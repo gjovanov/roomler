@@ -348,7 +348,6 @@ test.serial('API "/api/auth/me" throws a ValidationError for a token of deleted 
       t.is(response.statusCode, 409)
       t.is(response.headers['content-type'], 'application/json; charset=utf-8')
       const result = JSON.parse(response.payload)
-      console.log(result)
       t.true(Array.isArray(result.errors))
       t.true(result.errors.length > 0)
       t.true(result.errors[0].prop === 'token')

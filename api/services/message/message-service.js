@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Message = require('../../models/message')
+const roomService = require('../room/room-service')
 const MessageFilter = require('./message-filter')
 
 class MessageService {
@@ -42,21 +43,40 @@ class MessageService {
       .addLimit(sizeInt)
       .getAggregate()
 
+    console.log(JSON.stringify(aggregate))
+
     const records = await Message
       .aggregate(aggregate)
       .exec()
+    console.log(records)
     records.forEach((record) => {
+      record.author = record.author[0]
       record.room = record.room[0]
     })
     return records
   }
 
-  async create (user, items) {
-    items.forEach((item) => {
-      item.inviter = mongoose.Types.ObjectId(user._id)
+  async create (userid, payload) {
+    const messages = Array.isArray(payload.message) ? payload.message : (payload.message ? [payload.message] : [])
+    messages.forEach((message) => {
+      message.author = mongoose.Types.ObjectId(userid)
     })
+    const room = roomService.get(userid, payload.room)
+    if (!room) {
+      throw new ReferenceError('Room not found.')
+    }
     const records = await Message
-      .insertMany(items)
+      .insertMany(messages)
+      .then((rows) => {
+        return Promise.all(rows.map(async (row) => {
+          const record = await row
+            .populate('author')
+            .populate('room')
+            .populate('mentions')
+            .execPopulate()
+          return record
+        }))
+      })
 
     return records
   }

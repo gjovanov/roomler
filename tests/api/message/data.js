@@ -1,35 +1,33 @@
 module.exports = {
-  inviter: {
+  owner: {
     payload: {
-      username: 'userinviter',
-      email: 'userinviter@gmail.com',
+      username: 'messageownersuser',
+      email: 'messageownersuser@gmail.com',
       password: '12345678',
       passwordConfirm: '12345678'
     }
   },
-  inviteeMember: {
+  moderator: {
     payload: {
-      username: 'userinviteemember',
-      email: 'userinviteemember@gmail.com',
+      username: 'messagemoderatorsuser',
+      email: 'messagemoderatorsuser@gmail.com',
       password: '12345678',
       passwordConfirm: '12345678'
-    },
-    name: 'My new member'
+    }
   },
-  inviteeModerator: {
+  member: {
     payload: {
-      username: 'userinviteemoderator',
-      email: 'userinviteemoderator@gmail.com',
+      username: 'messagemmembersuser',
+      email: 'messagemmembersuser@gmail.com',
       password: '12345678',
       passwordConfirm: '12345678'
-    },
-    name: 'My new moderator'
+    }
   },
 
   room: {
     payload: {
-      roomid: 9878,
-      name: 'TestRoomInvite',
+      roomid: 9879,
+      name: 'TestRoomMessages',
       bitrate: 100000,
       fir_freq: 100000,
       record: false,

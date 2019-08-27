@@ -20,19 +20,19 @@ authOps.activate(fastify, test, 'activates the invitee moderator user account', 
 
 roomOps.create(fastify, test, 'returns newly created invite room', room)
 
-test.serial(`API "/api/invite/create" returns newly create invites`, async(t) => {
+test.serial(`API "/api/invite/create" returns newly create invites`, async (t) => {
   const payload = [{
-      room: room.record._id,
-      name: data.inviteeMember.name,
-      email: data.inviteeMember.payload.email,
-      type: 'member'
-    },
-    {
-      room: room.record._id,
-      name: data.inviteeModerator.name,
-      email: data.inviteeModerator.payload.email,
-      type: 'moderator'
-    }
+    room: room.record._id,
+    name: data.inviteeMember.name,
+    email: data.inviteeMember.payload.email,
+    type: 'member'
+  },
+  {
+    room: room.record._id,
+    name: data.inviteeModerator.name,
+    email: data.inviteeModerator.payload.email,
+    type: 'moderator'
+  }
   ]
   await fastify
     .inject({
@@ -68,7 +68,7 @@ test.serial(`API "/api/invite/create" returns newly create invites`, async(t) =>
     })
 })
 
-test.serial('API "/api/invite/get" returns an invite by id', async(t) => {
+test.serial('API "/api/invite/get" returns an invite by id', async (t) => {
   await fastify
     .inject({
       method: 'GET',
@@ -96,11 +96,11 @@ test.serial('API "/api/invite/get" returns an invite by id', async(t) => {
     })
 })
 
-test.serial('API "/api/invite/get-all" returns the invite list', async(t) => {
+test.serial('API "/api/invite/get-all" returns the invite list', async (t) => {
   await fastify
     .inject({
       method: 'GET',
-      url: `/api/invite/get-all`,
+      url: `/api/invite/get-all?roomid=${room.record._id}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${inviter.token}`
@@ -112,10 +112,6 @@ test.serial('API "/api/invite/get-all" returns the invite list', async(t) => {
       const result = JSON.parse(response.payload)
       t.true(Array.isArray(result))
       t.true(result.length === 2)
-      console.log(result)
-      console.log(data.inviteeMember.payload.email)
-      console.log(data.inviteeModerator.payload.email)
-
       const existsMember = result.some((item) => {
         return item.inviter.toString() === inviter.record._id.toString() &&
           item.room && item.room._id && item.room._id.toString() === room.record._id.toString() &&
@@ -141,7 +137,7 @@ test.serial('API "/api/invite/get-all" returns the invite list', async(t) => {
     })
 })
 
-test.serial(`API "/api/invite/update" returns the updated invite`, async(t) => {
+test.serial(`API "/api/invite/update" returns the updated invite`, async (t) => {
   const payload = {
     id: invites[0]._id,
     update: {
@@ -173,7 +169,7 @@ test.serial(`API "/api/invite/update" returns the updated invite`, async(t) => {
     })
 })
 
-test.serial(`API "/api/invite/accept" adds the room moderator and returns the accepted invite`, async(t) => {
+test.serial(`API "/api/invite/accept" adds the room moderator and returns the accepted invite`, async (t) => {
   await fastify
     .inject({
       method: 'PUT',
@@ -190,8 +186,8 @@ test.serial(`API "/api/invite/accept" adds the room moderator and returns the ac
       t.true(result.inviter.toString() === inviter.record._id.toString())
       t.true(result.email === data.inviteeModerator.payload.email)
       t.true(result.type === 'moderator')
+      t.true(result.status === 'accepted')
       t.true(result.room && result.room._id !== null)
-      console.log(result.room.moderators)
       const moderators = result.room.moderators.filter(id => id.toString() === inviteeModerator.record._id.toString())
       t.true(Array.isArray(moderators) || moderators.length === 1)
       t.pass()
@@ -201,11 +197,63 @@ test.serial(`API "/api/invite/accept" adds the room moderator and returns the ac
     })
 })
 
+test.serial(`API "/api/invite/reject" returns the rejected invite`, async (t) => {
+  await fastify
+    .inject({
+      method: 'PUT',
+      url: `/api/invite/reject/${invites[0]._id}`,
+      headers: {
+        Authorization: `Bearer ${inviteeMember.token}`
+      }
+    })
+    .then((response) => {
+      t.is(response.statusCode, 200)
+      t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+      const result = JSON.parse(response.payload)
+
+      t.true(result.inviter.toString() === inviter.record._id.toString())
+      t.true(result.email === data.inviteeMember.payload.email)
+      t.true(result.type === 'moderator')
+      t.true(result.status === 'rejected')
+      t.true(result.room && result.room._id !== null)
+      const moderators = result.room.moderators.filter(id => id.toString() === inviteeMember.record._id.toString())
+      t.true(!moderators || !moderators.length)
+      t.pass()
+    })
+    .catch((e) => {
+      t.fail()
+    })
+})
+
+test.serial(`API "/api/invite/delete/:id" deletes the invite`, async (t) => {
+  await fastify
+    .inject({
+      method: 'DELETE',
+      url: `/api/invite/delete/${invites[0]._id}`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${inviter.token}`
+      }
+    })
+    .then((response) => {
+      t.is(response.statusCode, 200)
+      t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+      const result = JSON.parse(response.payload)
+      t.true(result.ok === 1)
+      t.true(result.n > 0)
+      t.true(result.deletedCount > 0)
+      t.pass()
+    })
+    .catch(() => {
+      t.fail()
+    })
+})
+
 roomOps.delete(fastify, test, 'deletes the invite room', room)
 authOps.delete(fastify, test, 'deletes the inviter user account', inviter)
 authOps.delete(fastify, test, 'deletes the invitee member user account', inviteeMember)
 authOps.delete(fastify, test, 'deletes the invitee moderator user account', inviteeModerator)
 
-test.after('Shutdown API server', async(t) => {
+test.after('Shutdown API server', async (t) => {
   await fastify.close()
 })

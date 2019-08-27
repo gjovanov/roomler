@@ -8,7 +8,7 @@ class InviteController {
 
   async getAll (request, reply) {
     const filter = request.query.roomid ? {
-      room: request.query.roomid
+      roomid: request.query.roomid
     } : {}
     const result = await inviteService.getAll(request.user.user._id, request.query.page || 0, request.query.size || 10, filter)
     reply.send(result)

@@ -9,6 +9,10 @@ class MessageFilter {
         throw new TypeError('Invalid message id!')
       }
     }
+    if (this.filter.roomid) {
+      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.roomid)
+      delete this.filter.roomid
+    }
     this.aggregate = []
   }
 

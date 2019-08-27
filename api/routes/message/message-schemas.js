@@ -38,18 +38,25 @@ const message = S.object()
   .prop('type', S.string())
   .prop('content', S.string())
   .prop('parent', S.string())
-  .prop('mentions', S.array().items(S.string()))
+  .prop('mentions', S.array().items(user))
   .prop('reactions', S.array().items(reaction))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
 
 const messageList = S.array().items(message)
 
+const messageItem = S.object()
+  .prop('type', S.string())
+  .prop('content', S.string().required())
+
+const messageItems = S.array().items(messageItem)
+
 const createBody = S.object()
   .prop('room', S.string().required())
-  .prop('type', S.string().required())
-  .prop('content', S.string().required())
-const createBodyItems = S.array().items(createBody)
+  .anyOf([
+    S.ifThen(S.object().prop('message', S.object()), S.object().prop('message', messageItem)),
+    S.ifThen(S.object().prop('message', S.array()), S.object().prop('message', messageItems))
+  ])
 
 const inviteUpdate = S.object()
   .prop('name', S.string())
@@ -89,7 +96,7 @@ module.exports = {
     }
   },
   create: {
-    body: createBodyItems,
+    body: createBody,
     response: {
       200: messageList
     }

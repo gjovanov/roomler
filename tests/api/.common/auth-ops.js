@@ -24,8 +24,8 @@ class AuthOps {
           context.record = result.user
           t.pass()
         })
-        .catch(() => {
-          t.fail()
+        .catch((e) => {
+          t.fail(e)
         })
     })
   }
@@ -60,8 +60,8 @@ class AuthOps {
           context.token = result.token
           t.pass()
         })
-        .catch(() => {
-          t.fail()
+        .catch((e) => {
+          t.fail(e)
         })
     })
   }
@@ -87,7 +87,7 @@ class AuthOps {
           t.pass()
         })
         .catch((e) => {
-          t.fail()
+          t.fail(e)
         })
     })
   }

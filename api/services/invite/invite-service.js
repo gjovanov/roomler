@@ -78,7 +78,6 @@ class InviteService {
           return record
         }))
       })
-    console.log(records)
     return records
   }
 
@@ -114,18 +113,20 @@ class InviteService {
     const aggregate = inviteFilter
       .addLookup()
       .addMatch(userid)
-      .getFilter()
-    const record = await Invite
+      .getAggregate()
+    const result = await Invite
       .aggregate(aggregate)
       .exec()
       .then((records) => {
         if (!records.length) {
           throw new ReferenceError('Invite was not found.')
         }
-        return Invite.deleteOne(inviteFilter.getFilter()).exec()
+        return Invite.deleteOne(inviteFilter.getFilter())
+          .exec()
       })
-    return record
+    return result
   }
+
   // base methods - END
 
   async accept (userid, id) {
@@ -148,12 +149,23 @@ class InviteService {
   }
 
   async reject (userid, id) {
+    const invite = await this.get(null, id)
+
+    const payload = {
+      id: invite.room._id,
+      user: userid
+    }
+    await roomService.pull(null, `${invite.type}s`, payload)
+
     const update = {
       $set: {
         status: 'rejected'
       }
     }
     const record = await this.update(null, id, update)
+    if (!record.room) {
+      delete record.room
+    }
     return record
   }
 }
