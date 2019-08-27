@@ -1,7 +1,7 @@
 {
-  "name": "getaroom",
+  "name": "roomer.live",
   "version": "1.0.0",
-  "description": "Get a room",
+  "description": "Roomler.live - Video collaboration tool using WebRTC (Janus Gateway)",
   "author": "Goran Jovanov",
   "private": true,
   "scripts": {

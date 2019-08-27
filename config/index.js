@@ -13,7 +13,7 @@ env.API_URL = process.env.API_URL || `http://${env.HOST}:${env.PORT_API}`
 
 const config = {
   appSettings: {
-    name: 'Get a room',
+    name: 'Roomler.Live',
     env
   },
 
@@ -66,8 +66,8 @@ const config = {
 
   // use either SENDGRID or SMTP server
   emailSettings: {
-    fromEmail: 'goran.jovanov@gmail.com',
-    supportEmail: 'goran.jovanov@gmail.com',
+    fromEmail: 'support@roomler.live',
+    supportEmail: 'support@roomler.live',
     sendgrid: {
       apiKey: process.env.SENDGRID_API_KEY || undefined
     },

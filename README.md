@@ -1,6 +1,6 @@
-# getaroom
+# Roomler
 
-> My good Nuxt.js project
+> Roomler.Live - Live video collaboration tool using WebRTC (Janus Gateway)
 
 ## Build Setup
 
@@ -18,5 +18,3 @@ $ npm start
 # generate static project
 $ npm run generate
 ```
-
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
