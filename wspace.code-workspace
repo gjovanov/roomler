@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+    "files.eol": "\n",
+    "editor.formatOnPaste": true,
+    "javascript.validate.enable": false,
+    "eslint.validate": [{
+        "language": "vue",
+        "autoFix": true
+      },
+      {
+        "language": "html",
+        "autoFix": true
+      },
+      {
+        "language": "javascript",
+        "autoFix": true
+      }
+    ],
+    "eslint.autoFixOnSave": true,
+    "files.autoSave": "off",
+    "standard.autoFixOnSave": true
+  }
+}

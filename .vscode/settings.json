@@ -1,0 +1,23 @@
+{
+  "standard.autoFixOnSave": true,
+  "files.eol": "\n",
+  "html.format.wrapLineLength": 0,
+  "prettier.printWidth": 250,
+  "eslint.validate": [{ //list of extensions to validate
+      "language": "html",
+      "autoFix": true
+    },
+    {
+      "language": "vue",
+      "autoFix": true //Autofix any fixable errors when linting
+    },
+    {
+      "language": "javascript",
+      "autoFix": true
+    },
+    {
+      "language": "javascriptreact",
+      "autoFix": true
+    }
+  ]
+}

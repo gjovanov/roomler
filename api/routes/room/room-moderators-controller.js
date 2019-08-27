@@ -1,0 +1,23 @@
+const roomService = require('../../services/room/room-service')
+
+class RoomModeratorsController {
+  async push (request, reply) {
+    const payload = request.body
+    const result = await roomService.push(request.user.user._id, 'moderators', payload)
+    reply.send(result)
+  }
+
+  async update (request, reply) {
+    const payload = request.body
+    const result = await roomService.updateList(request.user.user._id, 'moderators', payload)
+    reply.send(result)
+  }
+
+  async pull (request, reply) {
+    const payload = request.body
+    const result = await roomService.pull(request.user.user._id, 'moderators', payload)
+    reply.send(result)
+  }
+}
+
+module.exports = new RoomModeratorsController()
