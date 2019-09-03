@@ -100,7 +100,7 @@ test.serial('API "/api/invite/get-all" returns the invite list', async (t) => {
   await fastify
     .inject({
       method: 'GET',
-      url: `/api/invite/get-all?roomid=${room.record._id}`,
+      url: `/api/invite/get-all?room=${room.record._id}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${inviter.token}`
@@ -137,18 +137,15 @@ test.serial('API "/api/invite/get-all" returns the invite list', async (t) => {
     })
 })
 
-test.serial(`API "/api/invite/update" returns the updated invite`, async (t) => {
+test.serial(`API "/api/invite/update/:id" returns the updated invite`, async (t) => {
   const payload = {
-    id: invites[0]._id,
-    update: {
-      name: 'My new moderator',
-      type: 'moderator'
-    }
+    name: 'My new moderator',
+    type: 'moderator'
   }
   await fastify
     .inject({
       method: 'PUT',
-      url: `/api/invite/update`,
+      url: `/api/invite/update/${invites[0]._id}`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${inviter.token}`
@@ -169,7 +166,7 @@ test.serial(`API "/api/invite/update" returns the updated invite`, async (t) => 
     })
 })
 
-test.serial(`API "/api/invite/accept" adds the room moderator and returns the accepted invite`, async (t) => {
+test.serial(`API "/api/invite/accept/:id" adds the room moderator and returns the accepted invite`, async (t) => {
   await fastify
     .inject({
       method: 'PUT',
@@ -197,7 +194,7 @@ test.serial(`API "/api/invite/accept" adds the room moderator and returns the ac
     })
 })
 
-test.serial(`API "/api/invite/reject" returns the rejected invite`, async (t) => {
+test.serial(`API "/api/invite/reject/:id" returns the rejected invite`, async (t) => {
   await fastify
     .inject({
       method: 'PUT',

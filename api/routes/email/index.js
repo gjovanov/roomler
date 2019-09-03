@@ -1,17 +1,17 @@
-const errorSchemas = require('../.common/error-schemas')
+const errorSchema = require('../.common/error-schema')
 const emailController = require('./email-controller')
-const emailSchemas = require('./email-schemas')
+const emailSchema = require('./email-schema')
 
 module.exports = [{
   authenticate: true,
   method: 'GET',
   url: '/api/email/get',
   schema: {
-    querystring: emailSchemas.get.querystring,
+    querystring: emailSchema.get.querystring,
     response: {
-      200: emailSchemas.get.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: emailSchema.get.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: emailController.get
@@ -21,11 +21,11 @@ module.exports = [{
   method: 'GET',
   url: '/api/email/get-all',
   schema: {
-    querystring: emailSchemas.getAll.querystring,
+    querystring: emailSchema.getAll.querystring,
     response: {
-      200: emailSchemas.getAll.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: emailSchema.getAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: emailController.getAll
@@ -35,11 +35,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/email/send',
   schema: {
-    body: emailSchemas.send.body,
+    body: emailSchema.send.body,
     response: {
-      200: emailSchemas.send.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: emailSchema.send.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: emailController.send
@@ -49,11 +49,11 @@ module.exports = [{
   method: 'DELETE',
   url: '/api/email/delete/:id',
   schema: {
-    params: emailSchemas.delete.params,
+    params: emailSchema.delete.params,
     response: {
-      200: emailSchemas.delete.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: emailSchema.delete.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: emailController.delete

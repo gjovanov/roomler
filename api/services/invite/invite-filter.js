@@ -9,9 +9,9 @@ class InviteFilter {
         throw new TypeError('Invalid invite id!')
       }
     }
-    if (this.filter.roomid) {
-      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.roomid)
-      delete this.filter.roomid
+    if (this.filter.room) {
+      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.room)
+      delete this.filter.room
     }
     this.aggregate = []
   }

@@ -7,8 +7,8 @@ class InviteController {
   }
 
   async getAll (request, reply) {
-    const filter = request.query.roomid ? {
-      roomid: request.query.roomid
+    const filter = request.query.room ? {
+      room: request.query.room
     } : {}
     const result = await messageService.getAll(request.user.user._id, request.query.page || 0, request.query.size || 10, filter)
     reply.send(result)
@@ -22,10 +22,11 @@ class InviteController {
 
   async update (request, reply) {
     const payload = request.body
+    const id = request.params.id
     const update = {
-      $set: payload.update
+      $set: payload
     }
-    const result = await messageService.update(request.user.user._id, payload.id, update)
+    const result = await messageService.update(request.user.user._id, id, update)
     reply.send(result)
   }
 

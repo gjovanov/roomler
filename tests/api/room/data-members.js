@@ -18,13 +18,7 @@ module.exports = {
 
   room: {
     payload: {
-      roomid: 9876,
-      name: 'TestRoomMembers',
-      bitrate: 100000,
-      fir_freq: 100000,
-      record: false,
-      audiocodec: 'opus',
-      videocodec: 'vp8'
+      name: 'TestRoomMembers'
     }
   }
 }

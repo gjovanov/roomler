@@ -6,7 +6,7 @@ class RoomFilter {
       if (mongoose.Types.ObjectId.isValid(options.id)) {
         this.filter._id = mongoose.Types.ObjectId(options.id)
       } else if (!isNaN(parseInt(options.id))) {
-        this.filter.roomid = parseInt(options.id)
+        this.filter.settings.media.roomid = parseInt(options.id)
       } else {
         throw new TypeError('Invalid room id!')
       }

@@ -17,6 +17,12 @@ class RoomOps {
           const result = JSON.parse(response.payload)
           t.true(result._id !== undefined)
           t.true(result.name === context.payload.name)
+          if (context.payload.tags) {
+            context.payload.tags.forEach(tag => {
+              const foundTag = result.tags.find(item => item === tag)
+              t.true(foundTag !== null && foundTag !== undefined)
+            })
+          }
           t.true(result.createdAt !== undefined)
           t.true(result.updatedAt !== undefined)
           context.record = result
@@ -55,10 +61,8 @@ class RoomOps {
   }
 
   push(fastify, test, testname, arrayType, roomContext, userContexts) {
-    test.serial(`API "/api/room/${arrayType}s/push" ${testname}`, async(t) => {
-      const payload = {
-        id: roomContext.record._id
-      }
+    test.serial(`API "/api/room/${arrayType}s/push/:id" ${testname}`, async(t) => {
+      const payload = {}
       if (Array.isArray(userContexts)) {
         payload.users = userContexts.map(uc => uc.record._id)
       } else {
@@ -67,7 +71,7 @@ class RoomOps {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/room/${arrayType}s/push`,
+          url: `/api/room/${arrayType}s/push/${roomContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${roomContext.token}`
@@ -101,10 +105,8 @@ class RoomOps {
   }
 
   pull(fastify, test, testname, arrayType, roomContext, userContexts) {
-    test.serial(`API "/api/room/${arrayType}s/pull" ${testname}`, async(t) => {
-      const payload = {
-        id: roomContext.record._id
-      }
+    test.serial(`API "/api/room/${arrayType}s/pull/:id" ${testname}`, async(t) => {
+      const payload = {}
       if (Array.isArray(userContexts)) {
         payload.users = userContexts.map(uc => uc.record._id)
       } else {
@@ -113,7 +115,7 @@ class RoomOps {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/room/${arrayType}s/pull`,
+          url: `/api/room/${arrayType}s/pull/${roomContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${roomContext.token}`
@@ -145,10 +147,8 @@ class RoomOps {
   }
 
   update(fastify, test, testname, arrayType, roomContext, userContexts) {
-    test.serial(`API "/api/room/${arrayType}s/update" ${testname}`, async(t) => {
-      const payload = {
-        id: roomContext.record._id
-      }
+    test.serial(`API "/api/room/${arrayType}s/update/:id" ${testname}`, async(t) => {
+      const payload = {}
       if (Array.isArray(userContexts)) {
         payload.users = userContexts.map(uc => uc.record._id)
       } else {
@@ -157,7 +157,7 @@ class RoomOps {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/room/${arrayType}s/update`,
+          url: `/api/room/${arrayType}s/update/${roomContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${roomContext.token}`

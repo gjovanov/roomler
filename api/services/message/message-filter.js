@@ -9,9 +9,9 @@ class MessageFilter {
         throw new TypeError('Invalid message id!')
       }
     }
-    if (this.filter.roomid) {
-      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.roomid)
-      delete this.filter.roomid
+    if (this.filter.room) {
+      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.room)
+      delete this.filter.room
     }
     this.aggregate = []
   }
@@ -30,6 +30,13 @@ class MessageFilter {
         localField: 'author',
         foreignField: '_id',
         as: 'author'
+      }
+    }, {
+      $lookup: {
+        from: 'users',
+        localField: 'readby',
+        foreignField: '_id',
+        as: 'readby'
       }
     }, {
       $lookup: {

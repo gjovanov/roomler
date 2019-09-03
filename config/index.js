@@ -52,15 +52,37 @@ const config = {
   },
 
   dataSettings: {
+    room: {
+      defaults: {
+        isopen: true,
+        settings: {
+          media: {
+            publishers: 6,
+            bitrate: 128000,
+            fir_freq: 0,
+            audiocodec: 'opus,pcmu',
+            videocodec: 'vp9,vp8,h264',
+            record: false
+          }
+        }
+      }
+    },
     code: {
       types: ['user_activation', 'password_reset']
     },
     invite: {
       statuses: ['pending', 'accepted', 'rejected'],
-      types: ['member', 'moderator']
+      types: ['member', 'moderator'],
+      defaults: {
+        type: 'member',
+        status: 'pending'
+      }
     },
     message: {
-      types: ['text']
+      types: ['text'],
+      defaults: {
+        type: 'text'
+      }
     }
   },
 

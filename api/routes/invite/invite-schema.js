@@ -7,14 +7,13 @@ const getQueryString = S.object()
   .prop('id', S.string().required())
 
 const getAllQueryString = S.object()
+  .prop('room', S.string().required())
   .prop('page', S.integer())
   .prop('size', S.integer())
-  .prop('roomid', S.string())
 
 const room = S.object()
   .prop('_id', S.string())
   .prop('owner', S.string())
-  .prop('roomid', S.number())
   .prop('name', S.string())
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
@@ -42,10 +41,6 @@ const inviteUpdate = S.object()
   .prop('name', S.string())
   .prop('email', S.string())
   .prop('type', S.string().enum(types))
-
-const updateBody = S.object()
-  .prop('id', S.string().required())
-  .prop('update', inviteUpdate)
 
 const idParam = S.object()
   .prop('id', S.string().required())
@@ -75,7 +70,8 @@ module.exports = {
     }
   },
   update: {
-    body: updateBody,
+    params: idParam,
+    body: inviteUpdate,
     response: {
       200: invite
     }

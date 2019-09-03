@@ -88,17 +88,17 @@ class RoomService {
   }
   // base methods - END
 
-  async updateList (userid, type, payload) {
+  async updateList (userid, id, type, payload) {
     const users = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const update = {
       $set: {}
     }
     update.$set[type] = users
-    const result = await this.update(userid, payload.id, update)
+    const result = await this.update(userid, id, update)
     return result
   }
 
-  async push (userid, type, payload) {
+  async push (userid, id, type, payload) {
     const users = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const update = {
       $addToSet: {}
@@ -106,11 +106,11 @@ class RoomService {
     update.$addToSet[type] = {
       $each: users
     }
-    const result = await this.update(userid, payload.id, update)
+    const result = await this.update(userid, id, update)
     return result
   }
 
-  async pull (userid, type, payload) {
+  async pull (userid, id, type, payload) {
     const users = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const update = {
       $pull: {}
@@ -118,7 +118,7 @@ class RoomService {
     update.$pull[type] = {
       $in: users
     }
-    const result = await this.update(userid, payload.id, update)
+    const result = await this.update(userid, id, update)
     return result
   }
 }

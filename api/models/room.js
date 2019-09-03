@@ -3,14 +3,10 @@ const Schema = mongoose.Schema
 require('mongoose-long')(mongoose)
 const Long = mongoose.Schema.Types.Long
 const ObjectId = mongoose.Schema.Types.ObjectId
+const config = require('../../config')
+const defaults = config.dataSettings.room.defaults
 
 const schema = new Schema({
-  roomid: {
-    type: Long,
-    required: 'RoomIdInvalid',
-    index: true,
-    unique: true
-  },
   owner: {
     type: ObjectId,
     ref: 'users',
@@ -20,34 +16,18 @@ const schema = new Schema({
   name: {
     type: String,
     required: 'NameInvalid',
-    index: true
+    index: true,
+    unique: true
   },
-  description: {
-    type: String
-  },
-  secret: {
-    type: String
-  },
-  bitrate: {
-    type: Number,
-    required: 'BitrateInvalid'
-  },
-  fir_freq: {
-    type: Number
-  },
-  audiocodec: {
-    type: String,
-    required: 'AudioCodecInvalid'
-  },
-  videocodec: {
-    type: String,
-    required: 'VideoCodecInvalid'
-  },
-  record: {
+  isopen: {
     type: Boolean,
-    required: 'RecordInvalid'
+    default: defaults.isopen
   },
-  rec_dir: {
+  tags: [{
+    type: String,
+    index: true
+  }],
+  description: {
     type: String
   },
   moderators: [{
@@ -59,7 +39,48 @@ const schema = new Schema({
     type: ObjectId,
     ref: 'users',
     index: true
-  }]
+  }],
+  settings: {
+    media: {
+      roomid: {
+        type: Long,
+        index: true
+      },
+      publishers: {
+        type: Number,
+        default: defaults.settings.media.publishers
+      },
+      secret: {
+        type: String // optional password needed for manipulating (e.g. destroying) the room
+      },
+      pin: {
+        type: String // optional password needed for joining the room
+      },
+      bitrate: {
+        type: Number,
+        default: defaults.settings.media.bitrate
+      },
+      fir_freq: {
+        type: Number,
+        default: defaults.settings.media.fir_freq
+      },
+      audiocodec: {
+        type: String,
+        default: defaults.settings.media.audiocodec
+      },
+      videocodec: {
+        type: String,
+        default: defaults.settings.media.videocodec
+      },
+      record: {
+        type: Boolean,
+        default: defaults.settings.media.record
+      },
+      rec_dir: {
+        type: String
+      }
+    }
+  }
 }, {
   timestamps: true
 })

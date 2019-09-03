@@ -13,30 +13,11 @@ const user = S.object()
   .prop('email', S.string().required())
   .prop('isactive', S.boolean().required())
 
-const room = S.object()
-  .prop('_id', S.string())
-  .prop('owner', user)
-  .prop('roomid', S.number().required())
-  .prop('name', S.string().required())
-  .prop('description', S.string())
-  .prop('secret', S.string())
-  .prop('bitrate', S.number().required())
-  .prop('fir_freq', S.number().required())
-  .prop('audiocodec', S.string().required())
-  .prop('videocodec', S.string().required())
-  .prop('record', S.boolean().required())
-  .prop('rec_dir', S.string())
-  .prop('moderators', S.array().items(user))
-  .prop('members', S.array().items(user))
-  .prop('createdAt', S.string())
-  .prop('updatedAt', S.string())
-
-const roomUpdate = S.object()
-  .prop('owner', S.string())
+const media = S.object()
   .prop('roomid', S.number())
-  .prop('name', S.string())
-  .prop('description', S.string())
+  .prop('publishers', S.number())
   .prop('secret', S.string())
+  .prop('pin', S.string())
   .prop('bitrate', S.number())
   .prop('fir_freq', S.number())
   .prop('audiocodec', S.string())
@@ -44,19 +25,36 @@ const roomUpdate = S.object()
   .prop('record', S.boolean())
   .prop('rec_dir', S.string())
 
-const updateBody = S.object()
-  .prop('id', S.string().required())
-  .prop('update', roomUpdate)
+const settings = S.object()
+  .prop('media', media)
+
+const room = S.object()
+  .prop('_id', S.string())
+  .prop('owner', user)
+  .prop('name', S.string().required())
+  .prop('tags', S.array().items(S.string()))
+  .prop('description', S.string())
+  .prop('settings', settings)
+  .prop('moderators', S.array().items(user))
+  .prop('members', S.array().items(user))
+  .prop('createdAt', S.string())
+  .prop('updatedAt', S.string())
+
+const roomUpdate = S.object()
+  .prop('owner', S.string())
+  .prop('name', S.string())
+  .prop('tags', S.array().items(S.string()))
+  .prop('description', S.string())
+  .prop('settings', settings)
 
 const userids = S.array().items(S.string())
 const arrayOps = S.object()
-  .prop('id', S.string().required())
   .prop('users', userids)
   .prop('user', S.string())
 
 const roomList = S.array().items(room)
 
-const deleteParams = S.object()
+const idParams = S.object()
   .prop('id', S.string().required())
 
 const delete200 = S.object()
@@ -84,31 +82,35 @@ module.exports = {
     }
   },
   update: {
-    body: updateBody,
+    params: idParams,
+    body: roomUpdate,
     response: {
       200: room
     }
   },
   delete: {
-    params: deleteParams,
+    params: idParams,
     response: {
       200: delete200
     }
   },
   members: {
     push: {
+      params: idParams,
       body: arrayOps,
       response: {
         200: room
       }
     },
     update: {
-      body: updateBody,
+      params: idParams,
+      body: roomUpdate,
       response: {
         200: room
       }
     },
     pull: {
+      params: idParams,
       body: arrayOps,
       response: {
         200: room
@@ -117,18 +119,21 @@ module.exports = {
   },
   moderators: {
     push: {
+      params: idParams,
       body: arrayOps,
       response: {
         200: room
       }
     },
     update: {
-      body: updateBody,
+      params: idParams,
+      body: roomUpdate,
       response: {
         200: room
       }
     },
     pull: {
+      params: idParams,
       body: arrayOps,
       response: {
         200: room

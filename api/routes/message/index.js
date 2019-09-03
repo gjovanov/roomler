@@ -1,18 +1,19 @@
-const errorSchemas = require('../.common/error-schemas')
+const errorSchema = require('../.common/error-schema')
 const messageController = require('./message-controller')
+const messageReadbyController = require('./message-readby-controller')
 const messageReactionsController = require('./message-reactions-controller')
-const messageSchemas = require('./message-schemas')
+const messageSchema = require('./message-schema')
 
 module.exports = [{
   authenticate: true,
   method: 'GET',
   url: '/api/message/get',
   schema: {
-    querystring: messageSchemas.get.querystring,
+    querystring: messageSchema.get.querystring,
     response: {
-      200: messageSchemas.get.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.get.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageController.get
@@ -22,11 +23,11 @@ module.exports = [{
   method: 'GET',
   url: '/api/message/get-all',
   schema: {
-    querystring: messageSchemas.getAll.querystring,
+    querystring: messageSchema.getAll.querystring,
     response: {
-      200: messageSchemas.getAll.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.getAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageController.getAll
@@ -36,11 +37,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/message/create',
   schema: {
-    body: messageSchemas.create.body,
+    body: messageSchema.create.body,
     response: {
-      200: messageSchemas.create.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.create.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageController.create
@@ -48,13 +49,14 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/message/update',
+  url: '/api/message/update/:id',
   schema: {
-    body: messageSchemas.update.body,
+    params: messageSchema.update.params,
+    body: messageSchema.update.body,
     response: {
-      200: messageSchemas.update.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.update.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageController.update
@@ -64,11 +66,11 @@ module.exports = [{
   method: 'DELETE',
   url: '/api/message/delete/:id',
   schema: {
-    params: messageSchemas.delete.params,
+    params: messageSchema.delete.params,
     response: {
-      200: messageSchemas.delete.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.delete.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageController.delete
@@ -76,13 +78,41 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/message/reactions/push',
+  url: '/api/message/readby/push/:id',
   schema: {
-    body: messageSchemas.reactions.push.body,
+    params: messageSchema.readby.push.params,
     response: {
-      200: messageSchemas.reactions.push.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.readby.push.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: messageReadbyController.push
+}, {
+  authenticate: true,
+  method: 'PUT',
+  url: '/api/message/readby/pull/:id',
+  schema: {
+    params: messageSchema.readby.pull.params,
+    response: {
+      200: messageSchema.readby.pull.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: messageReadbyController.pull
+},
+{
+  authenticate: true,
+  method: 'PUT',
+  url: '/api/message/reactions/push/:id',
+  schema: {
+    params: messageSchema.reactions.push.params,
+    body: messageSchema.reactions.push.body,
+    response: {
+      200: messageSchema.reactions.push.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageReactionsController.push
@@ -90,13 +120,13 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/message/reactions/pull',
+  url: '/api/message/reactions/pull/:id',
   schema: {
-    body: messageSchemas.reactions.pull.body,
+    params: messageSchema.reactions.pull.params,
     response: {
-      200: messageSchemas.reactions.pull.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: messageSchema.reactions.pull.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: messageReactionsController.pull

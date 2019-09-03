@@ -43,12 +43,9 @@ class MessageService {
       .addLimit(sizeInt)
       .getAggregate()
 
-    console.log(JSON.stringify(aggregate))
-
     const records = await Message
       .aggregate(aggregate)
       .exec()
-    console.log(records)
     records.forEach((record) => {
       record.author = record.author[0]
       record.room = record.room[0]
@@ -59,6 +56,7 @@ class MessageService {
   async create (userid, payload) {
     const messages = Array.isArray(payload.message) ? payload.message : (payload.message ? [payload.message] : [])
     messages.forEach((message) => {
+      message.room = mongoose.Types.ObjectId(payload.room)
       message.author = mongoose.Types.ObjectId(userid)
     })
     const room = roomService.get(userid, payload.room)
@@ -72,6 +70,7 @@ class MessageService {
           const record = await row
             .populate('author')
             .populate('room')
+            .populate('readby')
             .populate('mentions')
             .execPopulate()
           return record
@@ -100,7 +99,11 @@ class MessageService {
           throw new ReferenceError('Message was not found.')
         }
         return Message.findOneAndUpdate(messageFilter.getFilter(), update, options)
+          .populate('author')
           .populate('room')
+          .populate('readby')
+          .populate('mentions')
+          .populate('readby')
       })
 
     return record
@@ -127,7 +130,27 @@ class MessageService {
   }
   // base methods - END
 
-  async push (userid, payload) {
+  async pushReadby (userid, id) {
+    const update = {
+      $addToSet: {
+        readby: userid
+      }
+    }
+    const result = await this.update(userid, id, update)
+    return result
+  }
+
+  async pullReadby (userid, id) {
+    const update = {
+      $pull: {
+        readby: userid
+      }
+    }
+    const result = await this.update(userid, id, update)
+    return result
+  }
+
+  async pushReaction (userid, id, payload) {
     const reaction = {
       user: userid,
       type: payload.type,
@@ -138,11 +161,11 @@ class MessageService {
         reactions: reaction
       }
     }
-    const result = await this.update(userid, payload.id, update)
+    const result = await this.update(userid, id, update)
     return result
   }
 
-  async pull (userid, payload) {
+  async pullReaction (userid, id) {
     const update = {
       $pull: {
         reactions: {
@@ -150,7 +173,7 @@ class MessageService {
         }
       }
     }
-    const result = await this.update(userid, payload.id, update)
+    const result = await this.update(userid, id, update)
     return result
   }
 }

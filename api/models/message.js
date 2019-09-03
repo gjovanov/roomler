@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 const ObjectId = mongoose.Schema.Types.ObjectId
 const config = require('../../config')
 const types = config.dataSettings.message.types
+const defaults = config.dataSettings.message.defaults
 
 const schema = new Schema({
   author: {
@@ -21,7 +22,7 @@ const schema = new Schema({
     type: String,
     required: 'TypeIsRequired',
     enum: types,
-    default: 'text'
+    default: defaults.type
   },
   content: {
     type: String,
@@ -37,9 +38,15 @@ const schema = new Schema({
     ref: 'users',
     index: true
   }],
+  readby: [{
+    type: ObjectId,
+    ref: 'users',
+    index: true
+  }],
   reactions: [{
     user: {
       type: ObjectId,
+      required: 'ReactionUserIsRequired',
       ref: 'users',
       index: true
     },

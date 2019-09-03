@@ -19,10 +19,11 @@ class RoomController {
 
   async update (request, reply) {
     const payload = request.body
+    const id = request.params.id
     const update = {
-      $set: payload.update
+      $set: payload
     }
-    const result = await roomService.update(request.user.user._id, payload.id, update)
+    const result = await roomService.update(request.user.user._id, id, update)
     reply.send(result)
   }
 

@@ -10,13 +10,8 @@ module.exports = {
 
   room: {
     payload: {
-      roomid: 9875,
       name: 'TestName',
-      bitrate: 100000,
-      fir_freq: 100000,
-      record: false,
-      audiocodec: 'opus',
-      videocodec: 'vp8'
+      tags: ['super', 'dooper']
     },
     newname: 'TestName2',
     invalidroomid: 'sijndcijsc'

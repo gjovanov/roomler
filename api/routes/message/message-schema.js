@@ -1,6 +1,5 @@
 const S = require('fluent-schema')
 const config = require('../../../config')
-
 const types = config.dataSettings.message.types
 
 const getQueryString = S.object()
@@ -9,7 +8,7 @@ const getQueryString = S.object()
 const getAllQueryString = S.object()
   .prop('page', S.integer())
   .prop('size', S.integer())
-  .prop('roomid', S.string())
+  .prop('room', S.string())
 
 const user = S.object()
   .prop('_id', S.string().required())
@@ -20,10 +19,8 @@ const user = S.object()
 const room = S.object()
   .prop('_id', S.string())
   .prop('owner', S.string())
-  .prop('roomid', S.number())
   .prop('name', S.string())
   .prop('moderators', S.array().items(S.string()))
-  .prop('reactions', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
 
 const reaction = S.object()
@@ -39,6 +36,7 @@ const message = S.object()
   .prop('content', S.string())
   .prop('parent', S.string())
   .prop('mentions', S.array().items(user))
+  .prop('readby', S.array().items(user))
   .prop('reactions', S.array().items(reaction))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
@@ -46,8 +44,10 @@ const message = S.object()
 const messageList = S.array().items(message)
 
 const messageItem = S.object()
-  .prop('type', S.string())
+  .prop('parent', S.string())
+  .prop('type', S.string()) // S.string().enum(types))
   .prop('content', S.string().required())
+  .prop('mentions', S.array().items(S.string()))
 
 const messageItems = S.array().items(messageItem)
 
@@ -58,14 +58,9 @@ const createBody = S.object()
     S.ifThen(S.object().prop('message', S.array()), S.object().prop('message', messageItems))
   ])
 
-const inviteUpdate = S.object()
-  .prop('name', S.string())
-  .prop('email', S.string())
-  .prop('type', S.string().enum(types))
-
-const updateBody = S.object()
-  .prop('id', S.string().required())
-  .prop('update', inviteUpdate)
+const messageUpdate = S.object()
+  .prop('content', S.string().required())
+  .prop('mentions', S.array().items(S.string()))
 
 const idParam = S.object()
   .prop('id', S.string().required())
@@ -76,11 +71,8 @@ const delete200 = S.object()
   .prop('deletedCount', S.number().required())
 
 const reactionPush = S.object()
-  .prop('id', S.string().required())
   .prop('type', S.string().required())
   .prop('reaction', S.object())
-
-const reactionPull = S.object()
 
 module.exports = {
   get: {
@@ -102,7 +94,8 @@ module.exports = {
     }
   },
   update: {
-    body: updateBody,
+    params: idParam,
+    body: messageUpdate,
     response: {
       200: message
     }
@@ -113,15 +106,30 @@ module.exports = {
       200: delete200
     }
   },
+  readby: {
+    push: {
+      params: idParam,
+      response: {
+        200: message
+      }
+    },
+    pull: {
+      params: idParam,
+      response: {
+        200: message
+      }
+    }
+  },
   reactions: {
     push: {
+      params: idParam,
       body: reactionPush,
       response: {
         200: message
       }
     },
     pull: {
-      body: reactionPull,
+      params: idParam,
       response: {
         200: message
       }

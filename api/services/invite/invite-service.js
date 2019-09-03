@@ -133,10 +133,9 @@ class InviteService {
     const invite = await this.get(null, id)
 
     const payload = {
-      id: invite.room._id,
       user: userid
     }
-    await roomService.push(null, `${invite.type}s`, payload)
+    await roomService.push(null, invite.room._id, `${invite.type}s`, payload)
 
     const update = {
       $set: {
@@ -152,10 +151,9 @@ class InviteService {
     const invite = await this.get(null, id)
 
     const payload = {
-      id: invite.room._id,
       user: userid
     }
-    await roomService.pull(null, `${invite.type}s`, payload)
+    await roomService.pull(null, invite.room._id, `${invite.type}s`, payload)
 
     const update = {
       $set: {

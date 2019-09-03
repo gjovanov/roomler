@@ -5,6 +5,17 @@ module.exports = {
       email: 'messageownersuser@gmail.com',
       password: '12345678',
       passwordConfirm: '12345678'
+    },
+    message: {
+      payload: [{
+        content: 'Greetings by the room owner',
+        mentions: ['messagemoderatorsuser', 'messagemmembersuser']
+      },
+      {
+        content: 'The room owner welcomes you on board',
+        mentions: ['messagemoderatorsuser', 'messagemmembersuser']
+      }
+      ]
     }
   },
   moderator: {
@@ -13,6 +24,16 @@ module.exports = {
       email: 'messagemoderatorsuser@gmail.com',
       password: '12345678',
       passwordConfirm: '12345678'
+    },
+    message: {
+      payload: {
+        content: 'Greetings by the room moderator',
+        mentions: ['messagemoderatorsuser', 'messagemmembersuser']
+      },
+      update: {
+        content: 'Greetings by the room moderator - IMPROVED',
+        mentions: ['messagemmembersuser']
+      }
     }
   },
   member: {
@@ -26,13 +47,7 @@ module.exports = {
 
   room: {
     payload: {
-      roomid: 9879,
-      name: 'TestRoomMessages',
-      bitrate: 100000,
-      fir_freq: 100000,
-      record: false,
-      audiocodec: 'opus',
-      videocodec: 'vp8'
+      name: 'TestRoomMessages'
     }
   }
 }

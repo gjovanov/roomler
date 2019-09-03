@@ -4,6 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const config = require('../../config')
 const statuses = config.dataSettings.invite.statuses
 const types = config.dataSettings.invite.types
+const defaults = config.dataSettings.invite.defaults
 
 const schema = new Schema({
   inviter: {
@@ -30,13 +31,13 @@ const schema = new Schema({
     type: String,
     required: 'TypeIsRequired',
     enum: types,
-    default: 'member'
+    default: defaults.type
   },
   status: {
     type: String,
     required: 'StatusIsRequired',
     enum: statuses,
-    default: 'pending'
+    default: defaults.status
   },
   invitee: {
     type: ObjectId,

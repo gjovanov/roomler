@@ -1,14 +1,15 @@
 class RoomContext {
-  constructor(data, tokenProvider) {
+  constructor(data, userContext) {
     this.payload = data.payload
     this.invalidroomid = data.invalidroomid
     this.newname = data.newname
-    this.tokenProvider = tokenProvider
+    this.userContext = userContext
     this.record = null
+    this.messages = []
   }
 
   get token() {
-    return this.tokenProvider.token
+    return this.userContext.token
   }
 
 }

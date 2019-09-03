@@ -1,17 +1,17 @@
-const errorSchemas = require('../.common/error-schemas')
+const errorSchema = require('../.common/error-schema')
 const inviteController = require('./invite-controller')
-const inviteSchemas = require('./invite-schemas')
+const inviteSchema = require('./invite-schema')
 
 module.exports = [{
   authenticate: true,
   method: 'GET',
   url: '/api/invite/get',
   schema: {
-    querystring: inviteSchemas.get.querystring,
+    querystring: inviteSchema.get.querystring,
     response: {
-      200: inviteSchemas.get.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.get.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.get
@@ -21,11 +21,11 @@ module.exports = [{
   method: 'GET',
   url: '/api/invite/get-all',
   schema: {
-    querystring: inviteSchemas.getAll.querystring,
+    querystring: inviteSchema.getAll.querystring,
     response: {
-      200: inviteSchemas.getAll.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.getAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.getAll
@@ -35,11 +35,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/invite/create',
   schema: {
-    body: inviteSchemas.create.body,
+    body: inviteSchema.create.body,
     response: {
-      200: inviteSchemas.create.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.create.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.create
@@ -47,13 +47,13 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/invite/update',
+  url: '/api/invite/update/:id',
   schema: {
-    body: inviteSchemas.update.body,
+    body: inviteSchema.update.body,
     response: {
-      200: inviteSchemas.update.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.update.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.update
@@ -63,11 +63,11 @@ module.exports = [{
   method: 'PUT',
   url: '/api/invite/accept/:id',
   schema: {
-    params: inviteSchemas.accept.params,
+    params: inviteSchema.accept.params,
     response: {
-      200: inviteSchemas.accept.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.accept.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.accept
@@ -77,11 +77,11 @@ module.exports = [{
   method: 'PUT',
   url: '/api/invite/reject/:id',
   schema: {
-    params: inviteSchemas.reject.params,
+    params: inviteSchema.reject.params,
     response: {
-      200: inviteSchemas.reject.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.reject.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.reject
@@ -91,11 +91,11 @@ module.exports = [{
   method: 'DELETE',
   url: '/api/invite/delete/:id',
   schema: {
-    params: inviteSchemas.delete.params,
+    params: inviteSchema.delete.params,
     response: {
-      200: inviteSchemas.delete.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: inviteSchema.delete.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: inviteController.delete

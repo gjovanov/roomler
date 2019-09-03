@@ -23,6 +23,7 @@
     ],
     "eslint.autoFixOnSave": true,
     "files.autoSave": "off",
-    "standard.autoFixOnSave": true
+    "standard.autoFixOnSave": true,
+    "terminal.integrated.windowsEnableConpty": false
   }
 }

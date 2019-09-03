@@ -1,16 +1,16 @@
-const errorSchemas = require('../.common/error-schemas')
+const errorSchema = require('../.common/error-schema')
 const authController = require('./auth-controller')
-const authSchemas = require('./auth-schemas')
+const authSchema = require('./auth-schema')
 
 module.exports = [{
   method: 'POST',
   url: '/api/auth/register',
   schema: {
-    body: authSchemas.register.body,
+    body: authSchema.register.body,
     response: {
-      200: authSchemas.register.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.register.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.register
@@ -19,11 +19,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/auth/code/get',
   schema: {
-    body: authSchemas.code.get.body,
+    body: authSchema.code.get.body,
     response: {
-      200: authSchemas.code.get.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.code.get.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.getCode
@@ -32,11 +32,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/auth/activate',
   schema: {
-    body: authSchemas.activate.body,
+    body: authSchema.activate.body,
     response: {
-      200: authSchemas.register.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.register.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.activate
@@ -45,11 +45,11 @@ module.exports = [{
   method: 'POST',
   url: '/api/auth/login',
   schema: {
-    body: authSchemas.login.body,
+    body: authSchema.login.body,
     response: {
-      200: authSchemas.login.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.login.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.login
@@ -58,11 +58,11 @@ module.exports = [{
   method: 'PUT',
   url: '/api/auth/password/update',
   schema: {
-    body: authSchemas.password.update.body,
+    body: authSchema.password.update.body,
     response: {
-      200: authSchemas.password.update.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.password.update.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.updatePassword
@@ -72,11 +72,11 @@ module.exports = [{
   method: 'PUT',
   url: '/api/auth/person/update',
   schema: {
-    body: authSchemas.person.update.body,
+    body: authSchema.person.update.body,
     response: {
-      200: authSchemas.person.update.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.person.update.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.updatePerson
@@ -87,9 +87,9 @@ module.exports = [{
   url: '/api/auth/me',
   schema: {
     response: {
-      200: authSchemas.me.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.me.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.me
@@ -100,9 +100,9 @@ module.exports = [{
   url: '/api/auth/delete',
   schema: {
     response: {
-      200: authSchemas.delete.response[200],
-      409: errorSchemas.response[409],
-      500: errorSchemas.response[500]
+      200: authSchema.delete.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
     }
   },
   handler: authController.delete
