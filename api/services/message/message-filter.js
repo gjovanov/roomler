@@ -34,6 +34,13 @@ class MessageFilter {
     }, {
       $lookup: {
         from: 'users',
+        localField: 'mentions',
+        foreignField: '_id',
+        as: 'mentions'
+      }
+    }, {
+      $lookup: {
+        from: 'users',
         localField: 'readby',
         foreignField: '_id',
         as: 'readby'
@@ -41,9 +48,9 @@ class MessageFilter {
     }, {
       $lookup: {
         from: 'users',
-        localField: 'mentions',
+        localField: 'reactions.user',
         foreignField: '_id',
-        as: 'mentions'
+        as: 'reactions.user'
       }
     })
     return this

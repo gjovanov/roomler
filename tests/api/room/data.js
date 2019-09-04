@@ -1,4 +1,5 @@
 module.exports = {
+  invalidRoomId: 'sijndcijsc',
   user: {
     payload: {
       username: 'roomuser',
@@ -13,7 +14,9 @@ module.exports = {
       name: 'TestName',
       tags: ['super', 'dooper']
     },
-    newname: 'TestName2',
-    invalidroomid: 'sijndcijsc'
+    update: {
+      name: 'TestName2',
+      tags: ['super', 'dooper', 'exciting']
+    }
   }
 }

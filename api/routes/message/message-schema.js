@@ -24,7 +24,7 @@ const room = S.object()
   .prop('members', S.array().items(S.string()))
 
 const reaction = S.object()
-  .prop('user', S.string().required())
+  .prop('user', user)
   .prop('type', S.string().required())
   .prop('reaction', S.object())
 

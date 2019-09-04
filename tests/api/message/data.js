@@ -1,4 +1,18 @@
 module.exports = {
+  reaction: {
+    like: {
+      type: 'like',
+      reaction: {
+        icon: 'http://google.com?search=like'
+      }
+    },
+    lol: {
+      type: 'LOL',
+      reaction: {
+        icon: 'http://google.com?search=LOL'
+      }
+    }
+  },
   owner: {
     payload: {
       username: 'messageownersuser',

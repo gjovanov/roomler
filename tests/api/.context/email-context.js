@@ -1,11 +1,8 @@
-class RoomContext {
+class EmailContext {
   constructor(data, userContext) {
     this.payload = data.payload
-    this.update = data.update
-    this.newname = data.newname
     this.userContext = userContext
     this.record = null
-    this.messages = []
   }
 
   get token() {
@@ -14,4 +11,4 @@ class RoomContext {
 
 }
 
-module.exports = RoomContext
+module.exports = EmailContext

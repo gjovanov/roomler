@@ -37,8 +37,8 @@ class MessageOps {
           }
           result.forEach(message => {
             const payloadMessage = payloadMessages.find(m => m.content === message.content)
-            t.true(payloadMessage !== null && payloadMessage !== undefined)
-            t.true(message._id !== undefined)
+            t.true(!!payloadMessage)
+            t.true(!!message._id)
             t.true(message.room._id.toString() === messageContext.room._id.toString())
             if (payloadMessage.type) {
               t.true(message.type === payloadMessage.type)
@@ -47,11 +47,11 @@ class MessageOps {
             if (payloadMessage.mentions) {
               payloadMessage.mentions.forEach(mention => {
                 const foundMention = message.mentions.find(item => item._id.toString() === mention.toString())
-                t.true(foundMention !== null && foundMention !== undefined)
+                t.true(!!foundMention)
               })
             }
-            t.true(message.createdAt !== undefined)
-            t.true(message.updatedAt !== undefined)
+            t.true(!!message.createdAt)
+            t.true(!!message.updatedAt)
             messageContext.records.push(message)
           })
 
@@ -85,11 +85,11 @@ class MessageOps {
           if (messageContext.records[0].mentions) {
             messageContext.records[0].mentions.forEach(mention => {
               const foundMention = result.mentions.find(item => item._id.toString() === mention._id.toString())
-              t.true(foundMention !== null && foundMention !== undefined)
+              t.true(!!foundMention)
             })
           }
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
 
           t.pass()
         })
@@ -116,23 +116,23 @@ class MessageOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(Array.isArray(result))
-          result.forEach(message => {
-            const expectedMessage = expectedMessages.find(m => m._id.toString() === message._id.toString())
-            t.true(expectedMessage !== null && expectedMessage !== undefined)
-            t.true(message._id !== undefined)
-            t.true(message.room._id.toString() === messageContexts[0].records[0].room._id.toString())
-            if (expectedMessage.type) {
-              t.true(message.type === expectedMessage.type)
+          expectedMessages.forEach(expectedMessage => {
+            const message = result.find(m => m._id.toString() === expectedMessage._id.toString())
+            t.true(!!message)
+            t.true(!!expectedMessage._id)
+            t.true(expectedMessage.room._id.toString() === messageContexts[0].records[0].room._id.toString())
+            if (message.type) {
+              t.true(expectedMessage.type === message.type)
             }
-            t.true(message.content === expectedMessage.content)
-            if (expectedMessage.mentions) {
-              expectedMessage.mentions.forEach(mention => {
-                const foundMention = message.mentions.find(item => item._id.toString() === mention._id.toString())
-                t.true(foundMention !== null && foundMention !== undefined)
+            t.true(expectedMessage.content === message.content)
+            if (message.mentions) {
+              message.mentions.forEach(mention => {
+                const foundMention = expectedMessage.mentions.find(item => item._id.toString() === mention._id.toString())
+                t.true(!!foundMention)
               })
             }
-            t.true(message.createdAt !== undefined)
-            t.true(message.updatedAt !== undefined)
+            t.true(!!expectedMessage.createdAt)
+            t.true(!!expectedMessage.updatedAt)
           })
 
           t.pass()
@@ -161,7 +161,7 @@ class MessageOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result._id !== undefined)
+          t.true(!!result._id)
           t.true(result.room._id.toString() === messageContext.room._id.toString())
           if (payload.type) {
             t.true(result.type === payload.type)
@@ -170,11 +170,11 @@ class MessageOps {
           if (payload.mentions) {
             payload.mentions.forEach(mention => {
               const foundMention = result.mentions.find(item => item._id.toString() === mention.toString())
-              t.true(foundMention !== null && foundMention !== undefined)
+              t.true(!!foundMention)
             })
           }
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           messageContext.records = messageContext.records.map(r => r._id.toString() === result._id.toString() ? result : r)
           t.pass()
         })
@@ -228,13 +228,13 @@ class MessageOps {
           const result = JSON.parse(response.payload)
           t.true(result._id.toString() === messageContext.records[0]._id.toString())
           t.true(result.content === messageContext.records[0].content)
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
-          t.true(found._id !== undefined)
+          t.true(!!found._id)
           t.true(found.username === userContext.record.username)
           t.true(found.email === userContext.record.email)
-          t.true(found.password === undefined)
+          t.true(!found.password)
           t.pass()
         })
         .catch((e) => {
@@ -261,8 +261,72 @@ class MessageOps {
           const result = JSON.parse(response.payload)
           t.true(result._id.toString() === messageContext.records[0]._id.toString())
           t.true(result.content === messageContext.records[0].content)
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
+          t.true(!found)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  react(fastify, test, testname, messageContext, userContext, reaction) {
+    const payload = reaction
+    test.serial(`API "/api/message/reactions/push/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/message/reactions/push/${messageContext.records[0]._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result._id.toString() === messageContext.records[0]._id.toString())
+          t.true(result.content === messageContext.records[0].content)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          const found = result.reactions.find(reaction => reaction.user._id.toString() === userContext.record._id.toString())
+          t.true(!!found.user._id)
+          t.true(found.user.username === userContext.record.username)
+          t.true(found.user.email === userContext.record.email)
+          t.true(!found.user.password)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  unreact(fastify, test, testname, messageContext, userContext) {
+    test.serial(`API "/api/message/reactions/pull/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/message/reactions/pull/${messageContext.records[0]._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result._id.toString() === messageContext.records[0]._id.toString())
+          t.true(result.content === messageContext.records[0].content)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
           t.true(!found)
           t.pass()

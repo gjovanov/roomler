@@ -72,6 +72,7 @@ class MessageService {
             .populate('room')
             .populate('readby')
             .populate('mentions')
+            .populate('reactions.user')
             .execPopulate()
           return record
         }))
@@ -103,7 +104,7 @@ class MessageService {
           .populate('room')
           .populate('readby')
           .populate('mentions')
-          .populate('readby')
+          .populate('reactions.user')
       })
 
     return record

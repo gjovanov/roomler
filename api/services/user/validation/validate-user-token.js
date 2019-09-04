@@ -1,7 +1,6 @@
 const ValidationError = require('../../../errors/validation-error.js')
 module.exports = (tokenUser, dbUser) => {
   const errors = []
-
   if (!dbUser ||
     !dbUser._id ||
     !tokenUser ||

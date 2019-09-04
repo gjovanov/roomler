@@ -15,16 +15,15 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result._id !== undefined)
+          t.true(!!result._id)
           t.true(result.name === context.payload.name)
           if (context.payload.tags) {
             context.payload.tags.forEach(tag => {
-              const foundTag = result.tags.find(item => item === tag)
-              t.true(foundTag !== null && foundTag !== undefined)
+              t.true(result.tags.includes(tag))
             })
           }
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           context.record = result
           t.pass()
         })
@@ -34,6 +33,101 @@ class RoomOps {
     })
   }
 
+  get(fastify, test, testname, roomContext) {
+    test.serial(`API "/api/room/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/room/get?id=${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(!!result._id)
+          t.true(result.name === roomContext.payload.name)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          roomContext.record = result
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getAll(fastify, test, testname, roomContexts) {
+    test.serial(`API "/api/room/get-all" ${testname}`, async(t) => {
+      const expectedRooms = roomContexts.map(ec => ec.record)
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/room/get-all`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContexts[0].token}`
+          },
+          payload: roomContexts.payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(Array.isArray(result))
+          expectedRooms.forEach(expectedRoom => {
+            const room = result.find(r => r._id.toString() === expectedRoom._id.toString())
+            t.true(!!room)
+            t.true(expectedRoom._id.toString() === room._id.toString())
+            t.true(expectedRoom.name === room.name)
+            t.true(!!expectedRoom.createdAt)
+            t.true(!!expectedRoom.updatedAt)
+          })
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  update(fastify, test, testname, roomContext) {
+    test.serial(`API "/api/room/update/:id" ${testname}`, async(t) => {
+      const payload = roomContext.update
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/update/${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(!!result._id)
+          t.true(result.name === roomContext.update.name)
+          if (roomContext.update.tags) {
+            roomContext.update.tags.forEach(tag => {
+              t.true(result.tags.includes(tag))
+            })
+          }
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
   delete(fastify, test, testname, context) {
     test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
       await fastify
@@ -52,6 +146,31 @@ class RoomOps {
           t.true(result.ok === 1)
           t.true(result.n > 0)
           t.true(result.deletedCount > 0)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  deleteInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/room/delete/${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid room id!')
           t.pass()
         })
         .catch((e) => {
@@ -82,19 +201,19 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result._id !== undefined)
+          t.true(!!result._id)
           t.true(result.name === roomContext.payload.name)
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]
           t.true(Array.isArray(array))
           const users = Array.isArray(userContexts) ? userContexts : (userContexts ? [userContexts] : [])
           users.forEach(user => {
             const arrayItem = array.find(item => item._id.toString() === user.record._id.toString())
-            t.true(arrayItem._id !== undefined)
+            t.true(!!arrayItem._id)
             t.true(arrayItem.username === user.record.username)
             t.true(arrayItem.email === user.record.email)
-            t.true(arrayItem.password === undefined)
+            t.true(!arrayItem.password)
           })
           t.pass()
         })
@@ -126,10 +245,10 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result._id !== undefined)
+          t.true(!!result._id)
           t.true(result.name === roomContext.payload.name)
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]
           t.true(Array.isArray(array))
 
@@ -146,7 +265,7 @@ class RoomOps {
     })
   }
 
-  update(fastify, test, testname, arrayType, roomContext, userContexts) {
+  updateList(fastify, test, testname, arrayType, roomContext, userContexts) {
     test.serial(`API "/api/room/${arrayType}s/update/:id" ${testname}`, async(t) => {
       const payload = {}
       if (Array.isArray(userContexts)) {
@@ -168,20 +287,20 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result._id !== undefined)
+          t.true(!!result._id)
           t.true(result.name === roomContext.payload.name)
-          t.true(result.createdAt !== undefined)
-          t.true(result.updatedAt !== undefined)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]
           t.true(Array.isArray(array))
           const users = Array.isArray(userContexts) ? userContexts : (userContexts ? [userContexts] : [])
           t.true(array.length === users.length)
           users.forEach(user => {
             const arrayItem = array.find(item => item._id.toString() === user.record._id.toString())
-            t.true(arrayItem._id !== undefined)
+            t.true(!!arrayItem._id)
             t.true(arrayItem.username === user.record.username)
             t.true(arrayItem.email === user.record.email)
-            t.true(arrayItem.password === undefined)
+            t.true(!arrayItem.password)
           })
           t.pass()
         })
