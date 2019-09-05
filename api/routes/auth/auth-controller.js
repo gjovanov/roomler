@@ -64,7 +64,7 @@ class AuthController {
     const result = await userService.get(request.user.user._id)
     reply.send({
       user: result,
-      person: result ? result.person : null
+      person: result.person
     })
   }
 

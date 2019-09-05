@@ -22,24 +22,6 @@ class UserService {
     return record
   }
 
-  async getAll (page = 0, size = 10, filter = {}, sort = {
-    createdAt: 'desc'
-  }) {
-    const userFilter = new UserFilter({
-      filter
-    })
-      .getFilter()
-    const pageInt = parseInt(page)
-    const sizeInt = parseInt(size)
-    const records = await User
-      .find(userFilter)
-      .sort(sort)
-      .skip(pageInt * sizeInt)
-      .limit(sizeInt)
-      .exec()
-    return records
-  }
-
   async create (data) {
     let record = new User(data)
     record = await record.save()

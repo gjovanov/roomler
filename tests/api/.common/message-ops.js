@@ -99,6 +99,57 @@ class MessageOps {
     })
   }
 
+  getInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/message/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/message/get?id=${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid message id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getNotFoundId(fastify, test, testname, messageContext, recordIndex) {
+    test.serial(`API "/api/message/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/message/get?id=${messageContext.records[recordIndex]._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${messageContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          console.log(result)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Message was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   getAll(fastify, test, testname, messageContexts) {
     test.serial(`API "/api/message/get-all" ${testname}`, async(t) => {
       const expectedMessages = messageContexts.map(mc => mc.records).reduce((a, b) => [...a, ...b])
@@ -184,12 +235,64 @@ class MessageOps {
     })
   }
 
-  delete(fastify, test, testname, messageContext) {
+  updateInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/message/update/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/message/update/${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          console.log(result)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid message id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+  updateNotFoundId(fastify, test, testname, messageContext, recordIndex) {
+    test.serial(`API "/api/message/update/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/message/update/${messageContext.records[recordIndex]._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${messageContext.token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Message was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  delete(fastify, test, testname, messageContext, recordIndex) {
     test.serial(`API "/api/message/delete/:id" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'DELETE',
-          url: `/api/message/delete/${messageContext.records[0]._id}`,
+          url: `/api/message/delete/${messageContext.records[recordIndex]._id}`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${messageContext.token}`
@@ -202,6 +305,56 @@ class MessageOps {
           t.true(result.ok === 1)
           t.true(result.n > 0)
           t.true(result.deletedCount > 0)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  deleteInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/message/delete/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/message/delete/${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid message id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  deleteNotFoundId(fastify, test, testname, messageContext, recordIndex) {
+    test.serial(`API "/api/message/delete/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/message/delete/${messageContext.records[recordIndex]._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${messageContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Message was not found.')
           t.pass()
         })
         .catch((e) => {

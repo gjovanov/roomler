@@ -1,5 +1,5 @@
 class CodeFilter {
-  constructor (username, type = 'user_activation', token = undefined) {
+  constructor (username, type = 'user_activation', token) {
     this.filter = {
       username,
       type,

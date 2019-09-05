@@ -7,7 +7,7 @@ class EmailController {
   }
 
   async getAll (request, reply) {
-    const result = await emailService.getAll(request.user.user._id, request.query.page || 0, request.query.size || 10)
+    const result = await emailService.getAll(request.user.user._id, request.query.page, request.query.size)
     reply.send(result)
   }
 

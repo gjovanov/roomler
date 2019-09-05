@@ -7,10 +7,10 @@ class InviteController {
   }
 
   async getAll (request, reply) {
-    const filter = request.query.room ? {
+    const filter = {
       room: request.query.room
-    } : {}
-    const result = await inviteService.getAll(request.user.user._id, request.query.page || 0, request.query.size || 10, filter)
+    }
+    const result = await inviteService.getAll(request.user.user._id, request.query.page, request.query.size, filter)
     reply.send(result)
   }
 

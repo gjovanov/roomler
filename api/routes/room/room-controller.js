@@ -7,7 +7,7 @@ class RoomController {
   }
 
   async getAll (request, reply) {
-    const result = await roomService.getAll(request.user.user._id, request.query.page || 0, request.query.size || 10)
+    const result = await roomService.getAll(request.user.user._id, request.query.page, request.query.size)
     reply.send(result)
   }
 

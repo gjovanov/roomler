@@ -1,4 +1,6 @@
 module.exports = {
+  invalidEmailId: 'jh23k4rh',
+
   user: {
     payload: {
       username: 'emailuser',
@@ -7,8 +9,8 @@ module.exports = {
       passwordConfirm: '12345678'
     }
   },
+
   email: {
-    invalidId: 'jh23k4rh',
     template: {
       payload: {
         type: 'template',

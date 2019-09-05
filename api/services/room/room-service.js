@@ -15,14 +15,13 @@ class RoomService {
       .populate('moderators')
       .populate('members')
       .exec()
+    if (!record) {
+      throw new ReferenceError('Room was not found.')
+    }
     return record
   }
 
-  async getAll (userid, page = 0, size = 10, filter = {
-    _id: {
-      $exists: true
-    }
-  }, sort = {
+  async getAll (userid, page = 0, size = 10, filter = {}, sort = {
     createdAt: 'desc'
   }) {
     const roomFilter = new RoomFilter({
@@ -72,6 +71,9 @@ class RoomService {
       .populate('owner')
       .populate('moderators')
       .populate('members')
+    if (!record) {
+      throw new ReferenceError('Room was not found.')
+    }
     return record
   }
 
@@ -84,6 +86,9 @@ class RoomService {
     const result = await Room
       .deleteOne(roomFilter)
       .exec()
+    if (!result.deletedCount) {
+      throw new ReferenceError('Room was not found.')
+    }
     return result
   }
   // base methods - END

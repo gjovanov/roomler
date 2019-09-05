@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const Message = require('../../models/message')
-const roomService = require('../room/room-service')
 const MessageFilter = require('./message-filter')
 
 class MessageService {
@@ -59,10 +58,6 @@ class MessageService {
       message.room = mongoose.Types.ObjectId(payload.room)
       message.author = mongoose.Types.ObjectId(userid)
     })
-    const room = roomService.get(userid, payload.room)
-    if (!room) {
-      throw new ReferenceError('Room not found.')
-    }
     const records = await Message
       .insertMany(messages)
       .then((rows) => {
@@ -117,7 +112,7 @@ class MessageService {
     const aggregate = messageFilter
       .addLookup()
       .addMatch(userid)
-      .getFilter()
+      .getAggregate()
     const record = await Message
       .aggregate(aggregate)
       .exec()

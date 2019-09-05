@@ -58,7 +58,7 @@ class MessageFilter {
 
   addMatch (userid) {
     this.aggregate.push({
-      $match: userid ? {
+      $match: {
         $and: [{
           $or: [{
             'room.owner': mongoose.Types.ObjectId(userid)
@@ -73,7 +73,7 @@ class MessageFilter {
         },
         this.filter
         ]
-      } : this.filter
+      }
     })
     return this
   }

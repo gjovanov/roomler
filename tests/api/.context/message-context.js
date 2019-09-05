@@ -4,7 +4,7 @@ class MessageContext {
     this.update = data.update
     this.userContext = userContext
     this.roomContext = roomContext
-    this.users = userContexts || []
+    this.users = userContexts
     this.records = []
   }
 
@@ -18,27 +18,10 @@ class MessageContext {
 
   getMentionIds(payloadMessage) {
     const result = []
-    if (payloadMessage.mentions) {
-      payloadMessage.mentions.forEach(mention => {
-        const user = this.users.find(u => u.record.username === mention)
-        if (user) {
-          result.push(user.record._id)
-        }
-      })
-    }
-    return result
-  }
-
-  getReadbyIds(payloadMessage) {
-    const result = []
-    if (payloadMessage.readby) {
-      payloadMessage.readby.forEach(readby => {
-        const user = this.userContext.find(u => u.record.username === readby)
-        if (user) {
-          result.push(user.record._id)
-        }
-      })
-    }
+    payloadMessage.mentions.forEach(mention => {
+      const user = this.users.find(u => u.record.username === mention)
+      result.push(user.record._id)
+    })
     return result
   }
 }

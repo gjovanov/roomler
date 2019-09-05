@@ -62,6 +62,57 @@ class EmailOps {
     })
   }
 
+  getInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/email/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/email/get?id=${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid email id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getNotFoundId(fastify, test, testname, emailContext) {
+    test.serial(`API "/api/email/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/email/get?id=${emailContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${emailContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          console.log(result)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Email was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   getAll(fastify, test, testname, emailContexts) {
     test.serial(`API "/api/email/get-all" ${testname}`, async(t) => {
       const expectedEmails = emailContexts.map(ec => ec.record)
@@ -142,6 +193,31 @@ class EmailOps {
           const result = JSON.parse(response.payload)
           t.true(result.name === 'TypeError')
           t.true(result.message === 'Invalid email id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  deleteNotFoundId(fastify, test, testname, emailContext) {
+    test.serial(`API "/api/email/delete/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/email/delete/${emailContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${emailContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Email was not found.')
           t.pass()
         })
         .catch((e) => {

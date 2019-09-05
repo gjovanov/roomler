@@ -1,4 +1,5 @@
 module.exports = {
+  invalidInviteId: 'kjahsdk',
   user: {
     inviter: {
       payload: {
@@ -49,6 +50,11 @@ module.exports = {
       email: 'userinviteemoderator@gmail.com',
       type: 'moderator'
     }
-    ]
+    ],
+    update: {
+      name: 'userinviteemember',
+      email: 'userinviteemember@gmail.com',
+      type: 'moderator'
+    }
   }
 }

@@ -27,6 +27,9 @@ class EmailService {
       .findOne(emailFilter)
       .populate('creator')
       .exec()
+    if (!record) {
+      throw new ReferenceError('Email was not found.')
+    }
     return record
   }
 
@@ -59,6 +62,9 @@ class EmailService {
     const result = await Email
       .deleteOne(emailFilter)
       .exec()
+    if (!result.deletedCount) {
+      throw new ReferenceError('Email was not found.')
+    }
     return result
   }
 }

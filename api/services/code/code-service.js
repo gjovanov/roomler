@@ -6,7 +6,7 @@ const CodeFilter = require('./code-filter')
 
 class CodeService {
   // base methods - START
-  async get (username, type = 'user_activation', token = undefined) {
+  async get (username, type, token) {
     const codeFilter = new CodeFilter(username, type, token)
       .getFilter()
     const record = await Code
@@ -15,7 +15,7 @@ class CodeService {
     return record
   }
 
-  async create (username, type = 'user_activation') {
+  async create (username, type) {
     const token = randomstring.generate(7)
     const validto = new Date(+new Date() + config.authSettings.codeValidityInMinutes * 60 * 1000)
     const data = {
@@ -30,7 +30,7 @@ class CodeService {
   }
 
   // base methods - END
-  async generateCode (user, type = 'user_activation') {
+  async generateCode (user, type) {
     const code = await this.create(user.username, type)
     if (type === 'user_activation') {
       const url = `${config.appSettings.env.API_URL}${config.authSettings.userActivationPage}?user=${user.username}&token=${code.token}`

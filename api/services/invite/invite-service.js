@@ -161,9 +161,6 @@ class InviteService {
       }
     }
     const record = await this.update(null, id, update)
-    if (!record.room) {
-      delete record.room
-    }
     return record
   }
 }

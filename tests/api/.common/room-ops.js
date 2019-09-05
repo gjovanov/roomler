@@ -61,6 +61,57 @@ class RoomOps {
     })
   }
 
+  getInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/room/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/room/get?id=${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid room id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getNotFoundId(fastify, test, testname, roomContext) {
+    test.serial(`API "/api/room/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/room/get?id=${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          console.log(result)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Room was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   getAll(fastify, test, testname, roomContexts) {
     test.serial(`API "/api/room/get-all" ${testname}`, async(t) => {
       const expectedRooms = roomContexts.map(ec => ec.record)
@@ -121,6 +172,7 @@ class RoomOps {
           }
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
+          roomContext.record = result
           t.pass()
         })
         .catch((e) => {
@@ -128,6 +180,59 @@ class RoomOps {
         })
     })
   }
+
+  updateInvalidId(fastify, test, testname, userContext, invalidId) {
+    test.serial(`API "/api/room/update/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/update/${invalidId}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          console.log(result)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === 'Invalid room id!')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+  updateNotFoundId(fastify, test, testname, roomContext) {
+    test.serial(`API "/api/room/update/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/update/${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Room was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   delete(fastify, test, testname, context) {
     test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
       await fastify
@@ -179,6 +284,31 @@ class RoomOps {
     })
   }
 
+  deleteNotFoundId(fastify, test, testname, roomContext) {
+    test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/room/delete/${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === 'Room was not found.')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   push(fastify, test, testname, arrayType, roomContext, userContexts) {
     test.serial(`API "/api/room/${arrayType}s/push/:id" ${testname}`, async(t) => {
       const payload = {}
@@ -202,7 +332,7 @@ class RoomOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result._id)
-          t.true(result.name === roomContext.payload.name)
+          t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]
@@ -246,7 +376,7 @@ class RoomOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result._id)
-          t.true(result.name === roomContext.payload.name)
+          t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]
@@ -288,7 +418,7 @@ class RoomOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result._id)
-          t.true(result.name === roomContext.payload.name)
+          t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
           const array = result[`${arrayType}s`]

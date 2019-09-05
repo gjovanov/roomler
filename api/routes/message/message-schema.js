@@ -45,7 +45,7 @@ const messageList = S.array().items(message)
 
 const messageItem = S.object()
   .prop('parent', S.string())
-  .prop('type', S.string()) // S.string().enum(types))
+  .prop('type', S.string().enum(types))
   .prop('content', S.string().required())
   .prop('mentions', S.array().items(S.string()))
 
@@ -59,7 +59,7 @@ const createBody = S.object()
   ])
 
 const messageUpdate = S.object()
-  .prop('content', S.string().required())
+  .prop('content', S.string())
   .prop('mentions', S.array().items(S.string()))
 
 const idParam = S.object()
