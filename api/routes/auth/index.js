@@ -17,16 +17,16 @@ module.exports = [{
 },
 {
   method: 'POST',
-  url: '/api/auth/code/get',
+  url: '/api/auth/reset',
   schema: {
-    body: authSchema.code.get.body,
+    body: authSchema.reset.body,
     response: {
-      200: authSchema.code.get.response[200],
+      200: authSchema.reset.response[200],
       409: errorSchema.response[409],
       500: errorSchema.response[500]
     }
   },
-  handler: authController.getCode
+  handler: authController.reset
 },
 {
   method: 'POST',

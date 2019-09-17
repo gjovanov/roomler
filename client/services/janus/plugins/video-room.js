@@ -1,4 +1,6 @@
-import { Handle } from '~/services/janus/handle'
+import {
+  Handle
+} from '~/services/janus/handle'
 
 export default class VideoRoom extends Handle {
   // HANDLERS - START
@@ -28,9 +30,9 @@ export default class VideoRoom extends Handle {
           const args = {
             plugin: self.plugin,
             roomid: self.roomid,
-            display: display,
+            display,
             ptype: 'subscriber',
-            id: id,
+            id,
             myprivateid: self.myprivateid,
 
             sendAudio: self.sendAudio,
@@ -161,7 +163,7 @@ export default class VideoRoom extends Handle {
       const data = {
         request: 'destroy',
         room: parseInt(roomid),
-        secret: secret
+        secret
       }
       self.handle.send({
         message: data,
@@ -226,7 +228,7 @@ export default class VideoRoom extends Handle {
               video: self.sendVideo,
               data: self.sendData
             },
-            jsep: jsep
+            jsep
           })
           resolve(self)
         },
@@ -243,7 +245,7 @@ export default class VideoRoom extends Handle {
     console.log(`Creating answer has started: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)
     return new Promise((resolve, reject) => {
       self.handle.createAnswer({
-        jsep: jsep,
+        jsep,
         media: {
           audioSend: false,
           videoSend: false,
@@ -259,7 +261,7 @@ export default class VideoRoom extends Handle {
               request: 'start',
               room: self.roomid
             },
-            jsep: jsep
+            jsep
           })
           resolve(self)
         },
@@ -275,7 +277,9 @@ export default class VideoRoom extends Handle {
     const self = this
     console.log(`Unpublishing has started: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)
     return new Promise((resolve, reject) => {
-      const unpublish = { request: 'unpublish' }
+      const unpublish = {
+        request: 'unpublish'
+      }
 
       self.handle.send({
         message: unpublish,

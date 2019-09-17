@@ -1,4 +1,5 @@
 const userService = require('../../services/user/user-service')
+const config = require('../../../config')
 
 class AuthController {
   async register (request, reply) {
@@ -13,8 +14,8 @@ class AuthController {
     })
   }
 
-  async getCode (request, reply) {
-    await userService.getCode(request.body.username, request.body.type)
+  async reset (request, reply) {
+    await userService.reset(request.body.username, request.body.type)
     reply.send({
       result: 'ok'
     })
@@ -36,10 +37,21 @@ class AuthController {
     const token = await reply.jwtSign({
       user
     })
-    reply.send({
-      token,
-      user
-    })
+    reply
+    // .setCookie('token', token, {
+    //   domain: '127.0.0.1',
+    //   secure: false,
+    //   sameSite: 'lax',
+    //   // httpOnly: true,
+    //   expires: Date.now() + 1000,
+    //   path: '/'
+    // })
+      .send({
+        token,
+        user
+      })
+      // reply.log.info(`COOKIES YE: ${JSON.stringify(request.cookies)}`)
+      // reply.log.info(`COOKIES YE: ${reply.cookies}`)
   }
 
   async updatePassword (request, reply) {
@@ -61,10 +73,14 @@ class AuthController {
   }
 
   async me (request, reply) {
-    const result = await userService.get(request.user.user._id)
+    const user = await userService.get(request.user.user._id)
+    const token = await reply.jwtSign({
+      user
+    })
     reply.send({
-      user: result,
-      person: result.person
+      user,
+      token,
+      person: user.person ? user.person : null
     })
   }
 

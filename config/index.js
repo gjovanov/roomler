@@ -5,15 +5,21 @@ if (typeof window !== 'undefined' && window.requestAnimationFrame === undefined)
 }
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
-  HOST: process.env.HOST || 'localhost',
+  HOST: process.env.HOST || '127.0.0.1',
   PORT: process.env.PORT || 3000,
   PORT_API: process.env.PORT_API || 3001
 }
+env.URL = process.env.URL || `http://${env.HOST}:${env.PORT}`
 env.API_URL = process.env.API_URL || `http://${env.HOST}:${env.PORT_API}`
+
+let defaultDbUrl = 'mongodb://localhost:27017/roomdb'
+if (process.env.NODE_ENV === 'test') {
+  defaultDbUrl += `_${process.env.NODE_ENV}_${process.env.TEST}`
+}
 
 const config = {
   appSettings: {
-    name: 'Roomler.Live',
+    name: 'Roomler',
     env
   },
 
@@ -35,19 +41,20 @@ const config = {
   authSettings: {
     token: 'auth-token',
     codeValidityInMinutes: 5,
-    userActivationPage: 'auth/user-activate',
-    passwordResetPage: 'auth/password-reset',
-    inviteAcceptPage: 'invite/accept',
-    inviteRejectPage: 'invite/reject'
+    userActivationPage: '/auth/activate',
+    passwordResetPage: '/auth/reset',
+    inviteAcceptPage: '/invite/accept',
+    inviteRejectPage: '/invite/reject'
   },
 
   dbSettings: {
-    dbUrl: process.env.DB_CONN || (process.env.NODE_ENV === 'test' ? 'mongodb://localhost:27017/roomdbtest' : 'mongodb://localhost:27017/roomdb'),
+    dbUrl: process.env.DB_CONN || defaultDbUrl,
     dbOptions: {
       family: 4,
       useNewUrlParser: true,
       useCreateIndex: true,
-      useFindAndModify: false
+      useFindAndModify: false,
+      useUnifiedTopology: true
     }
   },
 
@@ -127,7 +134,6 @@ if (!config.emailSettings.gmail.auth) {
 if (!config.emailSettings.smtp.host) {
   config.emailSettings.smtp = undefined
 }
-if (process.env.NODE_ENV === 'development') {
-  console.log(config)
-}
+
+// export default config
 module.exports = config

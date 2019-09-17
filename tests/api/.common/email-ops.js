@@ -102,7 +102,6 @@ class EmailOps {
           t.is(response.statusCode, 500)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          console.log(result)
           t.true(result.name === 'ReferenceError')
           t.true(result.message === 'Email was not found.')
           t.pass()

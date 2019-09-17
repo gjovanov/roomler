@@ -1,12 +1,12 @@
 import test from 'ava'
-import start from '../server/start'
+import start from '../../server/start'
 
 const host = 'localhost'
 const port = 4001
 let nuxt = null
 let fastify = null
 
-test.before('Init Nuxt.js', async (t) => {
+test.before('Start Fastify and Nuxt servers', async (t) => {
   const server = await start(port, host)
   nuxt = server.nuxt
   fastify = server.fastify
@@ -18,11 +18,11 @@ test('Route / exits and render HTML', async (t) => {
   const {
     html
   } = await nuxt.renderRoute('/', context)
-  t.true(html.includes('<span>© 2019</span>'), 'Renders HTML')
+  t.true(html.includes('<span class="title">Roomler.Live</span>'), 'Renders Title')
   t.pass()
 })
 
-test.after('Closing server and nuxt.js', (t) => {
+test.after('Close Fastify and Nuxt servers', (t) => {
   fastify.close()
   nuxt.close()
 })

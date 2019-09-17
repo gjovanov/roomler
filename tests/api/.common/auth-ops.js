@@ -199,8 +199,8 @@ class AuthOps {
     })
   }
 
-  getCode(fastify, test, testname, userContext) {
-    test.serial(`API "/api/auth/code/get" ${testname}`, async(t) => {
+  reset(fastify, test, testname, userContext) {
+    test.serial(`API "/api/auth/reset" ${testname}`, async(t) => {
       const payload = {
         username: userContext.payload.username,
         type: passwordResetType
@@ -208,7 +208,7 @@ class AuthOps {
       await fastify
         .inject({
           method: 'POST',
-          url: `/api/auth/code/get`,
+          url: `/api/auth/reset`,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -346,6 +346,7 @@ class AuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result.user)
+          t.true(!!result.token)
           t.true(!!result.person)
           t.true(!!result.user._id)
           t.true(result.user.username === userContext.payload.username)

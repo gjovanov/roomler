@@ -11,7 +11,7 @@ authOps.activateInvalidToken(fastify, test, 'activate with invalid token throws 
 authOps.activate(fastify, test, 'activate the user for auth testing', user)
 authOps.loginInvalidPassword(fastify, test, 'login with invalid password throws ValidationError', user, data.invalidPassword)
 authOps.login(fastify, test, 'login with the user for auth testing', user)
-authOps.getCode(fastify, test, 'gets new password reset code/token', user)
+authOps.reset(fastify, test, 'password reset via code/token', user)
 authOps.updatePasswordPasswordsMismatch(fastify, test, 'update password with password mismatch throws ValidationError', user, data.invalidPassword)
 authOps.updatePassword(fastify, test, 'update the password of the user for auth testing', user, data.invalidPassword)
 authOps.updatePerson(fastify, test, 'populates the person related fields of the user for auth testing', user)

@@ -18,15 +18,20 @@ const registerBody = S.object()
   .prop('password', S.string().minLength(8).required())
   .prop('passwordConfirm', S.string().minLength(8).required())
 
-const person = S.object()
-  .prop('_id', S.string())
+const personInput = S.object()
   .prop('firstname', S.string().required())
   .prop('lastname', S.string().required())
   .prop('imageUrl', S.string().required())
 
-const userAndPerson = S.object()
+const personOutput = S.object()
+  .prop('firstname', S.string())
+  .prop('lastname', S.string)
+  .prop('imageUrl', S.string())
+
+const userTokenPerson = S.object()
   .prop('user', user)
-  .prop('person', person)
+  .prop('token', S.string())
+  .prop('person', personOutput)
 
 const activateBody = S.object()
   .prop('username', S.string().minLength(8).required())
@@ -41,7 +46,7 @@ const codeGetBody = S.object()
   .prop('username', S.string().required())
   .prop('type', S.string().enum(codeTypes).required())
 
-const codeGet200 = S.object()
+const resultOk = S.object()
   .prop('result', S.string().required())
 
 const passwordUpdateBody = S.object()
@@ -64,9 +69,9 @@ module.exports = {
   },
   person: {
     update: {
-      body: person,
+      body: personInput,
       response: {
-        200: person
+        200: personOutput
       }
     }
   },
@@ -82,12 +87,10 @@ module.exports = {
       200: token
     }
   },
-  code: {
-    get: {
-      body: codeGetBody,
-      response: {
-        200: codeGet200
-      }
+  reset: {
+    body: codeGetBody,
+    response: {
+      200: resultOk
     }
   },
   password: {
@@ -100,7 +103,7 @@ module.exports = {
   },
   me: {
     response: {
-      200: userAndPerson
+      200: userTokenPerson
     }
   },
   delete: {

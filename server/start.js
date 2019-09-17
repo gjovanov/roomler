@@ -17,6 +17,7 @@ async function start (port = process.env.PORT || 3000, host = process.env.HOST |
   // Build only in dev mode
   let nuxt = null
   if (runBuilder) {
+    console.log('Bundling....')
     config.rootDir = resolve(__dirname, '../')
     nuxt = new Nuxt(config)
     const builder = new Builder(nuxt)
@@ -30,7 +31,9 @@ async function start (port = process.env.PORT || 3000, host = process.env.HOST |
 
   fastify.use((req, res, next) => {
     // let fastify handle api requests
-    if (req.url.startsWith('/api') || req.url.startsWith('/docs')) {
+    if (req.url.startsWith('/api') ||
+      req.url.startsWith('/docs') ||
+      req.url.startsWith('/oauth')) {
       next()
     } else {
       // nuxt handles all other requests

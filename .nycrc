@@ -1,0 +1,25 @@
+{
+  "per-file": true,
+  "lines": 25,
+  "statements": 25,
+  "functions": 10,
+  "branches": 35,
+  "check-coverage": false,
+  "include": [
+    "client/**/*.vue",
+    "client/**/*.js",
+    ".nuxt/dist/**/*.js"
+  ],
+  "exclude": ["node_modules"],
+  "extension": [
+    ".js",
+    ".vue"
+  ],
+  "reporter": [
+    "lcov",
+    "text"
+  ],
+  "sourceMap": false,
+  "cache": true,
+  "all": true
+}

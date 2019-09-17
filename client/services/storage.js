@@ -15,7 +15,7 @@ class Storage {
   }
 
   get (key) {
-    let cookieValue = this.cookieStorage[key].split(';').filter(function (item) {
+    let cookieValue = this.cookieStorage.cookie.split(';').filter(function (item) {
       return item.includes(`${key}=`)
     })
     if (cookieValue) {
@@ -50,7 +50,7 @@ class Storage {
 
   setCookie (key, value, expiration) {
     const expire = new Date(new Date().getTime() + expiration * 24 * 60 * 60 * 1000)
-    this.cookieStorage[key] = `${key}=${value};expires= ${expire};path=/`
+    this.cookieStorage.cookie = `${key}=${value};expires= ${expire};path=/`
   }
 
   removeCookie (key) {
@@ -58,7 +58,8 @@ class Storage {
   }
 
   set (key, value, rememberMe) {
-    if (rememberMe === 'true') {
+    this.setCookie(key, value, 14)
+    if (rememberMe) {
       this.localStorage[key] = value
     } else {
       this.sessionStorage[key] = value
@@ -66,6 +67,7 @@ class Storage {
   }
 
   clear (key) {
+    this.removeCookie(key)
     this.localStorage.removeItem(key)
     this.sessionStorage.removeItem(key)
     return true

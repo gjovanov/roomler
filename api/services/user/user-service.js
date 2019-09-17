@@ -113,7 +113,7 @@ class UserService {
     return user
   }
 
-  async getCode (username, type) {
+  async reset (username, type) {
     const user = await this.get(username)
     validateUserExists(user)
     const code = await codeService.generateCode(user, type)

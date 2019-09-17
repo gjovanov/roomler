@@ -1,6 +1,7 @@
 {
   "env": {
     "test": {
+      "sourceType": "unambiguous",
       "presets": [
         [
           "@babel/preset-env",
@@ -10,7 +11,8 @@
             }
           }
         ]
-      ]
+      ],
+      "plugins": [ "istanbul"]
     }
   }
 }

@@ -1,5 +1,7 @@
-import { config } from '~/../config'
 import * as uuid from 'uuid/v4'
+import {
+  config
+} from '~/../config'
 
 export default class Handle {
   constructor (args) {

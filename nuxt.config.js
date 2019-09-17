@@ -2,15 +2,13 @@ const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
 const env = config.appSettings.env
 
-const isDev = env.NODE_ENV === 'development'
-
 const nuxtConfig = {
-  srcDir: 'client/',
+  srcDir: 'client',
   mode: 'universal',
 
   /*
-   ** Headers of the page
-   */
+     ** Headers of the page
+     */
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
@@ -36,30 +34,36 @@ const nuxtConfig = {
     ]
   },
   /*
-   ** Customize the progress-bar color
-   */
+     ** Customize the progress-bar color
+     */
   loading: {
     color: '#fff'
   },
   /*
-   ** Global CSS
-   */
+     ** Global CSS
+     */
   css: [],
 
   env,
 
-  serverMiddleware: [{
-    path: '/',
-    handler: '../api/api.js'
-  }],
+  router: {
+    middleware: 'check-auth'
+  },
+
+  // serverMiddleware: [{
+  //   path: '/',
+  //   handler: '../api/api.js'
+  // }],
 
   /*
-   ** Plugins to load before mounting the App
-   */
-  plugins: [],
+     ** Plugins to load before mounting the App
+     */
+  plugins: [
+    '@/plugins/axios'
+  ],
   /*
-   ** Nuxt.js modules
-   */
+     ** Nuxt.js modules
+     */
   modules: [
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
@@ -68,14 +72,16 @@ const nuxtConfig = {
     '@nuxtjs/eslint-module'
   ],
   /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
-  axios: {},
+     ** Axios module configuration
+     ** See https://axios.nuxtjs.org/options
+     */
+  axios: {
+    // credentials: true
+  },
   /*
-   ** vuetify module configuration
-   ** https://github.com/nuxt-community/vuetify-module
-   */
+     ** vuetify module configuration
+     ** https://github.com/nuxt-community/vuetify-module
+     */
   vuetify: {
     theme: {
       primary: colors.blue.darken2,
@@ -88,20 +94,17 @@ const nuxtConfig = {
     }
   },
   /*
-   ** Build configuration
-   */
+     ** Build configuration
+     */
   build: {
     /*
-     ** You can extend webpack config here
-     */
-    extend (config, ctx) {}
+       ** You can extend webpack config here
+       */
+    extend (config, ctx) {
+      config.devtool = '#source-map' // ctx.isClient ? '#source-map' : '#inline-source-map'
+    }
   }
 }
-
-if (isDev) {
-  config.axios.baseURL = `http://${env.HOST}:${env.PORT_API}`
-} else {
-  config.axios.baseURL = env.API_URL
-}
+// nuxtConfig.axios.baseURL = env.URL
 
 module.exports = nuxtConfig

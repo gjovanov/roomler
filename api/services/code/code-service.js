@@ -33,7 +33,7 @@ class CodeService {
   async generateCode (user, type) {
     const code = await this.create(user.username, type)
     if (type === 'user_activation') {
-      const url = `${config.appSettings.env.API_URL}${config.authSettings.userActivationPage}?user=${user.username}&token=${code.token}`
+      const url = `${config.appSettings.env.URL}${config.authSettings.userActivationPage}?user=${user.username}&token=${code.token}`
       await emailService.send(user._id, {
         to: user.email,
         subject: 'Activate your account',
@@ -44,7 +44,7 @@ class CodeService {
         }
       })
     } else if (type === 'password_reset') {
-      const url = `${config.appSettings.env.API_URL}${config.authSettings.passwordResetPage}?user=${user.username}&token=${code.token}`
+      const url = `${config.appSettings.env.URL}${config.authSettings.passwordResetPage}?user=${user.username}&token=${code.token}`
       await emailService.send(user._id, {
         to: user.email,
         subject: 'Reset your password',

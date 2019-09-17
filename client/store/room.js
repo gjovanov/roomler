@@ -1,5 +1,3 @@
-import Headers from '~/services/headers'
-
 export const state = () => ({
   room: null,
   rooms: []
@@ -25,10 +23,8 @@ export const actions = {
     state
   }, room) {
     return this.$axios
-      .$post('/api/room/create', {
+      .$post('/api/v1/room/create', {
         room
-      }, {
-        headers: Headers.getHeaders()
       })
       .then((response) => {
         commit('roomCreated', response.data.result)
@@ -50,9 +46,7 @@ export const actions = {
     state
   }, id) {
     return this.$axios
-      .$get(`/api/room/get?id=${id}`, {
-        headers: Headers.getHeaders()
-      })
+      .$get(`/api/v1/room/get?id=${id}`)
       .then((response) => {
         commit('roomsLoaded', response.data.result)
         return {
@@ -73,9 +67,7 @@ export const actions = {
     state
   }) {
     return this.$axios
-      .$get('/api/room/get-all', {
-        headers: Headers.getHeaders()
-      })
+      .$get('/api/v1/room/get-all')
       .then((response) => {
         commit('roomsLoaded', response.data.result)
         return {
