@@ -19,9 +19,9 @@ const schema = new Schema({
     index: true,
     unique: true
   },
-  isopen: {
+  is_open: {
     type: Boolean,
-    default: defaults.isopen
+    default: defaults.is_open
   },
   tags: [{
     type: String,

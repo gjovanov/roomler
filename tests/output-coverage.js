@@ -5,7 +5,7 @@ const pti = require('puppeteer-coverage');
   const options = {
     nyc_output_path: pathLib.resolve(__dirname, '../.nyc_output/'),
     src_dir: pathLib.resolve(__dirname, '../.nuxt/'),
-    source_map_dir: pathLib.resolve(__dirname, '../.nuxt/dist/client/'),
+    source_map_dir: pathLib.resolve(__dirname, '../.nuxt/dist/ui/'),
     url_regexp: /promotion\/res\/htmledition\/js\/(.+\.(js|css))/,
     filterCoverageFile: (path) => {
       return !(path.includes('/src/js/') &&

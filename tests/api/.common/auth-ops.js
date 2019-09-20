@@ -22,7 +22,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(!result.user.isactive)
+          t.true(!result.user.is_active)
           userContext.record = result.user
           userContext.token = result.token
           t.pass()
@@ -59,7 +59,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(result.user.isactive)
+          t.true(result.user.is_active)
           userContext.record = result.user
           userContext.token = result.token
           t.pass()
@@ -188,7 +188,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(result.user.isactive)
+          t.true(result.user.is_active)
           userContext.record = result.user
           userContext.token = result.token
           t.pass()
@@ -289,7 +289,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(result.user.isactive)
+          t.true(result.user.is_active)
           userContext.record = result.user
           userContext.token = result.token
           t.pass()
@@ -352,7 +352,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(result.user.isactive)
+          t.true(result.user.is_active)
           t.true(result.person.firstname === userContext.person.payload.firstname)
           t.true(result.person.lastname === userContext.person.payload.lastname)
           t.true(result.person.imageUrl === userContext.person.payload.imageUrl)

@@ -1,7 +1,6 @@
 const config = require('../../config')
 
 const upstream = `${config.appSettings.env.API_URL}/api`
-console.log(upstream)
 const options = {
   upstream,
   prefix: '/api/v1', // optional,

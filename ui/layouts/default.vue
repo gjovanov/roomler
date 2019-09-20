@@ -38,7 +38,6 @@
 
 <script>
 
-import config from '@@/config'
 import Logo from '@/components/logo'
 import AuthMenu from '@/components/auth-menu'
 import LeftMenu from '@/components/left-menu'
@@ -52,7 +51,7 @@ export default {
     Toaster
   },
   data: () => ({
-    title: config.appSettings.name,
+    title: 'Roomler',
     leftMenu: true
   }),
   computed: {

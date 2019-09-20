@@ -23,7 +23,7 @@ const schema = new Schema({
     type: String,
     select: false
   },
-  isactive: {
+  is_active: {
     type: Boolean,
     default: false
   },
@@ -36,21 +36,6 @@ const schema = new Schema({
     },
     imageUrl: {
       type: String
-    }
-  },
-
-  oauth: {
-    facebook: {
-      type: Object
-    },
-    google: {
-      type: Object
-    },
-    github: {
-      type: Object
-    },
-    linkedin: {
-      type: Object
     }
   }
 }, {

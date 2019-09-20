@@ -6,8 +6,8 @@
   "branches": 35,
   "check-coverage": false,
   "include": [
-    "client/**/*.vue",
-    "client/**/*.js",
+    "ui/**/*.vue",
+    "ui/**/*.js",
     ".nuxt/dist/**/*.js"
   ],
   "exclude": ["node_modules"],

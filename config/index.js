@@ -5,7 +5,7 @@ if (typeof window !== 'undefined' && window.requestAnimationFrame === undefined)
 }
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
-  HOST: process.env.HOST || '127.0.0.1',
+  HOST: process.env.HOST || 'localhost',
   PORT: process.env.PORT || 3000,
   PORT_API: process.env.PORT_API || 3001
 }
@@ -47,6 +47,10 @@ const config = {
     inviteRejectPage: '/invite/reject'
   },
 
+  oauthSettings: {
+    types: ['facebook', 'google', 'github', 'twitter']
+  },
+
   dbSettings: {
     dbUrl: process.env.DB_CONN || defaultDbUrl,
     dbOptions: {
@@ -54,14 +58,14 @@ const config = {
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: false,
-      useUnifiedTopology: true
+      useUnifiedTopology: false
     }
   },
 
   dataSettings: {
     room: {
       defaults: {
-        isopen: true,
+        is_open: true,
         settings: {
           media: {
             publishers: 6,

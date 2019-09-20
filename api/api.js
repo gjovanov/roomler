@@ -1,9 +1,8 @@
 const buildApi = function () {
   const fastify = require('fastify')({
-    logger: {
-      level: 'info'
-    }
-    // process.env.NODE_ENV !== 'test' // true
+    logger: process.env.NODE_ENV !== 'test'
+    // http2: true,
+    // https: require('./plugins/https-options')
   })
   const jwtOptions = require('./plugins/jwt-options')
 
@@ -11,20 +10,17 @@ const buildApi = function () {
     .setErrorHandler(require('./errors/error-handler'))
     .register(require('fastify-swagger'), require('./plugins/swagger-options'))
     .register(require('fastify-cookie'))
-    .register(require('fastify-http-proxy'), require('./plugins/http-proxy-options'))
-    // .register(require('fastify-cors'), require('./plugins/cors-options'))
+    .register(require('fastify-cors'), require('./plugins/http-proxy-options'))
+    // .register(require('fastify-http-proxy'), require('./plugins/http-proxy-options'))
     .register(require('fastify-oauth2'), require('./plugins/facebook-options'))
     .register(require('fastify-jwt'), jwtOptions)
     .register(require('./plugins/mongoose'), require('./plugins/mongoose-options'))
     .decorate('authenticate', async (request, reply) => {
-      try {
+      if (request.cookies.token) {
         const user = await fastify.jwt.verify(request.cookies.token, jwtOptions)
-        console.log(`USER from token: ${user}`)
         request.user = user
-      } catch (error) {
-        console.log('Verifying Headers')
-        const jwt = await request.jwtVerify(jwtOptions)
-        console.log(jwt)
+      } else {
+        await request.jwtVerify(jwtOptions)
       }
     })
     .decorate('verifyToken', async (request, reply) => {

@@ -99,7 +99,7 @@ class UserService {
     const code = await codeService.get(user.username, 'user_activation', token)
     validateActivationCode(code)
     const update = {
-      isactive: true
+      is_active: true
     }
     user = await this.update(user._id, update)
     await emailService.send(user._id, {

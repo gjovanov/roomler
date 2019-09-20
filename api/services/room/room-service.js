@@ -55,9 +55,7 @@ class RoomService {
     return record
   }
 
-  async update (userid, id, update, filterOptions = {
-    userFilter: true
-  }) {
+  async update (userid, id, update) {
     const roomFilter = new RoomFilter({
       id
     })

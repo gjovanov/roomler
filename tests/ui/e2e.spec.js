@@ -1,5 +1,5 @@
 import test from 'ava'
-import start from '../../server/start'
+import uiServer from '../../server/ui/ui-server'
 
 const host = 'localhost'
 const port = 4001
@@ -7,7 +7,7 @@ let nuxt = null
 let fastify = null
 
 test.before('Start Fastify and Nuxt servers', async (t) => {
-  const server = await start(port, host)
+  const server = await uiServer.up(port, host)
   nuxt = server.nuxt
   fastify = server.fastify
 })

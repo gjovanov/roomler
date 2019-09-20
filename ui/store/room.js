@@ -23,7 +23,7 @@ export const actions = {
     state
   }, room) {
     return this.$axios
-      .$post('/api/v1/room/create', {
+      .$post('/api/room/create', {
         room
       })
       .then((response) => {
@@ -46,7 +46,7 @@ export const actions = {
     state
   }, id) {
     return this.$axios
-      .$get(`/api/v1/room/get?id=${id}`)
+      .$get(`/api/room/get?id=${id}`)
       .then((response) => {
         commit('roomsLoaded', response.data.result)
         return {
@@ -67,7 +67,7 @@ export const actions = {
     state
   }) {
     return this.$axios
-      .$get('/api/v1/room/get-all')
+      .$get('/api/room/get-all')
       .then((response) => {
         commit('roomsLoaded', response.data.result)
         return {

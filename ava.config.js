@@ -10,10 +10,10 @@ if (process.env.TEST === 'e2e') {
 }
 
 export default {
-  require: ['./tests/setup.js', '@babel/register'],
+  require: ['./tests/setup.js'],
   files,
   cache: true,
-  concurrency: 16,
+  concurrency: 4,
   failFast: true,
   failWithoutAssertions: false,
   verbose: true

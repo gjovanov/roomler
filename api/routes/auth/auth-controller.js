@@ -1,12 +1,12 @@
 const userService = require('../../services/user/user-service')
-const config = require('../../../config')
+const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 
 class AuthController {
   async register (request, reply) {
     const payload = request.body
     const user = await userService.register(payload)
     const token = await reply.jwtSign({
-      user
+      user: tokenizeUser(user)
     })
     reply.send({
       token,
@@ -24,7 +24,7 @@ class AuthController {
   async activate (request, reply) {
     const user = await userService.activate(request.body.username, request.body.token)
     const token = await reply.jwtSign({
-      user
+      user: tokenizeUser(user)
     })
     reply.send({
       token,
@@ -35,30 +35,20 @@ class AuthController {
   async login (request, reply) {
     const user = await userService.login(request.body.username, request.body.password)
     const token = await reply.jwtSign({
-      user
+      user: tokenizeUser(user)
     })
     reply
-    // .setCookie('token', token, {
-    //   domain: '127.0.0.1',
-    //   secure: false,
-    //   sameSite: 'lax',
-    //   // httpOnly: true,
-    //   expires: Date.now() + 1000,
-    //   path: '/'
-    // })
       .send({
         token,
         user
       })
-      // reply.log.info(`COOKIES YE: ${JSON.stringify(request.cookies)}`)
-      // reply.log.info(`COOKIES YE: ${reply.cookies}`)
   }
 
   async updatePassword (request, reply) {
     const payload = request.body
     const user = await userService.updatePassword(payload.username, payload.token, payload.password, payload.passwordConfirm)
     const token = await reply.jwtSign({
-      user
+      user: tokenizeUser(user)
     })
     reply.send({
       token,
@@ -75,7 +65,7 @@ class AuthController {
   async me (request, reply) {
     const user = await userService.get(request.user.user._id)
     const token = await reply.jwtSign({
-      user
+      user: tokenizeUser(user)
     })
     reply.send({
       user,

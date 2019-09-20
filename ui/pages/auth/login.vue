@@ -22,15 +22,6 @@
               />
               <v-spacer />
               <v-text-field
-                v-model="email"
-                :rules="emailRules"
-                label="Email"
-                name="email"
-                autocomplete="on"
-                required
-              />
-              <v-spacer />
-              <v-text-field
                 v-model="password"
                 :rules="[...passwordRules]"
                 label="Password"
@@ -41,27 +32,20 @@
                 hint="At least 8 characters"
                 @click:append="showPassword = !showPassword"
               />
-              <v-spacer />
-              <v-text-field
-                v-model="passwordConfirm"
-                :rules="[...passwordConfirmRules, passwordConfirmationRule]"
-                label="Password confirm"
-                name="passwordConfirm"
-                autocomplete="on"
-                :append-icon="showPasswordConfirm ? 'visibility' : 'visibility_off'"
-                :type="showPasswordConfirm ? 'text' : 'password'"
-                hint="At least 8 characters"
-                @click:append="showPasswordConfirm = !showPasswordConfirm"
-              />
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-btn
               :disabled="!valid"
               color="primary"
-              @click="register()"
+              @click="login()"
             >
-              Register
+              Login
+            </v-btn>
+            <v-btn
+              :href="'/oauth/login/facebook'"
+            >
+              Facebook
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -83,41 +67,21 @@ export default {
         v => /^[a-zA-Z0-9_-]+$/.test(v) || 'Username must be composed of only letters, numbers and - or _ character'
       ],
 
-      email: null,
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /\S+@\S+\.\S+/.test(v) || 'E-mail must be valid'
-      ],
-
       password: null,
       passwordRules: [
         v => !!v || 'Password is required',
         v => (v && v.length >= 8) || 'Password must be at least 8 characters'
       ],
-      showPassword: false,
-
-      passwordConfirm: null,
-      passwordConfirmRules: [
-        v => !!v || 'Password confirm is required',
-        v => (v && v.length >= 8) || 'Password confirm must be at least 8 characters'
-      ],
-      showPasswordConfirm: false
-    }
-  },
-  computed: {
-    passwordConfirmationRule () {
-      return () => (this.password === this.passwordConfirm) || 'Password must match'
+      showPassword: false
     }
   },
   methods: {
-    async register () {
+    async login () {
       const self = this
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('auth/register', {
+        await this.$store.dispatch('auth/login', {
           username: this.username,
-          email: this.email,
-          password: this.password,
-          passwordConfirm: this.passwordConfirm
+          password: this.password
         })
         self.$router.push({ path: '/' })
       }

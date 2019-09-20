@@ -11,7 +11,7 @@ const user = S.object()
   .prop('_id', S.string().required())
   .prop('username', S.string().required())
   .prop('email', S.string().required())
-  .prop('isactive', S.boolean().required())
+  .prop('is_active', S.boolean().required())
 
 const media = S.object()
   .prop('roomid', S.number())

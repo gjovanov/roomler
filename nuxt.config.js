@@ -3,12 +3,12 @@ const config = require('./config')
 const env = config.appSettings.env
 
 const nuxtConfig = {
-  srcDir: 'client',
+  srcDir: 'ui',
   mode: 'universal',
 
   /*
-     ** Headers of the page
-     */
+   ** Headers of the page
+   */
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
@@ -34,14 +34,14 @@ const nuxtConfig = {
     ]
   },
   /*
-     ** Customize the progress-bar color
-     */
+   ** Customize the progress-bar color
+   */
   loading: {
     color: '#fff'
   },
   /*
-     ** Global CSS
-     */
+   ** Global CSS
+   */
   css: [],
 
   env,
@@ -56,14 +56,14 @@ const nuxtConfig = {
   // }],
 
   /*
-     ** Plugins to load before mounting the App
-     */
+   ** Plugins to load before mounting the App
+   */
   plugins: [
     '@/plugins/axios'
   ],
   /*
-     ** Nuxt.js modules
-     */
+   ** Nuxt.js modules
+   */
   modules: [
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
@@ -72,16 +72,16 @@ const nuxtConfig = {
     '@nuxtjs/eslint-module'
   ],
   /*
-     ** Axios module configuration
-     ** See https://axios.nuxtjs.org/options
-     */
+   ** Axios module configuration
+   ** See https://axios.nuxtjs.org/options
+   */
   axios: {
     // credentials: true
   },
   /*
-     ** vuetify module configuration
-     ** https://github.com/nuxt-community/vuetify-module
-     */
+   ** vuetify module configuration
+   ** https://github.com/nuxt-community/vuetify-module
+   */
   vuetify: {
     theme: {
       primary: colors.blue.darken2,
@@ -94,17 +94,17 @@ const nuxtConfig = {
     }
   },
   /*
-     ** Build configuration
-     */
+   ** Build configuration
+   */
   build: {
     /*
-       ** You can extend webpack config here
-       */
+     ** You can extend webpack config here
+     */
     extend (config, ctx) {
       config.devtool = '#source-map' // ctx.isClient ? '#source-map' : '#inline-source-map'
     }
   }
 }
-// nuxtConfig.axios.baseURL = env.URL
+nuxtConfig.axios.baseURL = env.API_URL
 
 module.exports = nuxtConfig

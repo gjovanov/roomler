@@ -5,14 +5,14 @@
   "author": "Goran Jovanov",
   "private": true,
   "scripts": {
-    "dev:api": "cross-env NODE_ENV=development nodemon api/index.js --watch api",
-    "dev:ui": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
+    "dev:api": "cross-env NODE_ENV=development nodemon server/api/index.js --config server/api/nodemon.json",
+    "dev:ui": "cross-env NODE_ENV=development nodemon server/ui/index.js --config server/ui/nodemon.json ",
     "build": "nuxt build",
-    "start": "cross-env NODE_ENV=production node server/index.js",
-    "start:api": "cross-env NODE_ENV=production node api/index.js",
-    "start:ui": "cross-env NODE_ENV=production node server/index.js",
-    "start:api-e2e": "cross-env NODE_ENV=test cross-env TEST=e2e cross-env PORT=4001 node api/index.js",
-    "start:ui-e2e": "cross-env NODE_ENV=test cross-env TEST=e2e cross-env PORT_API=4001 cross-env PORT=4000 node server/index.js",
+    "start": "cross-env NODE_ENV=production node server/ui/index.js",
+    "start:api": "cross-env NODE_ENV=production node server/api/index.js",
+    "start:ui": "cross-env NODE_ENV=production node server/ui/index.js",
+    "start:api-e2e": "cross-env NODE_ENV=test cross-env TEST=e2e cross-env PORT=4001 node server/api/index.js",
+    "start:ui-e2e": "cross-env NODE_ENV=test cross-env TEST=e2e cross-env PORT_API=4001 cross-env PORT=4000 node server/ui/index.js",
     "start:api-and-ui-e2e": "start-test start:api-e2e \"http-get://localhost:4001/api/ping\" start:ui-e2e",
     "start:test-e2e": "start-test start:api-and-ui-e2e 4000 test:e2e",
     "generate": "nuxt generate",
@@ -34,7 +34,7 @@
       "mocha"
     ],
     "ignore": [
-      "client/lib/**/*.js"
+      "ui/lib/**/*.js"
     ]
   },
   "dependencies": {
@@ -57,7 +57,7 @@
     "fluent-schema": "^0.7.5",
     "handlebars": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.6.13",
+    "mongoose": "^5.7.1",
     "mongoose-long": "^0.2.1",
     "nodemailer": "^6.3.0",
     "nuxt": "^2.9.2",

@@ -1,16 +1,100 @@
 const getService = require('../../services/utils/get-service')
-class OAuthController {
-  async loginFacebook (request, reply) {
-    const result = await this.getAccessTokenFromAuthorizationCodeFlow(request)
-    const data = await getService.get({
-      url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture',
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + result.access_token
-      },
-      json: true
+const utilsService = require('../../services/utils/utils-service')
+const oAuthService = require('../../services/oauth/oauth-service')
+const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
+
+const getFacebookData = async (access) => {
+  const data = await getService.get({
+    url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture',
+    method: 'GET',
+    headers: {
+      Authorization: 'Bearer ' + access.access_token
+    },
+    json: true
+  })
+  return data
+}
+
+const getData = async (access, type) => {
+  if (type === 'facebook') {
+    const data = await getFacebookData(access)
+    return data
+  } else {
+    throw new TypeError(`Unsupported OAuth type: ${type}`)
+  }
+}
+
+const getOrCreateOAuth = async (data, type) => {
+  let oauth = await oAuthService.get(null, type, data.email)
+  if (!oauth) {
+    oauth = await oAuthService.create({
+      type,
+      email: data.email,
+      id: data.id,
+      name: data.name,
+      photoUrl: data.picture.data.url
     })
-    reply.send(data)
+  }
+  return oauth
+}
+
+const getToken = async (oauth, reply) => {
+  let token = null
+  if (oauth.user && oauth.user._id) {
+    token = await reply.jwtSign({
+      user: tokenizeUser(utilsService.tokenizeUser(oauth.user))
+    })
+  }
+  return token
+}
+
+class OAuthController {
+  async get (request, reply) {
+    const type = request.query.type
+    const access = await this.getAccessTokenFromAuthorizationCodeFlow(request)
+    const data = await getData(access, type)
+    if (data && data.email) {
+      const oauth = await getOrCreateOAuth(data, type)
+      const token = await getToken(oauth, reply)
+      reply.send({
+        oauth,
+        token,
+        user: oauth.user
+      })
+    } else {
+      throw new Error(`Email info is missing with your '${type}' login. Try logging in with another option.`)
+    }
+  }
+
+  async getAll (request, reply) {
+    const result = await oAuthService.getAll(request.user.user._id, request.query.page, request.query.size)
+    reply.send(result)
+  }
+
+  async update (request, reply) {
+    const payload = request.body
+    const id = request.params.id
+    const update = {
+      $set: payload
+    }
+    const result = await oAuthService.update(request.user.user._id, id, update)
+    reply.send(result)
+  }
+
+  async delete (request, reply) {
+    const result = await oAuthService.delete(request.user.user._id, request.params.id)
+    reply.send(result)
+  }
+
+  async link (request, reply) {
+    const id = request.params.id
+    const update = {
+      $set: {
+        user: request.user.user._id
+      }
+    }
+    const result = await oAuthService.update(null, id, update)
+    reply.send(result)
   }
 }
 
