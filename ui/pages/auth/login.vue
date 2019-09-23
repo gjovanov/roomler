@@ -43,9 +43,18 @@
               Login
             </v-btn>
             <v-btn
+              fab
+              absolute
+              right
+              bottom
+              dark
+              small
+              color="primary"
               :href="'/oauth/login/facebook'"
             >
-              Facebook
+              <v-icon>
+                fab fa-facebook
+              </v-icon>
             </v-btn>
           </v-card-actions>
         </v-card>

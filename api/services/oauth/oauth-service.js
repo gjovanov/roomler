@@ -3,10 +3,11 @@ const OAuthFilter = require('./oauth-filter')
 
 class OAuthService {
   // base methods - START
-  async get (userid, type, email) {
+  async get (userid, filter) {
     const oAuthFilter = new OAuthFilter({
-      type,
-      email
+      id: filter.id,
+      type: filter.type,
+      email: filter.email
     })
       .addUserFilter(userid)
       .getFilter()
@@ -76,6 +77,16 @@ class OAuthService {
     if (!result.deletedCount) {
       throw new ReferenceError('OAuth was not found.')
     }
+    return result
+  }
+
+  async link (userid, id) {
+    const update = {
+      $set: {
+        user: userid
+      }
+    }
+    const result = await this.update(null, id, update)
     return result
   }
 }

@@ -4,16 +4,16 @@ const oAuthSchema = require('./oauth-schema')
 
 module.exports = [{
   method: 'GET',
-  url: '/api/oauth/get',
+  url: '/api/oauth/get-or-create',
   schema: {
-    querystring: oAuthSchema.get.querystring,
+    querystring: oAuthSchema.getOrCreate.querystring,
     response: {
-      200: oAuthSchema.get.response[200],
+      200: oAuthSchema.getOrCreate.response[200],
       409: errorSchema.response[409],
       500: errorSchema.response[500]
     }
   },
-  handler: oAuthController.get
+  handler: oAuthController.getOrCreate
 },
 {
   authenticate: true,

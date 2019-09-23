@@ -17,6 +17,7 @@ const registerBody = S.object()
   .prop('username', S.string().minLength(8).maxLength(50).required())
   .prop('password', S.string().minLength(8).required())
   .prop('passwordConfirm', S.string().minLength(8).required())
+  .prop('oauthId', S.string())
 
 const personInput = S.object()
   .prop('firstname', S.string().required())

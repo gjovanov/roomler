@@ -9,6 +9,9 @@
         sm="8"
         md="4"
       >
+        <v-alert v-if="oauthId" type="info">
+          You are almost there. Please enter your username/password and click Register to finalize your account.
+        </v-alert>
         <v-card class="elevation-12">
           <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
@@ -22,6 +25,7 @@
               />
               <v-spacer />
               <v-text-field
+                v-if="!oauthId"
                 v-model="email"
                 :rules="emailRules"
                 label="Email"
@@ -29,7 +33,7 @@
                 autocomplete="on"
                 required
               />
-              <v-spacer />
+              <v-spacer v-if="!oauthId" />
               <v-text-field
                 v-model="password"
                 :rules="[...passwordRules]"
@@ -63,6 +67,21 @@
             >
               Register
             </v-btn>
+            <v-btn
+              v-if="!oauthId"
+              fab
+              absolute
+              right
+              bottom
+              dark
+              small
+              color="primary"
+              :href="'/oauth/login/facebook'"
+            >
+              <v-icon>
+                fab fa-facebook
+              </v-icon>
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -71,6 +90,9 @@
 </template>
 
 <script>
+import {
+  handleSuccess
+} from '@/services/ajax-handlers'
 export default {
   data () {
     return {
@@ -118,6 +140,9 @@ export default {
     if (this.$route.query.username) {
       this.username = this.$route.query.username
     }
+    if (this.$route.query.oauth) {
+      this.oauthId = this.$route.query.oauth
+    }
   },
   methods: {
     async register () {
@@ -125,12 +150,17 @@ export default {
       if (this.$refs.form.validate()) {
         const response = await this.$store.dispatch('auth/register', {
           username: this.username,
-          email: this.email,
+          email: this.email.toLowerCase(),
           password: this.password,
           passwordConfirm: this.passwordConfirm,
           oauthId: this.oauthId
         })
         if (!response.hasError) {
+          if (this.oauthId) {
+            handleSuccess('Welcome on board. Your account is ready.', this.$store.commit)
+          } else {
+            handleSuccess('Your account was successfully created. Check your email on how to activate your account.', this.$store.commit)
+          }
           self.$router.push({ path: '/' })
         }
       }

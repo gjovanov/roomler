@@ -63,7 +63,9 @@ class AuthController {
   }
 
   async me (request, reply) {
-    const user = await userService.get(request.user.user._id)
+    const user = await userService.get({
+      id: request.user.user._id
+    })
     const token = await reply.jwtSign({
       user: tokenizeUser(user)
     })

@@ -1,6 +1,7 @@
 const User = require('../../models/user')
 const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
+const oAuthService = require('../oauth/oauth-service')
 const validateUserExists = require('./validation/validate-user-exists')
 const validateUserToken = require('./validation/validate-user-token')
 const validatePasswordIsConfirmed = require('./validation/validate-password-is-confirmed')
@@ -10,9 +11,11 @@ const UserFilter = require('./user-filter')
 
 class UserService {
   // base methods - START
-  async get (id) {
+  async get (filter) {
     const userFilter = new UserFilter({
-      id
+      id: filter.id,
+      username: filter.username,
+      email: filter.email
     })
       .getFilter()
     const record = await User
@@ -55,8 +58,20 @@ class UserService {
   // base methods - END
 
   async register (data) {
+    let oauth = null
+    if (data.oauthId) {
+      oauth = await oAuthService.get(null, data.oauthId)
+      data.email = oauth.email.toLowerCase()
+      data.is_active = true
+      delete data.oauthId
+    }
     const user = await this.create(data)
-    await codeService.generateCode(user, 'user_activation')
+    if (oauth) {
+      await oAuthService.link(user._id, oauth._id)
+    }
+    if (!data.is_active) {
+      await codeService.generateCode(user, 'user_activation')
+    }
     return user
   }
 
@@ -72,7 +87,9 @@ class UserService {
 
   async updatePassword (username, token, password, passwordConfirm) {
     validatePasswordIsConfirmed(password, passwordConfirm)
-    let user = await this.get(username)
+    let user = await this.get({
+      username
+    })
     validateUserExists(user)
     const code = await codeService.get(user.username, 'password_reset', token)
     validateActivationCode(code)
@@ -94,7 +111,9 @@ class UserService {
   }
 
   async activate (username, token) {
-    let user = await this.get(username)
+    let user = await this.get({
+      username
+    })
     validateUserExists(user)
     const code = await codeService.get(user.username, 'user_activation', token)
     validateActivationCode(code)
@@ -114,21 +133,27 @@ class UserService {
   }
 
   async reset (username, type) {
-    const user = await this.get(username)
+    const user = await this.get({
+      username
+    })
     validateUserExists(user)
     const code = await codeService.generateCode(user, type)
     return code
   }
 
   async login (username, password) {
-    const user = await this.get(username)
+    const user = await this.get({
+      username
+    })
     validateUserExists(user)
     await validatePasswordsMatch(user, password)
     return user
   }
 
   async verify (user) {
-    const userFromDb = await this.get(user.username)
+    const userFromDb = await this.get({
+      username: user.username
+    })
     validateUserToken(user, userFromDb)
     return user
   }

@@ -8,9 +8,6 @@
       dense
     >
       <v-app-bar-nav-icon v-if="isAuthenticated" @click.stop="leftMenu = !leftMenu" />
-      <v-icon class="mx-4">
-        fab fa-youtube
-      </v-icon>
       <logo />
       <v-toolbar-title class="mr-12 align-center">
         <span class="title">{{ title }}</span>

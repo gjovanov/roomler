@@ -1,6 +1,7 @@
 export const handleError = (err, commit) => {
-  if (Array.isArray(err.errors)) {
-    err.errors.forEach((e) => {
+  const data = err.response.data
+  if (Array.isArray(data.errors)) {
+    data.errors.forEach((e) => {
       e.error = true
       commit('toast/push', e, {
         root: true
@@ -8,8 +9,8 @@ export const handleError = (err, commit) => {
     })
   } else {
     commit('toast/push', {
-      prop: err.name,
-      message: err.message,
+      prop: data.name,
+      message: data.message,
       error: true
     }, {
       root: true

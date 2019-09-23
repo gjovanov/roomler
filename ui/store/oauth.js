@@ -3,18 +3,20 @@ import {
 } from '@/services/ajax-handlers'
 
 export const actions = {
-  async _get ({
+  async getOrCreate ({
     commit
   }, payload) {
+    const response = {}
     try {
-      const result = await this.$axios.$get(`/api/oauth/get?type=${payload.type}&code=${payload.code}&state=${payload.state}`)
-      commit('auth/storeUserInfo', result, {
+      response.result = await this.$axios.$get(`/api/oauth/get-or-create?type=${payload.type}&code=${payload.code}&state=${payload.state}`)
+      commit('auth/storeUserInfo', response.result, {
         root: true
       })
-      return result
     } catch (err) {
       handleError(err, commit)
+      response.hasError = true
     }
+    return response
   }
 }
 

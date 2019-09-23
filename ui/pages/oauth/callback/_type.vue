@@ -11,10 +11,15 @@ export default {
       code: this.$route.query.code,
       state: this.$route.query.state
     }
-    const result = await this.$store.dispatch('oauth/_get', payload)
-    console.log(result)
-    if (result && !result.user && result.oauth) {
-      this.$router.push({ path: `/auth/register?email=${result.oauth.email}&username=${result.oauth.name.replace(' ', '_').toLowerCase()}` })
+    const response = await this.$store.dispatch('oauth/getOrCreate', payload)
+    if (!response.hasError && response.result) {
+      if (!response.result.user) {
+        this.$router.push({ path: `/auth/register?email=${response.result.oauth.email}&username=${response.result.oauth.name.replace(' ', '_').toLowerCase()}&oauth=${response.result.oauth._id}` })
+      } else {
+        this.$router.push({ path: '/' })
+      }
+    } else {
+      this.$router.push({ path: '/auth/login' })
     }
   }
 

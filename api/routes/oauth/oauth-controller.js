@@ -1,5 +1,6 @@
 const getService = require('../../services/utils/get-service')
 const utilsService = require('../../services/utils/utils-service')
+const userService = require('../../services/user/user-service')
 const oAuthService = require('../../services/oauth/oauth-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 
@@ -25,14 +26,21 @@ const getData = async (access, type) => {
 }
 
 const getOrCreateOAuth = async (data, type) => {
-  let oauth = await oAuthService.get(null, type, data.email)
+  const user = await userService.get({
+    email: data.email
+  })
+  let oauth = await oAuthService.get(null, {
+    type,
+    email: data.email
+  })
   if (!oauth) {
     oauth = await oAuthService.create({
       type,
       email: data.email,
       id: data.id,
       name: data.name,
-      photoUrl: data.picture.data.url
+      photoUrl: data.picture.data.url,
+      user: user ? user._id : undefined
     })
   }
   return oauth
@@ -49,12 +57,13 @@ const getToken = async (oauth, reply) => {
 }
 
 class OAuthController {
-  async get (request, reply) {
+  async getOrCreate (request, reply) {
     const type = request.query.type
     const access = await this.getAccessTokenFromAuthorizationCodeFlow(request)
     const data = await getData(access, type)
     if (data && data.email) {
       const oauth = await getOrCreateOAuth(data, type)
+
       const token = await getToken(oauth, reply)
       reply.send({
         oauth,
@@ -87,13 +96,7 @@ class OAuthController {
   }
 
   async link (request, reply) {
-    const id = request.params.id
-    const update = {
-      $set: {
-        user: request.user.user._id
-      }
-    }
-    const result = await oAuthService.update(null, id, update)
+    const result = await oAuthService.link(request.user.user._id, request.params.id)
     reply.send(result)
   }
 }

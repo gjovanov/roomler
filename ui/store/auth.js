@@ -39,16 +39,11 @@ export const actions = {
   async register ({
     commit
   }, payload) {
-    const response = {
-      hasError: false
-    }
+    const response = {}
     try {
-      const result = await this.$axios.$post('/api/auth/register', payload)
-      response.result = result
-      commit('storeUserInfo', result)
-      handleSuccess('Account was successfully created. Check your email on how to activate your account.', commit)
+      response.result = await this.$axios.$post('/api/auth/register', payload)
+      commit('storeUserInfo', response.result)
     } catch (err) {
-      console.log(err)
       handleError(err, commit)
       response.hasError = true
     }
@@ -58,13 +53,10 @@ export const actions = {
   async activate ({
     commit
   }, payload) {
-    const response = {
-      hasError: false
-    }
+    const response = {}
     try {
-      const result = await this.$axios.$post('/api/auth/activate', payload)
-      response.result = result
-      commit('storeUserInfo', result)
+      response.result = await this.$axios.$post('/api/auth/activate', payload)
+      commit('storeUserInfo', response.result)
       handleSuccess('Account was successfully activated', commit)
     } catch (err) {
       handleError(err, commit)
@@ -76,23 +68,28 @@ export const actions = {
   async reset ({
     commit
   }, payload) {
+    const response = {}
     try {
-      await this.$axios.$post('/api/auth/reset', payload)
+      response.result = await this.$axios.$post('/api/auth/reset', payload)
       handleSuccess('Account was reset. Please check your email for further instructions.', commit)
     } catch (err) {
       handleError(err, commit)
     }
+    return response
   },
 
   async login ({
     commit
   }, payload) {
+    const response = {}
     try {
-      const result = await this.$axios.$post('/api/auth/login', payload)
-      commit('storeUserInfo', result)
+      response.result = await this.$axios.$post('/api/auth/login', payload)
+      commit('storeUserInfo', response.result)
     } catch (err) {
       handleError(err, commit)
+      response.hasError = true
     }
+    return response
   },
 
   logout ({
@@ -108,18 +105,20 @@ export const actions = {
   async me ({
     commit
   }) {
+    const response = {}
     try {
       const token = storage.get('token')
       if (token) {
         commit('storeUserInfo', {
           token
         })
-        const result = await this.$axios.$get('/api/auth/me')
-        commit('storeUserInfo', result)
+        response.result = await this.$axios.$get('/api/auth/me')
+        commit('storeUserInfo', response.result)
       }
     } catch (err) {
       handleError(err, commit)
     }
+    return response
   }
 }
 

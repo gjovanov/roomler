@@ -17,7 +17,8 @@ const schema = new Schema({
     required: true,
     minlength: 5,
     maxlength: 255,
-    index: true
+    index: true,
+    unique: true
   },
   password: {
     type: String,
@@ -42,7 +43,7 @@ const schema = new Schema({
   timestamps: true
 })
 
-const hashPassword = function (user, password, next) {
+const hashPassword = function(user, password, next) {
   const SALT_FACTOR = 10
   bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
     if (err) {
@@ -58,7 +59,7 @@ const hashPassword = function (user, password, next) {
   })
 }
 
-schema.pre('save', function (next) {
+schema.pre('save', function(next) {
   const user = this
   if (!user.isModified('password')) {
     return next()
@@ -66,7 +67,7 @@ schema.pre('save', function (next) {
   hashPassword(user, user.password, next)
 })
 
-schema.pre('findOneAndUpdate', function (next) {
+schema.pre('findOneAndUpdate', function(next) {
   const user = this._update
   const password = user.$set.password || user.password
   if (!password) {
@@ -75,7 +76,7 @@ schema.pre('findOneAndUpdate', function (next) {
   hashPassword(user, password, next)
 })
 
-schema.methods.comparePassword = function (password) {
+schema.methods.comparePassword = function(password) {
   const self = this
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, self.password, (err, isMatch) => {
