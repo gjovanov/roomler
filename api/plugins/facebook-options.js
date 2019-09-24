@@ -5,14 +5,14 @@ module.exports = {
   name: 'facebookOAuth2',
   credentials: {
     client: {
-      id: process.env.FACEBOOK_ID || null,
-      secret: process.env.FACEBOOK_SECRET || null
+      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.FACEBOOK_ID || null),
+      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.FACEBOOK_SECRET || null)
     },
     auth: oauthPlugin.FACEBOOK_CONFIGURATION
   },
   startRedirectPath: '/oauth/login/facebook',
   callbackUri: `${config.appSettings.env.URL}/oauth/callback/facebook`,
-  scope: ['email'],
+  scope: 'email',
   generateStateFunction: () => {
     return defaultState
   },

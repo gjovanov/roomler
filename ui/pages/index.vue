@@ -10,7 +10,7 @@
       md6
     >
       <v-card>
-        NOTHING HERE
+        &nbsp;
       </v-card>
     </v-flex>
   </v-layout>

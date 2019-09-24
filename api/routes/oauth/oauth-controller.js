@@ -6,13 +6,14 @@ const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 
 const getFacebookData = async (access) => {
   const data = await getService.get({
-    url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture',
+    url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture.type(large)',
     method: 'GET',
     headers: {
       Authorization: 'Bearer ' + access.access_token
     },
     json: true
   })
+  console.log(data)
   return data
 }
 
