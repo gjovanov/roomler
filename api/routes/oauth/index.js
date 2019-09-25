@@ -57,18 +57,5 @@ module.exports = [{
     }
   },
   handler: oAuthController.delete
-},
-{
-  method: 'PUT',
-  url: '/api/oauth/link/:id',
-  schema: {
-    params: oAuthSchema.link.params,
-    response: {
-      200: oAuthSchema.link.response[200],
-      409: errorSchema.response[409],
-      500: errorSchema.response[500]
-    }
-  },
-  handler: oAuthController.link
 }
 ]

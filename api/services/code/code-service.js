@@ -30,31 +30,34 @@ class CodeService {
   }
 
   // base methods - END
-  async generateCode (user, type) {
+  async generateCode (user, type, sendEmail = true) {
     const code = await this.create(user.username, type)
-    if (type === 'user_activation') {
-      const url = `${config.appSettings.env.URL}${config.authSettings.userActivationPage}?user=${user.username}&token=${code.token}`
-      await emailService.send(user._id, {
-        to: user.email,
-        subject: 'Activate your account',
-        template: 'user-activation.hbs',
-        model: {
-          name: user.username,
-          url
-        }
-      })
-    } else if (type === 'password_reset') {
-      const url = `${config.appSettings.env.URL}${config.authSettings.passwordResetPage}?user=${user.username}&token=${code.token}`
-      await emailService.send(user._id, {
-        to: user.email,
-        subject: 'Reset your password',
-        template: 'password-reset.hbs',
-        model: {
-          name: user.username,
-          url
-        }
-      })
+    if (sendEmail) {
+      if (type === 'user_activation') {
+        const url = `${config.appSettings.env.URL}${config.authSettings.userActivationPage}?user=${user.username}&token=${code.token}`
+        await emailService.send(user._id, {
+          to: user.email,
+          subject: 'Activate your account',
+          template: 'user-activation.hbs',
+          model: {
+            name: user.username,
+            url
+          }
+        })
+      } else if (type === 'password_reset') {
+        const url = `${config.appSettings.env.URL}${config.authSettings.passwordResetPage}?user=${user.username}&token=${code.token}`
+        await emailService.send(user._id, {
+          to: user.email,
+          subject: 'Reset your password',
+          template: 'password-reset.hbs',
+          model: {
+            name: user.username,
+            url
+          }
+        })
+      }
     }
+
     return code
   }
 }

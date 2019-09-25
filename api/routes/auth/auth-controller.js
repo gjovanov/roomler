@@ -72,7 +72,7 @@ class AuthController {
     reply.send({
       user,
       token,
-      person: user.person ? user.person : null
+      person: user.person
     })
   }
 

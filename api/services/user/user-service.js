@@ -58,20 +58,29 @@ class UserService {
   // base methods - END
 
   async register (data) {
-    let oauth = null
+    const oauths = []
+    // passed OAUTH overrides the user email
     if (data.oauthId) {
-      oauth = await oAuthService.get(null, data.oauthId)
+      const oauth = await oAuthService.get(null, {
+        id: data.oauthId
+      })
+      oauths.push(oauth)
       data.email = oauth.email.toLowerCase()
       data.is_active = true
       delete data.oauthId
     }
+    // find existing OAUTHs by email
+    await oAuthService.getAll(null, null, null, {
+      email: data.email
+    })
+      .then((oauthMatches) => {
+        oauthMatches.forEach(oauthMatch => oauths.push(oauthMatch))
+        data.is_active = true
+      })
     const user = await this.create(data)
-    if (oauth) {
-      await oAuthService.link(user._id, oauth._id)
-    }
-    if (!data.is_active) {
-      await codeService.generateCode(user, 'user_activation')
-    }
+    // Link all OAUTHS to the newly created user
+    await Promise.all(oauths.map(oauth => oAuthService.link(user._id, oauth._id)))
+    await codeService.generateCode(user, 'user_activation', !data.is_active)
     return user
   }
 

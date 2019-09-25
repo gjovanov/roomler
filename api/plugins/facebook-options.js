@@ -17,7 +17,8 @@ module.exports = {
     return defaultState
   },
   checkStateFunction: (state, callback) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' ||
+      process.env.NODE_ENV === 'test') {
       callback()
     } else {
       if (state === defaultState) {

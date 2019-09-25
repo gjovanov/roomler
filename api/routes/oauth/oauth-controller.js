@@ -13,7 +13,6 @@ const getFacebookData = async (access) => {
     },
     json: true
   })
-  console.log(data)
   return data
 }
 
@@ -72,7 +71,7 @@ class OAuthController {
         user: oauth.user
       })
     } else {
-      throw new Error(`Email info is missing with your '${type}' login. Try logging in with another option.`)
+      throw new ReferenceError(`Email address is missing with '${type}' login. Try another option.`)
     }
   }
 
@@ -93,11 +92,6 @@ class OAuthController {
 
   async delete (request, reply) {
     const result = await oAuthService.delete(request.user.user._id, request.params.id)
-    reply.send(result)
-  }
-
-  async link (request, reply) {
-    const result = await oAuthService.link(request.user.user._id, request.params.id)
     reply.send(result)
   }
 }

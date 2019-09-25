@@ -3,6 +3,9 @@ const passwordResetType = 'password_reset'
 class AuthOps {
   register(fastify, test, testname, userContext) {
     test.serial(`API "/api/auth/register" ${testname}`, async(t) => {
+      if (userContext.oauth) {
+        userContext.payload.oauthId = userContext.oauth.record._id
+      }
       await fastify
         .inject({
           method: 'POST',
@@ -22,7 +25,7 @@ class AuthOps {
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
-          t.true(!result.user.is_active)
+            // t.true(!result.user.is_active)
           userContext.record = result.user
           userContext.token = result.token
           t.pass()

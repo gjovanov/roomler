@@ -1,10 +1,6 @@
 const nock = require('nock')
 const facebookOptions = require('../../../api/plugins/facebook-options')
-const getOptions = (type) => {
-  if (type === 'facebook') {
-    return facebookOptions
-  }
-}
+
 const TOKEN_RESPONSE = {
   access_token: 'my-access-token',
   refresh_token: 'my-refresh-token',
@@ -17,38 +13,48 @@ const TOKEN_RESPONSE_REFRESHED = {
   token_type: 'bearer',
   expires_in: '240000'
 }
+const getOptions = (type) => {
+  if (type === 'facebook') {
+    return facebookOptions
+  }
+}
+const setMocks = (nock, oauthContext) => {
+  // clean reinit all MOCKS
+  nock.cleanAll()
+  const options = getOptions(oauthContext.type)
+  const state = options.generateStateFunction()
+  const tokenQuerystring = `code=my-code&redirect_uri=${encodeURIComponent(options.callbackUri)}&grant_type=authorization_code&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
+  const tokenRefreshQuerystring = `grant_type=refresh_token&refresh_token=my-refresh-token&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
+  const tokenMock = nock(options.credentials.auth.tokenHost)
+    .persist()
+    .post(options.credentials.auth.tokenPath, tokenQuerystring)
+    .reply(200, TOKEN_RESPONSE)
+    .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring)
+    .reply(200, TOKEN_RESPONSE_REFRESHED)
+  const meMock = nock(options.credentials.auth.tokenHost, {
+      reqheaders: {
+        Authorization: 'Bearer my-access-token'
+      }
+    })
+    .persist()
+    .get('/v4.0/me')
+    .query({
+      fields: 'email,name,picture.type(large)'
+    })
+    .reply(200, oauthContext.me)
+  return state
+}
+
+
 
 class OAuthOps {
   getOrCreate(fastify, test, testname, oauthContext) {
     test.serial(`API "/api/oauth/get-or-create" ${testname}`, async(t) => {
-      // clean reinit all MOCKS
-      nock.cleanAll()
-      const options = getOptions(oauthContext.type)
-      const tokenQuerystring = `code=my-code&redirect_uri=${encodeURIComponent(options.callbackUri)}&grant_type=authorization_code&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
-      const tokenRefreshQuerystring = `grant_type=refresh_token&refresh_token=my-refresh-token&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
-      const tokenMock = nock(options.credentials.auth.tokenHost)
-        // .log(console.log)
-        .persist()
-        .post(options.credentials.auth.tokenPath, tokenQuerystring)
-        .reply(200, TOKEN_RESPONSE)
-        .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring)
-        .reply(200, TOKEN_RESPONSE_REFRESHED)
-      const meMock = nock(options.credentials.auth.tokenHost, {
-          reqheaders: {
-            Authorization: 'Bearer my-access-token'
-          }
-        })
-        // .log(console.log)
-        .persist()
-        .get('/v4.0/me')
-        .query({
-          fields: 'email,name,picture.type(large)'
-        })
-        .reply(200, oauthContext.me)
+      const state = setMocks(nock, oauthContext)
       await fastify
         .inject({
           method: 'GET',
-          url: `/api/oauth/get-or-create?type=${oauthContext.type}&code=my-code&state=${options.generateStateFunction()}`,
+          url: `/api/oauth/get-or-create?type=${oauthContext.type}&code=my-code&state=${state}`,
           headers: {
             'Content-Type': 'application/json'
           }
@@ -58,10 +64,66 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result.oauth)
+          t.true(!!result.oauth._id)
+          t.true(result.oauth.email === oauthContext.me.email)
+          t.true(result.oauth.name === oauthContext.me.name)
           if (oauthContext.user) {
             t.true(!!result.user)
+            t.true(result.user.email === oauthContext.user.record.email)
             t.true(!!result.token)
           }
+          oauthContext.record = result.oauth
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getOrCreateMissingEmail(fastify, test, testname, oauthContext) {
+    test.serial(`API "/api/oauth/get-or-create" ${testname}`, async(t) => {
+      const state = setMocks(nock, oauthContext)
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/oauth/get-or-create?type=${oauthContext.type}&code=my-code&state=${state}`,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'ReferenceError')
+          t.true(result.message === `Email address is missing with '${oauthContext.type}' login. Try another option.`)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  getOrCreateUnsupportedType(fastify, test, testname, oauthContext) {
+    test.serial(`API "/api/oauth/get-or-create" ${testname}`, async(t) => {
+      const state = setMocks(nock, oauthContext)
+      const typeOverride = 'unsupported'
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/oauth/get-or-create?type=${typeOverride}&code=my-code&state=${state}`,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 500)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.name === 'TypeError')
+          t.true(result.message === `Unsupported OAuth type: ${typeOverride}`)
           t.pass()
         })
         .catch((e) => {
@@ -72,11 +134,11 @@ class OAuthOps {
 
   getAll(fastify, test, testname, oauthContexts) {
     test.serial(`API "/api/oauth/get-all" ${testname}`, async(t) => {
-      const expectedMessages = oauthContexts.map(mc => mc.records).reduce((a, b) => [...a, ...b])
+      const expectedOAuths = oauthContexts.map(mc => mc.record)
       await fastify
         .inject({
           method: 'GET',
-          url: `/api/oauth/get-all?room=${oauthContexts[0].records[0].room._id}`,
+          url: `/api/oauth/get-all`,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${oauthContexts[0].token}`
@@ -87,23 +149,11 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(Array.isArray(result))
-          expectedMessages.forEach(expectedMessage => {
-            const message = result.find(m => m._id.toString() === expectedMessage._id.toString())
-            t.true(!!message)
-            t.true(!!expectedMessage._id)
-            t.true(expectedMessage.room._id.toString() === oauthContexts[0].records[0].room._id.toString())
-            if (message.type) {
-              t.true(expectedMessage.type === message.type)
-            }
-            t.true(expectedMessage.content === message.content)
-            if (message.mentions) {
-              message.mentions.forEach(mention => {
-                const foundMention = expectedMessage.mentions.find(item => item._id.toString() === mention._id.toString())
-                t.true(!!foundMention)
-              })
-            }
-            t.true(!!expectedMessage.createdAt)
-            t.true(!!expectedMessage.updatedAt)
+          expectedOAuths.forEach(expectedOAuth => {
+            const oauth = result.find(m => m._id.toString() === expectedOAuth._id.toString())
+            t.true(!!oauth._id)
+            t.true(oauth.email === expectedOAuth.email)
+            t.true(oauth.name === expectedOAuth.name)
           })
 
           t.pass()
@@ -114,17 +164,16 @@ class OAuthOps {
     })
   }
 
-  update(fastify, test, testname, messageContext) {
+  update(fastify, test, testname, oauthContext) {
     test.serial(`API "/api/oauth/update/:id" ${testname}`, async(t) => {
-      const payload = messageContext.update
-      payload.mentions = messageContext.getMentionIds(payload)
+      const payload = oauthContext.update
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/oauth/update/${messageContext.records[0]._id}`,
+          url: `/api/oauth/update/${oauthContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
+            Authorization: `Bearer ${oauthContext.token}`
           },
           payload
         })
@@ -133,20 +182,8 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(!!result._id)
-          t.true(result.room._id.toString() === messageContext.room._id.toString())
-          if (payload.type) {
-            t.true(result.type === payload.type)
-          }
-          t.true(result.content === payload.content)
-          if (payload.mentions) {
-            payload.mentions.forEach(mention => {
-              const foundMention = result.mentions.find(item => item._id.toString() === mention.toString())
-              t.true(!!foundMention)
-            })
-          }
-          t.true(!!result.createdAt)
-          t.true(!!result.updatedAt)
-          messageContext.records = messageContext.records.map(r => r._id.toString() === result._id.toString() ? result : r)
+          t.true(result.email === oauthContext.update.email)
+          t.true(result.name === oauthContext.update.name)
           t.pass()
         })
         .catch((e) => {
@@ -172,7 +209,7 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'TypeError')
-          t.true(result.message === 'Invalid message id!')
+          t.true(result.message === 'Invalid oauth id!')
           t.pass()
         })
         .catch((e) => {
@@ -180,15 +217,15 @@ class OAuthOps {
         })
     })
   }
-  updateNotFoundId(fastify, test, testname, messageContext, recordIndex) {
+  updateNotFoundId(fastify, test, testname, oauthContext) {
     test.serial(`API "/api/oauth/update/:id" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/oauth/update/${messageContext.records[recordIndex]._id}`,
+          url: `/api/oauth/update/${oauthContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
+            Authorization: `Bearer ${oauthContext.token}`
           },
           payload: {}
         })
@@ -197,7 +234,7 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'ReferenceError')
-          t.true(result.message === 'Message was not found.')
+          t.true(result.message === 'OAuth was not found.')
           t.pass()
         })
         .catch((e) => {
@@ -206,15 +243,15 @@ class OAuthOps {
     })
   }
 
-  delete(fastify, test, testname, messageContext, recordIndex) {
+  delete(fastify, test, testname, oauthContext) {
     test.serial(`API "/api/oauth/delete/:id" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'DELETE',
-          url: `/api/oauth/delete/${messageContext.records[recordIndex]._id}`,
+          url: `/api/oauth/delete/${oauthContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
+            Authorization: `Bearer ${oauthContext.token}`
           }
         })
         .then((response) => {
@@ -248,7 +285,7 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'TypeError')
-          t.true(result.message === 'Invalid message id!')
+          t.true(result.message === 'Invalid oauth id!')
           t.pass()
         })
         .catch((e) => {
@@ -257,15 +294,15 @@ class OAuthOps {
     })
   }
 
-  deleteNotFoundId(fastify, test, testname, messageContext, recordIndex) {
+  deleteNotFoundId(fastify, test, testname, oauthContext) {
     test.serial(`API "/api/oauth/delete/:id" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'DELETE',
-          url: `/api/oauth/delete/${messageContext.records[recordIndex]._id}`,
+          url: `/api/oauth/delete/${oauthContext.record._id}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
+            Authorization: `Bearer ${oauthContext.token}`
           }
         })
         .then((response) => {
@@ -273,7 +310,7 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'ReferenceError')
-          t.true(result.message === 'Message was not found.')
+          t.true(result.message === 'OAuth was not found.')
           t.pass()
         })
         .catch((e) => {
