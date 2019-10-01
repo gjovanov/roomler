@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 class UserFilter {
-  constructor(options) {
+  constructor (options) {
     this.filter = options.filter || {}
     if (options.id) {
       if (mongoose.Types.ObjectId.isValid(options.id)) {
@@ -17,7 +17,7 @@ class UserFilter {
     }
   }
 
-  getFilter() {
+  getFilter () {
     return this.filter
   }
 }

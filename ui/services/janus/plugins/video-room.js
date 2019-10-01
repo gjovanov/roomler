@@ -1,6 +1,4 @@
-import {
-  Handle
-} from '~/services/janus/handle'
+import Handle from '@/services/janus/handle'
 
 export default class VideoRoom extends Handle {
   // HANDLERS - START
@@ -118,9 +116,6 @@ export default class VideoRoom extends Handle {
     const self = this
     console.log(`Creating room has started: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)
     return new Promise((resolve, reject) => {
-      if (!room.room) {
-        room.room = Math.floor(Math.random() * 10000000000000000 + 1)
-      }
       self.handle.send({
         message: room,
         success: (data) => {

@@ -1,3 +1,4 @@
+const usernameResetType = 'username_reset'
 const passwordResetType = 'password_reset'
 
 class AuthOps {
@@ -202,11 +203,11 @@ class AuthOps {
     })
   }
 
-  reset(fastify, test, testname, userContext) {
+  reset(fastify, test, testname, userContext, type = passwordResetType) {
     test.serial(`API "/api/auth/reset" ${testname}`, async(t) => {
       const payload = {
         username: userContext.payload.username,
-        type: passwordResetType
+        type
       }
       await fastify
         .inject({
@@ -230,11 +231,50 @@ class AuthOps {
     })
   }
 
+  updateUsername(fastify, test, testname, userContext) {
+    test.serial(`API "/api/auth/update/username" ${testname}`, async(t) => {
+      const code = await require('../../../api/services/code/code-service').get(userContext.payload.username, usernameResetType)
+      const payload = {
+        email: userContext.payload.email,
+        token: code.token,
+        username: userContext.update.username
+      }
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/auth/update/username`,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(!!result.token)
+          t.true(!!result.user)
+          t.true(!!result.user._id)
+          t.true(result.user.username === userContext.update.username)
+          t.true(result.user.email === userContext.payload.email)
+          t.true(!result.user.password)
+          t.true(result.user.is_active)
+          userContext.record = result.user
+          userContext.payload.username = userContext.update.username
+          userContext.token = result.token
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   updatePasswordPasswordsMismatch(fastify, test, testname, userContext, mismatchPassword) {
-    test.serial(`API "/api/auth/password/update" ${testname}`, async(t) => {
+    test.serial(`API "/api/auth/update/password" ${testname}`, async(t) => {
       const code = await require('../../../api/services/code/code-service').get(userContext.payload.username, passwordResetType)
       const payload = {
-        username: userContext.payload.username,
+        email: userContext.payload.email,
         token: code.token,
         password: userContext.update.password,
         passwordConfirm: mismatchPassword
@@ -242,7 +282,7 @@ class AuthOps {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/auth/password/update`,
+          url: `/api/auth/update/password`,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -263,12 +303,11 @@ class AuthOps {
         })
     })
   }
-
   updatePassword(fastify, test, testname, userContext) {
-    test.serial(`API "/api/auth/password/update" ${testname}`, async(t) => {
+    test.serial(`API "/api/auth/update/password" ${testname}`, async(t) => {
       const code = await require('../../../api/services/code/code-service').get(userContext.payload.username, passwordResetType)
       const payload = {
-        username: userContext.payload.username,
+        email: userContext.payload.email,
         token: code.token,
         password: userContext.update.password,
         passwordConfirm: userContext.update.password
@@ -276,7 +315,7 @@ class AuthOps {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/auth/password/update`,
+          url: `/api/auth/update/password`,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -304,11 +343,11 @@ class AuthOps {
   }
 
   updatePerson(fastify, test, testname, userContext) {
-    test.serial(`API "/api/auth/person/update" ${testname}`, async(t) => {
+    test.serial(`API "/api/auth/update/person" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/auth/person/update`,
+          url: `/api/auth/update/person`,
           headers: {
             'Content-Type': 'application/json'
           },
@@ -324,7 +363,7 @@ class AuthOps {
           const result = JSON.parse(response.payload)
           t.true(result.firstname === userContext.person.payload.firstname)
           t.true(result.lastname === userContext.person.payload.lastname)
-          t.true(result.imageUrl === userContext.person.payload.imageUrl)
+          t.true(result.photoUrl === userContext.person.payload.photoUrl)
           t.pass()
         })
         .catch((e) => {
@@ -356,9 +395,12 @@ class AuthOps {
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
           t.true(result.user.is_active)
-          t.true(result.person.firstname === userContext.person.payload.firstname)
-          t.true(result.person.lastname === userContext.person.payload.lastname)
-          t.true(result.person.imageUrl === userContext.person.payload.imageUrl)
+          if (userContext.person && userContext.person.payload) {
+            t.true(result.person.firstname === userContext.person.payload.firstname)
+            t.true(result.person.lastname === userContext.person.payload.lastname)
+            t.true(result.person.photoUrl === userContext.person.payload.photoUrl)
+          }
+
           t.pass()
         })
         .catch((e) => {

@@ -71,7 +71,32 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$post('/api/auth/reset', payload)
-      handleSuccess('Account was reset. Please check your email for further instructions.', commit)
+    } catch (err) {
+      handleError(err, commit)
+    }
+    return response
+  },
+
+  async updateUsername ({
+    commit
+  }, payload) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$put('/api/auth/update/username', payload)
+      commit('storeUserInfo', response.result)
+    } catch (err) {
+      handleError(err, commit)
+    }
+    return response
+  },
+
+  async updatePassword ({
+    commit
+  }, payload) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$put('/api/auth/update/password', payload)
+      commit('storeUserInfo', response.result)
     } catch (err) {
       handleError(err, commit)
     }
@@ -97,6 +122,9 @@ export const actions = {
   }, payload) {
     try {
       commit('clearUserInfo')
+      commit('room/setRooms', [], {
+        root: true
+      })
     } catch (err) {
       handleError(err, commit)
     }

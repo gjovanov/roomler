@@ -56,11 +56,24 @@ module.exports = [{
 },
 {
   method: 'PUT',
-  url: '/api/auth/password/update',
+  url: '/api/auth/update/username',
   schema: {
-    body: authSchema.password.update.body,
+    body: authSchema.update.username.body,
     response: {
-      200: authSchema.password.update.response[200],
+      200: authSchema.update.username.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: authController.updateUsername
+},
+{
+  method: 'PUT',
+  url: '/api/auth/update/password',
+  schema: {
+    body: authSchema.update.password.body,
+    response: {
+      200: authSchema.update.password.response[200],
       409: errorSchema.response[409],
       500: errorSchema.response[500]
     }
@@ -70,11 +83,11 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/auth/person/update',
+  url: '/api/auth/update/person',
   schema: {
-    body: authSchema.person.update.body,
+    body: authSchema.update.person.body,
     response: {
-      200: authSchema.person.update.response[200],
+      200: authSchema.update.person.response[200],
       409: errorSchema.response[409],
       500: errorSchema.response[500]
     }

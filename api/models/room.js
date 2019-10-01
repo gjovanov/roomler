@@ -40,45 +40,47 @@ const schema = new Schema({
     ref: 'users',
     index: true
   }],
-  settings: {
-    media: {
-      roomid: {
-        type: Long,
-        index: true
-      },
-      publishers: {
-        type: Number,
-        default: defaults.settings.media.publishers
-      },
-      secret: {
-        type: String // optional password needed for manipulating (e.g. destroying) the room
-      },
-      pin: {
-        type: String // optional password needed for joining the room
-      },
-      bitrate: {
-        type: Number,
-        default: defaults.settings.media.bitrate
-      },
-      fir_freq: {
-        type: Number,
-        default: defaults.settings.media.fir_freq
-      },
-      audiocodec: {
-        type: String,
-        default: defaults.settings.media.audiocodec
-      },
-      videocodec: {
-        type: String,
-        default: defaults.settings.media.videocodec
-      },
-      record: {
-        type: Boolean,
-        default: defaults.settings.media.record
-      },
-      rec_dir: {
-        type: String
-      }
+  media: {
+    roomid: {
+      type: Long,
+      index: true
+    },
+    publishers: {
+      type: Number,
+      default: defaults.media.publishers
+    },
+    is_private: {
+      type: Boolean,
+      default: defaults.media.is_private
+    },
+    secret: {
+      type: String // optional password needed for manipulating (e.g. destroying) the room
+    },
+    pin: {
+      type: String // optional password needed for joining the room
+    },
+    bitrate: {
+      type: Number,
+      default: defaults.media.bitrate
+    },
+    fir_freq: {
+      type: Number,
+      default: defaults.media.fir_freq
+    },
+    audiocodec: {
+      type: String,
+      default: defaults.media.audiocodec
+    },
+    videocodec: {
+      type: String,
+      default: defaults.media.videocodec
+    },
+    record: {
+      type: Boolean,
+      default: defaults.media.record
+    },
+    rec_dir: {
+      type: String
     }
   }
 }, {

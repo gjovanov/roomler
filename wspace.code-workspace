@@ -21,9 +21,11 @@
         "autoFix": true
       }
     ],
-    "eslint.autoFixOnSave": true,
     "files.autoSave": "off",
     "standard.autoFixOnSave": true,
-    "terminal.integrated.windowsEnableConpty": false
+    "terminal.integrated.windowsEnableConpty": false,
+    "standard.usePackageJson": true,
+    "standard.run": "onSave",
+    "eslint.autoFixOnSave": true
   }
 }

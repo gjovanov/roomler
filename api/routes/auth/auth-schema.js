@@ -1,16 +1,14 @@
 const S = require('fluent-schema')
-
-const codeTypes = ['user_activation', 'password_reset']
+const config = require('../../../config')
+const codeTypes = config.dataSettings.code.types
 
 const user = S.object()
   .prop('_id', S.string().required())
   .prop('username', S.string().required())
   .prop('email', S.string().required())
   .prop('is_active', S.boolean().required())
-
-const token = S.object()
-  .prop('token', S.string().required())
-  .prop('user', user)
+  .prop('is_username_set', S.boolean().required())
+  .prop('is_password_set', S.boolean().required())
 
 const registerBody = S.object()
   .prop('email', S.string().minLength(5).maxLength(255).required())
@@ -22,12 +20,12 @@ const registerBody = S.object()
 const personInput = S.object()
   .prop('firstname', S.string().required())
   .prop('lastname', S.string().required())
-  .prop('imageUrl', S.string().required())
+  .prop('photoUrl', S.string().required())
 
 const personOutput = S.object()
   .prop('firstname', S.string())
   .prop('lastname', S.string)
-  .prop('imageUrl', S.string())
+  .prop('photoUrl', S.string())
 
 const userTokenPerson = S.object()
   .prop('user', user)
@@ -50,8 +48,13 @@ const codeGetBody = S.object()
 const resultOk = S.object()
   .prop('result', S.string().required())
 
-const passwordUpdateBody = S.object()
+const usernameUpdateBody = S.object()
+  .prop('email', S.string().required())
+  .prop('token', S.string().required())
   .prop('username', S.string().required())
+
+const passwordUpdateBody = S.object()
+  .prop('email', S.string().required())
   .prop('token', S.string().required())
   .prop('password', S.string().required())
   .prop('passwordConfirm', S.string().required())
@@ -65,27 +68,19 @@ module.exports = {
   register: {
     body: registerBody,
     response: {
-      200: token
-    }
-  },
-  person: {
-    update: {
-      body: personInput,
-      response: {
-        200: personOutput
-      }
+      200: userTokenPerson
     }
   },
   activate: {
     body: activateBody,
     response: {
-      200: token
+      200: userTokenPerson
     }
   },
   login: {
     body: loginBody,
     response: {
-      200: token
+      200: userTokenPerson
     }
   },
   reset: {
@@ -94,11 +89,23 @@ module.exports = {
       200: resultOk
     }
   },
-  password: {
-    update: {
+  update: {
+    person: {
+      body: personInput,
+      response: {
+        200: personOutput
+      }
+    },
+    username: {
+      body: usernameUpdateBody,
+      response: {
+        200: userTokenPerson
+      }
+    },
+    password: {
       body: passwordUpdateBody,
       response: {
-        200: token
+        200: userTokenPerson
       }
     }
   },

@@ -4,18 +4,18 @@ import {
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
-  rooms: []
+  invites: []
 })
 
 export const mutations = {
-  setRooms (state, rooms) {
-    state.rooms = rooms
+  setInvites (state, invites) {
+    state.invites = invites
   },
-  push (state, room) {
-    state.rooms.push(room)
+  push (state, invite) {
+    state.invites.push(invite)
   },
-  pull (state, room) {
-    state.rooms = state.rooms.filter(r => r._id !== room._id)
+  pull (state, invite) {
+    state.invites = state.invites.filter(r => r._id !== invite._id)
   }
 }
 
@@ -26,7 +26,7 @@ export const actions = {
   }, payload) {
     const response = {}
     try {
-      response.result = await this.$axios.$post('/api/room/create', payload)
+      response.result = await this.$axios.$post('/api/invite/create', payload)
       commit('push', response.result)
     } catch (err) {
       handleError(err, commit)
@@ -40,7 +40,7 @@ export const actions = {
   }, id) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/room/get?id=${id}`)
+      response.result = await this.$axios.$get(`/api/invite/get?id=${id}`)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -51,11 +51,11 @@ export const actions = {
   async getAll ({
     commit,
     state
-  }) {
+  }, roomid) {
     const response = {}
     try {
-      response.result = await this.$axios.$get('/api/room/get-all')
-      commit('setRooms', response.result)
+      response.result = await this.$axios.$get(`/api/invite/get-all?room=${roomid}`)
+      commit('setInvites', response.result)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

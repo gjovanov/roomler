@@ -60,7 +60,8 @@ const nuxtConfig = {
    */
   plugins: [
     '@/plugins/axios',
-    '@/plugins/icons'
+    '@/plugins/icons',
+    '@/plugins/janus.client'
   ],
   /*
    ** Nuxt.js modules

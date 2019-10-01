@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <left-menu v-if="isAuthenticated" :drawer="leftMenu" />
+    <left-menu v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" />
     <v-app-bar
       app
       clipped-left
@@ -60,10 +60,19 @@ export default {
     },
     user () {
       return this.$store.state.auth.user
+    },
+    rooms () {
+      return this.$store.state.room.rooms
     }
   },
-  created () {
+  async mounted () {
+
+  },
+  async created () {
     this.$vuetify.theme.dark = true
+    if (this.isAuthenticated) {
+      await this.$store.dispatch('room/getAll')
+    }
   }
 }
 </script>

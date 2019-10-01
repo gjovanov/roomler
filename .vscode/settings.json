@@ -19,5 +19,7 @@
       "language": "javascriptreact",
       "autoFix": true
     }
-  ]
+  ],
+  "standard.run": "onSave",
+  "eslint.autoFixOnSave": true
 }

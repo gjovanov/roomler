@@ -44,8 +44,19 @@ class CodeService {
             url
           }
         })
+      } else if (type === 'username_reset') {
+        const url = `${config.appSettings.env.URL}${config.authSettings.updateUsernamePage}?email=${user.email}&token=${code.token}`
+        await emailService.send(user._id, {
+          to: user.email,
+          subject: 'Reset your username',
+          template: 'username-reset.hbs',
+          model: {
+            name: user.username,
+            url
+          }
+        })
       } else if (type === 'password_reset') {
-        const url = `${config.appSettings.env.URL}${config.authSettings.passwordResetPage}?user=${user.username}&token=${code.token}`
+        const url = `${config.appSettings.env.URL}${config.authSettings.updatePasswordPage}?email=${user.email}&token=${code.token}`
         await emailService.send(user._id, {
           to: user.email,
           subject: 'Reset your password',

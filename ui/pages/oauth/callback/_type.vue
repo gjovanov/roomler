@@ -1,6 +1,6 @@
 <template>
   <div>
-    hey
+    &nbsp;
   </div>
 </template>
 <script>
@@ -13,11 +13,8 @@ export default {
     }
     const response = await this.$store.dispatch('oauth/getOrCreate', payload)
     if (!response.hasError && response.result) {
-      if (!response.result.user) {
-        this.$router.push({ path: `/auth/register?email=${response.result.oauth.email}&username=${response.result.oauth.name.replace(' ', '_').toLowerCase()}&oauth=${response.result.oauth._id}` })
-      } else {
-        this.$router.push({ path: '/' })
-      }
+      await this.$store.dispatch('room/getAll')
+      this.$router.push({ path: `/@/${response.result.user.username}` })
     } else {
       this.$router.push({ path: '/auth/login' })
     }

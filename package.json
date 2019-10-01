@@ -16,6 +16,7 @@
     "start:api-and-ui-e2e": "start-test start:api-e2e \"http-get://localhost:4001/api/ping\" start:ui-e2e",
     "start:test-e2e": "start-test start:api-and-ui-e2e 4000 test:e2e",
     "generate": "nuxt generate",
+    "standard:fix": "standard --fix",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
     "test:api": "cross-env NODE_ENV=test cross-env TEST=api node tests/drop-database.js && cross-env NODE_ENV=test cross-env TEST=api ava --tap --verbose",
@@ -30,8 +31,7 @@
   "standard": {
     "env": [
       "browser",
-      "node",
-      "mocha"
+      "node"
     ],
     "ignore": [
       "ui/lib/**/*.js"
@@ -57,6 +57,7 @@
     "fastify-plugin": "^1.6.0",
     "fastify-swagger": "^2.4.0",
     "fluent-schema": "^0.7.5",
+    "generate-password": "^1.4.2",
     "handlebars": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.1",
@@ -68,9 +69,11 @@
     "passport-local": "^1.0.0",
     "randomstring": "^1.1.5",
     "simple-get": "^3.0.3",
+    "slugify": "^1.3.5",
     "uuid": "^3.3.3",
     "validator": "^11.1.0",
-    "vuetify": "^2.0.17"
+    "vuetify": "^2.0.17",
+    "webrtc-adapter": "^7.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",
@@ -83,10 +86,9 @@
     "babel-eslint": "^10.0.3",
     "babel-plugin-istanbul": "^5.2.0",
     "browser-env": "^3.2.6",
-    "eslint": "^6.3.0",
+    "eslint": "^6.5.1",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jest": "^22.17.0",
     "eslint-plugin-node": ">=10.0.0",
     "eslint-plugin-nuxt": ">=0.4.3",
     "eslint-plugin-promise": "^4.2.1",
@@ -107,7 +109,7 @@
     "require-extension-hooks-babel": "^1.0.0",
     "require-extension-hooks-vue": "^3.0.0",
     "sinon": "^7.4.2",
-    "standard": "^14.1.0",
+    "standard": "^14.3.1",
     "start-server-and-test": "^1.10.0",
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",

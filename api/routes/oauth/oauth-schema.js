@@ -14,6 +14,13 @@ const user = S.object()
   .prop('username', S.string().required())
   .prop('email', S.string().required())
   .prop('is_active', S.boolean().required())
+  .prop('is_username_set', S.boolean().required())
+  .prop('is_password_set', S.boolean().required())
+
+const person = S.object()
+  .prop('firstname', S.string())
+  .prop('lastname', S.string)
+  .prop('photoUrl', S.string())
 
 const oauth = S.object()
   .prop('_id', S.string().required())
@@ -32,10 +39,11 @@ const updateBody = S.object()
 
 const oauthList = S.array().items(oauth)
 
-const oauthUserToken = S.object()
+const oauthUserTokenPerson = S.object()
   .prop('oauth', oauth)
   .prop('user', user)
   .prop('token', S.string())
+  .prop('person', person)
 
 const delete200 = S.object()
   .prop('n', S.number().required())
@@ -49,7 +57,7 @@ module.exports = {
   getOrCreate: {
     querystring: callbackQueryString,
     response: {
-      200: oauthUserToken
+      200: oauthUserTokenPerson
     }
   },
   getAll: {

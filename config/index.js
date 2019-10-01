@@ -24,6 +24,7 @@ const config = {
   },
 
   janusSettings: {
+    url: 'wss://mcu.xplorify.net/janus',
     iceServers: [{
       urls: process.env.TURN_URL || 'turn:numb.viagenie.ca',
       username: process.env.TURN_USERNAME || 'webrtc@live.com',
@@ -42,7 +43,8 @@ const config = {
     token: 'auth-token',
     codeValidityInMinutes: 5,
     userActivationPage: '/auth/activate',
-    passwordResetPage: '/auth/reset',
+    updatePasswordPage: '/@/update/password',
+    updateUsernamePage: '/@/update/username',
     inviteAcceptPage: '/invite/accept',
     inviteRejectPage: '/invite/reject'
   },
@@ -69,20 +71,19 @@ const config = {
     room: {
       defaults: {
         is_open: true,
-        settings: {
-          media: {
-            publishers: 6,
-            bitrate: 128000,
-            fir_freq: 0,
-            audiocodec: 'opus,pcmu',
-            videocodec: 'vp9,vp8,h264',
-            record: false
-          }
+        media: {
+          publishers: 6,
+          is_private: false,
+          bitrate: 128000,
+          fir_freq: 0,
+          audiocodec: 'opus,pcmu',
+          videocodec: 'vp9,vp8,h264',
+          record: false
         }
       }
     },
     code: {
-      types: ['user_activation', 'password_reset']
+      types: ['user_activation', 'username_reset', 'password_reset']
     },
     invite: {
       statuses: ['pending', 'accepted', 'rejected'],

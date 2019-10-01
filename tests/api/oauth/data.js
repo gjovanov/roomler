@@ -28,54 +28,6 @@ module.exports = {
       }
     }
   },
-  user2: {
-    payload: {
-      username: 'facebookuser2',
-      email: 'facebookuser2@facebook.com',
-      password: '12345678',
-      passwordConfirm: '12345678'
-    }
-  },
-  oauth2: {
-    facebook: {
-      me: {
-        email: 'facebookuser2@facebook.com',
-        name: 'Facebook User2',
-        picture: {
-          data: {
-            height: 200,
-            is_silhouette: false,
-            url: 'https://facebook.com',
-            width: 200
-          }
-        }
-      }
-    }
-  },
-  user3: {
-    payload: {
-      username: 'facebookuser3',
-      email: 'facebookuser3@facebook.com',
-      password: '12345678',
-      passwordConfirm: '12345678'
-    }
-  },
-  oauth3: {
-    facebook: {
-      me: {
-        email: 'facebookuser3@facebook.com',
-        name: 'Facebook User3',
-        picture: {
-          data: {
-            height: 200,
-            is_silhouette: false,
-            url: 'https://facebook.com',
-            width: 200
-          }
-        }
-      }
-    }
-  },
   oauthInvalid: {
     facebook: {
       me: {

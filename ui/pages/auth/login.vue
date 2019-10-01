@@ -88,11 +88,14 @@ export default {
     async login () {
       const self = this
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('auth/login', {
+        const response = await this.$store.dispatch('auth/login', {
           username: this.username,
           password: this.password
         })
-        self.$router.push({ path: '/' })
+        if (!response.hasError && response.result) {
+          await this.$store.dispatch('room/getAll')
+          self.$router.push({ path: '/' })
+        }
       }
     }
   }

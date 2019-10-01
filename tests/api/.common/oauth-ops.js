@@ -67,12 +67,13 @@ class OAuthOps {
           t.true(!!result.oauth._id)
           t.true(result.oauth.email === oauthContext.me.email)
           t.true(result.oauth.name === oauthContext.me.name)
-          if (oauthContext.user) {
-            t.true(!!result.user)
-            t.true(result.user.email === oauthContext.user.record.email)
-            t.true(!!result.token)
-          }
+          t.true(!!result.user)
+          t.true(result.user.email === oauthContext.me.email)
+          t.true(!!result.token)
           oauthContext.record = result.oauth
+          oauthContext.user.record = result.user
+          oauthContext.user.token = result.token
+          oauthContext.user.payload.username = result.user.username
           t.pass()
         })
         .catch((e) => {

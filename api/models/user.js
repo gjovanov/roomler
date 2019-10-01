@@ -6,7 +6,7 @@ const schema = new Schema({
   username: {
     type: String,
     required: true,
-    minlength: 8,
+    minlength: 6,
     maxlength: 50,
     index: true,
     unique: true
@@ -22,11 +22,21 @@ const schema = new Schema({
   },
   password: {
     type: String,
+    minlength: 8,
+    maxlength: 50,
     select: false
   },
   is_active: {
     type: Boolean,
     default: false
+  },
+  is_username_set: {
+    type: Boolean,
+    default: true
+  },
+  is_password_set: {
+    type: Boolean,
+    default: true
   },
   person: {
     firstname: {
@@ -35,7 +45,7 @@ const schema = new Schema({
     lastname: {
       type: String
     },
-    imageUrl: {
+    photoUrl: {
       type: String
     }
   }
@@ -43,7 +53,7 @@ const schema = new Schema({
   timestamps: true
 })
 
-const hashPassword = function(user, password, next) {
+const hashPassword = function (user, password, next) {
   const SALT_FACTOR = 10
   bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
     if (err) {
@@ -59,7 +69,7 @@ const hashPassword = function(user, password, next) {
   })
 }
 
-schema.pre('save', function(next) {
+schema.pre('save', function (next) {
   const user = this
   if (!user.isModified('password')) {
     return next()
@@ -67,7 +77,7 @@ schema.pre('save', function(next) {
   hashPassword(user, user.password, next)
 })
 
-schema.pre('findOneAndUpdate', function(next) {
+schema.pre('findOneAndUpdate', function (next) {
   const user = this._update
   const password = user.$set.password || user.password
   if (!password) {
@@ -76,7 +86,7 @@ schema.pre('findOneAndUpdate', function(next) {
   hashPassword(user, password, next)
 })
 
-schema.methods.comparePassword = function(password) {
+schema.methods.comparePassword = function (password) {
   const self = this
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, self.password, (err, isMatch) => {

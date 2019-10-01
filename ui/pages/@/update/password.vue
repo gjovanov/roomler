@@ -13,26 +13,9 @@
           <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
               <v-text-field
-                v-model="username"
-                :rules="usernameRules"
-                label="Username"
-                name="username"
-                autocomplete="on"
-                required
-              />
-              <v-spacer />
-              <v-text-field
-                v-model="email"
-                :rules="emailRules"
-                label="Email"
-                name="email"
-                autocomplete="on"
-                required
-              />
-              <v-text-field
                 v-model="password"
                 :rules="[...passwordRules]"
-                label="Password"
+                label="New password"
                 name="password"
                 autocomplete="on"
                 :append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -44,7 +27,7 @@
               <v-text-field
                 v-model="passwordConfirm"
                 :rules="[...passwordConfirmRules, passwordConfirmationRule]"
-                label="Password confirm"
+                label="New password confirm"
                 name="passwordConfirm"
                 autocomplete="on"
                 :append-icon="showPasswordConfirm ? 'visibility' : 'visibility_off'"
@@ -58,23 +41,9 @@
             <v-btn
               :disabled="!valid"
               color="primary"
-              @click="register()"
+              @click="change()"
             >
-              Register
-            </v-btn>
-            <v-btn
-              fab
-              absolute
-              right
-              bottom
-              dark
-              small
-              color="primary"
-              :href="'/oauth/login/facebook'"
-            >
-              <v-icon>
-                fab fa-facebook
-              </v-icon>
+              Change password
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -92,18 +61,8 @@ export default {
     return {
       valid: true,
 
-      username: null,
-      usernameRules: [
-        v => !!v || 'Username is required',
-        v => (v && v.length >= 6) || 'Username must be at least 6 characters',
-        v => /^[a-zA-Z0-9_-]+$/.test(v) || 'Username must be composed of only letters, numbers and - or _ character'
-      ],
-
+      token: null,
       email: null,
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /\S+@\S+\.\S+/.test(v) || 'E-mail must be valid'
-      ],
 
       password: null,
       passwordRules: [
@@ -129,22 +88,22 @@ export default {
     if (this.$route.query.email) {
       this.email = this.$route.query.email
     }
-    if (this.$route.query.username) {
-      this.username = this.$route.query.username
+    if (this.$route.query.token) {
+      this.token = this.$route.query.token
     }
   },
   methods: {
-    async register () {
+    async change () {
       const self = this
       if (this.$refs.form.validate()) {
-        const response = await this.$store.dispatch('auth/register', {
-          username: this.username,
+        const response = await this.$store.dispatch('auth/updatePassword', {
           email: this.email.toLowerCase(),
+          token: this.token,
           password: this.password,
           passwordConfirm: this.passwordConfirm
         })
         if (!response.hasError) {
-          handleSuccess('Your account was successfully created. Check your email on how to activate your account.', this.$store.commit)
+          handleSuccess('Your password was successfully changed.', this.$store.commit)
           self.$router.push({ path: '/' })
         }
       }

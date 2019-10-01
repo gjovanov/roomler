@@ -1,6 +1,5 @@
 const getService = require('../../services/utils/get-service')
 const utilsService = require('../../services/utils/utils-service')
-const userService = require('../../services/user/user-service')
 const oAuthService = require('../../services/oauth/oauth-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 
@@ -26,9 +25,6 @@ const getData = async (access, type) => {
 }
 
 const getOrCreateOAuth = async (data, type) => {
-  const user = await userService.get({
-    email: data.email
-  })
   let oauth = await oAuthService.get(null, {
     type,
     email: data.email
@@ -39,8 +35,7 @@ const getOrCreateOAuth = async (data, type) => {
       email: data.email,
       id: data.id,
       name: data.name,
-      photoUrl: data.picture.data.url,
-      user: user ? user._id : undefined
+      photoUrl: data.picture.data.url
     })
   }
   return oauth
@@ -63,12 +58,12 @@ class OAuthController {
     const data = await getData(access, type)
     if (data && data.email) {
       const oauth = await getOrCreateOAuth(data, type)
-
       const token = await getToken(oauth, reply)
       reply.send({
         oauth,
         token,
-        user: oauth.user
+        user: oauth.user,
+        person: oauth.user.person
       })
     } else {
       throw new ReferenceError(`Email address is missing with '${type}' login. Try another option.`)

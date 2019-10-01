@@ -10,14 +10,15 @@ module.exports = {
       passwordConfirm: '12345678'
     },
     update: {
-      password: '123456789'
+      password: '123456789',
+      username: 'authuser_update'
     }
   },
   person: {
     payload: {
       firstname: 'John',
       lastname: 'Smith',
-      imageUrl: 'http://google.com'
+      photoUrl: 'http://google.com'
     }
   }
 }

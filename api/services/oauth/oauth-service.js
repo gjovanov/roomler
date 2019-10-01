@@ -1,5 +1,45 @@
+const slugify = require('slugify')
+const generator = require('generate-password')
+const userService = require('../user/user-service')
 const OAuth = require('../../models/oauth')
 const OAuthFilter = require('./oauth-filter')
+
+const getOrCreateUser = async (data) => {
+  let user = await userService.get({
+    email: data.email
+  })
+  // if user doesn't exist, create new one with generated username (slug of name and suffix) and password
+  if (!user) {
+    const suffix = generator.generate({
+      length: 5,
+      numbers: true,
+      uppercase: false
+    })
+    const slugOptions = {
+      replacement: '_', // replace spaces with replacement
+      remove: null, // regex to remove characters
+      lower: true // result in lower case
+    }
+    const username = `${slugify(data.name, slugOptions)}_${suffix}`
+    const password = generator.generate({
+      length: 17,
+      strict: true
+    })
+    const userData = {
+      username,
+      email: data.email,
+      password,
+      is_active: true,
+      is_username_set: false, // it's auto-generated, needs users override
+      is_password_set: false, // it's auto-generated, needs users override
+      person: {
+        photoUrl: data.photoUrl
+      }
+    }
+    user = await userService.register(userData)
+  }
+  return user
+}
 
 class OAuthService {
   // base methods - START
@@ -39,11 +79,14 @@ class OAuthService {
   }
 
   async create (data) {
+    const user = await getOrCreateUser(data)
+    data.user = user._id
     let record = new OAuth(data)
     record = await record.save()
       .then(r =>
         r.populate('user')
           .execPopulate())
+
     return record
   }
 

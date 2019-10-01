@@ -19,13 +19,13 @@ const schema = new Schema({
     required: 'RoomIsRequired',
     index: true
   },
-  name: {
-    type: String,
-    required: 'NameIsRequired'
-  },
   email: {
     type: String,
     required: 'EmailIsRequired'
+  },
+  name: {
+    type: String,
+    required: 'NameIsRequired'
   },
   type: {
     type: String,

@@ -1,7 +1,4 @@
 import * as uuid from 'uuid/v4'
-import {
-  config
-} from '~/../config'
 
 export default class Handle {
   constructor (args) {
@@ -14,7 +11,7 @@ export default class Handle {
 
     this.display = args.display || 'Unknown'
     this.ptype = args.ptype || 'publisher'
-    this.plugin = args.plugin || config.plugins.videoroom
+    this.plugin = args.plugin || 'janus.plugin.videoroom'
 
     this.id = null
     this.myprivateid = args.myprivateid || null

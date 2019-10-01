@@ -10,7 +10,8 @@ class AuthController {
     })
     reply.send({
       token,
-      user
+      user,
+      person: user.person
     })
   }
 
@@ -28,7 +29,8 @@ class AuthController {
     })
     reply.send({
       token,
-      user
+      user,
+      person: user.person
     })
   }
 
@@ -40,19 +42,34 @@ class AuthController {
     reply
       .send({
         token,
-        user
+        user,
+        person: user.person
       })
   }
 
-  async updatePassword (request, reply) {
+  async updateUsername (request, reply) {
     const payload = request.body
-    const user = await userService.updatePassword(payload.username, payload.token, payload.password, payload.passwordConfirm)
+    const user = await userService.updateUsername(payload.email, payload.token, payload.username)
     const token = await reply.jwtSign({
       user: tokenizeUser(user)
     })
     reply.send({
       token,
-      user
+      user,
+      person: user.person
+    })
+  }
+
+  async updatePassword (request, reply) {
+    const payload = request.body
+    const user = await userService.updatePassword(payload.email, payload.token, payload.password, payload.passwordConfirm)
+    const token = await reply.jwtSign({
+      user: tokenizeUser(user)
+    })
+    reply.send({
+      token,
+      user,
+      person: user.person
     })
   }
 

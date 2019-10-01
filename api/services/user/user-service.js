@@ -1,7 +1,6 @@
 const User = require('../../models/user')
 const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
-const oAuthService = require('../oauth/oauth-service')
 const validateUserExists = require('./validation/validate-user-exists')
 const validateUserToken = require('./validation/validate-user-token')
 const validatePasswordIsConfirmed = require('./validation/validate-password-is-confirmed')
@@ -58,28 +57,7 @@ class UserService {
   // base methods - END
 
   async register (data) {
-    const oauths = []
-    // passed OAUTH overrides the user email
-    if (data.oauthId) {
-      const oauth = await oAuthService.get(null, {
-        id: data.oauthId
-      })
-      oauths.push(oauth)
-      data.email = oauth.email.toLowerCase()
-      data.is_active = true
-      delete data.oauthId
-    }
-    // find existing OAUTHs by email
-    await oAuthService.getAll(null, null, null, {
-      email: data.email
-    })
-      .then((oauthMatches) => {
-        oauthMatches.forEach(oauthMatch => oauths.push(oauthMatch))
-        data.is_active = true
-      })
     const user = await this.create(data)
-    // Link all OAUTHS to the newly created user
-    await Promise.all(oauths.map(oauth => oAuthService.link(user._id, oauth._id)))
     await codeService.generateCode(user, 'user_activation', !data.is_active)
     return user
   }
@@ -94,10 +72,34 @@ class UserService {
     return record
   }
 
-  async updatePassword (username, token, password, passwordConfirm) {
+  async updateUsername (email, token, username) {
+    let user = await this.get({
+      email
+    })
+    validateUserExists(user)
+    const code = await codeService.get(user.username, 'username_reset', token)
+    validateActivationCode(code)
+    const update = {
+      $set: {
+        username
+      }
+    }
+    user = await this.update(user._id, update)
+    await emailService.send(user._id, {
+      to: user.email,
+      subject: 'Username was successfully reset',
+      template: 'username-reset-success.hbs',
+      model: {
+        name: user.username
+      }
+    })
+    return user
+  }
+
+  async updatePassword (email, token, password, passwordConfirm) {
     validatePasswordIsConfirmed(password, passwordConfirm)
     let user = await this.get({
-      username
+      email
     })
     validateUserExists(user)
     const code = await codeService.get(user.username, 'password_reset', token)
