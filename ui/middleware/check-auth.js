@@ -9,10 +9,9 @@ export default async function ({
 }) {
   // If nuxt generate, pass this middleware
   if (isServer && !req) return
-  if (req && req.headers && req.headers.cookie && !store.state.auth.user) {
+  if (req && req.headers && req.headers.cookie && !store.state.api.auth.user) {
     storage.cookieStorage.cookie = req.headers.cookie
-    await store.dispatch('auth/me')
+    await store.dispatch('api/auth/me')
+    await store.dispatch('api/room/getAll')
   }
-  // const loggedUser = isServer ? getUserFromCookie(req) : getUserFromLocalStorage()
-  // store.commit('SET_USER', loggedUser)
 }

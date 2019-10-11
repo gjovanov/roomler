@@ -10,17 +10,12 @@ const getOrCreateUser = async (data) => {
   })
   // if user doesn't exist, create new one with generated username (slug of name and suffix) and password
   if (!user) {
-    const suffix = generator.generate({
-      length: 5,
-      numbers: true,
-      uppercase: false
-    })
     const slugOptions = {
       replacement: '_', // replace spaces with replacement
       remove: null, // regex to remove characters
       lower: true // result in lower case
     }
-    const username = `${slugify(data.name, slugOptions)}_${suffix}`
+    let username = `${slugify(data.name, slugOptions)}`
     const password = generator.generate({
       length: 17,
       strict: true
@@ -32,11 +27,21 @@ const getOrCreateUser = async (data) => {
       is_active: true,
       is_username_set: false, // it's auto-generated, needs users override
       is_password_set: false, // it's auto-generated, needs users override
-      person: {
-        photoUrl: data.photoUrl
-      }
+      avatar_url: data.avatar_url
     }
-    user = await userService.register(userData)
+    try {
+      user = await userService.register(userData)
+    } catch (err) {
+      // possible username is taken, then add a suffix in the username
+      const suffix = generator.generate({
+        length: 5,
+        numbers: true,
+        uppercase: false
+      })
+      username = `${slugify(data.name, slugOptions)}_${suffix}`
+      userData.username = username
+      user = await userService.register(userData)
+    }
   }
   return user
 }

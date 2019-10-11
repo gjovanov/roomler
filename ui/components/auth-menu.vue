@@ -1,12 +1,12 @@
 <template>
   <v-toolbar-items>
-    <v-btn v-if="!isAuthenticated" text to="/auth/register">
+    <v-btn v-if="!isAuthenticated" text to="/@/auth/register">
       Register
     </v-btn>
 
     <v-divider vertical />
 
-    <v-btn v-if="!isAuthenticated" text to="/auth/login">
+    <v-btn v-if="!isAuthenticated" text to="/@/auth/login">
       Login
     </v-btn>
 
@@ -32,14 +32,14 @@
             size="36px"
           >
             <img
-              v-if="person && person.photoUrl"
+              v-if="user && user.avatar_url"
               alt="Avatar"
-              :src="person.photoUrl"
+              :src="user.avatar_url"
             >
             <v-icon
               v-else
             >
-              person
+              fa-user
             </v-icon>
           </v-avatar>
         </v-btn>
@@ -47,30 +47,30 @@
       <v-list>
         <v-list-item @click="goToProfile">
           <v-list-item-title>
-            Profile
+            <v-icon>fa-user</v-icon> Profile
           </v-list-item-title>
         </v-list-item>
         <v-divider />
         <v-list-item @click="goToCreateRoom">
           <v-list-item-title>
-            Create new room
+            <v-icon>fa-comment</v-icon> Create new room
           </v-list-item-title>
         </v-list-item>
         <v-divider />
         <v-list-item @click="resetUsername">
           <v-list-item-title>
-            Reset username
+            <v-icon>fa-fingerprint</v-icon> Reset username
           </v-list-item-title>
         </v-list-item>
         <v-list-item @click="resetPassword">
           <v-list-item-title>
-            Reset password
+            <v-icon>fa-key</v-icon> Reset password
           </v-list-item-title>
         </v-list-item>
         <v-divider />
         <v-list-item @click="logout">
           <v-list-item-title>
-            Log out
+            <v-icon>fa-power-off</v-icon> Log out
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -97,45 +97,39 @@ export default {
   },
   computed: {
     isAuthenticated () {
-      return this.$store.getters['auth/isAuthenticated']
+      return this.$store.getters['api/auth/isAuthenticated']
     },
     isActivated () {
-      return this.$store.getters['auth/isActivated']
+      return this.$store.getters['api/auth/isActivated']
     },
     user () {
-      return this.$store.state.auth.user
-    },
-    person () {
-      return this.$store.state.auth.person
+      return this.$store.state.api.auth.user
     }
   },
-  // async mounted () {
-  //   await this.$store.dispatch('auth/me')
-  // },
   methods: {
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
     },
     goToCreateRoom () {
-      this.$router.push({ path: '/room/create' })
+      this.$router.push({ path: '/@/room/create' })
     },
     async resetUsername () {
-      await this.$store.dispatch('auth/reset', {
-        username: this.$store.state.auth.user.username,
+      await this.$store.dispatch('api/auth/reset', {
+        username: this.$store.state.api.auth.user.username,
         type: 'username_reset'
       })
       handleSuccess('Username was reset. Please check your email for further instructions.', this.$store.commit)
     },
     async resetPassword () {
-      await this.$store.dispatch('auth/reset', {
-        username: this.$store.state.auth.user.username,
+      await this.$store.dispatch('api/auth/reset', {
+        username: this.$store.state.api.auth.user.username,
         type: 'password_reset'
       })
       handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
     },
-    logout () {
-      this.$store.dispatch('auth/logout')
-      this.$router.push({ path: '/' })
+    async logout () {
+      await this.$router.push({ path: '/' })
+      await this.$store.dispatch('api/auth/logout')
     }
   }
 }

@@ -7,10 +7,9 @@
       >
         <v-col
           cols="12"
-          lg="8"
           md="12"
         >
-          <v-card class="elevation-12">
+          <v-card class="elevation-0">
             <v-card-text>
               <v-form ref="form" v-model="valid" lazy-validation>
                 <v-row
@@ -43,7 +42,7 @@
                     outlined
                   />
                   <v-btn @click="pop(invite)">
-                    <v-icon>fa-user-times</v-icon>
+                    <v-icon>fa-minus</v-icon>
                   </v-btn>
                 </v-row>
               </v-form>
@@ -74,7 +73,7 @@
                     outlined
                   />
                   <v-btn @click="push">
-                    <v-icon>fa-user-plus</v-icon>
+                    <v-icon>fa-plus</v-icon>
                   </v-btn>
                 </v-row>
               </v-form>
@@ -83,6 +82,7 @@
               <v-btn
                 :disabled="!valid"
                 color="primary"
+                right
                 @click="createInvites()"
               >
                 Invite
@@ -132,7 +132,11 @@ export default {
   },
   computed: {
     room () {
-      return this.$store.state.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
+      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
+    },
+    members () {
+      const users = [this.room.owner, ...this.room.moderators, ...this.room.members]
+      return users
     }
   },
   methods: {
@@ -148,10 +152,10 @@ export default {
     },
     async createInvites () {
       if (this.$refs.form.validate()) {
-        const response = await this.$store.dispatch('invite/create', this.invites)
+        const response = await this.$store.dispatch('api/invite/create', this.invites)
         if (!response.hasError) {
           handleSuccess('Your peers have been invited successfully.', this.$store.commit)
-          this.$router.push({ path: '/' })
+          this.$router.push({ path: `/${this.room.path}/members` })
         }
       }
     }

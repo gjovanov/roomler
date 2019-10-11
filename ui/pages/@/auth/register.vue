@@ -7,7 +7,8 @@
       <v-col
         cols="12"
         sm="8"
-        md="4"
+        md="6"
+        lg="4"
       >
         <v-card class="elevation-12">
           <v-card-text>
@@ -137,7 +138,7 @@ export default {
     async register () {
       const self = this
       if (this.$refs.form.validate()) {
-        const response = await this.$store.dispatch('auth/register', {
+        const response = await this.$store.dispatch('api/auth/register', {
           username: this.username,
           email: this.email.toLowerCase(),
           password: this.password,

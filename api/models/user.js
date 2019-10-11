@@ -6,7 +6,7 @@ const schema = new Schema({
   username: {
     type: String,
     required: true,
-    minlength: 6,
+    minlength: 7,
     maxlength: 50,
     index: true,
     unique: true
@@ -38,16 +38,13 @@ const schema = new Schema({
     type: Boolean,
     default: true
   },
-  person: {
-    firstname: {
-      type: String
-    },
-    lastname: {
-      type: String
-    },
-    photoUrl: {
-      type: String
-    }
+  name: {
+    type: String,
+    minlength: 3,
+    maxlength: 100
+  },
+  avatar_url: {
+    type: String
   }
 }, {
   timestamps: true

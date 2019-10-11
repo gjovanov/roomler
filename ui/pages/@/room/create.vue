@@ -1,0 +1,237 @@
+<template>
+  <client-only>
+    <v-layout>
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+        >
+          <v-card>
+            <v-card-title>
+              Create a Room
+            </v-card-title>
+            <v-card-text>
+              <v-form ref="form" v-model="draftRoom.valid" lazy-validation>
+                <v-spacer />
+                <strong class="text-primary">Your room will be available at: </strong>
+                <v-chip
+                  class="ma-2"
+                  color="primary"
+                  outlined
+                  pill
+                >
+                  <v-icon left>
+                    fa-globe
+                  </v-icon>
+                  {{ `${url}/${draftRoom.path || 'your_room_name'}` }}
+                </v-chip>
+                <v-spacer />
+                <v-text-field
+                  v-model="draftRoom.name"
+                  :rules="nameRules"
+                  label="Room name"
+                  name="name"
+                  autocomplete="on"
+                  outlined
+                  required
+                  @keydown.enter.prevent="create()"
+                >
+                  <template v-slot:append>
+                    <v-tooltip
+                      bottom
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-icon
+                          v-on="on"
+                          @click="draftRoom.is_open = !draftRoom.is_open"
+                        >
+                          {{ `${draftRoom.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
+                        </v-icon>
+                      </template>
+                      {{ `${draftRoom.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
+                    </v-tooltip>
+                  </template>
+                </v-text-field>
+                <v-spacer />
+                <v-text-field
+                  v-model="newTag"
+                  label="Tag"
+                  name="tag"
+                  autocomplete="on"
+                  placeholder="Add a tag and press 'Enter'"
+                  outlined
+                  required
+                  @keydown.enter.prevent="addTag()"
+                />
+                <v-spacer />
+                <v-row v-if="draftRoom.tags.length" justify="space-around">
+                  <v-col cols="12" sm="12">
+                    <v-sheet>
+                      <v-alert
+                        border="left"
+                        dense
+                        outlined
+                        color="primary"
+                        elevation="2"
+                      >
+                        {{ `Max ${maxTagsLength} Tags (Left: ${maxTagsLength - draftRoom.tags.length})` }}
+                      </v-alert>
+                      <v-chip-group
+                        column
+                        active-class="primary--text"
+                      >
+                        <v-chip
+                          v-for="tag in draftRoom.tags"
+                          :key="tag"
+                          class="ma-2"
+                          outlined
+                          close
+                          @click:close="removeTag(tag)"
+                        >
+                          {{ tag }}
+                        </v-chip>
+                      </v-chip-group>
+                    </v-sheet>
+                  </v-col>
+                </v-row>
+                <v-spacer />
+                <v-textarea
+                  v-model="draftRoom.description"
+                  label="Description"
+                  name="description"
+                  autocomplete="on"
+                  outlined
+                  @keydown.enter.prevent=""
+                />
+              </v-form>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                :disabled="!draftRoom.valid"
+                color="primary"
+                @click="create()"
+              >
+                Create
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-layout>
+  </client-only>
+</template>
+
+<script>
+import slugify from 'slugify'
+import {
+  handleSuccess
+} from '@/services/ajax-handlers'
+
+const config = require('@@/config')
+const defaults = config.dataSettings.room.defaults.media
+const slugOptions = {
+  replacement: '-', // replace spaces with replacement
+  remove: null, // regex to remove characters
+  lower: true // result in lower case
+}
+const defaultRoom = {
+  valid: true,
+  name: null,
+  path: '',
+  is_open: true,
+  description: undefined,
+  tags: []
+}
+const maxTagsLength = 5
+export default {
+  middleware: 'authenticated',
+  data () {
+    return {
+      valid: true,
+
+      url: config.appSettings.env.URL,
+
+      draftRoom: JSON.parse(JSON.stringify(defaultRoom)),
+      newTag: null,
+      maxTagsLength,
+
+      nameRules: [
+        v => !!v || 'Room name is required',
+        v => (v && v.length >= 4) || 'Room name must be at least 4 characters',
+        v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
+      ],
+
+      media: {
+        roomid: undefined,
+        permanent: true,
+        publishers: defaults.publishers,
+        is_private: undefined,
+        secret: undefined,
+        pin: undefined,
+        bitrate: defaults.bitrate,
+        fir_freq: defaults.fir_freq,
+        audiocodec: defaults.audiocodec,
+        videocodec: defaults.videocodec,
+        record: defaults.record,
+        rec_dir: undefined
+      }
+    }
+  },
+
+  watch: {
+    'draftRoom.name' (newName) {
+      this.draftRoom.path = slugify(newName, slugOptions)
+    }
+  },
+  methods: {
+    addTag () {
+      if (!this.draftRoom.tags.includes(this.newTag) && this.draftRoom.tags.length < maxTagsLength) {
+        this.draftRoom.tags.push(this.newTag)
+        this.newTag = null
+      }
+    },
+    removeTag (tag) {
+      this.draftRoom.tags = this.draftRoom.tags.filter(t => t !== tag)
+    },
+
+    async create () {
+      if (this.$refs.form.validate()) {
+        // 1. create a room in our DB via the /api/room/create
+        // 2. create a room in Janus
+        // 3. update the Janus roomid in our DB via /api/room/update
+
+        const createPayload = {
+          name: this.draftRoom.name,
+          description: this.draftRoom.description,
+          is_open: this.draftRoom.is_open,
+          tags: this.draftRoom.tags,
+          media: this.media
+        }
+        const createResoponse = await this.$store.dispatch('api/room/create', createPayload)
+        if (!createResoponse.hasError) {
+          let room = createResoponse.result
+          const janusPayload = {
+            media: Object.assign({}, this.media),
+            plugin: config.janusSettings.plugins.videoroom
+          }
+          janusPayload.media.request = 'create'
+          janusPayload.media.is_private = !this.draftRoom.is_open
+          janusPayload.media.description = this.draftRoom.description
+          const janusRoom = await this.$store.dispatch('janus/createRoom', janusPayload)
+
+          const updatePayload = { id: room._id, update: { 'media.roomid': janusRoom.room } }
+          const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)
+          if (!updateResponse.hasError) {
+            room = updateResponse.result
+            handleSuccess('The room was created successfully. It\'s more fun with friends so let\'s invite some', this.$store.commit)
+            this.$router.push({ path: `/${room.path}/members/invite` })
+          }
+        }
+      }
+    }
+  }
+}
+</script>

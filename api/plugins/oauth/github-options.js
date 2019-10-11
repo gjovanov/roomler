@@ -1,18 +1,18 @@
 const defaultState = require('crypto').randomBytes(10).toString('hex')
 const oauthPlugin = require('fastify-oauth2')
-const config = require('../../config')
+const config = require('../../../config')
 module.exports = {
-  name: 'facebookOAuth2',
+  name: 'github',
   credentials: {
     client: {
-      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.FACEBOOK_ID || null),
-      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.FACEBOOK_SECRET || null)
+      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.GITHUB_ID || null),
+      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.GITHUB_SECRET || null)
     },
-    auth: oauthPlugin.FACEBOOK_CONFIGURATION
+    auth: oauthPlugin.GITHUB_CONFIGURATION
   },
-  startRedirectPath: '/oauth/login/facebook',
-  callbackUri: `${config.appSettings.env.URL}/oauth/callback/facebook`,
-  scope: 'email',
+  startRedirectPath: '/oauth/login/github',
+  callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/github`,
+  scope: ['user', 'user:email'],
   generateStateFunction: () => {
     return defaultState
   },

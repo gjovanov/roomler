@@ -14,11 +14,9 @@ module.exports = {
       username: 'authuser_update'
     }
   },
-  person: {
+  avatar: {
     payload: {
-      firstname: 'John',
-      lastname: 'Smith',
-      photoUrl: 'http://google.com'
+      avatar_url: 'http://google.com'
     }
   }
 }

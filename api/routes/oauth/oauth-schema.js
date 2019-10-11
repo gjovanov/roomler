@@ -16,11 +16,7 @@ const user = S.object()
   .prop('is_active', S.boolean().required())
   .prop('is_username_set', S.boolean().required())
   .prop('is_password_set', S.boolean().required())
-
-const person = S.object()
-  .prop('firstname', S.string())
-  .prop('lastname', S.string)
-  .prop('photoUrl', S.string())
+  .prop('avatar_url', S.string())
 
 const oauth = S.object()
   .prop('_id', S.string().required())
@@ -28,22 +24,21 @@ const oauth = S.object()
   .prop('email', S.string().required())
   .prop('id', S.string())
   .prop('name', S.string())
-  .prop('photoUrl', S.string())
+  .prop('avatar_url', S.string())
 
 const updateBody = S.object()
   .prop('type', S.string())
   .prop('email', S.string())
   .prop('id', S.string())
   .prop('name', S.string())
-  .prop('photoUrl', S.string())
+  .prop('avatar_url', S.string())
 
 const oauthList = S.array().items(oauth)
 
-const oauthUserTokenPerson = S.object()
+const oauthUserToken = S.object()
   .prop('oauth', oauth)
   .prop('user', user)
   .prop('token', S.string())
-  .prop('person', person)
 
 const delete200 = S.object()
   .prop('n', S.number().required())
@@ -57,7 +52,7 @@ module.exports = {
   getOrCreate: {
     querystring: callbackQueryString,
     response: {
-      200: oauthUserTokenPerson
+      200: oauthUserToken
     }
   },
   getAll: {

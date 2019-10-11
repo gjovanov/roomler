@@ -23,7 +23,7 @@
 export default {
   async beforeMount () {
     const self = this
-    await this.$store.dispatch('auth/activate', {
+    await this.$store.dispatch('api/auth/activate', {
       username: this.$route.query.user,
       token: this.$route.query.token
     })

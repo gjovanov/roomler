@@ -3,7 +3,7 @@ const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const UserContext = require('../.context/user-context')
 const data = require('./data')
-const user = new UserContext(data.user, data.person)
+const user = new UserContext(data.user, data.avatar)
 
 authOps.register(fastify, test, 'register the user for auth testing', user)
 authOps.activateInvalidUsername(fastify, test, 'activate with invalid username throws ValidationError', data.invalidUsername)
@@ -19,7 +19,7 @@ authOps.reset(fastify, test, 'password reset via code/token', user, 'password_re
 authOps.updatePasswordPasswordsMismatch(fastify, test, 'update password with password mismatch throws ValidationError', user, data.invalidPassword)
 authOps.updatePassword(fastify, test, 'update the password of the user for auth testing', user)
 
-authOps.updatePerson(fastify, test, 'populates the person related fields of the user for auth testing', user)
+authOps.updateAvatar(fastify, test, 'fills the Avatar URL to the user for auth testing', user)
 
 authOps.me(fastify, test, 'get full user information for the logged in user', user)
 authOps.delete(fastify, test, 'delete the user for auth testing', user)

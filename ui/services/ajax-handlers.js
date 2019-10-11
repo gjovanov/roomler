@@ -8,6 +8,11 @@ export const handleError = (err, commit) => {
       })
     })
   } else {
+    if (data.message.includes('E11000 duplicate key error collection')) {
+      const index = data.message.indexOf('{')
+      data.name = 'global'
+      data.message = `${data.message.substring(index)} is taken`
+    }
     commit('toast/push', {
       prop: data.name,
       message: data.message,

@@ -4,8 +4,8 @@ export default function ({
 }) {
   $axios.onRequest((config) => {
     // config.withCredentials = true
-    if (store.state.auth.token) {
-      config.headers.common.Authorization = `Bearer ${store.state.auth.token}`
+    if (store.state.api.auth.token) {
+      config.headers.common.Authorization = `Bearer ${store.state.api.auth.token}`
       // config.headers.common.crossDomain = true
       // config.header.common['Content-Type'] = 'application/json'
     }

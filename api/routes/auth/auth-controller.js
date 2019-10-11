@@ -10,15 +10,7 @@ class AuthController {
     })
     reply.send({
       token,
-      user,
-      person: user.person
-    })
-  }
-
-  async reset (request, reply) {
-    await userService.reset(request.body.username, request.body.type)
-    reply.send({
-      result: 'ok'
+      user
     })
   }
 
@@ -29,8 +21,7 @@ class AuthController {
     })
     reply.send({
       token,
-      user,
-      person: user.person
+      user
     })
   }
 
@@ -42,9 +33,15 @@ class AuthController {
     reply
       .send({
         token,
-        user,
-        person: user.person
+        user
       })
+  }
+
+  async reset (request, reply) {
+    await userService.reset(request.body.email, request.body.type)
+    reply.send({
+      result: 'ok'
+    })
   }
 
   async updateUsername (request, reply) {
@@ -55,8 +52,7 @@ class AuthController {
     })
     reply.send({
       token,
-      user,
-      person: user.person
+      user
     })
   }
 
@@ -68,15 +64,20 @@ class AuthController {
     })
     reply.send({
       token,
-      user,
-      person: user.person
+      user
     })
   }
 
-  async updatePerson (request, reply) {
-    const person = request.body
-    const user = await userService.updatePerson(request.user.user._id, person)
-    reply.send(user.person)
+  async updateAvatar (request, reply) {
+    const avatar_url = request.body.avatar_url
+    const user = await userService.updateAvatar(request.user.user._id, avatar_url)
+    const token = await reply.jwtSign({
+      user: tokenizeUser(user)
+    })
+    reply.send({
+      token,
+      user
+    })
   }
 
   async me (request, reply) {
@@ -88,8 +89,16 @@ class AuthController {
     })
     reply.send({
       user,
-      token,
-      person: user.person
+      token
+    })
+  }
+
+  async get (request, reply) {
+    const user = await userService.get({
+      username: request.params.username
+    })
+    reply.send({
+      user
     })
   }
 

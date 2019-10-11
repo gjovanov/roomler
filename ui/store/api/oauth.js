@@ -9,7 +9,7 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get(`/api/oauth/get-or-create?type=${payload.type}&code=${payload.code}&state=${payload.state}`)
-      commit('auth/storeUserInfo', response.result, {
+      commit('api/auth/storeUserInfo', response.result, {
         root: true
       })
     } catch (err) {

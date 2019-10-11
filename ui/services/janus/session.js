@@ -1,5 +1,6 @@
+// import config from '@@/config'
 import HandleFactory from '@/services/janus/handle-factory'
-const config = require('@@/config')
+
 export default class Session {
   constructor (Janus) {
     this.is_init = false
@@ -28,6 +29,7 @@ export default class Session {
   create () {
     const self = this
     return new Promise((resolve, reject) => {
+      const config = require('@@/config')
       const session = new self.Janus({
         server: config.janusSettings.url,
         iceServers: config.iceServers,

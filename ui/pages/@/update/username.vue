@@ -74,7 +74,7 @@ export default {
     async change () {
       const self = this
       if (this.$refs.form.validate()) {
-        const response = await this.$store.dispatch('auth/updateUsername', {
+        const response = await this.$store.dispatch('api/auth/updateUsername', {
           email: this.email.toLowerCase(),
           token: this.token,
           username: this.username

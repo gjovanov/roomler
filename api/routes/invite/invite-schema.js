@@ -15,6 +15,8 @@ const room = S.object()
   .prop('_id', S.string())
   .prop('owner', S.string())
   .prop('name', S.string())
+  .prop('path', S.string())
+  .prop('is_open', S.boolean())
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
 

@@ -20,7 +20,7 @@ const schema = new Schema({
   name: {
     type: String
   },
-  photoUrl: {
+  avatar_url: {
     type: String
   },
   user: {

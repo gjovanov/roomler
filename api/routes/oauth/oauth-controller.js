@@ -1,26 +1,21 @@
-const getService = require('../../services/utils/get-service')
+
 const utilsService = require('../../services/utils/utils-service')
 const oAuthService = require('../../services/oauth/oauth-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
-
-const getFacebookData = async (access) => {
-  const data = await getService.get({
-    url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture.type(large)',
-    method: 'GET',
-    headers: {
-      Authorization: 'Bearer ' + access.access_token
-    },
-    json: true
-  })
-  return data
-}
+const dataGetter = require('./oauth-data-getter')
 
 const getData = async (access, type) => {
   if (type === 'facebook') {
-    const data = await getFacebookData(access)
+    const data = await dataGetter.getFacebookData(access)
     return data
-  } else {
-    throw new TypeError(`Unsupported OAuth type: ${type}`)
+  }
+  if (type === 'github') {
+    const data = await dataGetter.getGithubData(access)
+    return data
+  }
+  if (type === 'linkedin') {
+    const data = await dataGetter.getLinkedinData(access)
+    return data
   }
 }
 
@@ -35,7 +30,7 @@ const getOrCreateOAuth = async (data, type) => {
       email: data.email,
       id: data.id,
       name: data.name,
-      photoUrl: data.picture.data.url
+      avatar_url: data.avatar_url
     })
   }
   return oauth
@@ -54,7 +49,11 @@ const getToken = async (oauth, reply) => {
 class OAuthController {
   async getOrCreate (request, reply) {
     const type = request.query.type
-    const access = await this.getAccessTokenFromAuthorizationCodeFlow(request)
+    const oauthConfig = this[type]
+    if (!oauthConfig) {
+      throw new TypeError(`Unsupported OAuth type: ${type}`)
+    }
+    const access = await oauthConfig.getAccessTokenFromAuthorizationCodeFlow(request)
     const data = await getData(access, type)
     if (data && data.email) {
       const oauth = await getOrCreateOAuth(data, type)
@@ -62,8 +61,7 @@ class OAuthController {
       reply.send({
         oauth,
         token,
-        user: oauth.user,
-        person: oauth.user.person
+        user: oauth.user
       })
     } else {
       throw new ReferenceError(`Email address is missing with '${type}' login. Try another option.`)

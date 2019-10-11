@@ -8,11 +8,12 @@
           {
             "targets": {
               "node": "current"
-            }
+            },
+            "modules": false
           }
         ]
       ],
-      "plugins": [ "istanbul"]
+      "plugins": [ "istanbul" ]
     }
   }
 }

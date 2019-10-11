@@ -34,7 +34,7 @@ export const actions = {
     }
     return response
   },
-  async Get ({
+  async              get ({
     commit,
     state
   }, id) {

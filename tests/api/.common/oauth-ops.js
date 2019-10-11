@@ -1,5 +1,5 @@
 const nock = require('nock')
-const facebookOptions = require('../../../api/plugins/facebook-options')
+const facebookOptions = require('../../../api/plugins/oauth/facebook-options')
 
 const TOKEN_RESPONSE = {
   access_token: 'my-access-token',
@@ -97,6 +97,7 @@ class OAuthOps {
           t.is(response.statusCode, 500)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
+          console.log(result)
           t.true(result.name === 'ReferenceError')
           t.true(result.message === `Email address is missing with '${oauthContext.type}' login. Try another option.`)
           t.pass()

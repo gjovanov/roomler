@@ -19,6 +19,12 @@ const schema = new Schema({
     index: true,
     unique: true
   },
+  path: {
+    type: String,
+    required: 'PathInvalid',
+    index: true,
+    unique: true
+  },
   is_open: {
     type: Boolean,
     default: defaults.is_open

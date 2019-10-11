@@ -206,7 +206,7 @@ class AuthOps {
   reset(fastify, test, testname, userContext, type = passwordResetType) {
     test.serial(`API "/api/auth/reset" ${testname}`, async(t) => {
       const payload = {
-        username: userContext.payload.username,
+        email: userContext.payload.email,
         type
       }
       await fastify
@@ -342,16 +342,16 @@ class AuthOps {
     })
   }
 
-  updatePerson(fastify, test, testname, userContext) {
-    test.serial(`API "/api/auth/update/person" ${testname}`, async(t) => {
+  updateAvatar(fastify, test, testname, userContext) {
+    test.serial(`API "/api/auth/update/avatar" ${testname}`, async(t) => {
       await fastify
         .inject({
           method: 'PUT',
-          url: `/api/auth/update/person`,
+          url: `/api/auth/update/avatar`,
           headers: {
             'Content-Type': 'application/json'
           },
-          payload: userContext.person.payload,
+          payload: userContext.avatar.payload,
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${userContext.token}`
@@ -361,9 +361,7 @@ class AuthOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result.firstname === userContext.person.payload.firstname)
-          t.true(result.lastname === userContext.person.payload.lastname)
-          t.true(result.photoUrl === userContext.person.payload.photoUrl)
+          t.true(result.user.avatar_url === userContext.avatar.payload.avatar_url)
           t.pass()
         })
         .catch((e) => {
@@ -389,17 +387,15 @@ class AuthOps {
           const result = JSON.parse(response.payload)
           t.true(!!result.user)
           t.true(!!result.token)
-          t.true(!!result.person)
           t.true(!!result.user._id)
           t.true(result.user.username === userContext.payload.username)
           t.true(result.user.email === userContext.payload.email)
           t.true(!result.user.password)
           t.true(result.user.is_active)
-          if (userContext.person && userContext.person.payload) {
-            t.true(result.person.firstname === userContext.person.payload.firstname)
-            t.true(result.person.lastname === userContext.person.payload.lastname)
-            t.true(result.person.photoUrl === userContext.person.payload.photoUrl)
+          if (userContext.avatar) {
+            t.true(result.user.avatar_url === userContext.avatar.payload.avatar_url)
           }
+
 
           t.pass()
         })

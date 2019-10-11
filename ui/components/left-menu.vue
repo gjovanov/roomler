@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
+    v-model="leftDrawer"
     app
     expand-on-hover
     clipped
@@ -15,7 +15,7 @@
         @click="goToRoom(room.name)"
       >
         <v-list-item-action>
-          <v-icon>fa-box-open</v-icon>
+          <v-icon>{{ `${room.is_open ? 'fa-lock-open' : 'fa-lock'}` }}</v-icon>
         </v-list-item-action>
         <v-list-item-content>
           <v-list-item-title>
@@ -44,6 +44,19 @@ export default {
       default: () => {
         return []
       }
+    }
+  },
+  data () {
+    return {
+      leftDrawer: true
+    }
+  },
+  watch: {
+    drawer (value) {
+      this.leftDrawer = value
+    },
+    leftDrawer (value) {
+      this.$emit('toggleDrawer', value)
     }
   },
   methods: {

@@ -1,6 +1,22 @@
+const slugify = require('slugify')
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
-
+const slugOptions = {
+  replacement: '-', // replace spaces with replacement
+  remove: null, // regex to remove characters
+  lower: true // result in lower case
+}
+const extendRole = (record) => {
+  const recordObj = record.toObject()
+  recordObj.owner.role = 'owner'
+  recordObj.moderators.forEach((m) => {
+    m.role = 'moderator'
+  })
+  recordObj.members.forEach((m) => {
+    m.role = 'member'
+  })
+  return recordObj
+}
 class RoomService {
   // base methods - START
   async get (userid, id) {
@@ -18,7 +34,7 @@ class RoomService {
     if (!record) {
       throw new ReferenceError('Room was not found.')
     }
-    return record
+    return extendRole(record)
   }
 
   async getAll (userid, page = 0, size = 10, filter = {}, sort = {
@@ -40,11 +56,12 @@ class RoomService {
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
       .exec()
-    return records
+    return records.map(record => extendRole(record))
   }
 
   async create (userid, data) {
     data.owner = userid
+    data.path = slugify(data.name, slugOptions)
     let record = new Room(data)
     record = await record.save()
       .then(r =>
@@ -52,10 +69,13 @@ class RoomService {
           .populate('moderators')
           .populate('members')
           .execPopulate())
-    return record
+    return extendRole(record)
   }
 
   async update (userid, id, update) {
+    if (update.name) {
+      update.path = slugify(update.name, slugOptions)
+    }
     const roomFilter = new RoomFilter({
       id
     })
@@ -72,7 +92,7 @@ class RoomService {
     if (!record) {
       throw new ReferenceError('Room was not found.')
     }
-    return record
+    return extendRole(record)
   }
 
   async delete (userid, id) {

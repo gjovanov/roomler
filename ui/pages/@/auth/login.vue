@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout fill-height>
     <v-row
       align="center"
       justify="center"
@@ -7,7 +7,8 @@
       <v-col
         cols="12"
         sm="8"
-        md="4"
+        md="6"
+        lg="4"
       >
         <v-card class="elevation-12">
           <v-card-text>
@@ -38,22 +39,87 @@
             <v-btn
               :disabled="!valid"
               color="primary"
+              class="mb-8"
               @click="login()"
             >
               Login
             </v-btn>
+            <v-spacer />
+            <v-btn
+              right
+              x-small
+              class="mb-8"
+              to="/@/auth/forgot/password"
+            >
+              Forgot password
+            </v-btn>
+            <v-btn
+              right
+              x-small
+              class="mb-8"
+              to="/@/auth/forgot/username"
+            >
+              Forgot username
+            </v-btn>
+            <v-spacer />
             <v-btn
               fab
               absolute
-              right
+              left
               bottom
               dark
               small
-              color="primary"
+              color="blue darken-3"
+
               :href="'/oauth/login/facebook'"
             >
               <v-icon>
                 fab fa-facebook
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="blue lighten-1"
+              :style="`margin-left: ${1 * 48}px !important;`"
+              :href="'/oauth/login/twitter'"
+            >
+              <v-icon>
+                fab fa-twitter
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="grey darken-1"
+              :style="`margin-left: ${2 * 48}px !important;`"
+              :href="'/oauth/login/github'"
+            >
+              <v-icon>
+                fab fa-github
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="teal darken-4"
+              :style="`margin-left: ${3 * 48}px !important;`"
+              :href="'/oauth/login/linkedin'"
+            >
+              <v-icon>
+                fab fa-linkedin
               </v-icon>
             </v-btn>
           </v-card-actions>
@@ -62,6 +128,14 @@
     </v-row>
   </v-layout>
 </template>
+
+<style>
+  .fab-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+</style>
 
 <script>
 export default {
@@ -88,12 +162,12 @@ export default {
     async login () {
       const self = this
       if (this.$refs.form.validate()) {
-        const response = await this.$store.dispatch('auth/login', {
+        const response = await this.$store.dispatch('api/auth/login', {
           username: this.username,
           password: this.password
         })
         if (!response.hasError && response.result) {
-          await this.$store.dispatch('room/getAll')
+          await this.$store.dispatch('api/room/getAll')
           self.$router.push({ path: '/' })
         }
       }

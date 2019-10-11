@@ -2,6 +2,9 @@ const S = require('fluent-schema')
 const config = require('../../../config')
 const codeTypes = config.dataSettings.code.types
 
+const usernameParam = S.object()
+  .prop('username', S.string().required())
+
 const user = S.object()
   .prop('_id', S.string().required())
   .prop('username', S.string().required())
@@ -9,6 +12,7 @@ const user = S.object()
   .prop('is_active', S.boolean().required())
   .prop('is_username_set', S.boolean().required())
   .prop('is_password_set', S.boolean().required())
+  .prop('avatar_url', S.string())
 
 const registerBody = S.object()
   .prop('email', S.string().minLength(5).maxLength(255).required())
@@ -17,20 +21,12 @@ const registerBody = S.object()
   .prop('passwordConfirm', S.string().minLength(8).required())
   .prop('oauthId', S.string())
 
-const personInput = S.object()
-  .prop('firstname', S.string().required())
-  .prop('lastname', S.string().required())
-  .prop('photoUrl', S.string().required())
+const avatarInput = S.object()
+  .prop('avatar_url', S.string().required())
 
-const personOutput = S.object()
-  .prop('firstname', S.string())
-  .prop('lastname', S.string)
-  .prop('photoUrl', S.string())
-
-const userTokenPerson = S.object()
+const userToken = S.object()
   .prop('user', user)
   .prop('token', S.string())
-  .prop('person', personOutput)
 
 const activateBody = S.object()
   .prop('username', S.string().minLength(8).required())
@@ -41,8 +37,8 @@ const loginBody = S.object()
   .prop('username', S.string().minLength(8).required())
   .prop('password', S.string().minLength(8).required())
 
-const codeGetBody = S.object()
-  .prop('username', S.string().required())
+const resetBody = S.object()
+  .prop('email', S.string().required())
   .prop('type', S.string().enum(codeTypes).required())
 
 const resultOk = S.object()
@@ -68,50 +64,56 @@ module.exports = {
   register: {
     body: registerBody,
     response: {
-      200: userTokenPerson
+      200: userToken
     }
   },
   activate: {
     body: activateBody,
     response: {
-      200: userTokenPerson
+      200: userToken
     }
   },
   login: {
     body: loginBody,
     response: {
-      200: userTokenPerson
+      200: userToken
     }
   },
   reset: {
-    body: codeGetBody,
+    body: resetBody,
     response: {
       200: resultOk
     }
   },
   update: {
-    person: {
-      body: personInput,
+    avatar: {
+      body: avatarInput,
       response: {
-        200: personOutput
+        200: userToken
       }
     },
     username: {
       body: usernameUpdateBody,
       response: {
-        200: userTokenPerson
+        200: userToken
       }
     },
     password: {
       body: passwordUpdateBody,
       response: {
-        200: userTokenPerson
+        200: userToken
       }
     }
   },
   me: {
     response: {
-      200: userTokenPerson
+      200: userToken
+    }
+  },
+  get: {
+    params: usernameParam,
+    response: {
+      200: user
     }
   },
   delete: {

@@ -16,6 +16,9 @@ export const mutations = {
   },
   pull (state, room) {
     state.rooms = state.rooms.filter(r => r._id !== room._id)
+  },
+  replace (state, roomid, updatedRoom) {
+    state.rooms = state.rooms.map(r => r._id === roomid ? updatedRoom : r)
   }
 }
 
@@ -34,7 +37,7 @@ export const actions = {
     }
     return response
   },
-  async Get ({
+  async get ({
     commit,
     state
   }, id) {
@@ -56,6 +59,21 @@ export const actions = {
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
       commit('setRooms', response.result)
+    } catch (err) {
+      handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
+  async update ({
+    commit,
+    state
+  }, payload) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$put(`/api/room/update/${payload.id}`, payload.update)
+      commit('replace', response.result)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

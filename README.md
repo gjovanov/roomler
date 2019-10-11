@@ -8,6 +8,30 @@
 $ npm i
 ```
 
+# Prerequisites
+Before you run the app either in DEVELOPMENT, PRODUCTION mode or even run any of the TESTS, you need to setup couple of environment variables used in `/config/index.js`:
+
+## Email setting
+You have the following options to configure your app to send emails e.g. Activation link, Welcome email, Password change email etc.
+1. SENDGRID account: `SENDGRID_API_KEY`
+2. GMAIL account: `GMAIL_USER` and `GMAIL_PASSWORD`, but before sending your email using gmail you have to allow non secure apps to access gmail you can do this by going to your gmail settings [here](https://myaccount.google.com/lesssecureapps).
+3. SMTP server you have access to: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` and `SMTP_PASSWORD`
+
+Please note that only one of those 3 options is needed to be properly setup in the exact order as above.
+
+## Database setting
+For running on localhost and you have MongodDB server instance also stared on localhost, this is not needed, otherwise your will need to provide the DB URL in the env variable `DB_CONN`
+
+## DNS settings
+Since you have the options to run two separate Fastify servers:
+1. UI server (for rendering UI app using NuxtJS)
+2. API server (for API calls)
+
+then you might want to configure the environment variables `URL` for the UI and `API_URL` for the API server respectively.
+
+On localhost, the default setting for these env variables is `URL=http://localhost:3000` and `API_URL=http://localhost:3001`
+
+
 # Development
 ## Start in development mode
 

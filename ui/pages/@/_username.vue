@@ -10,28 +10,34 @@
         md="4"
       >
         <v-card class="elevation-12">
-          <v-card-title>
-            {{ username }}
+          <v-card-title
+            class="justify-center"
+          >
             <v-avatar
               class="profile"
               color="grey"
               size="164"
+              align="center"
+              justify="center"
             >
               <img
-                v-if="person && person.photoUrl"
+                v-if="user && user.avatar_url"
                 alt="Avatar"
-                :src="person.photoUrl"
+                :src="user.avatar_url"
               >
               <v-icon
                 v-else
               >
-                person
+                fa-user
               </v-icon>
             </v-avatar>
           </v-card-title>
 
-          <v-card-text>
-            &nbsp;
+          <v-card-text
+            align="center"
+            justify="center"
+          >
+            {{ username }}
           </v-card-text>
           <v-card-actions>
             &nbsp;
@@ -50,16 +56,13 @@ export default {
   },
   computed: {
     isAuthenticated () {
-      return this.$store.getters['auth/isAuthenticated']
+      return this.$store.getters['api/auth/isAuthenticated']
     },
     isActivated () {
-      return this.$store.getters['auth/isActivated']
+      return this.$store.getters['api/auth/isActivated']
     },
     user () {
-      return this.$store.state.auth.user
-    },
-    person () {
-      return this.$store.state.auth.person
+      return this.$store.state.api.auth.user
     }
   },
   mounted () {

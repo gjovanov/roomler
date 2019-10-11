@@ -42,15 +42,15 @@ const config = {
   authSettings: {
     token: 'auth-token',
     codeValidityInMinutes: 5,
-    userActivationPage: '/auth/activate',
+    userActivationPage: '/@/auth/activate',
     updatePasswordPage: '/@/update/password',
     updateUsernamePage: '/@/update/username',
-    inviteAcceptPage: '/invite/accept',
-    inviteRejectPage: '/invite/reject'
+    inviteAcceptPage: '/@/invite/accept',
+    inviteRejectPage: '/@/invite/reject'
   },
 
   oauthSettings: {
-    types: ['facebook', 'google', 'github', 'twitter']
+    types: ['facebook', 'google', 'github', 'twitter', 'linkedin']
   },
 
   dbSettings: {
@@ -142,6 +142,8 @@ if (!config.emailSettings.gmail.auth) {
 if (!config.emailSettings.smtp.host) {
   config.emailSettings.smtp = undefined
 }
+
+// export default config
 
 // export default config
 module.exports = config

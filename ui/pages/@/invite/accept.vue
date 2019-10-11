@@ -11,12 +11,12 @@ export default {
       code: this.$route.query.code,
       state: this.$route.query.state
     }
-    const response = await this.$store.dispatch('oauth/getOrCreate', payload)
+    const response = await this.$store.dispatch('api/oauth/getOrCreate', payload)
     if (!response.hasError && response.result) {
-      await this.$store.dispatch('room/getAll')
+      await this.$store.dispatch('api/room/getAll')
       this.$router.push({ path: `/@/${response.result.user.username}` })
     } else {
-      this.$router.push({ path: '/auth/login' })
+      this.$router.push({ path: '/@/auth/login' })
     }
   }
 

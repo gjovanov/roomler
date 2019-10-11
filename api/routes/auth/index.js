@@ -83,16 +83,16 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
-  url: '/api/auth/update/person',
+  url: '/api/auth/update/avatar',
   schema: {
-    body: authSchema.update.person.body,
+    body: authSchema.update.avatar.body,
     response: {
-      200: authSchema.update.person.response[200],
+      200: authSchema.update.avatar.response[200],
       409: errorSchema.response[409],
       500: errorSchema.response[500]
     }
   },
-  handler: authController.updatePerson
+  handler: authController.updateAvatar
 },
 {
   authenticate: true,
@@ -106,6 +106,20 @@ module.exports = [{
     }
   },
   handler: authController.me
+},
+{
+  authenticate: true,
+  method: 'GET',
+  url: '/api/auth/get/:username',
+  schema: {
+    params: authSchema.get.params,
+    response: {
+      200: authSchema.get.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: authController.get
 },
 {
   authenticate: true,

@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <left-menu v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" />
+    <left-menu v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" @toggleDrawer="toggleDrawer" />
     <v-app-bar
       app
       clipped-left
@@ -18,10 +18,11 @@
     </v-app-bar>
 
     <v-content>
-      <v-container class="fill-height">
+      <v-container :fill-height="fillHeight">
         <v-row
           justify="center"
-          align="center"
+          align="stretch"
+          align-content="start"
         >
           <v-col>
             <nuxt />
@@ -52,26 +53,29 @@ export default {
     leftMenu: true
   }),
   computed: {
+    fillHeight () {
+      return !this.$route.name.startsWith('roomname')
+    },
+
     isAuthenticated () {
-      return this.$store.getters['auth/isAuthenticated']
+      return this.$store.getters['api/auth/isAuthenticated']
     },
     isActivated () {
-      return this.$store.getters['auth/isActivated']
+      return this.$store.getters['api/auth/isActivated']
     },
     user () {
-      return this.$store.state.auth.user
+      return this.$store.state.api.auth.user
     },
     rooms () {
-      return this.$store.state.room.rooms
+      return this.$store.state.api.room.rooms
     }
   },
-  async mounted () {
-
-  },
-  async created () {
+  created () {
     this.$vuetify.theme.dark = true
-    if (this.isAuthenticated) {
-      await this.$store.dispatch('room/getAll')
+  },
+  methods: {
+    toggleDrawer (value) {
+      this.leftMenu = value
     }
   }
 }

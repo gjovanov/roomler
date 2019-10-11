@@ -2,7 +2,7 @@ export default function ({
   store,
   redirect
 }) {
-  if (store.getters['auth/isAuthenticated']) {
+  if (store.getters['api/auth/isAuthenticated']) {
     return redirect('/')
   }
 }

@@ -62,10 +62,10 @@ class UserService {
     return user
   }
 
-  async updatePerson (id, person) {
+  async updateAvatar (id, url) {
     const update = {
       $set: {
-        person
+        avatar_url: url
       }
     }
     const record = await this.update(id, update)
@@ -81,7 +81,8 @@ class UserService {
     validateActivationCode(code)
     const update = {
       $set: {
-        username
+        username,
+        is_username_set: true
       }
     }
     user = await this.update(user._id, update)
@@ -106,7 +107,8 @@ class UserService {
     validateActivationCode(code)
     const update = {
       $set: {
-        password
+        password,
+        is_password_set: true
       }
     }
     user = await this.update(user._id, update)
@@ -143,9 +145,9 @@ class UserService {
     return user
   }
 
-  async reset (username, type) {
+  async reset (email, type) {
     const user = await this.get({
-      username
+      email
     })
     validateUserExists(user)
     const code = await codeService.generateCode(user, type)

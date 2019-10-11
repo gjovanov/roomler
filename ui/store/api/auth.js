@@ -14,13 +14,21 @@ export const state = () => ({
 })
 
 export const mutations = {
+  storeInvite (state, inviteid) {
+    let invites = storage.get('invites')
+    if (!invites) {
+      invites = []
+    }
+    if (!invites.includes(inviteid)) {
+      invites.push(inviteid)
+      storage.set('invites', invites, true)
+    }
+  },
+
   storeUserInfo (state, result) {
     storage.set('token', result.token, true)
     state.user = result.user
     state.token = result.token
-    if (result.person) {
-      state.person = result.person
-    }
     if (result.oauth) {
       state.oauth = result.oauth
     }
@@ -30,7 +38,6 @@ export const mutations = {
     storage.clear('token')
     state.user = null
     state.token = null
-    state.person = null
     state.oauth = null
   }
 }
@@ -122,7 +129,7 @@ export const actions = {
   }, payload) {
     try {
       commit('clearUserInfo')
-      commit('room/setRooms', [], {
+      commit('api/room/setRooms', [], {
         root: true
       })
     } catch (err) {
@@ -142,6 +149,24 @@ export const actions = {
         })
         response.result = await this.$axios.$get('/api/auth/me')
         commit('storeUserInfo', response.result)
+      }
+    } catch (err) {
+      handleError(err, commit)
+    }
+    return response
+  },
+
+  async get ({
+    commit
+  }, username) {
+    const response = {}
+    try {
+      const token = storage.get('token')
+      if (token) {
+        commit('storeUserInfo', {
+          token
+        })
+        response.result = await this.$axios.$get(`/api/auth/get/${username}`)
       }
     } catch (err) {
       handleError(err, commit)

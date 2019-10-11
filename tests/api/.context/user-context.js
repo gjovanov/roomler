@@ -1,12 +1,9 @@
 class UserContext {
-  constructor(data, personData, oauth) {
+  constructor(data, avatar, oauth) {
     this.payload = data.payload
     this.update = data.update
-    if (personData) {
-      this.person = {
-        payload: personData.payload,
-        update: personData.update
-      }
+    if (avatar) {
+      this.avatar = avatar
     }
     this.oauth = oauth
     this.record = null
