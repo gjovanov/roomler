@@ -1,5 +1,6 @@
 module.exports = [
   ...require('./ping'),
+  ...require('./config'),
   ...require('./email'),
   ...require('./auth'),
   ...require('./oauth'),

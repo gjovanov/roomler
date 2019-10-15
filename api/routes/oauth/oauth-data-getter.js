@@ -69,6 +69,25 @@ class OAuthDataGetter {
       avatar_url: null
     }
     const data = await getService.get({
+      url: 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${access.access_token}`
+      },
+      json: true
+    })
+    console.log(JSON.stringify(data))
+
+    result.id = data.id
+    result.name = `${data.firstName.localized.en_US} ${data.lastName.localized.en_US}`
+    let image = data.profilePicture['displayImage~'].elements.find(e => e.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].displaySize.width === 200)
+    if (!image && data.profilePicture['displayImage~'].elements.length) {
+      image = data.profilePicture['displayImage~'].elements[0]
+    }
+    if (image && image.identifiers[0]) {
+      result.avatar_url = image.identifiers[0].identifier
+    }
+    const data2 = await getService.get({
       url: 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))',
       method: 'GET',
       headers: {
@@ -76,11 +95,9 @@ class OAuthDataGetter {
       },
       json: true
     })
-    console.log(data)
-    result.id = data.id
-    result.name = data.name
-    result.email = data.email
-    result.avatar_url = data.picture && data.picture.data ? data.picture.data.url : undefined
+    console.log(JSON.stringify(data2))
+    result.email = data2.elements[0]['handle~'].emailAddress
+
     return result
   }
 }

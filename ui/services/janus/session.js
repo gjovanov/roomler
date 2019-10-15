@@ -1,12 +1,12 @@
-// import config from '@@/config'
 import HandleFactory from '@/services/janus/handle-factory'
 
 export default class Session {
-  constructor (Janus) {
+  constructor (Janus, config) {
     this.is_init = false
     this.session = null
     this.handles = []
     this.Janus = Janus
+    this.config = config
   }
 
   init (debug = true) {
@@ -29,10 +29,9 @@ export default class Session {
   create () {
     const self = this
     return new Promise((resolve, reject) => {
-      const config = require('@@/config')
       const session = new self.Janus({
-        server: config.janusSettings.url,
-        iceServers: config.iceServers,
+        server: this.config.janusSettings.url,
+        iceServers: this.config.iceServers,
         success: () => {
           self.session = session
           resolve(self)

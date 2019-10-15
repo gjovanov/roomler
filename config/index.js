@@ -40,7 +40,6 @@ const config = {
   },
 
   authSettings: {
-    token: 'auth-token',
     codeValidityInMinutes: 5,
     userActivationPage: '/@/auth/activate',
     updatePasswordPage: '/@/update/password',

@@ -101,21 +101,21 @@ import {
   handleSuccess
 } from '@/services/ajax-handlers'
 
-const config = require('@@/config')
-const inviteSettings = config.dataSettings.invite
-
-const defaultInvite = {
-  name: '',
-  email: '',
-  type: inviteSettings.defaults.type
-}
-
 export default {
   middleware: 'authenticated',
   data () {
+    const self = this
+    const defaultInvite = {
+      name: '',
+      email: '',
+      type: self.config.inviteSettings.defaults.type
+    }
+    const types = self.config.inviteSettings.types
+    const newInvite = Object.assign({ id: uuid() }, defaultInvite)
     return {
       valid: true,
       isNewRecordValid: true,
+      defaultInvite,
 
       emailRules: [
         v => !!v || 'E-mail is required',
@@ -125,12 +125,15 @@ export default {
       invites: [
 
       ],
-      newInvite: Object.assign({ id: uuid() }, defaultInvite),
+      newInvite,
 
-      types: inviteSettings.types
+      types
     }
   },
   computed: {
+    config () {
+      return this.$store.state.api.config.config
+    },
     room () {
       return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
     },
@@ -144,7 +147,7 @@ export default {
       if (this.$refs.newRecordForm.validate()) {
         this.newInvite.room = this.room._id
         this.invites.push(this.newInvite)
-        this.newInvite = Object.assign({ id: uuid() }, defaultInvite)
+        this.newInvite = Object.assign({ id: uuid() }, this.defaultInvite)
       }
     },
     pop (invite) {

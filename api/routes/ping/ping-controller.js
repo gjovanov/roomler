@@ -1,5 +1,5 @@
 class PingController {
-  doPing (request, reply) {
+  ping (request, reply) {
     reply.send({
       result: 'pong'
     })

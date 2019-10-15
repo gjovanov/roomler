@@ -130,33 +130,33 @@ import {
   handleSuccess
 } from '@/services/ajax-handlers'
 
-const config = require('@@/config')
-const defaults = config.dataSettings.room.defaults.media
-const slugOptions = {
-  replacement: '-', // replace spaces with replacement
-  remove: null, // regex to remove characters
-  lower: true // result in lower case
-}
-const defaultRoom = {
-  valid: true,
-  name: null,
-  path: '',
-  is_open: true,
-  description: undefined,
-  tags: []
-}
-const maxTagsLength = 5
 export default {
   middleware: 'authenticated',
   data () {
+    const slugOptions = {
+      replacement: '-', // replace spaces with replacement
+      remove: null, // regex to remove characters
+      lower: true // result in lower case
+    }
+    const defaultRoom = {
+      valid: true,
+      name: null,
+      path: '',
+      is_open: true,
+      description: undefined,
+      tags: []
+    }
+    const defaults = this.config.dataSettings.room.defaults.media
+
     return {
       valid: true,
 
-      url: config.appSettings.env.URL,
+      maxTagsLength: 5,
+      url: this.config.appSettings.env.URL,
+      slugOptions,
 
       draftRoom: JSON.parse(JSON.stringify(defaultRoom)),
       newTag: null,
-      maxTagsLength,
 
       nameRules: [
         v => !!v || 'Room name is required',
@@ -181,14 +181,20 @@ export default {
     }
   },
 
+  computed: {
+    config () {
+      return this.$store.state.api.config.config
+    }
+  },
+
   watch: {
     'draftRoom.name' (newName) {
-      this.draftRoom.path = slugify(newName, slugOptions)
+      this.draftRoom.path = slugify(newName, this.slugOptions)
     }
   },
   methods: {
     addTag () {
-      if (!this.draftRoom.tags.includes(this.newTag) && this.draftRoom.tags.length < maxTagsLength) {
+      if (!this.draftRoom.tags.includes(this.newTag) && this.draftRoom.tags.length < this.maxTagsLength) {
         this.draftRoom.tags.push(this.newTag)
         this.newTag = null
       }
@@ -215,7 +221,7 @@ export default {
           let room = createResoponse.result
           const janusPayload = {
             media: Object.assign({}, this.media),
-            plugin: config.janusSettings.plugins.videoroom
+            plugin: this.config.janusSettings.plugins.videoroom
           }
           janusPayload.media.request = 'create'
           janusPayload.media.is_private = !this.draftRoom.is_open

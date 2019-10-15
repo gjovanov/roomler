@@ -1,6 +1,11 @@
+# WARNING
+THIS PROJECT IS STILL HEAVILY IN DEVELOPMENT. USE ONLY IF U HAVE THE BALLS (PARDON MY FRENCH) AND DARE TO DIVE INTO THE UNKNOWN :)
+
 # Roomler
 
 > Roomler.Live - Live video collaboration tool using WebRTC (Janus Gateway)
+
+
 
 # Install packages
 ``` bash
