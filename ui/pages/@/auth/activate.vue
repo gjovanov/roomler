@@ -23,11 +23,16 @@
 export default {
   async beforeMount () {
     const self = this
-    await this.$store.dispatch('api/auth/activate', {
+    const response = await this.$store.dispatch('api/auth/activate', {
       username: this.$route.query.user,
       token: this.$route.query.token
     })
-    self.$router.push({ path: '/' })
+    if (!response.hasError) {
+      await this.$store.dispatch('connectWebSocket')
+      await this.$store.dispatch('api/invite/acceptPendingInvites')
+      await this.$store.dispatch('api/room/getAll')
+      self.$router.push({ path: '/' })
+    }
   }
 }
 </script>

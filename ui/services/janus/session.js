@@ -50,7 +50,7 @@ export default class Session {
     const self = this
     return new Promise((resolve, reject) => {
       args.session = self
-      const handle = HandleFactory.create(args)
+      const handle = HandleFactory.create(args, self.config)
       self.session.attach({
         plugin: args.plugin,
         opaqueId: args.opaqueId,

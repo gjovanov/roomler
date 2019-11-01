@@ -6,8 +6,11 @@ export const actions = {
   async nuxtServerInit ({ dispatch }, { req, store }) {
     console.log('[INIT]')
     await dispatch('api/config/get')
-    // if (store.getters['api/auth/isAuthenticated']) {
-    //   await dispatch('api/room/getAll')
-    // }
+  },
+  connectWebSocket ({
+    commit,
+    state
+  }) {
+    this.$wss.connect()
   }
 }

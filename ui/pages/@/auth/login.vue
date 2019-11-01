@@ -166,7 +166,9 @@ export default {
           username: this.username,
           password: this.password
         })
-        if (!response.hasError && response.result) {
+        if (!response.hasError) {
+          await this.$store.dispatch('connectWebSocket')
+          await this.$store.dispatch('api/invite/acceptPendingInvites')
           await this.$store.dispatch('api/room/getAll')
           self.$router.push({ path: '/' })
         }

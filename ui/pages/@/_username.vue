@@ -37,7 +37,7 @@
             align="center"
             justify="center"
           >
-            {{ username }}
+            {{ user.username }}
           </v-card-text>
           <v-card-actions>
             &nbsp;
@@ -51,7 +51,9 @@
 export default {
   data () {
     return {
-      username: null
+      user: {
+        username: null
+      }
     }
   },
   computed: {
@@ -60,13 +62,13 @@ export default {
     },
     isActivated () {
       return this.$store.getters['api/auth/isActivated']
-    },
-    user () {
-      return this.$store.state.api.auth.user
     }
   },
-  mounted () {
-    this.username = this.$route.params.username
+  async mounted () {
+    const response = await this.$store.dispatch('api/auth/get', this.$route.params.username)
+    if (!response.hasError) {
+      this.user = response.result
+    }
   }
 }
 </script>

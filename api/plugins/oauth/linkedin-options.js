@@ -1,5 +1,5 @@
 const defaultState = require('crypto').randomBytes(10).toString('hex')
-const oauthPlugin = require('fastify-oauth2')
+const oauthPlugin = require('fastify-oauth2-multi')
 const config = require('../../../config')
 module.exports = {
   name: 'linkedin',
@@ -12,7 +12,7 @@ module.exports = {
   },
   startRedirectPath: '/oauth/login/linkedin',
   callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/linkedin`,
-  scope: ['r_emailaddress', 'r_liteprofile', 'w_member_social'],
+  scope: ['r_emailaddress', 'r_liteprofile'],
   generateStateFunction: () => {
     return defaultState
   },

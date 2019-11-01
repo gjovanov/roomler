@@ -31,7 +31,6 @@ const userToken = S.object()
 const activateBody = S.object()
   .prop('username', S.string().minLength(8).required())
   .prop('token', S.string().required())
-  .prop('inviteid', S.string())
 
 const loginBody = S.object()
   .prop('username', S.string().minLength(8).required())

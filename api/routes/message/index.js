@@ -44,7 +44,8 @@ module.exports = [{
       500: errorSchema.response[500]
     }
   },
-  handler: messageController.create
+  handler: messageController.create,
+  wsHandler: messageController.createWs
 },
 {
   authenticate: true,

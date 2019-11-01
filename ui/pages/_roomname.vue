@@ -3,9 +3,10 @@
     background-color="basil"
     lg="12"
     md="12"
+    class="pt-0 mt-0"
   >
     <v-card-title class="text-center">
-      <h4 class="font-weight-bold basil--text">
+      <h4 v-if="room" class="font-weight-bold basil--text">
         {{ room.name }}
       </h4>
     </v-card-title>
@@ -78,7 +79,7 @@ export default {
   },
   computed: {
     room () {
-      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
+      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase()) || { tags: [] }
     }
   },
   methods: {

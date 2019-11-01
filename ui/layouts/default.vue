@@ -18,11 +18,15 @@
     </v-app-bar>
 
     <v-content>
-      <v-container :fill-height="fillHeight">
+      <v-container
+        :fill-height="fillHeight"
+        class="pt-0 mt-0 pb-0 mb-0"
+      >
         <v-row
           justify="center"
           align="stretch"
           align-content="start"
+          class="pt-0 mt-0"
         >
           <v-col>
             <nuxt />
@@ -42,6 +46,7 @@ import LeftMenu from '@/components/left-menu'
 import Toaster from '@/components/toaster'
 
 export default {
+  middleware: 'default-routes',
   components: {
     Logo,
     AuthMenu,

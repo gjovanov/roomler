@@ -17,7 +17,7 @@
             <v-divider />
             <template v-for="(item, index) in members">
               <v-divider
-                :key="index"
+                :key="`member_${index}`"
                 :inset="true"
               />
 
@@ -35,51 +35,72 @@
                 </v-list-item-content>
 
                 <v-list-item-action>
-                  <v-btn-toggle
-                    v-model="item.role"
-                    rounded
-                    color="primary accent-3"
-                  >
-                    <v-btn>
-                      Owner
-                    </v-btn>
-
-                    <v-btn>
-                      Member
-                    </v-btn>
-
-                    <v-btn>
-                      Moderator
-                    </v-btn>
-                  </v-btn-toggle>
+                  <member-menu :user="item" />
                 </v-list-item-action>
               </v-list-item>
             </template>
+            <v-spacer />
             <v-subheader
               v-text="'Invites'"
             />
             <v-divider />
+            <template v-for="(item, index) in invites">
+              <v-divider
+                :key="`invite_${index}`"
+                :inset="true"
+              />
+
+              <v-list-item
+                :key="item._id"
+              >
+                <v-list-item-avatar>
+                  <v-icon>fa-user</v-icon>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.email" />
+                  <v-list-item-subtitle v-text="item.name" />
+                  <v-list-item-action-text v-text="`${item.type} (${item.status})`" />
+                </v-list-item-content>
+
+                <v-list-item-action>
+                  <invite-menu :invite="item" />
+                </v-list-item-action>
+              </v-list-item>
+            </template>
           </v-list>
           <v-btn
             color="primary"
             right
-            :to="`/${room.path}/members/invite`"
+            class="ml-4"
+            @click="inviteDialog = true"
           >
-            Invite
+            <v-icon>fa-users</v-icon> &nbsp; Invite peers
           </v-btn>
         </v-col>
       </v-row>
+      <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
     </v-layout>
   </client-only>
 </template>
 
 <script>
 
+import InviteDialog from '@/components/invite/invite-dialog'
+import InviteMenu from '@/components/invite/invite-menu'
+import MemberMenu from '@/components/invite/member-menu'
+
 export default {
   middleware: 'authenticated',
+  components: {
+    InviteDialog,
+    InviteMenu,
+    MemberMenu
+  },
   data () {
     return {
-      text: ''
+      invites: [],
+      inviteDialog: false
     }
   },
   computed: {
@@ -87,8 +108,30 @@ export default {
       return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
     },
     members () {
-      const users = [this.room.owner, ...this.room.moderators, ...this.room.members]
+      const users = this.room ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
       return users
+    }
+  },
+  async created () {
+    const response = await this.$store.dispatch('api/invite/getAll', this.room._id)
+    if (!response.hasError) {
+      this.invites = response.result
+    }
+  },
+  mounted () {
+    if (this.$route.query.invite !== undefined) {
+      this.inviteDialog = true
+    }
+  },
+  methods: {
+    cancelInvites () {
+      this.inviteDialog = false
+      this.$router.push({ path: `/${this.room.path}/members` })
+    },
+    async sendInvites (invites) {
+      await this.$store.dispatch('api/invite/create', invites)
+      this.inviteDialog = false
+      this.$router.push({ path: `/${this.room.path}/members` })
     }
   }
 }

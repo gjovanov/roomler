@@ -59,22 +59,70 @@
             <v-btn
               :disabled="!valid"
               color="primary"
+              class="mb-8"
               @click="register()"
             >
               Register
             </v-btn>
+            <v-spacer />
             <v-btn
               fab
               absolute
-              right
+              left
               bottom
               dark
               small
-              color="primary"
+              color="blue darken-3"
+
               :href="'/oauth/login/facebook'"
             >
               <v-icon>
                 fab fa-facebook
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="blue lighten-1"
+              :style="`margin-left: ${1 * 48}px !important;`"
+              :href="'/oauth/login/twitter'"
+            >
+              <v-icon>
+                fab fa-twitter
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="grey darken-1"
+              :style="`margin-left: ${2 * 48}px !important;`"
+              :href="'/oauth/login/github'"
+            >
+              <v-icon>
+                fab fa-github
+              </v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              absolute
+              left
+              bottom
+              dark
+              small
+              color="teal darken-4"
+              :style="`margin-left: ${3 * 48}px !important;`"
+              :href="'/oauth/login/linkedin'"
+            >
+              <v-icon>
+                fab fa-linkedin
               </v-icon>
             </v-btn>
           </v-card-actions>
@@ -145,6 +193,9 @@ export default {
           passwordConfirm: this.passwordConfirm
         })
         if (!response.hasError) {
+          await this.$store.dispatch('connectWebSocket')
+          await this.$store.dispatch('api/invite/acceptPendingInvites')
+          await this.$store.dispatch('api/room/getAll')
           handleSuccess('Your account was successfully created. Check your email on how to activate your account.', this.$store.commit)
           self.$router.push({ path: '/' })
         }

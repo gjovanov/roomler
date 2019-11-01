@@ -19,5 +19,6 @@
     }
   ],
   "eslint.autoFixOnSave": true,
-  "eslint.lintTask.enable": true
+  "eslint.lintTask.enable": true,
+  "standard.autoFixOnSave": true
 }

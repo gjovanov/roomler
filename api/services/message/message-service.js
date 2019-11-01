@@ -58,6 +58,7 @@ class MessageService {
       message.room = mongoose.Types.ObjectId(payload.room)
       message.author = mongoose.Types.ObjectId(userid)
     })
+    console.log(messages)
     const records = await Message
       .insertMany(messages)
       .then((rows) => {

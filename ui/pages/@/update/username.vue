@@ -80,6 +80,9 @@ export default {
           username: this.username
         })
         if (!response.hasError) {
+          await this.$store.dispatch('connectWebSocket')
+          await this.$store.dispatch('api/invite/acceptPendingInvites')
+          await this.$store.dispatch('api/room/getAll')
           handleSuccess('Your username was successfully changed.', this.$store.commit)
           self.$router.push({ path: '/' })
         }

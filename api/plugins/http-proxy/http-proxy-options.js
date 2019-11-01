@@ -1,4 +1,4 @@
-const config = require('../../config')
+const config = require('../../../config')
 
 const upstream = `${config.appSettings.env.API_URL}/api`
 const options = {

@@ -6,15 +6,13 @@
 <script>
 export default {
   async mounted () {
-    const payload = {
-      type: this.$route.params.type,
-      code: this.$route.query.code,
-      state: this.$route.query.state
-    }
-    const response = await this.$store.dispatch('api/oauth/getOrCreate', payload)
-    if (!response.hasError && response.result) {
+    const invite = this.$route.query.invite
+    this.$store.commit('api/invite/storePendingInvites', invite, {
+      root: true
+    })
+    if (this.$store.getters['api/auth/isAuthenticated']) {
+      await this.$store.dispatch('api/invite/acceptPendingInvites')
       await this.$store.dispatch('api/room/getAll')
-      this.$router.push({ path: `/@/${response.result.user.username}` })
     } else {
       this.$router.push({ path: '/@/auth/login' })
     }

@@ -16,7 +16,7 @@
             <v-card-text>
               <v-form ref="form" v-model="draftRoom.valid" lazy-validation>
                 <v-spacer />
-                <strong class="text-primary">Your room will be available at: </strong>
+                <strong class="text-primary">Room URL: </strong>
                 <v-chip
                   class="ma-2"
                   color="primary"
@@ -26,7 +26,7 @@
                   <v-icon left>
                     fa-globe
                   </v-icon>
-                  {{ `${url}/${draftRoom.path || 'your_room_name'}` }}
+                  {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'your_room_name'}` }}</em>
                 </v-chip>
                 <v-spacer />
                 <v-text-field
@@ -146,13 +146,15 @@ export default {
       description: undefined,
       tags: []
     }
-    const defaults = this.config.dataSettings.room.defaults.media
+    const config = this.$store.state.api.config.config
+    const defaults = config.dataSettings.room.defaults.media
 
     return {
       valid: true,
 
       maxTagsLength: 5,
-      url: this.config.appSettings.env.URL,
+      config,
+      url: config.appSettings.env.URL,
       slugOptions,
 
       draftRoom: JSON.parse(JSON.stringify(defaultRoom)),
@@ -160,7 +162,6 @@ export default {
 
       nameRules: [
         v => !!v || 'Room name is required',
-        v => (v && v.length >= 4) || 'Room name must be at least 4 characters',
         v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
       ],
 
@@ -180,10 +181,10 @@ export default {
       }
     }
   },
-
   computed: {
-    config () {
-      return this.$store.state.api.config.config
+    parentRoom () {
+      const result = this.$store.state.api.room.rooms.find(r => r.path === this.$route.query.parent)
+      return result
     }
   },
 
@@ -216,12 +217,17 @@ export default {
           tags: this.draftRoom.tags,
           media: this.media
         }
-        const createResoponse = await this.$store.dispatch('api/room/create', createPayload)
-        if (!createResoponse.hasError) {
-          let room = createResoponse.result
+        if (this.parentRoom) {
+          createPayload.parent_name = this.parentRoom.name
+          createPayload.parent_path = this.parentRoom.path
+        }
+        const createResponse = await this.$store.dispatch('api/room/create', createPayload)
+        if (!createResponse.hasError) {
+          let room = createResponse.result
           const janusPayload = {
             media: Object.assign({}, this.media),
-            plugin: this.config.janusSettings.plugins.videoroom
+            plugin: this.config.janusSettings.plugins.videoroom,
+            config: this.config
           }
           janusPayload.media.request = 'create'
           janusPayload.media.is_private = !this.draftRoom.is_open
@@ -233,7 +239,7 @@ export default {
           if (!updateResponse.hasError) {
             room = updateResponse.result
             handleSuccess('The room was created successfully. It\'s more fun with friends so let\'s invite some', this.$store.commit)
-            this.$router.push({ path: `/${room.path}/members/invite` })
+            this.$router.push({ path: `/${room.path}` })
           }
         }
       }

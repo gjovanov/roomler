@@ -54,7 +54,7 @@
     "fastify-http-proxy": "^2.2.0",
     "fastify-jwt": "^1.0.0",
     "fastify-mongodb": "^1.0.1",
-    "fastify-oauth2": "^2.3.0",
+    "fastify-oauth2-multi": "^2.5.0",
     "fastify-plugin": "^1.6.0",
     "fastify-swagger": "^2.4.0",
     "fluent-schema": "^0.7.5",
@@ -74,7 +74,8 @@
     "uuid": "^3.3.3",
     "validator": "^11.1.0",
     "vuetify": "^2.1.1",
-    "webrtc-adapter": "^7.3.0"
+    "webrtc-adapter": "^7.3.0",
+    "ws": "^7.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

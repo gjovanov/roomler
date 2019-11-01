@@ -1,4 +1,4 @@
-const config = require('../../config')
+const config = require('../../../config')
 module.exports = {
   dbUrl: config.dbSettings.dbUrl,
   dbOptions: config.dbSettings.dbOptions

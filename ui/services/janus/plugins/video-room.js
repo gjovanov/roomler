@@ -151,6 +151,26 @@ export default class VideoRoom extends Handle {
     })
   }
 
+  listRooms () {
+    const self = this
+    console.log(`Listing rooms has started: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)
+    return new Promise((resolve, reject) => {
+      const data = {
+        request: 'list'
+      }
+      self.handle.send({
+        message: data,
+        success: (rooms) => {
+          resolve(rooms)
+          console.log(`Listing rooms has finished: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)
+        },
+        error: (error) => {
+          reject(error)
+        }
+      })
+    })
+  }
+
   destroyRoom (roomid, secret) {
     const self = this
     console.log(`Destroying room has started: display=${self.display}, plugin=${self.plugin}, id=${self.id}`)

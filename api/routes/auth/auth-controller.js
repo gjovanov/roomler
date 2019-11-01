@@ -69,8 +69,8 @@ class AuthController {
   }
 
   async updateAvatar (request, reply) {
-    const avatar_url = request.body.avatar_url
-    const user = await userService.updateAvatar(request.user.user._id, avatar_url)
+    const avatarUrl = request.body.avatar_url
+    const user = await userService.updateAvatar(request.user.user._id, avatarUrl)
     const token = await reply.jwtSign({
       user: tokenizeUser(user)
     })
@@ -97,9 +97,7 @@ class AuthController {
     const user = await userService.get({
       username: request.params.username
     })
-    reply.send({
-      user
-    })
+    reply.send(user)
   }
 
   async delete (request, reply) {

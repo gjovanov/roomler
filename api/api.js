@@ -4,25 +4,26 @@ const buildApi = function () {
     // http2: true,
     // https: require('./plugins/https-options')
   })
-  const jwtOptions = require('./plugins/jwt-options')
-  const facebookOptions = require('./plugins/oauth/facebook-options')
-  const githubOptions = require('./plugins/oauth/github-options')
-  const linkedinOptions = require('./plugins/oauth/linkedin-options')
+  const jwtOptions = require('./plugins/jwt/jwt-options')
+  const oauthOptions = require('./plugins/oauth/options')
   fastify
     .setErrorHandler(require('./errors/error-handler'))
-    .register(require('fastify-swagger'), require('./plugins/swagger-options'))
+    .register(require('fastify-swagger'), require('./plugins/swagger/swagger-options'))
     .register(require('fastify-cookie'))
-    .register(require('fastify-cors'), require('./plugins/http-proxy-options'))
+    .register(require('fastify-cors'), require('./plugins/cors/cors-options'))
     .register(require('fastify-jwt'), jwtOptions)
-    .register(require('./plugins/mongoose'), require('./plugins/mongoose-options'))
-  if (facebookOptions.credentials.client.id) {
-    fastify.register(require('fastify-oauth2'), facebookOptions)
+    .register(require('./plugins/mongoose/fastify-mongoose'), require('./plugins/mongoose/mongoose-options'))
+    .register(require('./plugins/ws/fastify-ws'), {
+      jwt: jwtOptions
+    })
+  if (oauthOptions.facebook) {
+    fastify.register(require('fastify-oauth2-multi'), oauthOptions.facebook)
   }
-  if (githubOptions.credentials.client.id) {
-    fastify.register(require('fastify-oauth2'), githubOptions)
+  if (oauthOptions.github) {
+    fastify.register(require('fastify-oauth2-multi'), oauthOptions.github)
   }
-  if (linkedinOptions.credentials.client.id) {
-    fastify.register(require('fastify-oauth2'), linkedinOptions)
+  if (oauthOptions.linkedin) {
+    fastify.register(require('fastify-oauth2-multi'), oauthOptions.linkedin)
   }
   fastify
     .decorate('authenticate', async (request, reply) => {
@@ -30,6 +31,7 @@ const buildApi = function () {
         const user = await fastify.jwt.verify(request.cookies.token, jwtOptions)
         request.user = user
       } else {
+        console.log(request.raw.url)
         await request.jwtVerify(jwtOptions)
       }
     })

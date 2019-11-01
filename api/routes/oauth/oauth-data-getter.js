@@ -76,7 +76,6 @@ class OAuthDataGetter {
       },
       json: true
     })
-    console.log(JSON.stringify(data))
 
     result.id = data.id
     result.name = `${data.firstName.localized.en_US} ${data.lastName.localized.en_US}`
@@ -95,7 +94,6 @@ class OAuthDataGetter {
       },
       json: true
     })
-    console.log(JSON.stringify(data2))
     result.email = data2.elements[0]['handle~'].emailAddress
 
     return result

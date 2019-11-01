@@ -10,21 +10,10 @@ import {
 export const state = () => ({
   user: null,
   token: null,
-  peron: null
+  oauth: null
 })
 
 export const mutations = {
-  storeInvite (state, inviteid) {
-    let invites = storage.get('invites')
-    if (!invites) {
-      invites = []
-    }
-    if (!invites.includes(inviteid)) {
-      invites.push(inviteid)
-      storage.set('invites', invites, true)
-    }
-  },
-
   storeUserInfo (state, result) {
     storage.set('token', result.token, true)
     state.user = result.user
@@ -128,10 +117,10 @@ export const actions = {
     commit
   }, payload) {
     try {
-      commit('clearUserInfo')
       commit('api/room/setRooms', [], {
         root: true
       })
+      commit('clearUserInfo')
     } catch (err) {
       handleError(err, commit)
     }
@@ -161,13 +150,7 @@ export const actions = {
   }, username) {
     const response = {}
     try {
-      const token = storage.get('token')
-      if (token) {
-        commit('storeUserInfo', {
-          token
-        })
-        response.result = await this.$axios.$get(`/api/auth/get/${username}`)
-      }
+      response.result = await this.$axios.$get(`/api/auth/get/${username}`)
     } catch (err) {
       handleError(err, commit)
     }
@@ -181,5 +164,8 @@ export const getters = {
   },
   isActivated: (state) => {
     return state.token && state.user && state.user.username && state.user.is_active
+  },
+  avatarUrl: (state) => {
+    return state.oauth ? state.oauth.avatar_url : (state.user ? state.user.avatar_url : null)
   }
 }

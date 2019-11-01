@@ -38,7 +38,7 @@ class RoomService {
   }
 
   async getAll (userid, page = 0, size = 10, filter = {}, sort = {
-    createdAt: 'desc'
+    path: 'asc'
   }) {
     const roomFilter = new RoomFilter({
       filter
@@ -62,6 +62,12 @@ class RoomService {
   async create (userid, data) {
     data.owner = userid
     data.path = slugify(data.name, slugOptions)
+    if (data.parent_path) {
+      data.path = `${data.parent_path}.${data.path}`
+    }
+    if (data.parent_name) {
+      data.name = `${data.parent_name}.${data.name}`
+    }
     let record = new Room(data)
     record = await record.save()
       .then(r =>

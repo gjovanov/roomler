@@ -108,7 +108,6 @@ module.exports = [{
   handler: authController.me
 },
 {
-  authenticate: true,
   method: 'GET',
   url: '/api/auth/get/:username',
   schema: {

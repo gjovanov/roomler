@@ -32,9 +32,9 @@
             size="36px"
           >
             <img
-              v-if="user && user.avatar_url"
+              v-if="avatarUrl"
               alt="Avatar"
-              :src="user.avatar_url"
+              :src="avatarUrl"
             >
             <v-icon
               v-else
@@ -78,8 +78,8 @@
 
     <v-divider vertical />
 
-    <v-btn v-if="user && isAuthenticated && !isActivated" text :to="`/auth/reset?user=${ user.username }`">
-      Reset
+    <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
+      Activate
     </v-btn>
   </v-toolbar-items>
 </template>
@@ -102,6 +102,9 @@ export default {
     isActivated () {
       return this.$store.getters['api/auth/isActivated']
     },
+    avatarUrl () {
+      return this.$store.getters['api/auth/avatarUrl']
+    },
     user () {
       return this.$store.state.api.auth.user
     }
@@ -113,16 +116,23 @@ export default {
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })
     },
+    async resetAccount () {
+      await this.$store.dispatch('api/auth/reset', {
+        email: this.$store.state.api.auth.user.email,
+        type: 'user_activation'
+      })
+      handleSuccess('Activation link was send. Please check your email for further instructions.', this.$store.commit)
+    },
     async resetUsername () {
       await this.$store.dispatch('api/auth/reset', {
-        username: this.$store.state.api.auth.user.username,
+        email: this.$store.state.api.auth.user.email,
         type: 'username_reset'
       })
       handleSuccess('Username was reset. Please check your email for further instructions.', this.$store.commit)
     },
     async resetPassword () {
       await this.$store.dispatch('api/auth/reset', {
-        username: this.$store.state.api.auth.user.username,
+        email: this.$store.state.api.auth.user.email,
         type: 'password_reset'
       })
       handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
@@ -130,6 +140,7 @@ export default {
     async logout () {
       await this.$router.push({ path: '/' })
       await this.$store.dispatch('api/auth/logout')
+      await this.$store.dispatch('connectWebSocket')
     }
   }
 }

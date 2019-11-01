@@ -1,24 +1,41 @@
+import Tree from '../../services/tree'
 import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
-  rooms: []
+  rooms: [],
+  tree: {
+    source: new Tree([]),
+    open: [],
+    model: []
+  }
 })
+
+export const getters = {
+  tree: (state) => {
+    return state.tree
+  }
+}
 
 export const mutations = {
   setRooms (state, rooms) {
     state.rooms = rooms
+    state.tree.source = new Tree(state.rooms)
   },
   push (state, room) {
+    room.children = []
     state.rooms.push(room)
+    state.tree.source = new Tree(state.rooms)
   },
-  pull (state, room) {
-    state.rooms = state.rooms.filter(r => r._id !== room._id)
+  pull (state, roomid) {
+    state.rooms = state.rooms.filter(r => r._id !== roomid)
+    state.tree.source = new Tree(state.rooms)
   },
   replace (state, roomid, updatedRoom) {
     state.rooms = state.rooms.map(r => r._id === roomid ? updatedRoom : r)
+    state.tree.source = new Tree(state.rooms)
   }
 }
 
@@ -74,6 +91,21 @@ export const actions = {
     try {
       response.result = await this.$axios.$put(`/api/room/update/${payload.id}`, payload.update)
       commit('replace', response.result)
+    } catch (err) {
+      handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
+  async delete ({
+    commit,
+    state
+  }, id) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$delete(`/api/room/delete/${id}`)
+      commit('pull', id)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

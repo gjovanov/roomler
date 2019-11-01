@@ -20,6 +20,27 @@ class InviteController {
     reply.send(result)
   }
 
+  async createWs (wss, socket, msg) {
+    console.log('Here')
+    if (socket.user) {
+      console.log('Here2')
+      const payload = msg
+      try {
+        const result = await messageService.create(socket.user._id, payload)
+        wss.clients.forEach((client) => {
+          if (client.readyState === 1) {
+            client.send(JSON.stringify({
+              type: 'message',
+              data: result
+            }))
+          }
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+
   async update (request, reply) {
     const payload = request.body
     const id = request.params.id

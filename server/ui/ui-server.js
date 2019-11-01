@@ -17,17 +17,6 @@ class UiServer {
   }
 
   async up (port = process.env.PORT || 3000, host = process.env.HOST || 'localhost') {
-    if (runBuilder) {
-      console.log('Bundling....')
-      config.rootDir = resolve(__dirname, '..', '..')
-      this.nuxt = new Nuxt(config)
-      const builder = new Builder(this.nuxt)
-      await builder.build()
-    } else {
-      this.nuxt = new Nuxt(config)
-      await this.nuxt.ready()
-    }
-
     this.fastify.use((req, res, next) => {
       // let fastify handle api requests
       if (req.url.startsWith('/api') ||
@@ -39,6 +28,16 @@ class UiServer {
         return this.nuxt.render(req, res)
       }
     })
+    if (runBuilder) {
+      console.log('Bundling....')
+      config.rootDir = resolve(__dirname, '..', '..')
+      this.nuxt = new Nuxt(config)
+      const builder = new Builder(this.nuxt)
+      await builder.build()
+    } else {
+      this.nuxt = new Nuxt(config)
+      await this.nuxt.ready()
+    }
 
     try {
       const address = await this.fastify.listen(port, host)

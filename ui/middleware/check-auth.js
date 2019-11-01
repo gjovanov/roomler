@@ -10,8 +10,11 @@ export default async function ({
   // If nuxt generate, pass this middleware
   if (isServer && !req) return
   if (req && req.headers && req.headers.cookie && !store.state.api.auth.user) {
+    console.log(`COOKIE: ${req.headers.cookie}`)
     storage.cookieStorage.cookie = req.headers.cookie
-    await store.dispatch('api/auth/me')
-    await store.dispatch('api/room/getAll')
+    if (storage.get('token')) {
+      await store.dispatch('api/auth/me')
+      await store.dispatch('api/room/getAll')
+    }
   }
 }
