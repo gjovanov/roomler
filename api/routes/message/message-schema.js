@@ -5,16 +5,18 @@ const types = config.dataSettings.message.types
 const getQueryString = S.object()
   .prop('id', S.string().required())
 
+const ids = S.array().items(S.string())
+
 const getAllQueryString = S.object()
   .prop('page', S.integer())
   .prop('size', S.integer())
   .prop('room', S.string())
 
 const user = S.object()
-  .prop('_id', S.string().required())
-  .prop('username', S.string().required())
-  .prop('email', S.string().required())
-  .prop('is_active', S.boolean().required())
+  .prop('_id', S.string())
+  .prop('username', S.string())
+  .prop('email', S.string())
+  .prop('is_active', S.boolean())
   .prop('avatar_url', S.string())
   .prop('role', S.string())
 
@@ -27,25 +29,37 @@ const room = S.object()
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
 
+const reactionObj = S.object()
+  .prop('name', S.string())
+  .prop('char', S.string())
+  .prop('keywords', S.array().items(S.string()))
+
 const reaction = S.object()
   .prop('user', user)
-  .prop('type', S.string().required())
-  .prop('reaction', S.object())
+  .prop('type', S.string())
+  .prop('reaction', reactionObj)
 
 const message = S.object()
   .prop('_id', S.string())
   .prop('author', user)
   .prop('room', room)
+  .prop('client_id', S.string())
   .prop('type', S.string())
   .prop('content', S.string())
   .prop('parent', S.string())
+  .prop('is_read', S.boolean())
+  .prop('has_mention', S.boolean())
   .prop('mentions', S.array().items(user))
-  .prop('readby', S.array().items(user))
+  // .prop('readby', S.array().items(user))
   .prop('reactions', S.array().items(reaction))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
 
 const messageList = S.array().items(message)
+
+const wsMessage = S.object()
+  .prop('type')
+  .prop('data', messageList)
 
 const messageItem = S.object()
   .prop('parent', S.string())
@@ -76,9 +90,10 @@ const delete200 = S.object()
 
 const reactionPush = S.object()
   .prop('type', S.string().required())
-  .prop('reaction', S.object())
+  .prop('reaction', reaction)
 
 module.exports = {
+  wsMessage,
   get: {
     querystring: getQueryString,
     response: {
@@ -115,6 +130,12 @@ module.exports = {
       params: idParam,
       response: {
         200: message
+      }
+    },
+    pushAll: {
+      body: ids,
+      response: {
+        200: messageList
       }
     },
     pull: {

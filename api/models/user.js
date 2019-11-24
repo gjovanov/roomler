@@ -94,5 +94,6 @@ schema.methods.comparePassword = function (password) {
     })
   })
 }
-
+schema.index({ createdAt: 1 })
+schema.index({ updatedAt: 1 })
 module.exports = mongoose.model('users', schema)

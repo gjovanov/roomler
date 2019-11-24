@@ -13,12 +13,6 @@ export const state = () => ({
   }
 })
 
-export const getters = {
-  tree: (state) => {
-    return state.tree
-  }
-}
-
 export const mutations = {
   setRooms (state, rooms) {
     state.rooms = rooms
@@ -48,6 +42,9 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/room/create', payload)
       commit('push', response.result)
+      commit('api/message/initMessages', response.result.path, {
+        root: true
+      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -76,6 +73,11 @@ export const actions = {
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
       commit('setRooms', response.result)
+      response.result.forEach((room) => {
+        commit('api/message/initMessages', room.path, {
+          root: true
+        })
+      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -111,5 +113,14 @@ export const actions = {
       response.hasError = true
     }
     return response
+  }
+}
+
+export const getters = {
+  tree: (state) => {
+    return state.tree
+  },
+  roomPaths: (state) => {
+    return state.rooms.map(r => r.path)
   }
 }

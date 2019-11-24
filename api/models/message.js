@@ -18,6 +18,10 @@ const schema = new Schema({
     required: 'RoomIsRequired',
     index: true
   },
+  client_id: {
+    type: String,
+    required: 'ClientIdIsRequired'
+  },
   type: {
     type: String,
     required: 'TypeIsRequired',
@@ -62,5 +66,6 @@ const schema = new Schema({
 }, {
   timestamps: true
 })
-
+schema.index({ createdAt: 1 })
+schema.index({ updatedAt: 1 })
 module.exports = mongoose.model('messages', schema)

@@ -13,6 +13,8 @@ export default {
     }
     const response = await this.$store.dispatch('api/oauth/getOrCreate', payload)
     if (!response.hasError && response.result) {
+      await this.$store.dispatch('connectWebSocket')
+      await this.$store.dispatch('api/invite/acceptPendingInvites')
       await this.$store.dispatch('api/room/getAll')
       this.$router.push({ path: `/@/${response.result.user.username}` })
     } else {

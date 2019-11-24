@@ -4,7 +4,6 @@ export const state = () => ({
 
 export const actions = {
   async nuxtServerInit ({ dispatch }, { req, store }) {
-    console.log('[INIT]')
     await dispatch('api/config/get')
   },
   connectWebSocket ({

@@ -104,6 +104,7 @@ const nuxtConfig = {
      ** You can extend webpack config here
      */
     extend (config, ctx) {
+      config.resolve.alias.vue = 'vue/dist/vue.common'
       config.devtool = '#source-map' // ctx.isClient ? '#source-map' : '#inline-source-map'
     }
   }

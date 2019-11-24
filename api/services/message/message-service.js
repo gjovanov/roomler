@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
 const Message = require('../../models/message')
 const MessageFilter = require('./message-filter')
+const extendRecord = (record, userid, convertToObject = true) => {
+  const recordObj = convertToObject ? record.toObject() : record
+  recordObj.is_read = !!record.readby.find(u => u._id.toString() === userid.toString())
+  recordObj.has_mention = !!record.mentions.find(u => u._id.toString() === userid.toString())
+  return recordObj
+}
 
 class MessageService {
   // base methods - START
@@ -19,9 +25,15 @@ class MessageService {
         if (!records.length) {
           throw new ReferenceError('Message was not found.')
         }
-        records[0].author = records[0].author[0]
-        records[0].room = records[0].room[0]
-        return records[0]
+        const record = extendRecord(records[0], userid, false)
+        record.author = record.author[0]
+        record.room = record.room[0]
+        if (record.reactions && record.reactions.length) {
+          record.reactions.forEach((reaction) => {
+            reaction.user = reaction.user[0]
+          })
+        }
+        return record
       })
     return record
   }
@@ -42,14 +54,26 @@ class MessageService {
       .addLimit(sizeInt)
       .getAggregate()
 
-    const records = await Message
+    let records = await Message
       .aggregate(aggregate)
       .exec()
-    records.forEach((record) => {
+    records = records.map((r) => {
+      const record = extendRecord(r, userid, false)
       record.author = record.author[0]
       record.room = record.room[0]
+      if (record.reactions && record.reactions.length &&
+          record.reactions_users && record.reactions_users.length) {
+        record.reactions.forEach((reaction) => {
+          const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
+          if (user) {
+            reaction.user = user
+          }
+        })
+      }
+      return record
     })
-    return records
+    console.log(records[0].reactions)
+    return records.reverse()
   }
 
   async create (userid, payload) {
@@ -57,8 +81,8 @@ class MessageService {
     messages.forEach((message) => {
       message.room = mongoose.Types.ObjectId(payload.room)
       message.author = mongoose.Types.ObjectId(userid)
+      message.readby = [mongoose.Types.ObjectId(userid)]
     })
-    console.log(messages)
     const records = await Message
       .insertMany(messages)
       .then((rows) => {
@@ -70,7 +94,7 @@ class MessageService {
             .populate('mentions')
             .populate('reactions.user')
             .execPopulate()
-          return record
+          return extendRecord(record, userid)
         }))
       })
 
@@ -103,7 +127,7 @@ class MessageService {
           .populate('reactions.user')
       })
 
-    return record
+    return extendRecord(record, userid)
   }
 
   async delete (userid, id) {
@@ -137,6 +161,16 @@ class MessageService {
     return result
   }
 
+  async pushAllReadby (userid, ids) {
+    const update = {
+      $addToSet: {
+        readby: userid
+      }
+    }
+    const result = await Promise.all(ids.map(id => this.update(userid, id, update)))
+    return result
+  }
+
   async pullReadby (userid, id) {
     const update = {
       $pull: {
@@ -166,7 +200,7 @@ class MessageService {
     const update = {
       $pull: {
         reactions: {
-          _id: userid
+          user: userid
         }
       }
     }

@@ -63,7 +63,7 @@ class InviteService {
         return Promise.all(rows.map(async (row) => {
           const record = await row.populate('room')
             .execPopulate()
-          const acceptUrl = `${config.appSettings.env.API_URL}${config.authSettings.inviteAcceptPage}?invite=${row._id}`
+          const acceptUrl = `${config.appSettings.env.URL}${config.authSettings.inviteAcceptPage}?invite=${row._id}`
           await emailService.send(user._id, {
             to: row.email,
             subject: 'You are invited to join this Room',

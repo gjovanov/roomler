@@ -89,7 +89,22 @@ module.exports = [{
     }
   },
   handler: messageReadbyController.push
-}, {
+},
+{
+  authenticate: true,
+  method: 'PUT',
+  url: '/api/message/readby/pushAll',
+  schema: {
+    body: messageSchema.readby.pushAll.body,
+    response: {
+      200: messageSchema.readby.pushAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: messageReadbyController.pushAll
+},
+{
   authenticate: true,
   method: 'PUT',
   url: '/api/message/readby/pull/:id',

@@ -1,3 +1,4 @@
+const uuid = require('uuid/v4')
 class MessageOps {
   create(fastify, test, testname, messageContext) {
     test.serial(`API "/api/message/create" ${testname}`, async(t) => {
@@ -8,9 +9,11 @@ class MessageOps {
       if (payload.message) {
         if (Array.isArray(payload.message)) {
           payload.message.forEach(message => {
+            message.client_id = uuid()
             message.mentions = messageContext.getMentionIds(message)
           })
         } else {
+          payload.message.client_id = uuid()
           payload.message.mentions = messageContext.getMentionIds(payload.message)
         }
       }
@@ -381,11 +384,7 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
-          const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
-          t.true(!!found._id)
-          t.true(found.username === userContext.record.username)
-          t.true(found.email === userContext.record.email)
-          t.true(!found.password)
+          t.true(result.is_read)
           t.pass()
         })
         .catch((e) => {
@@ -414,8 +413,7 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
-          const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
-          t.true(!found)
+          t.false(result.is_read)
           t.pass()
         })
         .catch((e) => {
@@ -478,7 +476,7 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
-          const found = result.readby.find(readby => readby._id.toString() === userContext.record._id.toString())
+          const found = result.reactions.find(reaction => reaction.user._id.toString() === userContext.record._id.toString())
           t.true(!found)
           t.pass()
         })

@@ -92,7 +92,6 @@ const schema = new Schema({
 }, {
   timestamps: true
 })
-schema.index({
-  createdAt: 1
-})
+schema.index({ createdAt: 1 })
+schema.index({ updatedAt: 1 })
 module.exports = mongoose.model('rooms', schema)

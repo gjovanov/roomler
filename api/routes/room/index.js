@@ -1,8 +1,34 @@
+const {
+  join
+} = require('path')
+const {
+  renameSync,
+  existsSync,
+  mkdirSync
+} = require('fs')
+const multer = require('fastify-multer')
 const errorSchema = require('../.common/error-schema')
 const roomController = require('./room-controller')
 const roomMembersController = require('./room-members-controller')
 const roomModeratorsController = require('./room-moderators-controller')
 const roomSchema = require('./room-schema')
+
+// folders
+const staticFolder = join(__dirname, '../../../ui/static')
+const uploadsFolder = join(staticFolder, 'uploads')
+
+const storage = multer.diskStorage({
+  destination (req, file, callback) {
+    callback(null, uploadsFolder)
+  },
+  filename (req, file, callback) {
+    const fileComponents = file.originalname.split('.')
+    const fileExtension = fileComponents[fileComponents.length - 1]
+    const filename = `${file.originalname}_${Date.now()}.${fileExtension}`
+    callback(null, filename)
+  }
+})
+const upload = multer({ storage })
 
 module.exports = [{
   authenticate: true,
@@ -74,6 +100,22 @@ module.exports = [{
     }
   },
   handler: roomController.delete
+},
+{
+  authenticate: true,
+  method: 'POST',
+  url: '/api/room/upload',
+  preHandler: upload.single('file'),
+  handler (request, reply) {
+    const roomFolder = join(uploadsFolder, request.body.room)
+    if (!existsSync(roomFolder)) {
+      mkdirSync(roomFolder)
+    }
+    const oldPath = join(uploadsFolder, request.file.filename)
+    const newPath = join(roomFolder, request.file.filename)
+    renameSync(oldPath, newPath)
+    reply.code(200).send({ src: `/uploads/${request.body.room}/${request.file.filename}` })
+  }
 },
 {
   authenticate: true,

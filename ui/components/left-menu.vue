@@ -18,18 +18,31 @@
       dense
       item-key="name"
       item-text="short_name"
-      open-on-click
     >
       <template v-slot:prepend="{ item, open }">
-        <v-icon>
-          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-        </v-icon>
+        <v-badge
+          left
+          bottom
+          overlap
+          :color="mentions(item) ? 'red' : 'orange'"
+          class="align-self-center"
+        >
+          <template v-slot:badge>
+            <span v-if="unreads(item)">{{ unreads(item) }}</span>
+          </template>
+          <v-icon>
+            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+          </v-icon>
+        </v-badge>
       </template>
       <template slot="label" slot-scope="{ item }">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn :to="{ path: `/${item.path}` }" block outlined class="justify-start" v-on="on">
-              {{ '#' + item.short_name }}
+            <v-btn :to="{ path: `/${item.path}` }" block outlined class="justify-space-between pr-0" v-on="on">
+              <span>{{ item.short_name }}</span>
+              <v-icon v-if="mentions(item)" small color="red">
+                fa-at
+              </v-icon>
             </v-btn>
           </template>
           <span>{{ item.name }}</span>
@@ -89,6 +102,13 @@ export default {
     }
   },
   methods: {
+    unreads (room) {
+      return this.$store.getters['api/message/unreads'](room.path).length
+    },
+    mentions (room) {
+      const userid = this.$store.state.api.auth.user._id
+      return this.$store.getters['api/message/mentions'](room.path, userid).length
+    },
     add (item) {
       this.$router.push({ path: `/@/room/create?parent=${item.path}` })
     },

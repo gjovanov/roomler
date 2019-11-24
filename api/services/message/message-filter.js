@@ -50,14 +50,16 @@ class MessageFilter {
         from: 'users',
         localField: 'reactions.user',
         foreignField: '_id',
-        as: 'reactions.user'
+        as: 'reactions_users'
       }
     })
     return this
   }
 
   addMatch (userid) {
-    this.aggregate.push({
+    const before = this.filter.before
+    delete this.filter.before
+    const match = {
       $match: {
         $and: [{
           $or: [{
@@ -74,7 +76,11 @@ class MessageFilter {
         this.filter
         ]
       }
-    })
+    }
+    if (before) {
+      match.$match.$and.push({ createdAt: { $lt: new Date(before) } })
+    }
+    this.aggregate.push(match)
     return this
   }
 

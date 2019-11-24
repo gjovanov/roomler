@@ -1,5 +1,5 @@
 const defaultState = require('crypto').randomBytes(10).toString('hex')
-const oauthPlugin = require('fastify-oauth2-multi')
+const oauthPlugin = require('fastify-oauth2')
 const config = require('../../../config')
 module.exports = {
   name: 'facebook',

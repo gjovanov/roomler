@@ -58,9 +58,8 @@ class WsService {
     }
 
     this.ws.onmessage = (msg) => {
-      console.log(msg.data)
       self.subscriptions.onmessage.forEach((handler) => {
-        handler(event)
+        handler(msg)
       })
     }
   }

@@ -1,4 +1,15 @@
+const { performance, PerformanceObserver } = require('perf_hooks')
+const fastJson = require('fast-json-stringify')
 const messageService = require('../../services/message/message-service')
+const schema = require('./message-schema')
+const stringify = fastJson(schema.wsMessage.valueOf())
+
+const obs = new PerformanceObserver((items) => {
+  items.getEntries().forEach((item) => {
+    console.log(`${item.name} ${item.duration}`)
+  })
+})
+obs.observe({ entryTypes: ['measure'] })
 
 class InviteController {
   async get (request, reply) {
@@ -8,7 +19,8 @@ class InviteController {
 
   async getAll (request, reply) {
     const filter = {
-      room: request.query.room
+      room: request.query.room,
+      before: request.query.before && request.query.before !== 'undefined' ? request.query.before : undefined
     }
     const result = await messageService.getAll(request.user.user._id, request.query.page, request.query.size, filter)
     reply.send(result)
@@ -21,18 +33,31 @@ class InviteController {
   }
 
   async createWs (wss, socket, msg) {
-    console.log('Here')
     if (socket.user) {
-      console.log('Here2')
       const payload = msg
       try {
-        const result = await messageService.create(socket.user._id, payload)
+        performance.mark('Create start')
+        const messages = await messageService.create(socket.user._id, payload)
+        performance.mark('Create end')
+        performance.measure('Create', 'Create start', 'Create end')
         wss.clients.forEach((client) => {
           if (client.readyState === 1) {
-            client.send(JSON.stringify({
-              type: 'message',
-              data: result
-            }))
+            const clientMessages = []
+            messages.forEach((message) => {
+              message.is_read = message.readby.map(r => r._id.toString()).includes(client.user._id.toString())
+              message.has_mention = message.mentions.map(r => r._id.toString()).includes(client.user._id.toString())
+              if (message.room.owner._id.toString() === client.user._id.toString() ||
+                  message.room.moderators.map(u => u._id.toString()).includes(client.user._id.toString()) ||
+                  message.room.members.map(u => u._id.toString()).includes(client.user._id.toString())) {
+                clientMessages.push(message)
+              }
+            })
+            if (clientMessages.length) {
+              client.send(stringify({
+                type: 'message',
+                data: clientMessages
+              }))
+            }
           }
         })
       } catch (err) {

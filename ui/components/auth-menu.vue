@@ -13,6 +13,71 @@
     <v-divider vertical />
 
     <v-menu
+      v-if="totalUnreads"
+      v-model="notificationsMenu"
+      open-on-hover
+      bottom
+      offset-y
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          outlined
+          small
+          style="background-color: #303030"
+          v-on="on"
+        >
+          <v-badge
+            left
+            bottom
+            overlap
+            :color="totalMentions ? 'red' : 'orange'"
+          >
+            <template v-slot:badge>
+              {{ totalUnreads }}
+            </template>
+            <v-icon>mdi-email</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <v-list>
+        <template v-for="(item, index) in messageNotifications">
+          <v-list-item
+            :key="item.room.path"
+            @click="goToRoom(item.room.path)"
+          >
+            <v-list-item-avatar>
+              <v-badge
+                left
+                bottom
+                overlap
+                :color="item.mentions ? 'red' : 'orange'"
+              >
+                <template v-slot:badge>
+                  {{ item.unreads }}
+                </template>
+                <v-icon>mdi-email</v-icon>
+              </v-badge>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>
+                <span>{{ item.room.short_name }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action v-if="item.mentions">
+              <v-list-item-action-text>
+                <v-icon small color="red">
+                  fa-at
+                </v-icon>
+              </v-list-item-action-text>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider :key="`menu_divider_${index}`" />
+        </template>
+      </v-list>
+    </v-menu>
+
+    <v-divider vertical />
+    <v-menu
       v-if="isAuthenticated"
       v-model="profileMenu"
       open-on-hover
@@ -92,7 +157,8 @@ import {
 export default {
   data () {
     return {
-      profileMenu: false
+      profileMenu: false,
+      notificationsMenu: false
     }
   },
   computed: {
@@ -107,11 +173,40 @@ export default {
     },
     user () {
       return this.$store.state.api.auth.user
+    },
+    rooms () {
+      return this.$store.state.api.room.rooms
+    },
+    messageNotifications () {
+      const self = this
+      let result = []
+      if (this.user) {
+        result = this.rooms
+          .map((room) => {
+            return {
+              room,
+              unreads: self.$store.getters['api/message/unreads'](room.path).length,
+              mentions: self.$store.getters['api/message/mentions'](room.path, self.user._id).length
+            }
+          })
+          .filter(r => r.unreads > 0)
+      }
+      return result
+    },
+    totalUnreads () {
+      const result = this.messageNotifications.reduce((a, b) => a + b.unreads, 0)
+      return result
+    },
+    totalMentions () {
+      return this.messageNotifications.reduce((a, b) => a + b.mentions, 0)
     }
   },
   methods: {
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
+    },
+    goToRoom (room) {
+      this.$router.push({ path: `/${room}` })
     },
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })
