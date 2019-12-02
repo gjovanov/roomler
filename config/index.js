@@ -100,6 +100,16 @@ const config = {
     }
   },
 
+  wsSettings: {
+    opTypes: {
+      messageCreate: 'MESSAGE_CREATE',
+      messageReactionPush: 'MESSAGE_REACTION_PUSH',
+      messageReactionPull: 'MESSAGE_REACTION_PULL',
+
+      roomJoin: 'ROOM_JOIN'
+    }
+  },
+
   // use either SENDGRID or SMTP server
   emailSettings: {
     fromEmail: 'support@roomler.live',

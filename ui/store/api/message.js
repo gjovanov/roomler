@@ -4,11 +4,6 @@ import {
   // handleSuccess
 } from '@/services/ajax-handlers'
 
-// const extendMessage = (rootState, message) => {
-//   message.author = rootState.api.auth.user
-//   message.createdAt = moment().format()
-// }
-
 export const state = () => ({
   messages: {}
 })
@@ -56,11 +51,14 @@ export const mutations = {
 export const actions = {
   subscribe ({
     commit,
-    state
+    state,
+    rootState
   }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.type === 'message') {
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.messageCreate ||
+          data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPush ||
+          data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPull) {
         if (Array.isArray(data.data) && data.data.length) {
           commit('pushAll', { room: data.data[0].room.path, messages: data.data })
         } else {
@@ -79,7 +77,11 @@ export const actions = {
       const room = payload.room
       payload.room = room._id
       if (this.$wss.ws.readyState) {
-        this.$wss.send(JSON.stringify(payload))
+        const message = {
+          op: rootState.api.config.config.wsSettings.opTypes.messageCreate,
+          payload
+        }
+        this.$wss.send(JSON.stringify(message))
       } else {
         response.result = await this.$axios.$post('/api/message/create', payload)
         commit('pushAll', { room: response.result.room.path, message: response.result })
@@ -171,6 +173,24 @@ export const getters = {
         }
       })
     }
+    return result
+  },
+
+  reactions: state => (message) => {
+    const result = { }
+    const reactions = message.reactions || []
+
+    reactions.forEach((reaction) => {
+      const grouping = result[reaction.name]
+      if (!grouping) {
+        result[reaction.name] = {
+          symbol: reaction.symbol,
+          list: [reaction]
+        }
+      } else {
+        grouping.list.push(reaction)
+      }
+    })
     return result
   }
 }

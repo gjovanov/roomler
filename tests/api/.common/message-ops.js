@@ -444,6 +444,8 @@ class MessageOps {
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
           const found = result.reactions.find(reaction => reaction.user._id.toString() === userContext.record._id.toString())
+          t.true(found.type === reaction.type)
+          t.true(found.symbol === reaction.symbol)
           t.true(!!found.user._id)
           t.true(found.user.username === userContext.record.username)
           t.true(found.user.email === userContext.record.email)

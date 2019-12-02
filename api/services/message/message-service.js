@@ -5,10 +5,23 @@ const extendRecord = (record, userid, convertToObject = true) => {
   const recordObj = convertToObject ? record.toObject() : record
   recordObj.is_read = !!record.readby.find(u => u._id.toString() === userid.toString())
   recordObj.has_mention = !!record.mentions.find(u => u._id.toString() === userid.toString())
+  recordObj.has_reaction = !!record.reactions.find(u => u.user._id.toString() === userid.toString())
   return recordObj
 }
 
 class MessageService {
+  route (messages, userid) {
+    return messages
+      .filter((message) => {
+        return message.room.owner._id.toString() === userid.toString() ||
+          message.room.moderators.map(u => u._id.toString()).includes(userid.toString()) ||
+          message.room.members.map(u => u._id.toString()).includes(userid.toString())
+      })
+      .map((message) => {
+        return extendRecord(message, userid, false)
+      })
+  }
+
   // base methods - START
   async get (userid, id) {
     const messageFilter = new MessageFilter({
@@ -28,11 +41,10 @@ class MessageService {
         const record = extendRecord(records[0], userid, false)
         record.author = record.author[0]
         record.room = record.room[0]
-        if (record.reactions && record.reactions.length) {
-          record.reactions.forEach((reaction) => {
-            reaction.user = reaction.user[0]
-          })
-        }
+        record.reactions.forEach((reaction) => {
+          const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
+          reaction.user = user
+        })
         return record
       })
     return record
@@ -61,18 +73,12 @@ class MessageService {
       const record = extendRecord(r, userid, false)
       record.author = record.author[0]
       record.room = record.room[0]
-      if (record.reactions && record.reactions.length &&
-          record.reactions_users && record.reactions_users.length) {
-        record.reactions.forEach((reaction) => {
-          const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
-          if (user) {
-            reaction.user = user
-          }
-        })
-      }
+      record.reactions.forEach((reaction) => {
+        const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
+        reaction.user = user
+      })
       return record
     })
-    console.log(records[0].reactions)
     return records.reverse()
   }
 
@@ -101,31 +107,34 @@ class MessageService {
     return records
   }
 
-  async update (userid, id, update) {
+  async update (userid, id, update, validate = true) {
     const options = {
       new: true
     }
     const messageFilter = new MessageFilter({
       id
     })
-    const aggregate = messageFilter
-      .addLookup()
-      .addMatch(userid)
-      .getAggregate()
-    const record = await Message
-      .aggregate(aggregate)
-      .exec()
-      .then((records) => {
-        if (!records.length) {
-          throw new ReferenceError('Message was not found.')
-        }
-        return Message.findOneAndUpdate(messageFilter.getFilter(), update, options)
-          .populate('author')
-          .populate('room')
-          .populate('readby')
-          .populate('mentions')
-          .populate('reactions.user')
-      })
+    let records = []
+    if (validate) {
+      const aggregate = messageFilter
+        .addLookup()
+        .addMatch(userid)
+        .getAggregate()
+      records = await Message
+        .aggregate(aggregate)
+        .exec()
+    }
+    if (validate) {
+      if (!records.length) {
+        throw new ReferenceError('Message was not found.')
+      }
+    }
+    const record = await Message.findOneAndUpdate(messageFilter.getFilter(), update, options)
+      .populate('author')
+      .populate('room')
+      .populate('readby')
+      .populate('mentions')
+      .populate('reactions.user')
 
     return extendRecord(record, userid)
   }
@@ -184,15 +193,23 @@ class MessageService {
   async pushReaction (userid, id, payload) {
     const reaction = {
       user: userid,
-      type: payload.type,
-      reaction: payload.reaction
+      name: payload.name,
+      symbol: payload.symbol
     }
-    const update = {
+    const updatePull = {
+      $pull: {
+        reactions: {
+          user: userid
+        }
+      }
+    }
+    await this.update(userid, id, updatePull, false)
+    const updatePush = {
       $addToSet: {
         reactions: reaction
       }
     }
-    const result = await this.update(userid, id, update)
+    const result = await this.update(userid, id, updatePush)
     return result
   }
 

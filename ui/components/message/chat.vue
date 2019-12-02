@@ -5,33 +5,21 @@
     v-scroll:#messages-list="onMessagesScroll"
     style="height: calc(100vh - 330px); overflow-y: auto; overflow-x: hidden"
   >
-    <v-menu
-      v-model="menu"
-      :position-x="x"
-      :position-y="y"
-      absolute
-      offset-y
-    >
-      <div
-        style="width: 320px"
-      >
-        <template v-for="(emoji) in filterEmoji()">
-          <v-btn
-            :key="emoji.id"
-            @click="addEmoji(emoji)"
-          >
-            {{ emoji.char }}
-          </v-btn>
-        </template>
-      </div>
-    </v-menu>
+    <add-reaction-menu
+      :open="menu.addReaction.open"
+      :emojis="emojis"
+      :x="menu.addReaction.x"
+      :y="menu.addReaction.y"
+      :message="menu.addReaction.message"
+      @pushReaction="pushReaction"
+      @hideMenu="menu.addReaction.open = false"
+    />
     <template v-for="(value, propertyName) in messages">
       <v-subheader :key="`subheader_${propertyName}`">
         {{ propertyName }}
       </v-subheader>
       <v-timeline
         :key="propertyName"
-        :reverse="reverse"
         dense
       >
         <v-scroll-y-reverse-transition
@@ -66,12 +54,13 @@
                   </v-tooltip>
                   <v-btn
                     outlined
+                    rounded
                     right
                     absolute
-                    icon
                     @mouseover="showMenu($event, message)"
                   >
-                    😄+
+                    😄
+                    +
                   </v-btn>
                 </v-card-title>
                 <v-card-text>
@@ -80,22 +69,24 @@
               </v-card>
             </v-hover>
             <v-spacer />
-            <template v-for="(reaction, index) in message.reactions">
-              <v-badge
-                :key="index"
-                right
-                top
-                overlap
-                class="align-self-center"
-                color="black"
+            <template v-for="(reactionGroup, name, index) in getReactions(message)">
+              <v-chip
+                :key="name"
+                class="mt-2"
+                tile
+                outlined
+                :class="index !== 0 ? 'ml-3' : ''"
+                color="primary"
+                @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
               >
-                <template v-slot:badge>
-                  <span>3</span>
-                </template>
-                <v-btn tile outlined x-small :class="index !== 0 ? 'ml-3' : ''" color="primary">
-                  {{ reaction.reaction.char }}
-                </v-btn>
-              </v-badge>
+                {{ reactionGroup.symbol }}
+                <v-avatar
+                  right
+                  class="green darken-4"
+                >
+                  {{ reactionGroup.list.length }}
+                </v-avatar>
+              </v-chip>
             </template>
           </v-timeline-item>
         </v-scroll-y-reverse-transition>
@@ -108,9 +99,9 @@
 import * as uuid from 'uuid/v4'
 import * as cheerio from 'cheerio'
 import * as EmojiMap from 'emojilib'
-import Fuse from 'fuse.js'
 import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
+import AddReactionMenu from '@/components/message/add-reaction-menu'
 
 const scrollDirection = {
   noScroll: 'no_scroll',
@@ -118,6 +109,9 @@ const scrollDirection = {
   top: 'top'
 }
 export default {
+  components: {
+    AddReactionMenu
+  },
   props: {
     room: {
       type: Object,
@@ -147,12 +141,20 @@ export default {
       autoScrollTimeout: null,
       manualScrollTimeout: null,
       mouseoverTimeout: null,
-      reverse: false,
       selectedMessage: null,
-      menu: false,
-      filter: '',
-      x: 0,
-      y: 0,
+      menu: {
+        addReaction: {
+          x: 0,
+          y: 0,
+          open: false,
+          message: null
+        },
+        reactionMembers: {
+          x: 0,
+          y: 0,
+          open: false
+        }
+      },
       scroll: scrollDirection.bottom
     }
   },
@@ -160,15 +162,17 @@ export default {
   watch: {
     messages (newVal, oldVal) {
       const self = this
-      if (this.scroll === scrollDirection.bottom || this.scroll === scrollDirection.top) {
-        if (this.autoScrollTimeout) {
-          clearTimeout(this.autoScrollTimeout)
+      this.$nextTick(() => {
+        if (self.autoScrollTimeout) {
+          clearTimeout(self.autoScrollTimeout)
         }
-        this.autoScrollTimeout = setTimeout(() => {
-          self.scrollMessages(this.scroll === scrollDirection.bottom)
+        self.autoScrollTimeout = setTimeout(() => {
+          if (self.scroll === scrollDirection.bottom || self.scroll === scrollDirection.top) {
+            self.scrollMessages(self.scroll === scrollDirection.bottom)
+          }
           self.scroll = scrollDirection.bottom
-        }, 200)
-      }
+        }, 300)
+      })
     }
   },
 
@@ -185,33 +189,26 @@ export default {
   },
 
   methods: {
-    filterEmoji () {
-      if (!this.filter) {
-        return this.emojis.slice(0, 30)
-      }
-      const fuse = new Fuse(this.emojis, {
-        threshold: 0.2,
-        keys: ['name', 'keywords']
-      })
-      const result = fuse.search(this.filter).slice(0, 30)
-      console.log(result)
+    getReactions (message) {
+      const result = this.$store.getters['api/message/reactions'](message)
       return result
     },
+
     showMenu (e, message) {
-      const self = this
-      console.log(e.clientX)
-      self.x = e.clientX
-      self.y = e.clientY - 100
-      self.selectedMessage = message
-      self.menu = true
+      this.menu.addReaction.x = e.clientX
+      this.menu.addReaction.y = e.clientY - 100
+      this.menu.addReaction.message = message
+      this.menu.addReaction.open = true
     },
+
     getMessageId (message) {
       return message._id || message.client_id
     },
     scrollMessages (bottom = true) {
       const messagesList = this.$refs['messages-list']
       if (messagesList) {
-        messagesList.scrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
+        const newScrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
+        messagesList.scrollTop = newScrollTop
         this.$vuetify.goTo('#new-message-txt')
       }
     },
@@ -254,18 +251,34 @@ export default {
       }
     },
 
-    async addEmoji (emoji) {
+    async toggleReaction (message, emoji) {
+      const myReaction = message.reactions.find(r => r.user._id === this.$store.state.api.auth.user._id)
+      this.scroll = scrollDirection.noScroll
+      if (message.has_reaction && myReaction && myReaction.name === emoji.name) {
+        await this.pullReaction(message)
+      } else {
+        await this.pushReaction(message, emoji)
+      }
+    },
+
+    async pushReaction (message, emoji) {
+      this.scroll = scrollDirection.noScroll
       await this.$store
         .dispatch('api/message/reaction/push', {
-          message: this.selectedMessage._id,
+          id: message._id,
           data: {
-            type: 'emoji',
-            reaction: {
-              name: emoji.name,
-              char: emoji.char,
-              keywords: emoji.keywords
-            }
+            name: emoji.name,
+            symbol: emoji.char
           }
+        })
+    },
+
+    async pullReaction (message) {
+      this.scroll = scrollDirection.noScroll
+      await this.$store
+        .dispatch('api/message/reaction/pull', {
+          id: message._id,
+          data: { }
         })
     },
 

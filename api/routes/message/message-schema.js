@@ -29,15 +29,14 @@ const room = S.object()
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
 
-const reactionObj = S.object()
-  .prop('name', S.string())
-  .prop('char', S.string())
-  .prop('keywords', S.array().items(S.string()))
-
 const reaction = S.object()
   .prop('user', user)
-  .prop('type', S.string())
-  .prop('reaction', reactionObj)
+  .prop('name', S.string())
+  .prop('symbol', S.string())
+
+const reactionPush = S.object()
+  .prop('name', S.string().required())
+  .prop('symbol', S.string().required())
 
 const message = S.object()
   .prop('_id', S.string())
@@ -50,15 +49,15 @@ const message = S.object()
   .prop('is_read', S.boolean())
   .prop('has_mention', S.boolean())
   .prop('mentions', S.array().items(user))
-  // .prop('readby', S.array().items(user))
   .prop('reactions', S.array().items(reaction))
+  .prop('has_reaction', S.boolean())
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
 
 const messageList = S.array().items(message)
 
 const wsMessage = S.object()
-  .prop('type')
+  .prop('op')
   .prop('data', messageList)
 
 const messageItem = S.object()
@@ -87,10 +86,6 @@ const delete200 = S.object()
   .prop('n', S.number().required())
   .prop('ok', S.number().required())
   .prop('deletedCount', S.number().required())
-
-const reactionPush = S.object()
-  .prop('type', S.string().required())
-  .prop('reaction', reaction)
 
 module.exports = {
   wsMessage,

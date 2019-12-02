@@ -14,8 +14,8 @@
             @click="extension.selectItem(user)"
           >
             <v-list-item-avatar>
-              <v-img v-if="user.avatar_url" :src="user.avatar_url" />
-              <v-icon v-if="!user.avatar_url">
+              <v-img v-if="user.avatarUrl" :src="user.avatarUrl" />
+              <v-icon v-if="!user.avatarUrl">
                 fa-user
               </v-icon>
             </v-list-item-avatar>

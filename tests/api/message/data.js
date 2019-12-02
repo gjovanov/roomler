@@ -2,16 +2,12 @@ module.exports = {
   invalidMessageId: 'lakjsdj',
   reaction: {
     like: {
-      type: 'like',
-      reaction: {
-        icon: 'http://google.com?search=like'
-      }
+      name: 'like',
+      symbol: '👍'
     },
     lol: {
-      type: 'LOL',
-      reaction: {
-        icon: 'http://google.com?search=LOL'
-      }
+      name: 'lol',
+      symbol: '😂'
     }
   },
   user: {

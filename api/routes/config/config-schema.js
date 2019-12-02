@@ -83,6 +83,14 @@ const dataSettings = S.object()
     )
   )
 
+const wsSettings = S.object()
+  .prop('opTypes', S.object()
+    .prop('messageCreate', S.string())
+    .prop('messageReactionPush', S.string())
+    .prop('messageReactionPull', S.string())
+    .prop('roomJoin', S.string())
+  )
+
 const emailSettings = S.object()
   .prop('fromEmail', S.string())
   .prop('supportEmail', S.string())
@@ -113,6 +121,7 @@ const response = S.object()
   .prop('oauthSettings', oauthSettings)
   .prop('dbSettings', dbSettings)
   .prop('dataSettings', dataSettings)
+  .prop('wsSettings', wsSettings)
   .prop('emailSettings', emailSettings)
 
 module.exports = {

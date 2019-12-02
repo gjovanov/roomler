@@ -54,13 +54,15 @@ const schema = new Schema({
       ref: 'users',
       index: true
     },
-    type: {
+    name: {
       type: String,
-      required: 'ReactionTypeIsRequired'
+      required: 'ReactionTypeIsRequired',
+      maxlength: 20
     },
-    reaction: {
-      type: Object,
-      required: 'ReactionIsRequired'
+    symbol: {
+      type: String,
+      required: 'SymbolIsRequired',
+      maxlength: 2
     }
   }]
 }, {

@@ -1,15 +1,9 @@
-const { performance, PerformanceObserver } = require('perf_hooks')
 const fastJson = require('fast-json-stringify')
+const performanceService = require('../../services/performance/performance-service')
 const messageService = require('../../services/message/message-service')
+const config = require('../../../config')
 const schema = require('./message-schema')
 const stringify = fastJson(schema.wsMessage.valueOf())
-
-const obs = new PerformanceObserver((items) => {
-  items.getEntries().forEach((item) => {
-    console.log(`${item.name} ${item.duration}`)
-  })
-})
-obs.observe({ entryTypes: ['measure'] })
 
 class InviteController {
   async get (request, reply) {
@@ -32,29 +26,20 @@ class InviteController {
     reply.send(result)
   }
 
-  async createWs (wss, socket, msg) {
-    if (socket.user) {
+  async createWs (wss, conn, msg) {
+    if (conn.user) {
       const payload = msg
       try {
-        performance.mark('Create start')
-        const messages = await messageService.create(socket.user._id, payload)
-        performance.mark('Create end')
-        performance.measure('Create', 'Create start', 'Create end')
+        performanceService.performance.mark('MessageCreate start')
+        const messages = await messageService.create(conn.user._id, payload)
+        performanceService.performance.mark('MessageCreate end')
+        performanceService.performance.measure('MessageCreate', 'MessageCreate start', 'MessageCreate end')
         wss.clients.forEach((client) => {
           if (client.readyState === 1) {
-            const clientMessages = []
-            messages.forEach((message) => {
-              message.is_read = message.readby.map(r => r._id.toString()).includes(client.user._id.toString())
-              message.has_mention = message.mentions.map(r => r._id.toString()).includes(client.user._id.toString())
-              if (message.room.owner._id.toString() === client.user._id.toString() ||
-                  message.room.moderators.map(u => u._id.toString()).includes(client.user._id.toString()) ||
-                  message.room.members.map(u => u._id.toString()).includes(client.user._id.toString())) {
-                clientMessages.push(message)
-              }
-            })
+            const clientMessages = messageService.route(messages, client.user._id)
             if (clientMessages.length) {
               client.send(stringify({
-                type: 'message',
+                op: config.wsSettings.opTypes.messageCreate,
                 data: clientMessages
               }))
             }

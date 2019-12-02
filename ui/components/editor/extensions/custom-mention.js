@@ -66,24 +66,44 @@ export default class CustomMention extends Mention {
 
   get schema () {
     const customSchema = {
-      toDOM: node => [
-        'a',
-        {
-          class: this.options.mentionClass,
-          userkey: node.attrs.id,
-          'data-username': node.attrs.label,
-          'data-linked-resource-type': 'userinfo',
-          href: `/@/${node.attrs.label}`
-        },
-        node.attrs.label
-      ],
+      attrs: {
+        id: {},
+        label: {},
+        avatarUrl: {}
+      },
+      // group: 'block',
+      // inline: false,
+      // atom: false,
+      toDOM: (node) => {
+        return [
+          'a',
+          {
+            class: this.options.mentionClass,
+            userkey: node.attrs.id,
+            'data-username': node.attrs.label,
+            'data-linked-resource-type': 'userinfo',
+            'data-avatar-url': node.attrs.avatarUrl || '/user.png',
+            href: `/@/${node.attrs.label}`
+          },
+          [
+            'img',
+            {
+              src: node.attrs.avatarUrl || '/user.png',
+              class: 'v-avatar',
+              style: 'height: 24px; min-width: 24px; width: 24px; border-radius: 50%; margin-right: 5px'
+            }
+          ],
+          node.attrs.label
+        ]
+      },
       parseDOM: [
         {
           tag: 'a[userkey]',
           getAttrs: (dom) => {
             const id = dom.getAttribute('userkey')
+            const avatarUrl = dom.getAttribute('data-avatar-url').replace('/user.png', '')
             const label = dom.textContent.split(this.options.matcher.char).join('')
-            return { id, label }
+            return { id, label, avatarUrl }
           }
         }
       ]

@@ -16,7 +16,8 @@ const buildApi = function () {
     .register(multer.contentParser)
     .register(require('./plugins/mongoose/fastify-mongoose'), require('./plugins/mongoose/mongoose-options'))
     .register(require('./plugins/ws/fastify-ws'), {
-      jwt: jwtOptions
+      jwt: jwtOptions,
+      handlers: require('./routes/ws/ws-handlers')
     })
   if (oauthOptions.facebook) {
     fastify.register(require('fastify-oauth2'), oauthOptions.facebook)

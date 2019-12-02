@@ -120,14 +120,15 @@ export default {
       $refs: this.$refs,
       mentionClass: 'v-btn v-btn--outlined v-size--small',
       items: () => this.users.map((u) => {
-        return { id: u._id, name: u.username, email: u.email, avatar_url: u.avatar_url }
+        return { id: u._id, name: u.username, email: u.email, avatarUrl: u.avatar_url }
       }),
       templateId: 'suggestions',
       filterKeys: ['name'],
       attrMapper: (item) => {
         return {
           id: item.id,
-          label: item.name
+          label: item.name,
+          avatarUrl: item.avatarUrl || ''
         }
       }
     })
