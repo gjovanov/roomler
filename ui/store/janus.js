@@ -1,59 +1,55 @@
-import Session from '@/services/janus/session'
-
-export const state = () => ({
-  session: null
-})
-
-export const mutations = {
-  set (state, session) {
-    state.session = session
-  }
-}
-
 export const actions = {
-  async createRoom ({ commit, rootState }, payload) {
-    const config = rootState.api.config.config
-    const handleArgs = {
-      plugin: config.janusSettings.plugins.videoroom
-    }
-    const session = new Session(this.$Janus, config)
-    const handle = await session.init()
-      .then(s => s.create())
-      .then(s => s.attach(handleArgs))
-      .then(h => h.createRoom(payload.media))
-    const room = handle.room
-    await session.destroy()
-    return room
+  async createRoom ({
+    commit,
+    dispatch,
+    rootState
+  }, payload) {
+    await dispatch('api/janus/session/init', true, { root: true })
+    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/create', { handleDTO, room: payload }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
+    return result
   },
 
-  async destroyRoom ({ commit, rootState }, payload) {
-    const config = rootState.api.config.config
-    const handleArgs = {
-      plugin: config.janusSettings.plugins.videoroom
-    }
-    const session = new Session(this.$Janus, config)
-    await session.init()
-      .then(s => s.create())
-      .then(s => s.attach(handleArgs))
-      .then(h => h.destroyRoom(payload.roomid, payload.secret))
-    await session.destroy()
+  async destroyRoom ({
+    commit,
+    dispatch,
+    rootState
+  }, payload) {
+    await dispatch('api/janus/session/init', true, { root: true })
+    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
+    await dispatch('api/janus/videoroom/api/destroy', { handleDTO, roomid: payload.roomid, secret: payload.secret }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
   },
 
-  async listRooms ({ commit, rootState }, payload) {
-    const config = rootState.api.config.config
-    const handleArgs = {
-      plugin: config.janusSettings.plugins.videoroom
-    }
-    const session = new Session(this.$Janus, config)
-    const rooms = await session.init()
-      .then(s => s.create())
-      .then(s => s.attach(handleArgs))
-      .then(h => h.listRooms())
-    await session.destroy()
-    return rooms
+  async listRooms ({
+    commit,
+    dispatch,
+    rootState
+  }, payload) {
+    await dispatch('api/janus/session/init', true, { root: true })
+    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/list', { handleDTO }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
+    return result
   },
 
-  async joinRoom () {
-
+  async join ({
+    commit,
+    dispatch,
+    rootState
+  }, payload) {
+    await dispatch('api/janus/session/init', true, { root: true })
+    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDTO = await dispatch('api/janus/handle/attachPublisher', { sessionDTO, args: payload.janus }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/exists', { handleDTO, roomid: payload.janus.roomid }, { root: true })
+    if (!result.exists) {
+      await dispatch('api/janus/videoroom/api/create', { handleDTO, room: payload.media }, { root: true })
+    }
+    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDTO }, { root: true })
+    return sessionDTO
   }
 }

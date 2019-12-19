@@ -30,6 +30,7 @@
       v-model="tab"
       background-color="accent-4"
       dark
+      show-arrows
       icons-and-text
       grow
     >
@@ -69,6 +70,11 @@ export default {
           to: `/${this.$route.params.roomname}/members`
         },
         {
+          name: 'Live',
+          icon: 'fa-video',
+          to: `/${this.$route.params.roomname}/live`
+        },
+        {
           name: 'Settings',
           icon: 'fa-cog',
           to: `/${this.$route.params.roomname}/settings`
@@ -79,7 +85,7 @@ export default {
   },
   computed: {
     room () {
-      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase()) || { tags: [] }
+      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
     }
   },
   methods: {

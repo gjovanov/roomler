@@ -24,7 +24,7 @@ const config = {
   },
 
   janusSettings: {
-    url: 'wss://mcu.xplorify.net/janus',
+    url: 'wss://mcu.xplorify.net/janus_ws',
     iceServers: [{
       urls: process.env.TURN_URL || 'turn:numb.viagenie.ca',
       username: process.env.TURN_USERNAME || 'webrtc@live.com',

@@ -6,6 +6,7 @@
       <v-divider />
 
       <editor-content
+        :id="elemId"
         class="editor__content Prose"
         :editor="editor"
       />
@@ -20,10 +21,24 @@
                   v-on="on"
                   @click="minimal = !minimal"
                 >
-                  <v-icon>format_shapes</v-icon>
+                  <v-icon>fa-edit</v-icon>
                 </v-btn>
               </template>
               <span>Format</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  small
+                  :text="menuMembers"
+                  v-on="on"
+                  @click="toggleMenuMembers()"
+                >
+                  <v-icon>fa-users</v-icon>
+                </v-btn>
+              </template>
+              <span>Members</span>
             </v-tooltip>
 
             <v-tooltip top>
@@ -98,6 +113,10 @@ export default {
     MentionTemplate
   },
   props: {
+    elemId: {
+      type: String,
+      default: ''
+    },
     users: {
       type: Array,
       default () {
@@ -142,7 +161,8 @@ export default {
       attrMapper: (item) => {
         return {
           id: item.name,
-          label: item.char
+          label: item.char,
+          avatarUrl: ''
         }
       }
     })
@@ -151,7 +171,7 @@ export default {
       extensions: [
         new Placeholder({
           showOnlyWhenEditable: true,
-          emptyNodeText: 'Write something... Use @ to mention someone... Use : for emojis :)  (use ⬆ and ⬇ keys for selection)'
+          emptyNodeText: 'Write something... Use @ to mention someone. Use : for emoji'
         }),
         new class extends Extension {
           keys () {
@@ -210,6 +230,11 @@ export default {
       customEmoji
     }
   },
+  computed: {
+    menuMembers () {
+      return this.$store.state.api.auth.menu.members
+    }
+  },
   beforeDestroy () {
     this.editor.destroy()
   },
@@ -225,6 +250,9 @@ export default {
       const headers = { 'Content-Type': 'multipart/form-data' }
       const response = await this.$axios.post('api/room/upload', formData, { headers })
       return response.data.src
+    },
+    toggleMenuMembers () {
+      this.$store.commit('api/auth/toggleMenu', 'members')
     }
   }
 }
@@ -246,6 +274,7 @@ export default {
     color: black;
     border-radius: 5px;
     padding: 10px;
+    min-height: 60px;
 }
 .ProseMirror p {
   margin-bottom: 0px;

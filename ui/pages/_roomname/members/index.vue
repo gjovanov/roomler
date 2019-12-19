@@ -105,7 +105,7 @@ export default {
   },
   computed: {
     room () {
-      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
+      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
     },
     members () {
       const users = this.room ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []

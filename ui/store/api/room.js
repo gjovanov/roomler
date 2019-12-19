@@ -122,5 +122,9 @@ export const getters = {
   },
   roomPaths: (state) => {
     return state.rooms.map(r => r.path)
+  },
+  selectedRoom: state => (roomname) => {
+    const nullo = { tags: [] }
+    return roomname ? (state.rooms.find(r => r.name.toLowerCase() === roomname.toLowerCase()) || nullo) : nullo
   }
 }

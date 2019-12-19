@@ -1,9 +1,9 @@
 <template>
   <div
-    id="messages-list"
-    ref="messages-list"
-    v-scroll:#messages-list="onMessagesScroll"
-    style="height: calc(100vh - 330px); overflow-y: auto; overflow-x: hidden"
+    :id="elemId"
+    :ref="elemId"
+    v-scroll:[`#${elemId}`]="onMessagesScroll"
+    style="height: calc(100vh - 500px); overflow-y: auto; overflow-x: hidden"
   >
     <add-reaction-menu
       :open="menu.addReaction.open"
@@ -11,8 +11,8 @@
       :x="menu.addReaction.x"
       :y="menu.addReaction.y"
       :message="menu.addReaction.message"
-      @pushReaction="pushReaction"
-      @hideMenu="menu.addReaction.open = false"
+      @hideMenu="hideMenu"
+      @noScroll="noScroll"
     />
     <template v-for="(value, propertyName) in messages">
       <v-subheader :key="`subheader_${propertyName}`">
@@ -31,8 +31,9 @@
             :key="getMessageId(message)"
             :icon="!message.author.avatar_url ? 'fa-user' : undefined"
             data-type="message_item"
+            small
           >
-            <v-avatar v-if="message.author.avatar_url" slot="icon">
+            <v-avatar v-if="message.author.avatar_url" slot="icon" size="32">
               <img :src="message.author.avatar_url">
             </v-avatar>
             <span slot="opposite">Tus eu perfecto</span>
@@ -42,6 +43,18 @@
                 :class="message.has_mention && !message.is_read ? 'mr-4 red lighten-4' : (!message.is_read || !message._id ? 'mr-4 orange lighten-4' : 'mr-4 white')"
                 light
               >
+                <v-btn
+                  fab
+                  right
+                  bottom
+                  x-small
+                  absolute
+                  color="green"
+                  @mouseover="showMenu($event, message)"
+                  @click="showMenu($event, message)"
+                >
+                  😄
+                </v-btn>
                 <v-card-title class="overline">
                   {{ message.author.username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
@@ -52,16 +65,6 @@
                     </template>
                     <span>You are mentioned in this messsage!</span>
                   </v-tooltip>
-                  <v-btn
-                    outlined
-                    rounded
-                    right
-                    absolute
-                    @mouseover="showMenu($event, message)"
-                  >
-                    😄
-                    +
-                  </v-btn>
                 </v-card-title>
                 <v-card-text>
                   <pre style="white-space: pre-wrap" v-html="message.content" />
@@ -69,25 +72,11 @@
               </v-card>
             </v-hover>
             <v-spacer />
-            <template v-for="(reactionGroup, name, index) in getReactions(message)">
-              <v-chip
-                :key="name"
-                class="mt-2"
-                tile
-                outlined
-                :class="index !== 0 ? 'ml-3' : ''"
-                color="primary"
-                @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
-              >
-                {{ reactionGroup.symbol }}
-                <v-avatar
-                  right
-                  class="green darken-4"
-                >
-                  {{ reactionGroup.list.length }}
-                </v-avatar>
-              </v-chip>
-            </template>
+            <message-reaction-list
+              :message="message"
+              :reactions="getReactions(message)"
+              @noScroll="noScroll"
+            />
           </v-timeline-item>
         </v-scroll-y-reverse-transition>
       </v-timeline>
@@ -102,6 +91,7 @@ import * as EmojiMap from 'emojilib'
 import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
 import AddReactionMenu from '@/components/message/add-reaction-menu'
+import MessageReactionList from '@/components/message/message-reaction-list'
 
 const scrollDirection = {
   noScroll: 'no_scroll',
@@ -110,9 +100,18 @@ const scrollDirection = {
 }
 export default {
   components: {
-    AddReactionMenu
+    AddReactionMenu,
+    MessageReactionList
   },
   props: {
+    elemId: {
+      type: String,
+      default: ''
+    },
+    inputId: {
+      type: String,
+      default: ''
+    },
     room: {
       type: Object,
       default: null
@@ -195,22 +194,30 @@ export default {
     },
 
     showMenu (e, message) {
-      this.menu.addReaction.x = e.clientX
-      this.menu.addReaction.y = e.clientY - 100
-      this.menu.addReaction.message = message
-      this.menu.addReaction.open = true
+      if (!this.menu.addReaction.open) {
+        this.menu.addReaction.x = e.clientX
+        this.menu.addReaction.y = e.clientY - 100
+        this.menu.addReaction.message = message
+        this.menu.addReaction.open = true
+      }
+    },
+    hideMenu () {
+      this.menu.addReaction.open = false
     },
 
     getMessageId (message) {
       return message._id || message.client_id
     },
     scrollMessages (bottom = true) {
-      const messagesList = this.$refs['messages-list']
+      const messagesList = this.$refs[this.elemId]
       if (messagesList) {
         const newScrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
         messagesList.scrollTop = newScrollTop
-        this.$vuetify.goTo('#new-message-txt')
+        this.$vuetify.goTo(`#${this.inputId}`)
       }
+    },
+    noScroll () {
+      this.scroll = scrollDirection.noScroll
     },
     onMessagesScroll (e) {
       if (this.manualScrollTimeout) {
@@ -237,7 +244,7 @@ export default {
       if (this.unreads && document.hasFocus()) {
         const messagesInView = []
         this.unreads.forEach((message) => {
-          const messageList = document.getElementById('messages-list')
+          const messageList = document.getElementById(self.elemId)
           const messageItem = document.getElementById(`message_item_${self.getMessageId(message)}`)
           const inView = domUtils.isScrolledIntoView(messageItem)
           if (messageList && messageItem && inView) {
@@ -250,38 +257,6 @@ export default {
         }
       }
     },
-
-    async toggleReaction (message, emoji) {
-      const myReaction = message.reactions.find(r => r.user._id === this.$store.state.api.auth.user._id)
-      this.scroll = scrollDirection.noScroll
-      if (message.has_reaction && myReaction && myReaction.name === emoji.name) {
-        await this.pullReaction(message)
-      } else {
-        await this.pushReaction(message, emoji)
-      }
-    },
-
-    async pushReaction (message, emoji) {
-      this.scroll = scrollDirection.noScroll
-      await this.$store
-        .dispatch('api/message/reaction/push', {
-          id: message._id,
-          data: {
-            name: emoji.name,
-            symbol: emoji.char
-          }
-        })
-    },
-
-    async pullReaction (message) {
-      this.scroll = scrollDirection.noScroll
-      await this.$store
-        .dispatch('api/message/reaction/pull', {
-          id: message._id,
-          data: { }
-        })
-    },
-
     async sendMessage (content) {
       if (content) {
         const $ = cheerio.load(content)
@@ -301,3 +276,15 @@ export default {
   }
 }
 </script>
+
+<style>
+.v-timeline-item__divider {
+  min-width: 64px;
+}
+.v-timeline--dense .v-timeline-item__body {
+  max-width: calc(100% - 64px);
+}
+.v-application--is-ltr .v-timeline--dense:not(.v-timeline--reverse):before {
+    left: calc(32px - 1px)
+}
+</style>

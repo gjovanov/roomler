@@ -1,44 +1,43 @@
 <template>
   <client-only>
-    <v-container>
-      <v-row
-        v-if="members.length === 1"
-        dense
-        align="center"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          sm="6"
-          md="4"
-        >
-          <room-invite :room="room" />
-        </v-col>
-      </v-row>
-      <v-row
-        v-if="members.length >= 1"
-        dense
-        align="center"
-        justify="center"
-      >
-        <v-col
-
-          cols="12"
-          sm="12"
-        >
-          <chat :room="room" :messages="messages" :unreads="unreads" />
-        </v-col>
-      </v-row>
-      <v-row v-if="!!room">
-        <v-col
-          cols="12"
-          sm="12"
-          light
-        >
-          <tiptap id="new-message-txt" :users="members" :gallery="room.path" @sendMessage="sendMessage" />
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-expansion-panels
+      v-model="panels"
+      accordion
+      multiple
+    >
+      <v-expansion-panel v-if="members && members.length === 1">
+        <v-expansion-panel-header>Invite</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row
+            v-if="members && members.length === 1"
+            dense
+            align="center"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              sm="6"
+              md="4"
+            >
+              <room-invite :room="room" />
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel v-if="members && members.length >= 1">
+        <v-expansion-panel-header>Conference</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <conference :user="user" :room="room" :members="members" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel v-if="members && members.length >= 1">
+        <v-expansion-panel-header>Chat</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <chat :elem-id="'messages-list'" :input-id="'new-message-txt'" :room="room" :messages="messages" :unreads="unreads" />
+          <tiptap :elem-id="'new-message-txt'" :users="members" :gallery="room.path" @sendMessage="sendMessage" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </client-only>
 </template>
 
@@ -47,6 +46,7 @@ import * as uuid from 'uuid/v4'
 import * as cheerio from 'cheerio'
 import Tiptap from '@/components/editor/tiptap'
 import RoomInvite from '@/components/room/room-invite'
+import Conference from '@/components/message/conference'
 import Chat from '@/components/message/chat'
 
 const scrollDirection = {
@@ -60,18 +60,23 @@ export default {
   components: {
     Tiptap,
     RoomInvite,
+    Conference,
     Chat
   },
   data () {
     return {
+      panels: [0, 1],
       reverse: false,
       menu: false,
       scroll: scrollDirection.noScroll
     }
   },
   computed: {
+    user () {
+      return this.$store.state.api.auth.user
+    },
     room () {
-      return this.$store.state.api.room.rooms.find(r => r.name.toLowerCase() === this.$route.params.roomname.toLowerCase())
+      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
     },
     members () {
       const users = this.room ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []

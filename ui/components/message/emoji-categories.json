@@ -1,0 +1,48 @@
+{
+  "categories": [
+    {
+      "code": "common",
+      "icon": "fa-star",
+      "name": "Favorite"
+    },
+    {
+      "code": "people",
+      "icon": "fa-users",
+      "name": "People"
+    },
+    {
+      "code": "objects",
+      "icon": "fa-lightbulb",
+      "name": "Objects"
+    },
+    {
+      "code": "activity",
+      "icon": "fa-futbol",
+      "name": "Activity"
+    },
+    {
+      "code": "animals_and_nature",
+      "icon": "fa-horse",
+      "name": "Animals & nature"
+    },
+    {
+      "code": "food_and_drink",
+      "icon": "fa-hamburger",
+      "name": "Food & drink"
+    },
+    {
+      "code": "travel_and_places",
+      "icon": "fa-globe-americas",
+      "name": "Travel & places"
+    },
+    {
+      "code": "symbols",
+      "icon": "fa-ankh",
+      "name": "Symbols"
+    },
+    {
+      "code": "flags",
+      "icon": "fa-flag",
+      "name": "Flags"
+    }]
+}

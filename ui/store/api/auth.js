@@ -10,7 +10,10 @@ import {
 export const state = () => ({
   user: null,
   token: null,
-  oauth: null
+  oauth: null,
+  menu: {
+    members: false
+  }
 })
 
 export const mutations = {
@@ -28,6 +31,10 @@ export const mutations = {
     state.user = null
     state.token = null
     state.oauth = null
+  },
+
+  toggleMenu (state, menu) {
+    state.menu[menu] = !state.menu[menu]
   }
 }
 

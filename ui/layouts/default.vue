@@ -1,9 +1,11 @@
 <template>
   <v-app id="inspire">
     <left-menu v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" @toggleDrawer="toggleDrawer" />
+    <right-menu v-if="room && room._id" :drawer="menuMembers" :room="room" />
     <v-app-bar
       app
       clipped-left
+      clipped-right
       color="red"
       dense
     >
@@ -17,10 +19,11 @@
       <auth-menu />
     </v-app-bar>
 
-    <v-content>
+    <v-content class="pt-9 ma-0">
       <v-container
         :fill-height="fillHeight"
         class="pt-0 mt-0 pb-0 mb-0"
+        fluid
       >
         <v-row
           justify="center"
@@ -43,6 +46,7 @@
 import Logo from '@/components/logo'
 import AuthMenu from '@/components/auth-menu'
 import LeftMenu from '@/components/left-menu'
+import RightMenu from '@/components/right-menu'
 import Toaster from '@/components/toaster'
 
 export default {
@@ -51,6 +55,7 @@ export default {
     Logo,
     AuthMenu,
     LeftMenu,
+    RightMenu,
     Toaster
   },
   data: () => ({
@@ -73,10 +78,17 @@ export default {
     },
     rooms () {
       return this.$store.state.api.room.rooms
+    },
+    room () {
+      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
+    },
+    menuMembers () {
+      return this.$store.state.api.auth.menu.members
     }
   },
   created () {
     this.$vuetify.theme.dark = true
+    console.log(this.$vuetify.application.top)
   },
   methods: {
     toggleDrawer (value) {
