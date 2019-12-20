@@ -90,8 +90,8 @@ import * as cheerio from 'cheerio'
 import * as EmojiMap from 'emojilib'
 import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
-import AddReactionMenu from '@/components/message/add-reaction-menu'
-import MessageReactionList from '@/components/message/message-reaction-list'
+import AddReactionMenu from '@/components/chat/add-reaction-menu'
+import MessageReactionList from '@/components/chat/message-reaction-list'
 
 const scrollDirection = {
   noScroll: 'no_scroll',

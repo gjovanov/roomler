@@ -6,8 +6,8 @@ export const actions = {
   }, payload) {
     await dispatch('api/janus/session/init', true, { root: true })
     const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/create', { handleDTO, room: payload }, { root: true })
+    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: { } }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/create', { handleDTO, payload }, { root: true })
     await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
     return result
   },
@@ -20,7 +20,7 @@ export const actions = {
     await dispatch('api/janus/session/init', true, { root: true })
     const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
     const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
-    await dispatch('api/janus/videoroom/api/destroy', { handleDTO, roomid: payload.roomid, secret: payload.secret }, { root: true })
+    await dispatch('api/janus/videoroom/api/destroy', { handleDTO, payload }, { root: true })
     await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
   },
 

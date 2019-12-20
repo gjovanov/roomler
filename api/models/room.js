@@ -87,6 +87,10 @@ const schema = new Schema({
     },
     rec_dir: {
       type: String
+    },
+    notify_joining: {
+      type: Boolean,
+      default: defaults.media.notify_joining
     }
   }
 }, {

@@ -2,6 +2,17 @@ export const mutations = {
   setPublisher (state, { handleDTO, isPublisher }) {
     handleDTO.isPublisher = isPublisher
   },
+  setMedia (state, { handleDTO, media }) {
+    if (media.sendVideo !== undefined) {
+      handleDTO.sendVideo = media.sendVideo
+    }
+    if (media.sendAudio !== undefined) {
+      handleDTO.sendAudio = media.sendAudio
+    }
+    if (media.sendData !== undefined) {
+      handleDTO.sendData = media.sendData
+    }
+  },
   clearStream (state, { handleDTO }) {
     handleDTO.stream = null
   },
@@ -60,9 +71,14 @@ export const actions = {
     commit,
     dispatch
   }, { handleDTO, msg, jsep }) {
+    console.log(msg)
     if (msg.videoroom === 'joined') {
       this.$Janus.log('onmessage:joined')
       await dispatch('handleJoined', { handleDTO, msg })
+    }
+    if (msg.joining) {
+      this.$Janus.log('onmessage:joining')
+      await dispatch('handleJoining', { handleDTO, joining: msg.joining })
     }
     if (msg.videoroom === 'attached') {
       this.$Janus.log('onmessage:attached')
@@ -72,17 +88,21 @@ export const actions = {
       this.$Janus.log('onmessage:publishers')
       await dispatch('handlePublishers', { handleDTO, publishers: msg.publishers })
     }
+    if (msg.attendees && msg.attendees.length) {
+      this.$Janus.log('onmessage:attendees')
+      await dispatch('handleAttendees', { handleDTO, attendees: msg.attendees })
+    }
     if (msg.configured === 'ok') {
       this.$Janus.log('onmessage:configured')
       await dispatch('handleConfigured', { handleDTO })
     }
+    if (msg.unpublished) {
+      this.$Janus.log('onmessage:unpublished')
+      await dispatch('handleUnpublished', { handleDTO, leaving: msg.unpublished })
+    }
     if (msg.leaving) {
       this.$Janus.log('onmessage:leaving')
       await dispatch('handleLeaving', { handleDTO, leaving: msg.leaving })
-    }
-    if (msg.unpublished) {
-      this.$Janus.log('onmessage:unpublished')
-      await dispatch('handleLeaving', { handleDTO, leaving: msg.unpublished })
     }
     if (jsep) {
       await dispatch('handleJsep', { handleDTO, jsep })
@@ -107,6 +127,22 @@ export const actions = {
       dispatch('api/janus/handle/createOffer', { handleDTO }, { root: true })
         .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDTO, jsep }, { root: true }))
     }
+  },
+  handleJoining ({
+    commit,
+    dispatch
+  }, { handleDTO, joining }) {
+    this.$Janus.log('handleJoining')
+    const id = joining.id
+    const display = joining.display
+    const args = {
+      plugin: handleDTO.plugin,
+      roomid: handleDTO.roomid,
+      display,
+      ptype: 'attendee',
+      id
+    }
+    dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
   },
   handleAttached ({
     commit,
@@ -147,10 +183,42 @@ export const actions = {
     }
   },
 
+  handleAttendees ({
+    commit,
+    dispatch
+  }, { handleDTO, attendees }) {
+    for (const a in attendees) {
+      const id = attendees[a].id
+      const display = attendees[a].display
+      const args = {
+        plugin: handleDTO.plugin,
+        roomid: handleDTO.roomid,
+        display,
+        ptype: 'subscriber',
+        id
+      }
+      dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
+    }
+  },
+
   handleConfigured ({
     commit
   }, { handleDTO }) {
     this.$Janus.log('Configuration has finished')
+  },
+
+  handleUnpublished ({
+    commit,
+    dispatch
+  }, { handleDTO, unpublished }) {
+    if (unpublished === 'ok') {
+      commit('clearStream', { handleDTO })
+    } else {
+      const foundHandleDTO = handleDTO.sessionDTO.handleDTOs.find(h => h.id === unpublished)
+      if (foundHandleDTO) {
+        commit('clearStream', { handleDTO: foundHandleDTO })
+      }
+    }
   },
 
   async handleLeaving ({
@@ -163,6 +231,7 @@ export const actions = {
       const foundHandleDTO = handleDTO.sessionDTO.handleDTOs.find(h => h.id === leaving)
       if (foundHandleDTO) {
         await dispatch('api/janus/handle/detach', { handleDTO: foundHandleDTO }, { root: true })
+        commit('api/janus/handle/pull', { sessionDTO: foundHandleDTO.sessionDTO, handleDTO: foundHandleDTO }, { root: true })
       }
     }
   },

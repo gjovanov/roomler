@@ -115,10 +115,11 @@
                     >
                       <v-btn
                         color="red"
-                        outlined
+                        fab
+                        small
                         @click="pop(invite)"
                       >
-                        <v-icon>fa-minus</v-icon>
+                        <v-icon>fa-trash-alt</v-icon>
                       </v-btn>
                     </v-col>
                     <v-divider />
@@ -189,7 +190,7 @@ export default {
   },
   computed: {
     members () {
-      const users = this.room ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
+      const users = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
       return users
     }
   },

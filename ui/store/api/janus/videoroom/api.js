@@ -1,11 +1,11 @@
 export const actions = {
   create ({
     commit
-  }, { handleDTO, room }) {
-    room.request = 'create'
+  }, { handleDTO, payload }) {
+    payload.request = 'create'
     return new Promise((resolve, reject) => {
       handleDTO.handle.send({
-        message: room,
+        message: payload,
         success: (data) => {
           if (data && data.error) {
             reject(data.error)
@@ -69,15 +69,11 @@ export const actions = {
 
   destroy ({
     commit
-  }, { handleDTO, roomid, secret }) {
+  }, { handleDTO, payload }) {
     return new Promise((resolve, reject) => {
-      const request = {
-        request: 'destroy',
-        room: parseInt(roomid),
-        secret
-      }
+      payload.request = 'destroy'
       handleDTO.handle.send({
-        message: request,
+        message: payload,
         success: (data) => {
           if (data && data.error) {
             reject(data.error)

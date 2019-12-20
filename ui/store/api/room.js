@@ -27,8 +27,8 @@ export const mutations = {
     state.rooms = state.rooms.filter(r => r._id !== roomid)
     state.tree.source = new Tree(state.rooms)
   },
-  replace (state, roomid, updatedRoom) {
-    state.rooms = state.rooms.map(r => r._id === roomid ? updatedRoom : r)
+  replace (state, updatedRoom) {
+    state.rooms = state.rooms.map(r => r._id === updatedRoom._id ? updatedRoom : r)
     state.tree.source = new Tree(state.rooms)
   }
 }

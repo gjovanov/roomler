@@ -1,9 +1,10 @@
 <template>
   <v-navigation-drawer
+    ref="leftDrawer"
     v-model="leftDrawer"
     app
     clipped
-    :width="325"
+    :width="width"
   >
     <v-subheader class="mt-4 grey--text text--darken-1">
       Rooms
@@ -49,7 +50,7 @@
         </v-tooltip>
       </template>
       <template v-slot:append="{ item, open }">
-        <room-menu :room="item" @add="add" @removeConsent="removeConsent" @remove="remove" />
+        <room-menu v-if="canManage(item)" :room="item" @add="add" @removeConsent="removeConsent" @remove="remove" />
       </template>
     </v-treeview>
     <room-delete-dialog :dialog="dialog" :room="selectedRoom" @remove="remove" @removeCancel="removeCancel" />
@@ -82,6 +83,8 @@ export default {
     const config = this.$store.state.api.config.config
     return {
       leftDrawer: true,
+      width: 280,
+      borderSize: 5,
       mini: false,
       config,
       dialog: false,
@@ -91,6 +94,9 @@ export default {
   computed: {
     roomTree () {
       return this.$store.getters['api/room/tree']
+    },
+    direction () {
+      return !this.leftDrawer ? 'Open' : 'Closed'
     }
   },
   watch: {
@@ -101,13 +107,63 @@ export default {
       this.$emit('toggleDrawer', value)
     }
   },
+  mounted () {
+    this.setBorderWidth()
+    this.setEvents()
+  },
   methods: {
+    setBorderWidth () {
+      const i = this.$refs.leftDrawer.$el.querySelector(
+        '.v-navigation-drawer__border'
+      )
+      i.style.width = this.borderSize + 'px'
+      i.style.cursor = 'ew-resize'
+      i.style.backgroundColor = 'black'
+    },
+    setEvents () {
+      const minSize = this.borderSize
+      const el = this.$refs.leftDrawer.$el
+      const drawerBorder = el.querySelector('.v-navigation-drawer__border')
+      const direction = el.classList.contains('v-navigation-drawer--right')
+        ? 'right'
+        : 'left'
+
+      function resize (e) {
+        document.body.style.cursor = 'ew-resize'
+        const f =
+          direction === 'right'
+            ? document.body.scrollWidth - e.clientX
+            : e.clientX
+        el.style.width = f + 'px'
+      }
+
+      const downHandler = (e) => {
+        if (e.offsetX < minSize) {
+          el.style.transition = 'initial'
+          document.addEventListener('mousemove', resize, false)
+        }
+      }
+
+      const upHandler = (e) => {
+        el.style.transition = ''
+        this.width = el.style.width
+        document.body.style.cursor = ''
+        document.removeEventListener('mousemove', resize, false)
+      }
+
+      drawerBorder.addEventListener('mousedown', downHandler, false)
+      document.addEventListener('mouseup', upHandler, false)
+    },
     unreads (room) {
       return this.$store.getters['api/message/unreads'](room.path).length
     },
     mentions (room) {
       const userid = this.$store.state.api.auth.user._id
       return this.$store.getters['api/message/mentions'](room.path, userid).length
+    },
+    canManage (room) {
+      const userid = this.$store.state.api.auth.user._id
+      return room.owner._id === userid || room.moderators.map(m => m._id).includes(userid)
     },
     add (item) {
       this.$router.push({ path: `/@/room/create?parent=${item.path}` })
@@ -119,9 +175,9 @@ export default {
     async remove (room) {
       this.dialog = false
       await this.$store.dispatch('janus/destroyRoom', {
-        plugin: this.config.janusSettings.plugins.videoroom,
-        roomid: room.media.roomid,
-        secret: room.media.secret
+        room: room.media.roomid,
+        secret: room.media.secret,
+        permanent: true
       })
       await this.$store.dispatch('api/room/delete', room._id)
       this.$router.push({ path: '/' })

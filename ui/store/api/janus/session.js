@@ -1,4 +1,4 @@
-import * as uuid from 'uuid/v4'
+import { toSessionDTO } from '@/services/session-mapper'
 
 export const state = () => ({
   sessionDTOs: [
@@ -15,17 +15,6 @@ export const mutations = {
   pull (state, sessionDTO) {
     sessionDTO.session = null
     state.sessionDTOs = state.sessionDTOs.filter(s => s.id !== sessionDTO.id)
-  }
-}
-
-const toSessionDTO = (url, iceServers, plugins) => {
-  return {
-    id: uuid(),
-    url,
-    iceServers,
-    plugins,
-    session: null,
-    handleDTOs: []
   }
 }
 

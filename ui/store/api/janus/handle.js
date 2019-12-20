@@ -1,5 +1,4 @@
-
-import * as uuid from 'uuid/v4'
+import { toHandleDTO } from '@/services/handle-mapper'
 
 export const state = () => ({
   handles: []
@@ -17,53 +16,6 @@ export const mutations = {
   pull (state, { sessionDTO, handleDTO }) {
     handleDTO.handle = null
     sessionDTO.handleDTOs = sessionDTO.handleDTOs.filter(h => h.id !== handleDTO.id)
-  }
-}
-
-const toHandleDTO = (sessionDTO, args) => {
-  return {
-    id: args.id || uuid(),
-    private_id: args.private_id || uuid(),
-    feed: null,
-    display: args.display,
-    sessionDTO,
-    plugin: args.plugin || 'janus.plugin.videoroom',
-    roomid: args.roomid || null,
-    token: args.token || undefined,
-
-    consentDialog: false,
-    webrtcState: false,
-    iceState: false,
-    iceStateReason: null,
-    mediaState: {
-      audio: false,
-      video: false,
-      data: false
-    },
-
-    isPublisher: false,
-
-    audio: true,
-    video: true,
-    data: true,
-
-    sendAudio: args.sendAudio !== undefined ? args.sendAudio : true,
-    sendVideo: args.sendVideo !== undefined ? args.sendVideo : true,
-    sendData: args.sendData !== undefined ? args.sendData : false,
-    sendScreen: args.sendScreen !== undefined ? args.sendScreen : false,
-
-    receiveAudio: args.receiveAudio !== undefined ? args.receiveAudio : true,
-    receiveVideo: args.receiveVideo !== undefined ? args.receiveVideo : true,
-    receiveData: args.receiveData !== undefined ? args.receiveData : true,
-
-    audioCodec: args.audioCodec || null,
-    videoCodec: args.videoCodec || null,
-
-    simulcast: args.simulcast !== undefined ? args.simulcast : false,
-    iceRestart: args.iceRestart !== undefined ? args.iceRestart : true,
-    trickle: args.trickle !== undefined ? args.trickle : true,
-
-    stream: null
   }
 }
 
@@ -118,8 +70,9 @@ export const actions = {
           commit('api/janus/videoroom/handlers/oncleanup', { handleDTO }, { root: true })
           // commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
         },
-        detached: () => {
-          commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
+        ondetached: () => {
+          self.$Janus.debug('Detaching.............')
+          // commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
         },
         onmessage: (msg, jsep) => {
           dispatch('api/janus/videoroom/handlers/onmessage', { handleDTO, msg, jsep }, { root: true })
@@ -148,6 +101,17 @@ export const actions = {
     return handleDTO
   },
 
+  attachAttendee ({
+    commit,
+    dispatch
+  }, { sessionDTO, args }) {
+    const self = this
+    self.$Janus.debug('Attaching:attendee')
+    const handleDTO = toHandleDTO(sessionDTO, args)
+    commit('push', { sessionDTO, handleDTO })
+    return handleDTO
+  },
+
   detach ({
     commit,
     dispatch
@@ -173,8 +137,8 @@ export const actions = {
         media: {
           audioRecv: false,
           videoRecv: false,
-          audioSend: handleDTO.audio,
-          videoSend: handleDTO.video,
+          audioSend: handleDTO.sendAudio,
+          videoSend: handleDTO.sendVideo,
           data: handleDTO.data
         },
         simulcast: handleDTO.simulcast,

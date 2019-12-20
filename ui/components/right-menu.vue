@@ -70,7 +70,7 @@ export default {
   },
   computed: {
     members () {
-      const users = this.room ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
+      const users = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
       return users
     }
   },

@@ -8,9 +8,12 @@
       <v-btn
         text
         dark
+        x-small
         v-on="on"
       >
-        <v-icon>fa-ellipsis-h</v-icon>
+        <v-icon small>
+          fa-ellipsis-h
+        </v-icon>
       </v-btn>
     </template>
     <v-list>

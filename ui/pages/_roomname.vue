@@ -60,19 +60,14 @@ export default {
       tab: 0,
       tabs: [
         {
-          name: 'Messages',
-          icon: 'fa-envelope',
-          to: `/${this.$route.params.roomname}/messages`
+          name: 'Live',
+          icon: 'fa-video',
+          to: `/${this.$route.params.roomname}/live`
         },
         {
           name: 'Members',
           icon: 'fa-users',
           to: `/${this.$route.params.roomname}/members`
-        },
-        {
-          name: 'Live',
-          icon: 'fa-video',
-          to: `/${this.$route.params.roomname}/live`
         },
         {
           name: 'Settings',

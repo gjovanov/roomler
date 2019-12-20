@@ -177,7 +177,8 @@ export default {
         audiocodec: defaults.audiocodec,
         videocodec: defaults.videocodec,
         record: defaults.record,
-        rec_dir: undefined
+        rec_dir: undefined,
+        notify_joining: defaults.notify_joining
       }
     }
   },
@@ -209,7 +210,6 @@ export default {
         // 1. create a room in our DB via the /api/room/create
         // 2. create a room in Janus
         // 3. update the Janus roomid in our DB via /api/room/update
-
         const createPayload = {
           name: this.draftRoom.name,
           description: this.draftRoom.description,
@@ -217,6 +217,7 @@ export default {
           tags: this.draftRoom.tags,
           media: this.media
         }
+
         if (this.parentRoom) {
           createPayload.parent_name = this.parentRoom.name
           createPayload.parent_path = this.parentRoom.path
@@ -224,14 +225,10 @@ export default {
         const createResponse = await this.$store.dispatch('api/room/create', createPayload)
         if (!createResponse.hasError) {
           let room = createResponse.result
-          const janusPayload = {
-            media: Object.assign({}, this.media),
-            plugin: this.config.janusSettings.plugins.videoroom,
-            config: this.config
-          }
-          janusPayload.media.request = 'create'
-          janusPayload.media.is_private = !this.draftRoom.is_open
-          janusPayload.media.description = this.draftRoom.description
+          const janusPayload = Object.assign({}, this.media)
+          janusPayload.is_private = !this.draftRoom.is_open
+          janusPayload.description = this.draftRoom.name
+          janusPayload.permanent = true
           const janusRoom = await this.$store.dispatch('janus/createRoom', janusPayload)
 
           const updatePayload = { id: room._id, update: { 'media.roomid': janusRoom.room } }

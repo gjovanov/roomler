@@ -26,6 +26,7 @@ const media = S.object()
   .prop('videocodec', S.string())
   .prop('record', S.boolean())
   .prop('rec_dir', S.string())
+  .prop('notify_joining', S.boolean())
 
 const room = S.object()
   .prop('_id', S.string())
