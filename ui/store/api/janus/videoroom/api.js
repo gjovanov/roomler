@@ -171,14 +171,14 @@ export const actions = {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'configure',
-        audio: handleDTO.sendAudio,
-        video: handleDTO.sendVideo,
-        data: handleDTO.sendData
+        audio: handleDTO.audio,
+        video: handleDTO.video || handleDTO.screen,
+        data: handleDTO.data,
         // bitrate: handleDTO.bitrate,
         // keyframe: handleDTO.keyframe,
         // record: handleDTO.record,
         // filename: handleDTO.filename,
-        // display: handleDTO.display
+        display: handleDTO.display
       }
       handleDTO.handle.send({
         message: request,
@@ -203,9 +203,9 @@ export const actions = {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'publish',
-        audio: handleDTO.sendAudio,
-        video: handleDTO.sendVideo,
-        data: handleDTO.sendData,
+        audio: handleDTO.audio,
+        video: handleDTO.video,
+        data: handleDTO.data,
         audiocodec: handleDTO.audiocodec,
         videocodec: handleDTO.videocodec,
         bitrate: handleDTO.bitrate,

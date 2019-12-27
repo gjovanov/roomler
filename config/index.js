@@ -59,7 +59,7 @@ const config = {
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: false,
-      useUnifiedTopology: false,
+      useUnifiedTopology: true,
       keepAlive: true,
       keepAliveInitialDelay: 300000
       // reconnectTries: 20

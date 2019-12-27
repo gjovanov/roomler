@@ -4,6 +4,7 @@
       <v-layout justify-center>
         <join-dialog :open="joinDialog" @join="join" @cancel="joinDialog = false" />
         <publish-dialog :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
+        <extension-dialog :open="extensionDialog" @cancel="extensionDialog = false" />
         <v-tooltip v-if="!session" top>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -33,10 +34,10 @@
           </template>
           <span>Hang up</span>
         </v-tooltip>
-        <v-tooltip v-if="localHandle && !localHandle.sendScreen" top>
+        <v-tooltip v-if="localHandle && !localHandle.screen" top>
           <template v-slot:activator="{ on }">
             <v-btn
-              v-if="localHandle && !localHandle.sendScreen"
+              v-if="localHandle && !localHandle.screen"
               small
               fab
               v-on="on"
@@ -45,7 +46,7 @@
               <v-icon>fa-share</v-icon>
             </v-btn>
           </template>
-          <span>Unpublish</span>
+          <span>Share screen</span>
         </v-tooltip>
         <v-tooltip v-if="localHandle && localHandle.stream" top>
           <template v-slot:activator="{ on }">
@@ -83,11 +84,13 @@
 <script>
 import JoinDialog from '@/components/conference/join-dialog'
 import PublishDialog from '@/components/conference/publish-dialog'
+import ExtensionDialog from '@/components/conference/extension-dialog'
 
 export default {
   components: {
     JoinDialog,
-    PublishDialog
+    PublishDialog,
+    ExtensionDialog
   },
   props: {
     user: {
@@ -110,7 +113,8 @@ export default {
   data () {
     return {
       joinDialog: false,
-      publishDialog: false
+      publishDialog: false,
+      extensionDialog: false
     }
   },
   methods: {
@@ -122,26 +126,40 @@ export default {
           roomid: this.room.media.roomid,
           plugin: config.janusSettings.plugins.videoroom,
           display: this.user && this.user.username ? this.user.username : 'Anonymous',
-          sendVideo: media.sendVideo,
-          sendAudio: media.sendAudio
+          video: media.video,
+          audio: media.audio,
+          screen: media.screen
         },
         media: this.room.media
       }
-      console.log(janusPayload.janus)
       janusPayload.media.room = janusPayload.media.roomid
       janusPayload.media.request = 'create'
       this.$emit('join', janusPayload)
     },
-    shareScreen () {
-
+    async shareScreen () {
+      if (!this.$Janus.isExtensionEnabled()) {
+        this.extensionDialog = true
+      } else {
+        this.$store.commit('api/janus/videoroom/updates/setMedia', {
+          handleDTO: this.localHandle,
+          media: {
+            audio: false,
+            video: false,
+            screen: true
+          }
+        })
+        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+          .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+      }
     },
     async publish (media) {
       this.publishDialog = false
-      this.$store.commit('api/janus/videoroom/handlers/setMedia', { handleDTO: this.localHandle, media })
+      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
       await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
         .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
     },
     async unpublish () {
+      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media: { audio: false, video: false, screen: false, data: false } })
       await this.$store.dispatch('api/janus/videoroom/api/unpublish', { handleDTO: this.localHandle })
     },
     leave () {

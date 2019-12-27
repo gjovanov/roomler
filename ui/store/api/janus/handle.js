@@ -1,9 +1,5 @@
 import { toHandleDTO } from '@/services/handle-mapper'
 
-export const state = () => ({
-  handles: []
-})
-
 export const mutations = {
   set (state, { handleDTO, handle }) {
     handleDTO.handle = handle
@@ -40,34 +36,34 @@ export const actions = {
           reject(error)
         },
         consentDialog: (on) => {
-          commit('api/janus/videoroom/handlers/consentDialog', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/consentDialog', { handleDTO, on }, { root: true })
         },
         webrtcState: (on, reason) => {
-          commit('api/janus/videoroom/handlers/webrtcState', { handleDTO, on, reason }, { root: true })
+          commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
-          commit('api/janus/videoroom/handlers/iceState', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
-          commit('api/janus/videoroom/handlers/mediaState', { handleDTO, type, on }, { root: true })
+          commit('api/janus/videoroom/updates/mediaState', { handleDTO, type, on }, { root: true })
         },
         slowLink: (on) => {
-          commit('api/janus/videoroom/handlers/slowLink', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/slowLink', { handleDTO, on }, { root: true })
         },
         onlocalstream: (stream) => {
-          commit('api/janus/videoroom/handlers/onlocalstream', { handleDTO, stream }, { root: true })
+          commit('api/janus/videoroom/updates/onlocalstream', { handleDTO, stream }, { root: true })
         },
         onremotestream: (stream) => {
-          commit('api/janus/videoroom/handlers/onremotestream', { handleDTO, stream }, { root: true })
+          commit('api/janus/videoroom/updates/onremotestream', { handleDTO, stream }, { root: true })
         },
         ondataopen: () => {
-          commit('api/janus/videoroom/handlers/ondataopen', { handleDTO }, { root: true })
+          commit('api/janus/videoroom/updates/ondataopen', { handleDTO }, { root: true })
         },
         ondata: (data) => {
           dispatch('api/janus/videoroom/handlers/ondata', { handleDTO, data }, { root: true })
         },
         oncleanup: () => {
-          commit('api/janus/videoroom/handlers/oncleanup', { handleDTO }, { root: true })
+          commit('api/janus/videoroom/updates/oncleanup', { handleDTO }, { root: true })
           // commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
         },
         ondetached: () => {
@@ -87,7 +83,7 @@ export const actions = {
       dispatch
     }, { sessionDTO, args }) {
     const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args }, { root: true })
-    commit('api/janus/videoroom/handlers/setPublisher', { handleDTO, isPublisher: true }, { root: true })
+    commit('api/janus/videoroom/updates/setPublisher', { handleDTO, isPublisher: true }, { root: true })
     return handleDTO
   },
 
@@ -97,7 +93,7 @@ export const actions = {
       dispatch
     }, { sessionDTO, args }) {
     const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args }, { root: true })
-    commit('api/janus/videoroom/handlers/setPublisher', { handleDTO, isPublisher: false }, { root: true })
+    commit('api/janus/videoroom/updates/setPublisher', { handleDTO, isPublisher: false }, { root: true })
     return handleDTO
   },
 
@@ -117,14 +113,18 @@ export const actions = {
     dispatch
   }, { handleDTO }) {
     return new Promise((resolve, reject) => {
-      handleDTO.handle.detach({
-        success () {
-          resolve()
-        },
-        error (error) {
-          reject(error)
-        }
-      })
+      if (handleDTO.handle) {
+        handleDTO.handle.detach({
+          success () {
+            resolve()
+          },
+          error (error) {
+            reject(error)
+          }
+        })
+      } else {
+        resolve()
+      }
     })
   },
 
@@ -137,8 +137,8 @@ export const actions = {
         media: {
           audioRecv: false,
           videoRecv: false,
-          audioSend: handleDTO.sendAudio,
-          videoSend: handleDTO.sendVideo,
+          audioSend: handleDTO.audio,
+          video: handleDTO.screen ? 'screen' : handleDTO.video,
           data: handleDTO.data
         },
         simulcast: handleDTO.simulcast,
@@ -162,9 +162,7 @@ export const actions = {
         media: {
           audioSend: false,
           videoSend: false,
-          audioRecv: handleDTO.receiveAudio,
-          videoRecv: handleDTO.receiveVideo,
-          data: handleDTO.receiveData
+          data: handleDTO.data
         },
         success: (jsepObj) => {
           resolve(jsepObj)

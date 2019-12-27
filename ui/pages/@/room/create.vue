@@ -229,7 +229,7 @@ export default {
           janusPayload.is_private = !this.draftRoom.is_open
           janusPayload.description = this.draftRoom.name
           janusPayload.permanent = true
-          const janusRoom = await this.$store.dispatch('janus/createRoom', janusPayload)
+          const janusRoom = await this.$store.dispatch('api/janus/videoroom/createRoom', janusPayload)
 
           const updatePayload = { id: room._id, update: { 'media.roomid': janusRoom.room } }
           const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)

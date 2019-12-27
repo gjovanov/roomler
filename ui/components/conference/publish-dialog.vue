@@ -12,30 +12,63 @@
         Select your media.
         <v-spacer />
         <v-layout justify-center>
-          <v-btn
-            outlined
-            :text="!media.sendVideo"
-            @click="media.sendVideo = !media.sendVideo"
-          >
-            <v-icon v-if="media.sendVideo">
-              fa-video
-            </v-icon>
-            <v-icon v-if="!media.sendVideo">
-              fa-video-slash
-            </v-icon>
-          </v-btn>
-          <v-btn
-            outlined
-            :text="!media.sendAudio"
-            @click="media.sendAudio = !media.sendAudio"
-          >
-            <v-icon v-if="media.sendAudio">
-              fa-microphone
-            </v-icon>
-            <v-icon v-if="!media.sendAudio">
-              fa-microphone-slash
-            </v-icon>
-          </v-btn>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                outlined
+                :text="!media.video"
+                v-on="on"
+                @click="media.video = !media.video"
+              >
+                <v-icon v-if="media.video">
+                  fa-video
+                </v-icon>
+                <v-icon v-if="!media.video">
+                  fa-video-slash
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="media.video">Camera video</span>
+            <span v-if="!media.video">No camera video</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                outlined
+                :text="!media.screen"
+                v-on="on"
+                @click="media.screen = !media.screen"
+              >
+                <v-icon v-if="media.screen">
+                  screen_share
+                </v-icon>
+                <v-icon v-if="!media.screen">
+                  stop_screen_share
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="media.screen">Screen share</span>
+            <span v-if="!media.screen">No screen share</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                outlined
+                :text="!media.audio"
+                v-on="on"
+                @click="media.audio = !media.audio"
+              >
+                <v-icon v-if="media.audio">
+                  fa-microphone
+                </v-icon>
+                <v-icon v-if="!media.audio">
+                  fa-microphone-slash
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="media.audio">Microphone audio</span>
+            <span v-if="!media.audio">No microphone audio</span>
+          </v-tooltip>
         </v-layout>
       </v-card-text>
       <v-spacer />
@@ -54,7 +87,7 @@
         <v-btn
           color="green darken-1"
           outlined
-          :disabled="!media.sendAudio && !media.sendVideo"
+          :disabled="!media.audio && !media.video"
           @click="publish()"
         >
           Publish
@@ -76,14 +109,25 @@ export default {
     return {
       dialog: false,
       media: {
-        sendAudio: true,
-        sendVideo: true
+        audio: true,
+        video: true,
+        screen: false
       }
     }
   },
   watch: {
     open (newVal) {
       this.dialog = newVal
+    },
+    'media.video' (newVal) {
+      if (newVal) {
+        this.media.screen = false
+      }
+    },
+    'media.screen' (newVal) {
+      if (newVal) {
+        this.media.video = false
+      }
     }
   },
   methods: {

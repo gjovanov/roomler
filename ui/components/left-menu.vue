@@ -174,7 +174,7 @@ export default {
     },
     async remove (room) {
       this.dialog = false
-      await this.$store.dispatch('janus/destroyRoom', {
+      await this.$store.dispatch('api/janus/videoroom/destroyRoom', {
         room: room.media.roomid,
         secret: room.media.secret,
         permanent: true

@@ -20,5 +20,8 @@
   ],
   "eslint.autoFixOnSave": true,
   "eslint.lintTask.enable": true,
-  "standard.autoFixOnSave": true
+  "standard.autoFixOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

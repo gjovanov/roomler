@@ -30,6 +30,9 @@
     "eslint.lintTask.enable": true,
     "javascript.format.enable": false,
     "typescript.format.enable": false,
-    "eslint.alwaysShowStatus": true
+    "eslint.alwaysShowStatus": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": true
+    }
   }
 }

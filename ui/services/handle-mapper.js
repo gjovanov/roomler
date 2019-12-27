@@ -1,11 +1,23 @@
 
 import * as uuid from 'uuid/v4'
 export const toHandleDTO = (sessionDTO, args) => {
-  return {
+  if (args.display && args.display.includes('|Screenshare')) {
+    args.screen = true
+  }
+  if (args.screen) {
+    if (!args.display.includes('|Screenshare')) {
+      args.display += '|Screenshare'
+    }
+    args.video = false
+  }
+  args.display_name = args.display ? args.display.replace('|Screenshare', '') : args.display
+
+  const result = {
     id: args.id || uuid(),
     private_id: args.private_id || uuid(),
     feed: null,
     display: args.display,
+    display_name: args.display_name,
     sessionDTO,
     plugin: args.plugin || 'janus.plugin.videoroom',
     roomid: args.roomid || null,
@@ -24,18 +36,10 @@ export const toHandleDTO = (sessionDTO, args) => {
     isPublisher: args.isPublisher !== undefined ? args.isPublisher : false,
     isLocal: args.isLocal !== undefined ? args.isLocal : true,
 
-    audio: true,
-    video: true,
-    data: true,
-
-    sendAudio: args.sendAudio !== undefined ? args.sendAudio : true,
-    sendVideo: args.sendVideo !== undefined ? args.sendVideo : true,
-    sendData: args.sendData !== undefined ? args.sendData : false,
-    sendScreen: args.sendScreen !== undefined ? args.sendScreen : false,
-
-    receiveAudio: args.receiveAudio !== undefined ? args.receiveAudio : true,
-    receiveVideo: args.receiveVideo !== undefined ? args.receiveVideo : true,
-    receiveData: args.receiveData !== undefined ? args.receiveData : true,
+    audio: args.audio !== undefined ? args.audio : true,
+    video: args.video !== undefined ? args.video : true,
+    screen: args.screen !== undefined ? args.screen : false,
+    data: args.data !== undefined ? args.data : false,
 
     audioCodec: args.audioCodec || null,
     videoCodec: args.videoCodec || null,
@@ -46,4 +50,6 @@ export const toHandleDTO = (sessionDTO, args) => {
 
     stream: null
   }
+
+  return result
 }
