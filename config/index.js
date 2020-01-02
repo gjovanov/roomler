@@ -10,7 +10,7 @@ const env = {
   PORT_API: process.env.PORT_API || 3001
 }
 env.URL = process.env.URL || `http://${env.HOST}:${env.PORT}`
-env.API_URL = process.env.API_URL || `http://${env.HOST}:${env.PORT_API}`
+env.API_URL = process.env.API_URL || (process.env.NODE_ENV === 'production' ? `http://${env.HOST}:${env.PORT}` : `http://${env.HOST}:${env.PORT_API}`)
 
 let defaultDbUrl = 'mongodb://localhost:27017/roomdb'
 if (process.env.NODE_ENV === 'test') {
