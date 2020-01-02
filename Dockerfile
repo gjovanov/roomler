@@ -25,8 +25,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
   rm -rf /var/cache/apk/*
 
 # Volumes
-VOLUME /facer/data
-WORKDIR /facer
+WORKDIR /roomler
 
 EXPOSE 3000 3001
 
