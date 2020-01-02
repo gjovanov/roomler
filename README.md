@@ -64,6 +64,16 @@ docker run -d --name roomler \
     --restart always \
     -e API_URL=https://roomler.live \
     -p 8082:3000 \
+    -e SENDGRID_API_KEY=YOUR_SEND_GRID_KEY \
+    -e FACEBOOK_ID=YOUR_FACEBOOK_ID \
+    -e FACEBOOK_SECRET=YOUR_FACEBOOK_SECRET \
+    -e GITHUB_ID=YOUR_GITHUB_ID \
+    -e GITHUB_SECRET=YOUR_GITHUB_SECRET \
+    -e LINKEDIN_ID=YOUR_LINKEDIN_ID \
+    -e LINKEDIN_SECRET=YOUR_LINKEDIN_SECRET \
+    -e TURN_URL=YOUR_TURN_URL \
+    -e TURN_USERNAME=YOUR_TURN_USERNAME \
+    -e TURN_PASSWORD=YOUR_TURN_PASSWORD \
     gjovanov/roomler
 ```
 
