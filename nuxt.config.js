@@ -71,8 +71,7 @@ const nuxtConfig = {
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/pwa'
   ],
   /*
    ** Axios module configuration
@@ -110,5 +109,8 @@ const nuxtConfig = {
   }
 }
 nuxtConfig.axios.baseURL = env.API_URL
+if (env.NODE_ENV === 'development') {
+  nuxtConfig.modules.push('@nuxtjs/eslint-module')
+}
 
 module.exports = nuxtConfig
