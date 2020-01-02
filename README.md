@@ -64,6 +64,7 @@ docker run -d --name roomler \
     --restart always \
     -e API_URL=https://roomler.live \
     -p 8082:3000 \
+    -e DB_CONN=YOUR_DB_CONN \
     -e SENDGRID_API_KEY=YOUR_SEND_GRID_KEY \
     -e FACEBOOK_ID=YOUR_FACEBOOK_ID \
     -e FACEBOOK_SECRET=YOUR_FACEBOOK_SECRET \
