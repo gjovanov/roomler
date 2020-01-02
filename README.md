@@ -57,6 +57,17 @@ $ npm run build
 $ npm start
 ```
 
+## Start using docker
+```
+docker run -d --name roomler \
+    --hostname roomler \
+    --restart always \
+    -e API_URL=https://roomler.live \
+    -p 8082:3000 \
+    gjovanov/roomler
+```
+
+
 # Testing
 ## Run API tests
 
