@@ -8,7 +8,6 @@ ADD VERSION .
 ENV NODE_ENV production
 ENV HOST 0.0.0.0
 ENV PORT 3000
-ENV API_URL https://api.roomler.live
 
 # Install packages & git clone source code and build the application
 RUN apk add --update --no-cache --virtual .build-deps \
