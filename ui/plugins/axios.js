@@ -2,6 +2,7 @@ export default function ({
   $axios,
   store
 }) {
+  $axios.setBaseURL(store.state.api.config.appSettings.env.API_URL)
   $axios.onRequest((config) => {
     // config.withCredentials = true
     if (store.state.api.auth.token) {
