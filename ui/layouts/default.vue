@@ -35,6 +35,17 @@
             <nuxt />
           </v-col>
         </v-row>
+        <v-footer
+          padless
+          absolute
+        >
+          <v-btn
+            text
+            to="/tos/privacy"
+          >
+            Privacy terms
+          </v-btn>
+        </v-footer>
       </v-container>
       <toaster />
     </v-content>
