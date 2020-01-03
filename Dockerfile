@@ -28,7 +28,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
 VOLUME /roomler/ui/static/uploads
 WORKDIR /roomler
 
-EXPOSE 3000 3001
+EXPOSE 3000
 
 # Define the Run command
 CMD ["npm", "run", "start:ui"]
