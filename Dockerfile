@@ -25,6 +25,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
   rm -rf /var/cache/apk/*
 
 # Volumes
+VOLUME /roomler/ui/static/uploads
 WORKDIR /roomler
 
 EXPOSE 3000 3001
