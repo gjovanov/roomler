@@ -62,66 +62,7 @@
               Forgot username
             </v-btn>
             <v-spacer />
-            <v-btn
-              fab
-              absolute
-              left
-              bottom
-              dark
-              small
-              color="blue darken-3"
-
-              :href="'/oauth/login/facebook'"
-            >
-              <v-icon>
-                fab fa-facebook
-              </v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              absolute
-              left
-              bottom
-              dark
-              small
-              color="blue lighten-1"
-              :style="`margin-left: ${1 * 48}px !important;`"
-              :href="'/oauth/login/twitter'"
-            >
-              <v-icon>
-                fab fa-twitter
-              </v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              absolute
-              left
-              bottom
-              dark
-              small
-              color="grey darken-1"
-              :style="`margin-left: ${2 * 48}px !important;`"
-              :href="'/oauth/login/github'"
-            >
-              <v-icon>
-                fab fa-github
-              </v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              absolute
-              left
-              bottom
-              dark
-              small
-              color="teal darken-4"
-              :style="`margin-left: ${3 * 48}px !important;`"
-              :href="'/oauth/login/linkedin'"
-            >
-              <v-icon>
-                fab fa-linkedin
-              </v-icon>
-            </v-btn>
+            <oauth-buttons />
           </v-card-actions>
         </v-card>
       </v-col>
@@ -138,7 +79,12 @@
 </style>
 
 <script>
+import OauthButtons from '@/components/oauth-buttons'
+
 export default {
+  components: {
+    OauthButtons
+  },
   data () {
     return {
       valid: true,

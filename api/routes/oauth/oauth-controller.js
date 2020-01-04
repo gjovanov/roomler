@@ -9,6 +9,14 @@ const getData = async (access, type) => {
     const data = await dataGetter.getFacebookData(access)
     return data
   }
+  if (type === 'twitter') {
+    const data = await dataGetter.getTwitterData(access)
+    return data
+  }
+  if (type === 'google') {
+    const data = await dataGetter.getGoogleData(access)
+    return data
+  }
   if (type === 'github') {
     const data = await dataGetter.getGithubData(access)
     return data

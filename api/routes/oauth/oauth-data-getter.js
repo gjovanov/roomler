@@ -22,6 +22,53 @@ class OAuthDataGetter {
     return result
   }
 
+  async getTwitterData (access) {
+    const result = {
+      email: null,
+      id: null,
+      name: null,
+      avatar_url: null
+    }
+    console.log(access)
+    const data = await getService.get({
+      url: 'https://api.twitter.com/1.1/account/verify_credentials.json',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${access.access_token}`
+      },
+      json: true
+    })
+    console.log(data)
+    result.id = data.id
+    result.name = data.name
+    result.email = data.email
+    result.avatar_url = data.picture && data.picture.data ? data.picture.data.url : undefined
+    return result
+  }
+
+  async getGoogleData (access) {
+    const result = {
+      email: null,
+      id: null,
+      name: null,
+      avatar_url: null
+    }
+    const data = await getService.get({
+      url: 'https://www.googleapis.com/userinfo/v2/me',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${access.access_token}`
+      },
+      json: true
+    })
+    console.log(data)
+    result.id = data.id
+    result.name = `${data.given_name} ${data.family_name}`
+    result.email = data.email
+    result.avatar_url = data.picture ? data.picture : undefined
+    return result
+  }
+
   async getGithubData (access) {
     const result = {
       email: null,

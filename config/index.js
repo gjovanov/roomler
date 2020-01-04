@@ -49,7 +49,7 @@ const config = {
   },
 
   oauthSettings: {
-    types: ['facebook', 'google', 'github', 'twitter', 'linkedin']
+    types: ['facebook', 'google', 'github', 'linkedin']
   },
 
   dbSettings: {

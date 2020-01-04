@@ -22,6 +22,9 @@ const buildApi = function () {
   if (oauthOptions.facebook) {
     fastify.register(require('fastify-oauth2'), oauthOptions.facebook)
   }
+  if (oauthOptions.google) {
+    fastify.register(require('fastify-oauth2'), oauthOptions.google)
+  }
   if (oauthOptions.github) {
     fastify.register(require('fastify-oauth2'), oauthOptions.github)
   }
