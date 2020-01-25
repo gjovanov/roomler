@@ -1,9 +1,7 @@
-const fastJson = require('fast-json-stringify')
 const performanceService = require('../../services/performance/performance-service')
 const messageService = require('../../services/message/message-service')
 const config = require('../../../config')
-const schema = require('./message-schema')
-const stringify = fastJson(schema.wsMessage.valueOf())
+const wsDispatcher = require('../ws/ws-dispatcher')
 
 class InviteController {
   async get (request, reply) {
@@ -23,6 +21,7 @@ class InviteController {
   async create (request, reply) {
     const payload = request.body
     const result = await messageService.create(request.user.user._id, payload)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.messageCreate, result, true)
     reply.send(result)
   }
 
@@ -34,17 +33,7 @@ class InviteController {
         const messages = await messageService.create(conn.user._id, payload)
         performanceService.performance.mark('MessageCreate end')
         performanceService.performance.measure('MessageCreate', 'MessageCreate start', 'MessageCreate end')
-        wss.clients.forEach((client) => {
-          if (client.readyState === 1) {
-            const clientMessages = messageService.route(messages, client.user._id)
-            if (clientMessages.length) {
-              client.send(stringify({
-                op: config.wsSettings.opTypes.messageCreate,
-                data: clientMessages
-              }))
-            }
-          }
-        })
+        return messages
       } catch (err) {
         console.log(err)
       }

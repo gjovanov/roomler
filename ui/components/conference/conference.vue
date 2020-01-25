@@ -41,8 +41,8 @@
               >
                 <img
                   v-if="getMember(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
                   :src="getMember(handleDTO.display_name).avatar_url"
+                  alt="Avatar"
                 >
                 <v-icon
                   v-else
@@ -98,8 +98,8 @@
               >
                 <img
                   v-if="getMember(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
                   :src="getMember(handleDTO.display_name).avatar_url"
+                  alt="Avatar"
                 >
                 <v-icon
                   v-else
@@ -155,8 +155,8 @@
               >
                 <img
                   v-if="getMember(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
                   :src="getMember(handleDTO.display_name).avatar_url"
+                  alt="Avatar"
                 >
                 <v-icon
                   v-else

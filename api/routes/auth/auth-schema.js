@@ -13,6 +13,7 @@ const user = S.object()
   .prop('is_username_set', S.boolean().required())
   .prop('is_password_set', S.boolean().required())
   .prop('avatar_url', S.string())
+  .prop('user_connections', S.array().items(S.string()))
 
 const registerBody = S.object()
   .prop('email', S.string().minLength(5).maxLength(255).required())
@@ -59,7 +60,24 @@ const delete200 = S.object()
   .prop('ok', S.number().required())
   .prop('deletedCount', S.number().required())
 
+const userConnection = S.object()
+  .prop('_id', S.string().required())
+  .prop('conn_id', S.string().required())
+  .prop('process_name', S.string().required())
+  .prop('status', S.string().required())
+  .prop('ip_address', S.string().required())
+  .prop('country_code', S.string())
+  .prop('country_name', S.string())
+  .prop('user', S.string())
+
+const userConnectionList = S.array().items(userConnection)
+
+const wsUserConnection = S.object()
+  .prop('op')
+  .prop('data', userConnectionList)
+
 module.exports = {
+  wsUserConnection,
   register: {
     body: registerBody,
     response: {

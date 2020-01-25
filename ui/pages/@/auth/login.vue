@@ -25,22 +25,22 @@
               <v-text-field
                 v-model="password"
                 :rules="[...passwordRules]"
+                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append="showPassword = !showPassword"
                 label="Password"
                 name="password"
                 autocomplete="on"
-                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                :type="showPassword ? 'text' : 'password'"
                 hint="At least 8 characters"
-                @click:append="showPassword = !showPassword"
               />
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-btn
               :disabled="!valid"
+              @click="login()"
               color="primary"
               class="mb-8"
-              @click="login()"
             >
               Login
             </v-btn>

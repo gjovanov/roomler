@@ -7,10 +7,10 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        outlined
-        dark
         :disabled="user.role === 'owner'"
         v-on="on"
+        outlined
+        dark
       >
         {{ user.role }}
       </v-btn>

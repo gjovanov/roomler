@@ -8,7 +8,7 @@ class ApiServer {
       // await dbConnect()
       const address = await this.fastify.listen(port, host)
       this.fastify.swagger()
-      console.log(`API SERVER is listening at: ${address}`)
+      console.log(`API SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
     } catch (err) {
       this.fastify.log.error(err)
       process.exit(1)

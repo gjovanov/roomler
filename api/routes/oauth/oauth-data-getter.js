@@ -29,7 +29,6 @@ class OAuthDataGetter {
       name: null,
       avatar_url: null
     }
-    console.log(access)
     const data = await getService.get({
       url: 'https://api.twitter.com/1.1/account/verify_credentials.json',
       method: 'GET',
@@ -38,7 +37,6 @@ class OAuthDataGetter {
       },
       json: true
     })
-    console.log(data)
     result.id = data.id
     result.name = data.name
     result.email = data.email
@@ -61,7 +59,6 @@ class OAuthDataGetter {
       },
       json: true
     })
-    console.log(data)
     result.id = data.id
     result.name = `${data.given_name} ${data.family_name}`
     result.email = data.email

@@ -1,15 +1,14 @@
-const fastJson = require('fast-json-stringify')
 const performanceService = require('../../services/performance/performance-service')
 const messageService = require('../../services/message/message-service')
-const config = require('../../../config')
-const schema = require('./message-schema')
-const stringify = fastJson(schema.wsMessage.valueOf())
+// const config = require('../../../config')
+// const wsDispatcher = require('../ws/ws-dispatcher')
 
 class MessageReactionsController {
   async push (request, reply) {
     const payload = request.body
     const id = request.params.id
     const result = await messageService.pushReaction(request.user.user._id, id, payload)
+    // wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPush, [result], true)
     reply.send(result)
   }
 
@@ -22,17 +21,7 @@ class MessageReactionsController {
         const message = await messageService.pushReaction(conn.user._id, payload.id, payload.data)
         performanceService.performance.mark('ReactionPush end')
         performanceService.performance.measure('ReactionPush', 'ReactionPush start', 'ReactionPush end')
-        wss.clients.forEach((client) => {
-          if (client.readyState === 1) {
-            const clientMessages = messageService.route([message], client.user._id)
-            if (clientMessages.length) {
-              client.send(stringify({
-                op: config.wsSettings.opTypes.messageReactionPush,
-                data: clientMessages
-              }))
-            }
-          }
-        })
+        return message
       } catch (err) {
         console.log(err)
       }
@@ -42,6 +31,7 @@ class MessageReactionsController {
   async pull (request, reply) {
     const id = request.params.id
     const result = await messageService.pullReaction(request.user.user._id, id)
+    // wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPull, [result], true)
     reply.send(result)
   }
 
@@ -53,17 +43,7 @@ class MessageReactionsController {
         const message = await messageService.pullReaction(conn.user._id, payload.id)
         performanceService.performance.mark('ReactionPull end')
         performanceService.performance.measure('ReactionPull', 'ReactionPull start', 'ReactionPull end')
-        wss.clients.forEach((client) => {
-          if (client.readyState === 1) {
-            const clientMessages = messageService.route([message], client.user._id)
-            if (clientMessages.length) {
-              client.send(stringify({
-                op: config.wsSettings.opTypes.messageReactionPull,
-                data: clientMessages
-              }))
-            }
-          }
-        })
+        return message
       } catch (err) {
         console.log(err)
       }

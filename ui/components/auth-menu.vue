@@ -21,16 +21,16 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
+          v-on="on"
           outlined
           small
           style="background-color: #303030"
-          v-on="on"
         >
           <v-badge
+            :color="totalMentions ? 'red' : 'orange'"
             left
             bottom
             overlap
-            :color="totalMentions ? 'red' : 'orange'"
           >
             <template v-slot:badge>
               {{ totalUnreads }}
@@ -47,10 +47,10 @@
           >
             <v-list-item-avatar>
               <v-badge
+                :color="item.mentions ? 'red' : 'orange'"
                 left
                 bottom
                 overlap
-                :color="item.mentions ? 'red' : 'orange'"
               >
                 <template v-slot:badge>
                   {{ item.unreads }}
@@ -86,9 +86,9 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
+          v-on="on"
           text
           dark
-          v-on="on"
         >
           <v-icon>mdi-dots-vertical</v-icon>
           {{ user.username }}
@@ -98,8 +98,8 @@
           >
             <img
               v-if="avatarUrl"
-              alt="Avatar"
               :src="avatarUrl"
+              alt="Avatar"
             >
             <v-icon
               v-else
@@ -143,7 +143,7 @@
 
     <v-divider vertical />
 
-    <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
+    <v-btn v-if="user && isAuthenticated && !isActivated" @click="resetAccount()" text>
       Activate
     </v-btn>
   </v-toolbar-items>

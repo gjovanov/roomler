@@ -10,12 +10,17 @@ const extendRecord = (record, userid, convertToObject = true) => {
 }
 
 class MessageService {
+  recepients (messages) {
+    return messages.map(m => [m.room.owner, ...m.room.moderators, ...m.room.members]).reduce((a, b) => a.concat(b), [])
+  }
+
   route (messages, userid) {
+    const useridString = JSON.stringify(userid)
     return messages
       .filter((message) => {
-        return message.room.owner._id.toString() === userid.toString() ||
-          message.room.moderators.map(u => u._id.toString()).includes(userid.toString()) ||
-          message.room.members.map(u => u._id.toString()).includes(userid.toString())
+        return JSON.stringify(message.room.owner) === useridString ||
+          message.room.moderators.map(u => JSON.stringify(u)).includes(useridString) ||
+          message.room.members.map(u => JSON.stringify(u)).includes(useridString)
       })
       .map((message) => {
         return extendRecord(message, userid, false)

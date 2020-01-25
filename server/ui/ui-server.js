@@ -46,7 +46,7 @@ class UiServer {
       } catch (e) {
         console.log('No Swagger')
       }
-      console.log(`UI SERVER is listening at: ${address}`)
+      console.log(`UI SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
     } catch (err) {
       this.fastify.log.error(err)
       process.exit(1)

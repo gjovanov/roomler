@@ -70,10 +70,10 @@
             </template>
           </v-list>
           <v-btn
+            @click="inviteDialog = true"
             color="primary"
             right
             class="ml-4"
-            @click="inviteDialog = true"
           >
             <v-icon>fa-users</v-icon> &nbsp; Invite peers
           </v-btn>

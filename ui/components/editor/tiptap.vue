@@ -7,8 +7,8 @@
 
       <editor-content
         :id="elemId"
-        class="editor__content Prose"
         :editor="editor"
+        class="editor__content Prose"
       />
       <v-layout>
         <v-row>
@@ -16,10 +16,10 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  small
                   :text="!minimal"
                   v-on="on"
                   @click="minimal = !minimal"
+                  small
                 >
                   <v-icon>fa-edit</v-icon>
                 </v-btn>
@@ -30,10 +30,10 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  small
                   :text="menuMembers"
                   v-on="on"
                   @click="toggleMenuMembers()"
+                  small
                 >
                   <v-icon>fa-users</v-icon>
                 </v-btn>
@@ -44,11 +44,11 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
+                  v-on="on"
+                  @click="send()"
                   small
                   absolute
                   right
-                  v-on="on"
-                  @click="send()"
                 >
                   <v-icon>send</v-icon>
                 </v-btn>

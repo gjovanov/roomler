@@ -2,9 +2,9 @@
   <v-navigation-drawer
     ref="leftDrawer"
     v-model="leftDrawer"
+    :width="width"
     app
     clipped
-    :width="width"
   >
     <v-subheader class="mt-4 grey--text text--darken-1">
       Rooms
@@ -22,14 +22,15 @@
     >
       <template v-slot:prepend="{ item, open }">
         <v-badge
+          :color="mentions(item) ? 'red' : 'orange'"
+          :value="unreads(item)"
           left
           bottom
           overlap
-          :color="mentions(item) ? 'red' : 'orange'"
           class="align-self-center"
         >
           <template v-slot:badge>
-            <span v-if="unreads(item)">{{ unreads(item) }}</span>
+            <span>{{ unreads(item) }}</span>
           </template>
           <v-icon>
             {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
@@ -39,7 +40,7 @@
       <template slot="label" slot-scope="{ item }">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn :to="{ path: `/${item.path}` }" block outlined class="justify-space-between pr-0" v-on="on">
+            <v-btn :to="{ path: `/${item.path}` }" v-on="on" block outlined class="justify-space-between pr-0">
               <span>{{ item.short_name }}</span>
               <v-icon v-if="mentions(item)" small color="red">
                 fa-at
@@ -49,7 +50,7 @@
           <span>{{ item.name }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:append="{ item, open }">
+      <template v-slot:append="{ item }">
         <room-menu v-if="canManage(item)" :room="item" @add="add" @removeConsent="removeConsent" @remove="remove" />
       </template>
     </v-treeview>

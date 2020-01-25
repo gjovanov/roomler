@@ -21,8 +21,8 @@
                   <v-text-field
                     v-model="newInvite.email"
                     :rules="emailRules"
-                    label="Email"
                     :name="`email[${newInvite.id}]`"
+                    label="Email"
                     autocomplete="on"
                     required
                     outlined
@@ -30,8 +30,8 @@
                   <v-spacer />
                   <v-text-field
                     v-model="newInvite.name"
-                    label="Name"
                     :name="`name[${newInvite.id}]`"
+                    label="Name"
                     autocomplete="on"
                     outlined
                   />
@@ -45,10 +45,10 @@
                   />
                   <v-btn
                     :disabled="!isValidNewInvite"
+                    @click="push"
                     color="primary"
                     outlined
                     class="justify-end"
-                    @click="push"
                   >
                     <v-icon>fa-plus</v-icon> Add invite
                   </v-btn>
@@ -75,8 +75,8 @@
                       <v-text-field
                         v-model="invite.email"
                         :rules="emailRules"
-                        label="Email"
                         :name="`email[${invite.id}]`"
+                        label="Email"
                         autocomplete="on"
                         required
                         outlined
@@ -89,8 +89,8 @@
                     >
                       <v-text-field
                         v-model="invite.name"
-                        label="Name"
                         :name="`name[${invite.id}]`"
+                        label="Name"
                         autocomplete="on"
                         outlined
                       />
@@ -114,10 +114,10 @@
                       class="pa-0"
                     >
                       <v-btn
+                        @click="pop(invite)"
                         color="red"
                         fab
                         small
-                        @click="pop(invite)"
                       >
                         <v-icon>fa-trash-alt</v-icon>
                       </v-btn>
@@ -130,14 +130,14 @@
           </v-expansion-panels>
           <v-card-actions>
             <v-spacer />
-            <v-btn color="grey" outlined @click="cancelInvites()">
+            <v-btn @click="cancelInvites()" color="grey" outlined>
               Cancel
             </v-btn>
             <v-btn
               :disabled="!areValidInvites || !invites.length"
+              @click="sendInvites()"
               color="primary"
               outlined
-              @click="sendInvites()"
             >
               Send invites
             </v-btn>

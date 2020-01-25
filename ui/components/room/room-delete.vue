@@ -8,10 +8,10 @@
         <v-card-text>Are you sure you want to delete this room?</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="grey" outlined @click="no()">
+          <v-btn @click="no()" color="grey" outlined>
             No
           </v-btn>
-          <v-btn color="primary" outlined @click="yes()">
+          <v-btn @click="yes()" color="primary" outlined>
             Yes
           </v-btn>
         </v-card-actions>

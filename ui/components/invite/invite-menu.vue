@@ -7,9 +7,9 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
+        v-on="on"
         outlined
         dark
-        v-on="on"
       >
         {{ invite.type }}
       </v-btn>

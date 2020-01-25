@@ -15,33 +15,33 @@
               <v-text-field
                 v-model="password"
                 :rules="[...passwordRules]"
+                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                :type="showPassword ? 'text' : 'password'"
+                @click:append="showPassword = !showPassword"
                 label="New password"
                 name="password"
                 autocomplete="on"
-                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                :type="showPassword ? 'text' : 'password'"
                 hint="At least 8 characters"
-                @click:append="showPassword = !showPassword"
               />
               <v-spacer />
               <v-text-field
                 v-model="passwordConfirm"
                 :rules="[...passwordConfirmRules, passwordConfirmationRule]"
+                :append-icon="showPasswordConfirm ? 'visibility' : 'visibility_off'"
+                :type="showPasswordConfirm ? 'text' : 'password'"
+                @click:append="showPasswordConfirm = !showPasswordConfirm"
                 label="New password confirm"
                 name="passwordConfirm"
                 autocomplete="on"
-                :append-icon="showPasswordConfirm ? 'visibility' : 'visibility_off'"
-                :type="showPasswordConfirm ? 'text' : 'password'"
                 hint="At least 8 characters"
-                @click:append="showPasswordConfirm = !showPasswordConfirm"
               />
             </v-form>
           </v-card-text>
           <v-card-actions>
             <v-btn
               :disabled="!valid"
-              color="primary"
               @click="change()"
+              color="primary"
             >
               Change password
             </v-btn>

@@ -7,6 +7,7 @@ export default ({
   // if (apiUrl.includes('localhost')) {
   //   apiUrl = apiUrl.replace('localhost', '127.0.0.1') // faster with ip4 than ip6 - https://stackoverflow.com/questions/15135506/websocket-connection-setup-takes-a-relatively-long-time-is-this-normal
   // }
+  console.log(`${apiUrl.replace(/^http/, 'ws')}`)
   const wss = new WsService(apiUrl.replace(/^http/, 'ws'))
   inject('wss', wss)
   app.store.dispatch('api/message/subscribe')

@@ -25,8 +25,8 @@
           <v-card-actions>
             <v-btn
               :disabled="!valid"
-              color="primary"
               @click="change()"
+              color="primary"
             >
               Change username
             </v-btn>

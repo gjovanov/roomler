@@ -1,0 +1,15 @@
+module.exports = {
+  url: 'wss://mcu.xplorify.net/janus_ws',
+  iceServers: [{
+    urls: process.env.TURN_URL || 'turn:numb.viagenie.ca',
+    username: process.env.TURN_USERNAME || 'webrtc@live.com',
+    credential: process.env.TURN_PASSWORD || 'muazkh'
+  }],
+  plugins: {
+    videoroom: 'janus.plugin.videoroom',
+    textroom: 'janus.plugin.textroom',
+    streaming: 'janus.plugin.streaming'
+  },
+  audioCodecs: ['opus', 'isac32', 'isac16', 'pcmu', 'pcma'],
+  videoCodecs: ['vp8', 'vp9', 'h264']
+}

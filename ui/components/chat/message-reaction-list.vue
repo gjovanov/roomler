@@ -3,12 +3,12 @@
     <v-chip
       v-for="(reactionGroup, name, index) in reactions"
       :key="name"
+      :class="index !== 0 ? 'ml-3' : ''"
+      @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
       class="mt-2"
       tile
       outlined
-      :class="index !== 0 ? 'ml-3' : ''"
       color="primary"
-      @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
     >
       {{ reactionGroup.symbol }}
       <v-avatar

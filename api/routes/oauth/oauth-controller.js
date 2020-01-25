@@ -61,6 +61,7 @@ class OAuthController {
     if (!oauthConfig) {
       throw new TypeError(`Unsupported OAuth type: ${type}`)
     }
+    console.log(oauthConfig)
     const access = await oauthConfig.getAccessTokenFromAuthorizationCodeFlow(request)
     const data = await getData(access, type)
     if (data && data.email) {

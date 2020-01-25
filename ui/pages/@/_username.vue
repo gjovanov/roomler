@@ -22,8 +22,8 @@
             >
               <img
                 v-if="user && user.avatar_url"
-                alt="Avatar"
                 :src="user.avatar_url"
+                alt="Avatar"
               >
               <v-icon
                 v-else

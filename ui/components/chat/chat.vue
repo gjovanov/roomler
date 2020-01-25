@@ -33,7 +33,7 @@
             data-type="message_item"
             small
           >
-            <v-avatar v-if="message.author.avatar_url" slot="icon" size="32">
+            <v-avatar slot="icon" v-if="message.author.avatar_url" size="32">
               <img :src="message.author.avatar_url">
             </v-avatar>
             <span slot="opposite">Tus eu perfecto</span>
@@ -44,14 +44,14 @@
                 light
               >
                 <v-btn
+                  @mouseover="showMenu($event, message)"
+                  @click="showMenu($event, message)"
                   fab
                   right
                   bottom
                   x-small
                   absolute
                   color="green"
-                  @mouseover="showMenu($event, message)"
-                  @click="showMenu($event, message)"
                 >
                   😄
                 </v-btn>
@@ -59,7 +59,7 @@
                   {{ message.author.username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
                     <template v-slot:activator="{ on }">
-                      <v-icon small color="red" v-on="on">
+                      <v-icon v-on="on" small color="red">
                         fa-at
                       </v-icon>
                     </template>
@@ -67,7 +67,7 @@
                   </v-tooltip>
                 </v-card-title>
                 <v-card-text>
-                  <pre style="white-space: pre-wrap" v-html="message.content" />
+                  <pre v-html="message.content" style="white-space: pre-wrap" />
                 </v-card-text>
               </v-card>
             </v-hover>

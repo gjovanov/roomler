@@ -18,6 +18,10 @@ const extendRole = (record) => {
   return recordObj
 }
 class RoomService {
+  recepients (rooms) {
+    return rooms.map(r => [r.owner._id, ...r.moderators.map(m => m._id), ...r.members.map(m => m._id)]).reduce((a, b) => a.concat(b), [])
+  }
+
   // base methods - START
   async get (userid, id) {
     const roomFilter = new RoomFilter({

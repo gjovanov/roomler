@@ -2,11 +2,11 @@
   <client-only>
     <v-navigation-drawer
       v-model="rightDrawer"
+      :mini-variant.sync="mini"
       app
       clipped
       right
       expand-on-hover
-      :mini-variant.sync="mini"
     >
       <v-list-item>
         <v-list-item-avatar>
@@ -14,8 +14,8 @@
         </v-list-item-avatar>
         <v-list-item-title>Members</v-list-item-title>
         <v-btn
-          icon
           @click.stop="mini = !mini"
+          icon
         >
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>

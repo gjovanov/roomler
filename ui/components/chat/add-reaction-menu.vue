@@ -9,17 +9,17 @@
     offset-y
   >
     <v-card
-      style="width: 384px;"
       @mouseleave="menu = false"
+      style="width: 384px;"
     >
       <v-card-title class="overline red">
         <v-btn
+          @click="hideMenu()"
           light
           small
           text
           right
           absolute
-          @click="hideMenu()"
         >
           <v-icon>fa-window-close</v-icon>
         </v-btn>
@@ -70,8 +70,8 @@
             <template v-for="(emoji) in filteredEmojis">
               <v-btn
                 :key="emoji.id"
-                outlined
                 @click="pushReaction(emoji)"
+                outlined
               >
                 {{ emoji.char }}
               </v-btn>

@@ -170,6 +170,26 @@ class UserService {
     validateUserToken(user, userFromDb)
     return user
   }
+
+  async pushUserConnection (userid, id) {
+    const update = {
+      $addToSet: {
+        user_connections: id
+      }
+    }
+    const result = await this.update(userid, update)
+    return result
+  }
+
+  async pullUserConnection (userid, id) {
+    const update = {
+      $pull: {
+        user_connections: id
+      }
+    }
+    const result = await this.update(userid, update)
+    return result
+  }
 }
 
 module.exports = new UserService()

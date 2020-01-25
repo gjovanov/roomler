@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs')
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const schema = new Schema({
   username: {
@@ -45,7 +46,12 @@ const schema = new Schema({
   },
   avatar_url: {
     type: String
-  }
+  },
+  user_connections: [{
+    type: ObjectId,
+    ref: 'user_connections',
+    index: true
+  }]
 }, {
   timestamps: true
 })

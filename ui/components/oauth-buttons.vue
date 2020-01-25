@@ -3,15 +3,15 @@
     <v-btn
       v-for="(oauth, index) in oauths"
       :key="oauth.name"
+      :color="oauth.color"
+      :style="`margin-left: ${index * 48}px !important;`"
+      :href="oauth.url"
       fab
       absolute
       left
       bottom
       dark
       small
-      :color="oauth.color"
-      :style="`margin-left: ${index * 48}px !important;`"
-      :href="oauth.url"
     >
       <v-icon>
         fab {{ oauth.icon }}
