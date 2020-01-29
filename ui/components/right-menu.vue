@@ -30,14 +30,24 @@
           link
         >
           <v-list-item-icon>
-            <v-avatar
-              size="36px"
+            <v-badge
+              :color="isOnline(user._id) ? 'green' : 'grey'"
+              bordered
+              bottom
+              left
+              dot
+              offset-x="4"
+              offset-y="4"
             >
-              <img v-if="user.avatar_url" :src="user.avatar_url">
-              <v-icon v-if="!user.avatar_url">
-                fa-user
-              </v-icon>
-            </v-avatar>
+              <v-avatar
+                size="36px"
+              >
+                <img v-if="user.avatar_url" :src="user.avatar_url">
+                <v-icon v-if="!user.avatar_url">
+                  fa-user
+                </v-icon>
+              </v-avatar>
+            </v-badge>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>{{ user.username }}</v-list-item-title>
@@ -82,6 +92,11 @@ export default {
       if (value !== this.drawer) {
         this.$store.commit('api/auth/toggleMenu', 'members')
       }
+    }
+  },
+  methods: {
+    isOnline (userid) {
+      return this.$store.getters['api/room/isOnline'](userid)
     }
   }
 }

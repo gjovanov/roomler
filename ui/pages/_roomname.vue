@@ -1,6 +1,5 @@
 <template>
   <v-card
-    background-color="basil"
     lg="12"
     md="12"
     class="pt-0 mt-0"
@@ -28,7 +27,6 @@
 
     <v-tabs
       v-model="tab"
-      background-color="accent-4"
       dark
       show-arrows
       icons-and-text

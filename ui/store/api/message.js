@@ -27,7 +27,6 @@ export const mutations = {
       })
       state.messages[room] = result
         .map((message) => {
-          message.click = () => { console.log('clicked') }
           const updatedMessage = messages.find(m => (m._id === message._id) || (m.client_id === message.client_id))
           return updatedMessage || message
         })

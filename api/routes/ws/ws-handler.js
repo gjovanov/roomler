@@ -39,8 +39,6 @@ class WsHandler {
   }
 
   onMessage (wss, conn, msg) {
-    console.log(`ON_MESSAGE: ${processName}`)
-    console.log(`WS message for OP TYPE: ${msg.op}`)
     if (msg.op === config.wsSettings.opTypes.messageCreate) {
       return require('../message/message-controller').createWs(wss, conn, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPush) {

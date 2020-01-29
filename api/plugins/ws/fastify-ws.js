@@ -114,7 +114,6 @@ function fastifyWs (fastify, opts, next) {
         // 2. dispatch to proper recepients
         // 3. scaleout to other WS servers
         conn.on('message', async (msg) => {
-          console.log(`ON_MESSAGE__: ${processName}`)
           const message = JSON.parse(msg)
           let messages = await opts.handler.onMessage(wss, conn, message)
           if (messages) {
@@ -122,7 +121,6 @@ function fastifyWs (fastify, opts, next) {
               messages = [messages]
             }
             if (opts.dispatcher) {
-              console.log('Dispatching relayed message')
               opts.dispatcher.dispatch(message.op, messages, true)
             }
           }

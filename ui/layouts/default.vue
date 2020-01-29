@@ -99,7 +99,6 @@ export default {
   },
   created () {
     this.$vuetify.theme.dark = true
-    console.log(this.$vuetify.application.top)
   },
   methods: {
     toggleDrawer (value) {

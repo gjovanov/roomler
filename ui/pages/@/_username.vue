@@ -13,24 +13,34 @@
           <v-card-title
             class="justify-center"
           >
-            <v-avatar
-              class="profile"
-              color="grey"
-              size="164"
-              align="center"
-              justify="center"
+            <v-badge
+              :color="isOnline() ? 'green' : 'grey'"
+              bordered
+              bottom
+              left
+              dot
+              offset-x="28"
+              offset-y="28"
             >
-              <img
-                v-if="user && user.avatar_url"
-                :src="user.avatar_url"
-                alt="Avatar"
+              <v-avatar
+                class="profile"
+                color="grey"
+                size="164"
+                align="center"
+                justify="center"
               >
-              <v-icon
-                v-else
-              >
-                fa-user
-              </v-icon>
-            </v-avatar>
+                <img
+                  v-if="user && user.avatar_url"
+                  :src="user.avatar_url"
+                  alt="Avatar"
+                >
+                <v-icon
+                  v-else
+                >
+                  fa-user
+                </v-icon>
+              </v-avatar>
+            </v-badge>
           </v-card-title>
 
           <v-card-text
@@ -52,6 +62,7 @@ export default {
   data () {
     return {
       user: {
+        _id: null,
         username: null
       }
     }
@@ -68,6 +79,11 @@ export default {
     const response = await this.$store.dispatch('api/auth/get', this.$route.params.username)
     if (!response.hasError) {
       this.user = response.result
+    }
+  },
+  methods: {
+    isOnline () {
+      return this.$store.getters['api/room/isOnline'](this.user._id)
     }
   }
 }

@@ -33,10 +33,20 @@
             data-type="message_item"
             small
           >
-            <v-avatar slot="icon" v-if="message.author.avatar_url" size="32">
-              <img :src="message.author.avatar_url">
-            </v-avatar>
-            <span slot="opposite">Tus eu perfecto</span>
+            <v-badge
+              slot="icon"
+              :color="isOnline(message.author._id) ? 'green' : 'grey'"
+              bordered
+              bottom
+              left
+              dot
+              offset-x="8"
+              offset-y="8"
+            >
+              <v-avatar v-if="message.author.avatar_url" size="32">
+                <img :src="message.author.avatar_url">
+              </v-avatar>
+            </v-badge>
             <v-hover v-slot:default="{ hover }">
               <v-card
                 :elevation="hover ? 16 : 2"
@@ -188,6 +198,9 @@ export default {
   },
 
   methods: {
+    isOnline (userid) {
+      return this.$store.getters['api/room/isOnline'](userid)
+    },
     getReactions (message) {
       const result = this.$store.getters['api/message/reactions'](message)
       return result

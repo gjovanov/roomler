@@ -93,20 +93,30 @@
           <v-icon>mdi-dots-vertical</v-icon>
           {{ user.username }}
           &nbsp;
-          <v-avatar
-            size="36px"
+          <v-badge
+            :color="isOnline() ? 'green' : 'grey'"
+            bordered
+            bottom
+            left
+            dot
+            offset-x="10"
+            offset-y="10"
           >
-            <img
-              v-if="avatarUrl"
-              :src="avatarUrl"
-              alt="Avatar"
+            <v-avatar
+              size="36px"
             >
-            <v-icon
-              v-else
-            >
-              fa-user
-            </v-icon>
-          </v-avatar>
+              <img
+                v-if="avatarUrl"
+                :src="avatarUrl"
+                alt="Avatar"
+              >
+              <v-icon
+                v-else
+              >
+                fa-user
+              </v-icon>
+            </v-avatar>
+          </v-badge>
         </v-btn>
       </template>
       <v-list>
@@ -202,6 +212,9 @@ export default {
     }
   },
   methods: {
+    isOnline () {
+      return this.$store.getters['api/room/isOnline'](this.$store.state.api.auth.user._id)
+    },
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
     },

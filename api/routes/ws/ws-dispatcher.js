@@ -39,16 +39,13 @@ class WsDispatcher {
   sendRecepients (op, recepients, stringify, messages) {
     recepients.forEach((r) => {
       const recepient = JSON.stringify(r)
-      console.log(recepient)
       if (storage.clients[recepient]) {
         const clientConns = storage.clients[recepient]
         if (clientConns && clientConns.length) {
-          console.log(`CONNS: ${JSON.stringify(clientConns[0].user)}`)
           if (clientConns[0].user) {
             const username = clientConns[0].user.username
             clientConns.forEach((client) => {
               if (client.readyState === 1) {
-                console.log(`SENDING TO '${username}' messages '${messages.length}' messages on ${processName}`)
                 if (messages.length) {
                   client.send(stringify({
                     op,
@@ -65,7 +62,6 @@ class WsDispatcher {
 
   scaleoutMessages (op, messages, scaleout) {
     if (scaleout && this.publisher && this.publisher.status === 'ready') {
-      console.log(`PUBLISHING: ${processName}`)
       this.publisher.publish('global', JSON.stringify({
         process: processName,
         op,
