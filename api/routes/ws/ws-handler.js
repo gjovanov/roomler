@@ -28,7 +28,7 @@ class WsHandler {
       process_name: processName,
       ip_address: ipAddress
     }
-    const userConnection = await require('../auth/auth-controller').pushUserConnectionWs(wss, conn, payload)
+    const userConnection = await require('../metric/metric-controller').pushUserConnectionWs(wss, conn, payload)
     conn.user_connection_id = userConnection._id
 
     // notify USER CONNECTION OPENED
@@ -65,7 +65,7 @@ class WsHandler {
     }
     storage.pull(conn)
     if (conn.user_connection_id) {
-      const userConnection = await require('../auth/auth-controller').pullUserConnectionWs(wss, conn)
+      const userConnection = await require('../metric/metric-controller').pullUserConnectionWs(wss, conn)
       // notify USER CONNECTION CLOSED
       if (conn.user) {
         const op = config.wsSettings.opTypes.userConnectionClosed

@@ -1,5 +1,4 @@
 
-const utilsService = require('../../services/utils/utils-service')
 const oAuthService = require('../../services/oauth/oauth-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 const dataGetter = require('./oauth-data-getter')
@@ -48,7 +47,7 @@ const getToken = async (oauth, reply) => {
   let token = null
   if (oauth.user && oauth.user._id) {
     token = await reply.jwtSign({
-      user: tokenizeUser(utilsService.tokenizeUser(oauth.user))
+      user: tokenizeUser(oauth.user)
     })
   }
   return token
@@ -61,7 +60,6 @@ class OAuthController {
     if (!oauthConfig) {
       throw new TypeError(`Unsupported OAuth type: ${type}`)
     }
-    console.log(oauthConfig)
     const access = await oauthConfig.getAccessTokenFromAuthorizationCodeFlow(request)
     const data = await getData(access, type)
     if (data && data.email) {

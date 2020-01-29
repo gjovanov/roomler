@@ -20,7 +20,7 @@ export const mutations = {
 
     // Merge with Cookie Pending Invites
     let invites = storage.get('pendingInvites')
-    if (Array.isArray(invites)) {
+    if (invites) {
       invites = JSON.parse(invites)
       invites.forEach((i) => {
         if (!result.includes(i)) {

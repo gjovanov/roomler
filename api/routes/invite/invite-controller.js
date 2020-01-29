@@ -36,6 +36,7 @@ class InviteController {
   }
 
   async accept (request, reply) {
+    console.log('INVITE ACCEPT')
     const result = await inviteService.accept(request.user.user._id, request.params.id)
     reply.send(result)
   }

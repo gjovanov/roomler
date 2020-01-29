@@ -32,6 +32,26 @@ const verify = (fastify, opts) => (info, cb) => {
   }
 }
 
+const startHeartbeats = (wss, conn) => {
+  const noop = () => {}
+  const handlePong = function () {
+    this.isAlive = true
+  }
+  conn.isAlive = true
+  conn.on('pong', handlePong)
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (!ws.isAlive) {
+        return ws.terminate()
+      }
+
+      ws.isAlive = false
+      ws.ping(noop)
+    })
+  }, 30000)
+  return interval
+}
+
 function fastifyWs (fastify, opts, next) {
   if (opts.scaleout && opts.scaleout.enabled) {
     if (!fastify.scaleout) {
@@ -79,6 +99,9 @@ function fastifyWs (fastify, opts, next) {
   })
   wss
     .on('connection', (conn, req) => {
+      // start the connection Hearbeats with PING/PONG messages
+      const interval = startHeartbeats(wss, conn)
+
       if (opts.handler) {
         conn.send(JSON.stringify({
           op: 'HELLO',
@@ -106,6 +129,8 @@ function fastifyWs (fastify, opts, next) {
         })
 
         conn.on('close', () => {
+          clearInterval(interval)
+
           opts.handler.onClose(wss, conn)
         })
       }
@@ -118,7 +143,6 @@ function fastifyWs (fastify, opts, next) {
       fastify.scaleout.publisher.quit()
       fastify.scaleout.subscriber.quit()
     }
-
     fastify.ws.close(done)
   })
 

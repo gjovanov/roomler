@@ -1,12 +1,17 @@
 export const handleError = (err, commit) => {
   const data = err.response.data
   if (Array.isArray(data.errors)) {
-    data.errors.forEach((e) => {
-      e.error = true
-      commit('toast/push', e, {
-        root: true
+    const invalidToken = data.errors.find(e => e.prop === 'token')
+    if (invalidToken) {
+      commit('api/auth/clearUserInfo', null, { root: true })
+    } else {
+      data.errors.forEach((e) => {
+        e.error = true
+        commit('toast/push', e, {
+          root: true
+        })
       })
-    })
+    }
   } else {
     if (data.message && data.message.includes('E11000 duplicate key error collection')) {
       const index = data.message.indexOf('{')

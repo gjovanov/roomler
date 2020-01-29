@@ -1,7 +1,6 @@
 const oauthPlugin = require('fastify-oauth2')
 const config = require('../../../config')
 const defaultState = require('./default-state')
-console.log(`${config.appSettings.env.URL}/@/oauth/callback/google`)
 module.exports = {
   name: 'google',
   credentials: {

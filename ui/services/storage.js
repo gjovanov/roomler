@@ -68,8 +68,12 @@ class Storage {
 
   clear (key) {
     this.removeCookie(key)
-    this.localStorage.removeItem(key)
-    this.sessionStorage.removeItem(key)
+    if (this.localStorage.removeItem) {
+      this.localStorage.removeItem(key)
+    }
+    if (this.sessionStorage.removeItem) {
+      this.sessionStorage.removeItem(key)
+    }
     return true
   }
 }

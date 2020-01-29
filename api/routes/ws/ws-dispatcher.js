@@ -27,7 +27,7 @@ class WsDispatcher {
     if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
       recepients = roomService.recepients(rooms)
-      stringify = fastJson(require('../auth/auth-schema').wsUserConnection.valueOf())
+      stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
     // TODO: Add other ROUTES (RECEPIENTS)
     return {
