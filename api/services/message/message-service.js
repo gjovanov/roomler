@@ -3,9 +3,9 @@ const Message = require('../../models/message')
 const MessageFilter = require('./message-filter')
 const extendRecord = (record, userid, convertToObject = true) => {
   const recordObj = convertToObject ? record.toObject() : record
-  recordObj.is_read = !!record.readby.find(u => u._id.toString() === userid.toString())
-  recordObj.has_mention = !!record.mentions.find(u => u._id.toString() === userid.toString())
-  recordObj.has_reaction = !!record.reactions.find(u => u.user._id.toString() === userid.toString())
+  recordObj.is_read = !!record.readby.find(u => u.toString() === userid.toString())
+  recordObj.has_mention = !!record.mentions.find(u => u.toString() === userid.toString())
+  recordObj.has_reaction = !!record.reactions.find(u => u.user.toString() === userid.toString())
   return recordObj
 }
 
@@ -44,12 +44,12 @@ class MessageService {
           throw new ReferenceError('Message was not found.')
         }
         const record = extendRecord(records[0], userid, false)
-        record.author = record.author[0]
+        // record.author = record.author[0]
         record.room = record.room[0]
-        record.reactions.forEach((reaction) => {
-          const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
-          reaction.user = user
-        })
+        // record.reactions.forEach((reaction) => {
+        //   const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
+        //   reaction.user = user
+        // })
         return record
       })
     return record
@@ -76,12 +76,12 @@ class MessageService {
       .exec()
     records = records.map((r) => {
       const record = extendRecord(r, userid, false)
-      record.author = record.author[0]
+      // record.author = record.author[0]
       record.room = record.room[0]
-      record.reactions.forEach((reaction) => {
-        const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
-        reaction.user = user
-      })
+      // record.reactions.forEach((reaction) => {
+      //   const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
+      //   reaction.user = user
+      // })
       return record
     })
     return records.reverse()
@@ -99,16 +99,11 @@ class MessageService {
       .then((rows) => {
         return Promise.all(rows.map(async (row) => {
           const record = await row
-            .populate('author')
             .populate('room')
-            .populate('readby')
-            .populate('mentions')
-            .populate('reactions.user')
             .execPopulate()
           return extendRecord(record, userid)
         }))
       })
-
     return records
   }
 
@@ -135,11 +130,7 @@ class MessageService {
       }
     }
     const record = await Message.findOneAndUpdate(messageFilter.getFilter(), update, options)
-      .populate('author')
       .populate('room')
-      .populate('readby')
-      .populate('mentions')
-      .populate('reactions.user')
 
     return extendRecord(record, userid)
   }

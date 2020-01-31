@@ -190,7 +190,8 @@ export default {
   },
   computed: {
     members () {
-      const users = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
+      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
+      const users = this.$store.getters['api/auth/getUsers'](userids)
       return users
     }
   },

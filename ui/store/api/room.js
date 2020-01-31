@@ -5,7 +5,6 @@ import {
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
-  users: [],
   rooms: [],
   tree: {
     source: new Tree([]),
@@ -14,81 +13,30 @@ export const state = () => ({
   }
 })
 
-const uniqueUsers = (room, users) => {
-  let found = users.find(u => u._id === room.owner._id)
-  if (!found) {
-    users.push(room.owner)
-  }
-  room.moderators.forEach((user) => {
-    found = users.find(u => u._id === user._id)
-    if (!found) {
-      users.push(user)
-    }
-  })
-  room.members.forEach((user) => {
-    found = users.find(u => u._id === user._id)
-    if (!found) {
-      users.push(user)
-    }
-  })
-}
-
 export const mutations = {
   setRooms (state, rooms) {
     state.rooms = rooms
     state.tree.source = new Tree(state.rooms)
-    const users = []
-    state.rooms.forEach((room) => {
-      uniqueUsers(room, users)
-    })
-    state.users = users
   },
   push (state, room) {
     room.children = []
     state.rooms.push(room)
     state.tree.source = new Tree(state.rooms)
-    const users = []
-    state.rooms.forEach((room) => {
-      uniqueUsers(room, users)
-    })
-    state.users = users
   },
   pull (state, roomid) {
     state.rooms = state.rooms.filter(r => r._id !== roomid)
     state.tree.source = new Tree(state.rooms)
-    const users = []
-    state.rooms.forEach((room) => {
-      uniqueUsers(room, users)
-    })
-    state.users = users
   },
   replace (state, updatedRoom) {
     state.rooms = state.rooms.map(r => r._id === updatedRoom._id ? updatedRoom : r)
     state.tree.source = new Tree(state.rooms)
-    const users = []
-    state.rooms.forEach((room) => {
-      uniqueUsers(room, users)
-    })
-    state.users = users
   },
-  pushUserConnection (state, userConnections) {
-    userConnections.forEach((userConnection) => {
-      const user = state.users.find(u => u._id === userConnection.user)
-      if (user) {
-        const uconn = user.user_connections.find(uc => uc === userConnection._id)
-        if (!uconn) {
-          user.user_connections.push(userConnection._id)
-        }
-      }
-    })
-  },
-  pullUserConnection (state, userConnections) {
-    userConnections.forEach((userConnection) => {
-      const user = state.users.find(u => u._id === userConnection.user)
-      if (user) {
-        user.user_connections = user.user_connections.filter(uc => uc !== userConnection._id)
-      }
-    })
+
+  pushUser (state, invite) {
+    const room = state.rooms.find(r => r._id === invite.room._id)
+    if (room) {
+      room[`${invite.type}s`].push(invite.invitee._id)
+    }
   }
 }
 
@@ -100,10 +48,13 @@ export const actions = {
   }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpened) {
-        commit('pushUserConnection', data.data)
-      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionClosed) {
-        commit('pullUserConnection', data.data)
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomJoin) {
+        data.data.forEach((invite) => {
+          commit('pushUser', invite)
+          commit('api/auth/push', invite.invitee, {
+            root: true
+          })
+        })
       }
     })
   },
@@ -199,12 +150,5 @@ export const getters = {
   selectedRoom: state => (roomname) => {
     const nullo = { tags: [] }
     return roomname ? (state.rooms.find(r => r.name.toLowerCase() === roomname.toLowerCase()) || nullo) : nullo
-  },
-  getUser: state => (userid) => {
-    return state.users.find(u => u._id === userid)
-  },
-  isOnline: state => (userid) => {
-    const user = state.users.find(u => u._id === userid)
-    return user && user.user_connections && user.user_connections.length
   }
 }

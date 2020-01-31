@@ -8,18 +8,18 @@ const slugOptions = {
 }
 const extendRole = (record) => {
   const recordObj = record.toObject()
-  recordObj.owner.role = 'owner'
-  recordObj.moderators.forEach((m) => {
-    m.role = 'moderator'
-  })
-  recordObj.members.forEach((m) => {
-    m.role = 'member'
-  })
+  // recordObj.owner.role = 'owner'
+  // recordObj.moderators.forEach((m) => {
+  //   m.role = 'moderator'
+  // })
+  // recordObj.members.forEach((m) => {
+  //   m.role = 'member'
+  // })
   return recordObj
 }
 class RoomService {
   recepients (rooms) {
-    return rooms.map(r => [r.owner._id, ...r.moderators.map(m => m._id), ...r.members.map(m => m._id)]).reduce((a, b) => a.concat(b), [])
+    return rooms.map(r => [r.owner, ...r.moderators, ...r.members]).reduce((a, b) => a.concat(b), [])
   }
 
   // base methods - START
@@ -31,9 +31,6 @@ class RoomService {
       .getFilter()
     const record = await Room
       .findOne(roomFilter)
-      .populate('owner')
-      .populate('moderators')
-      .populate('members')
       .exec()
     if (!record) {
       throw new ReferenceError('Room was not found.')
@@ -49,13 +46,11 @@ class RoomService {
     })
       .addUserFilter(userid)
       .getFilter()
+    console.log(JSON.stringify(roomFilter))
     const pageInt = parseInt(page)
     const sizeInt = parseInt(size)
     const records = await Room
       .find(roomFilter)
-      .populate('owner')
-      .populate('moderators')
-      .populate('members')
       .sort(sort)
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
@@ -74,11 +69,6 @@ class RoomService {
     }
     let record = new Room(data)
     record = await record.save()
-      .then(r =>
-        r.populate('owner')
-          .populate('moderators')
-          .populate('members')
-          .execPopulate())
     return extendRole(record)
   }
 
@@ -96,9 +86,6 @@ class RoomService {
     }
     const record = await Room
       .findOneAndUpdate(roomFilter, update, options)
-      .populate('owner')
-      .populate('moderators')
-      .populate('members')
     if (!record) {
       throw new ReferenceError('Room was not found.')
     }

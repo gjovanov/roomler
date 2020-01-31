@@ -23,6 +23,12 @@ class InviteService {
           throw new ReferenceError('Invite was not found.')
         }
         records[0].room = records[0].room[0]
+        records[0].inviter = records[0].inviter[0]
+        if (records[0].invitee && records[0].invitee.length) {
+          records[0].invitee = records[0].invitee[0]
+        } else {
+          records[0].invitee = undefined
+        }
         return records[0]
       })
     return record
@@ -49,6 +55,12 @@ class InviteService {
       .exec()
     records.forEach((record) => {
       record.room = record.room[0]
+      record.inviter = record.inviter[0]
+      if (record.invitee && record.invitee.length) {
+        record.invitee = record.invitee[0]
+      } else {
+        record.invitee = undefined
+      }
     })
     return records
   }
@@ -61,7 +73,11 @@ class InviteService {
       .insertMany(items)
       .then((rows) => {
         return Promise.all(rows.map(async (row) => {
-          const record = await row.populate('room')
+          const record = await row
+            .populate('room')
+            .populate('inviter')
+            .populate('invitee')
+            .populate('invitee.user_connections')
             .execPopulate()
           const acceptUrl = `${config.appSettings.env.URL}${config.authSettings.inviteAcceptPage}?invite=${row._id}`
           await emailService.send(user._id, {
@@ -101,6 +117,9 @@ class InviteService {
         }
         return Invite.findOneAndUpdate(inviteFilter.getFilter(), update, options)
           .populate('room')
+          .populate('inviter')
+          .populate('invitee')
+          .populate('invitee.user_connections')
       })
 
     return record

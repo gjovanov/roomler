@@ -8,6 +8,7 @@ import {
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
+  peers: [],
   user: null,
   token: null,
   oauth: null,
@@ -17,10 +18,57 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setPeers (state, peers) {
+    state.peers = peers
+  },
+  push (state, peer) {
+    // eslint-disable-next-line no-debugger
+    debugger
+    const found = state.peers.find(p => p._id === peer._id)
+    if (!found) {
+      state.peers.push(peer)
+    }
+  },
+  pull (state, peerid) {
+    state.peers = state.peers.filter(p => p._id !== peerid)
+  },
+  replace (state, updatedPeer) {
+    state.peers = state.peers.map(p => p._id === updatedPeer._id ? updatedPeer : p)
+  },
+
+  pushUserConnection (state, userConnections) {
+    userConnections.forEach((userConnection) => {
+      const user = state.peers.find(u => u._id === userConnection.user)
+      if (user) {
+        const uconn = user.user_connections.find(uc => uc === userConnection._id)
+        if (!uconn) {
+          user.user_connections.push(userConnection._id)
+        }
+      }
+    })
+  },
+  pullUserConnection (state, userConnections) {
+    userConnections.forEach((userConnection) => {
+      const user = state.peers.find(u => u._id === userConnection.user)
+      if (user) {
+        user.user_connections = user.user_connections.filter(uc => uc !== userConnection._id)
+      }
+    })
+  },
+
   storeUserInfo (state, result) {
+    // eslint-disable-next-line no-debugger
+    debugger
     storage.set('token', result.token, true)
     state.user = result.user
     state.token = result.token
+    if (state.user && state.user._id) {
+      const peer = state.peers.find(p => p._id === state.user._id)
+      if (!peer) {
+        state.peers.push(state.user)
+      }
+    }
+
     if (result.oauth) {
       state.oauth = result.oauth
     }
@@ -39,6 +87,20 @@ export const mutations = {
 }
 
 export const actions = {
+  subscribe ({
+    commit,
+    state,
+    rootState
+  }) {
+    this.$wss.subscribe('onmessage', (message) => {
+      const data = JSON.parse(message.data)
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpened) {
+        commit('pushUserConnection', data.data)
+      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionClosed) {
+        commit('pullUserConnection', data.data)
+      }
+    })
+  },
   async register ({
     commit
   }, payload) {
@@ -152,6 +214,21 @@ export const actions = {
     return response
   },
 
+  async getPeers ({
+    commit,
+    state
+  }) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$get('/api/auth/get-peers')
+      commit('setPeers', response.result)
+    } catch (err) {
+      handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
   async get ({
     commit
   }, username) {
@@ -174,5 +251,15 @@ export const getters = {
   },
   avatarUrl: (state) => {
     return state.oauth ? state.oauth.avatar_url : (state.user ? state.user.avatar_url : null)
+  },
+  getUser: state => (userid) => {
+    return state.peers.find(u => u._id === userid)
+  },
+  getUsers: state => (userids) => {
+    return state.peers.filter(u => userids.includes(u._id))
+  },
+  isOnline: state => (userid) => {
+    const user = state.peers.find(u => u._id === userid)
+    return user && user.user_connections && user.user_connections.length
   }
 }

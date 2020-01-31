@@ -1,3 +1,21 @@
+
+let defaultChannel = `global_${process.env.NODE_ENV}`
+if (process.env.NODE_ENV === 'test') {
+  defaultChannel += `_${process.env.TEST}`
+}
+const scaleout = {
+  enabled: process.env.WS_SCALEOUT_ENABLED ? process.env.WS_SCALEOUT_ENABLED.toLowerCase() === 'true' : true,
+  channel: process.env.WS_SCALEOUT_CHANNEL || defaultChannel,
+  publisher: {
+    namespace: 'publisher',
+    host: process.env.WS_SCALEOUT_HOST || '127.0.0.1'
+  },
+  subscriber: {
+    namespace: 'subscriber',
+    host: process.env.WS_SCALEOUT_HOST || '127.0.0.1'
+  }
+}
+
 module.exports = {
   opTypes: {
     messageCreate: 'MESSAGE_CREATE',
@@ -14,5 +32,6 @@ module.exports = {
     roomDelete: 'ROOM_DELETE',
     roomJoin: 'ROOM_JOIN',
     roomLeave: 'ROOM_LEAVE'
-  }
+  },
+  scaleout
 }

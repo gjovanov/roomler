@@ -44,5 +44,11 @@ module.exports = {
       name: 'TestName2',
       tags: ['super', 'dooper', 'exciting']
     }
+  },
+  room2: {
+    payload: {
+      name: 'TestName2_',
+      tags: ['super2', 'dooper2']
+    }
   }
 }

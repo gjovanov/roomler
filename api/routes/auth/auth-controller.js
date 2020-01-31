@@ -100,6 +100,12 @@ class AuthController {
     reply.send(user)
   }
 
+  async getPeers (request, reply) {
+    const users = await userService.getPeers(request.user.user._id)
+    console.log(users)
+    reply.send(users)
+  }
+
   async delete (request, reply) {
     const result = await userService.delete(request.user.user._id)
     reply.send(result)

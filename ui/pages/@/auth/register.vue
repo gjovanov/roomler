@@ -138,9 +138,9 @@ export default {
           passwordConfirm: this.passwordConfirm
         })
         if (!response.hasError) {
+          await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
           await this.$store.dispatch('connectWebSocket')
           await this.$store.dispatch('api/invite/acceptPendingInvites')
-          await this.$store.dispatch('api/room/getAll')
           handleSuccess('Your account was successfully created. Check your email on how to activate your account.', this.$store.commit)
           self.$router.push({ path: '/' })
         }

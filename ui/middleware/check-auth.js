@@ -12,8 +12,7 @@ export default async function ({
   if (req && req.headers && req.headers.cookie && !store.state.api.auth.user) {
     storage.cookieStorage.cookie = req.headers.cookie
     if (storage.get('token')) {
-      await store.dispatch('api/auth/me')
-      await store.dispatch('api/room/getAll')
+      await Promise.all([store.dispatch('api/auth/me'), store.dispatch('api/room/getAll'), store.dispatch('api/auth/getPeers')])
     }
   }
 }

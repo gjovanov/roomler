@@ -29,13 +29,13 @@
             v-for="message in messages[propertyName]"
             :id="'message_item_' + getMessageId(message)"
             :key="getMessageId(message)"
-            :icon="!message.author.avatar_url ? 'fa-user' : undefined"
+            :icon="!getUser(message.author).avatar_url ? 'fa-user' : undefined"
             data-type="message_item"
             small
           >
             <v-badge
               slot="icon"
-              :color="isOnline(message.author._id) ? 'green' : 'grey'"
+              :color="isOnline(message.author) ? 'green' : 'grey'"
               bordered
               bottom
               left
@@ -43,8 +43,8 @@
               offset-x="8"
               offset-y="8"
             >
-              <v-avatar v-if="message.author.avatar_url" size="32">
-                <img :src="message.author.avatar_url">
+              <v-avatar v-if="getUser(message.author).avatar_url" size="32">
+                <img :src="getUser(message.author).avatar_url">
               </v-avatar>
             </v-badge>
             <v-hover v-slot:default="{ hover }">
@@ -66,7 +66,7 @@
                   😄
                 </v-btn>
                 <v-card-title class="overline">
-                  {{ message.author.username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
+                  {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
                     <template v-slot:activator="{ on }">
                       <v-icon v-on="on" small color="red">
@@ -198,8 +198,11 @@ export default {
   },
 
   methods: {
+    getUser (userid) {
+      return this.$store.getters['api/auth/getUser'](userid)
+    },
     isOnline (userid) {
-      return this.$store.getters['api/room/isOnline'](userid)
+      return this.$store.getters['api/auth/isOnline'](userid)
     },
     getReactions (message) {
       const result = this.$store.getters['api/message/reactions'](message)

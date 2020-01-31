@@ -73,11 +73,11 @@ function fastifyWs (fastify, opts, next) {
       }
       try {
         const subscriber = new Redis(opts.scaleout.subscriber)
-        subscriber.subscribe('global')
+        subscriber.subscribe(opts.scaleout.channel)
           .then(() => {
             subscriber.on('message', (channel, payload) => {
               const data = JSON.parse(payload)
-              if (channel === 'global' && opts.dispatcher && data.process !== processName) {
+              if (channel === opts.scaleout.channel && opts.dispatcher && data.process !== processName) {
                 console.log('SUBSCRIPTION MESSAGE')
 
                 console.log(data.process)

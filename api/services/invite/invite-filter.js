@@ -25,6 +25,22 @@ class InviteFilter {
         as: 'room'
       }
     })
+    this.aggregate.push({
+      $lookup: {
+        from: 'users',
+        localField: 'inviter',
+        foreignField: '_id',
+        as: 'inviter'
+      }
+    })
+    this.aggregate.push({
+      $lookup: {
+        from: 'users',
+        localField: 'invitee',
+        foreignField: '_id',
+        as: 'invitee'
+      }
+    })
     return this
   }
 

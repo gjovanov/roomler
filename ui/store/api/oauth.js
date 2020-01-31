@@ -9,6 +9,8 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get(`/api/oauth/get-or-create?type=${payload.type}&code=${payload.code}&state=${payload.state}`)
+      // eslint-disable-next-line no-debugger
+      debugger
       commit('api/auth/storeUserInfo', response.result, {
         root: true
       })

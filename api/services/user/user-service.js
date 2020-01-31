@@ -1,4 +1,5 @@
 const User = require('../../models/user')
+const Room = require('../../models/room')
 const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
 const validateUserExists = require('./validation/validate-user-exists')
@@ -7,6 +8,7 @@ const validatePasswordIsConfirmed = require('./validation/validate-password-is-c
 const validatePasswordsMatch = require('./validation/validate-passwords-match')
 const validateActivationCode = require('./validation/validate-activation-code')
 const UserFilter = require('./user-filter')
+const PeerFilter = require('./peer-filter')
 
 class UserService {
   // base methods - START
@@ -22,6 +24,21 @@ class UserService {
       .select('+password')
       .exec()
     return record
+  }
+
+  async getPeers (userid) {
+    const aggregate = new PeerFilter()
+      .addMatch(userid)
+      .addProjectUsers()
+      .addLookup()
+      .addProjectPeers()
+      .getAggregate()
+
+    const records = await Room
+      .aggregate(aggregate)
+      .exec()
+    console.log(records)
+    return records && records.length && records[0].peers ? records[0].peers : []
   }
 
   async create (data) {

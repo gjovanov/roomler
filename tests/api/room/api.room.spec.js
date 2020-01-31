@@ -8,7 +8,9 @@ const data = require('./data')
 const user1 = new UserContext(data.user.user1)
 const user2 = new UserContext(data.user.user2)
 const user3 = new UserContext(data.user.user3)
+const user4 = new UserContext(data.user.user4)
 const room = new RoomContext(data.room, user1)
+const room2 = new RoomContext(data.room2, user4)
 
 authOps.register(fastify, test, 'create the first user account for room creation', user1)
 authOps.activate(fastify, test, 'activate the first user account for room creation', user1)
@@ -16,8 +18,11 @@ authOps.register(fastify, test, 'create the second user account for room creatio
 authOps.activate(fastify, test, 'activate the second user account for room creation', user2)
 authOps.register(fastify, test, 'create the third user account for room creation', user3)
 authOps.activate(fastify, test, 'activate the third user account for room creation', user3)
+authOps.register(fastify, test, 'create the fourth user account for room creation', user4)
+authOps.activate(fastify, test, 'activate the fourth user account for room creation', user4)
 
 roomOps.create(fastify, test, 'create the room for testing', room)
+roomOps.create(fastify, test, 'create the room2 for testing', room2)
 roomOps.getInvalidId(fastify, test, 'get with invalid id throws a TypeError', user1, data.invalidRoomId)
 roomOps.get(fastify, test, 'get the room for testing by id', room)
 roomOps.getAll(fastify, test, 'get all rooms for testing', [room])
@@ -26,12 +31,14 @@ roomOps.update(fastify, test, 'update the name of the room for testing', room)
 
 // members ops
 roomOps.push(fastify, test, 'add a single member', 'member', room, user2)
+roomOps.push(fastify, test, 'add a single member 2', 'member', room2, user1)
 roomOps.pull(fastify, test, 'remove a single member', 'member', room, user2)
 roomOps.updateList(fastify, test, 'set the member list to a list with a single member', 'member', room, user2)
 roomOps.updateList(fastify, test, 'clear the member list using null', 'member', room, null)
 roomOps.push(fastify, test, 'add multiple members', 'member', room, [user2, user3])
 roomOps.pull(fastify, test, 'remove multiple members', 'member', room, [user3])
 roomOps.updateList(fastify, test, 'set the member list to a list with multiple members', 'member', room, [user2, user3])
+roomOps.getPeers(fastify, test, 'get all peers for testing', [room, room2])
 roomOps.updateList(fastify, test, 'clear the member list using an empty array', 'member', room, [])
 
 // moderators ops

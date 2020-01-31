@@ -24,34 +24,6 @@ class MessageFilter {
         foreignField: '_id',
         as: 'room'
       }
-    }, {
-      $lookup: {
-        from: 'users',
-        localField: 'author',
-        foreignField: '_id',
-        as: 'author'
-      }
-    }, {
-      $lookup: {
-        from: 'users',
-        localField: 'mentions',
-        foreignField: '_id',
-        as: 'mentions'
-      }
-    }, {
-      $lookup: {
-        from: 'users',
-        localField: 'readby',
-        foreignField: '_id',
-        as: 'readby'
-      }
-    }, {
-      $lookup: {
-        from: 'users',
-        localField: 'reactions.user',
-        foreignField: '_id',
-        as: 'reactions_users'
-      }
     })
     return this
   }

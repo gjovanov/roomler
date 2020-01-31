@@ -108,6 +108,19 @@ module.exports = [{
   handler: authController.me
 },
 {
+  authenticate: true,
+  method: 'GET',
+  url: '/api/auth/get-peers',
+  schema: {
+    response: {
+      200: authSchema.getPeers.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: authController.getPeers
+},
+{
   method: 'GET',
   url: '/api/auth/get/:username',
   schema: {

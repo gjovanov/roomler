@@ -49,7 +49,7 @@ class MessageOps {
             t.true(message.content === payloadMessage.content)
             if (payloadMessage.mentions) {
               payloadMessage.mentions.forEach(mention => {
-                const foundMention = message.mentions.find(item => item._id.toString() === mention.toString())
+                const foundMention = message.mentions.find(item => item.toString() === mention.toString())
                 t.true(!!foundMention)
               })
             }
@@ -87,7 +87,7 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           if (messageContext.records[0].mentions) {
             messageContext.records[0].mentions.forEach(mention => {
-              const foundMention = result.mentions.find(item => item._id.toString() === mention._id.toString())
+              const foundMention = result.mentions.find(item => item.toString() === mention.toString())
               t.true(!!foundMention)
             })
           }
@@ -180,7 +180,7 @@ class MessageOps {
             t.true(expectedMessage.content === message.content)
             if (message.mentions) {
               message.mentions.forEach(mention => {
-                const foundMention = expectedMessage.mentions.find(item => item._id.toString() === mention._id.toString())
+                const foundMention = expectedMessage.mentions.find(item => item.toString() === mention.toString())
                 t.true(!!foundMention)
               })
             }
@@ -222,7 +222,7 @@ class MessageOps {
           t.true(result.content === payload.content)
           if (payload.mentions) {
             payload.mentions.forEach(mention => {
-              const foundMention = result.mentions.find(item => item._id.toString() === mention.toString())
+              const foundMention = result.mentions.find(item => item.toString() === mention.toString())
               t.true(!!foundMention)
             })
           }
@@ -443,13 +443,10 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
-          const found = result.reactions.find(reaction => reaction.user._id.toString() === userContext.record._id.toString())
+          const found = result.reactions.find(reaction => reaction.user.toString() === userContext.record._id.toString())
+          t.true(!!found)
           t.true(found.type === reaction.type)
           t.true(found.symbol === reaction.symbol)
-          t.true(!!found.user._id)
-          t.true(found.user.username === userContext.record.username)
-          t.true(found.user.email === userContext.record.email)
-          t.true(!found.user.password)
           t.pass()
         })
         .catch((e) => {
@@ -478,7 +475,7 @@ class MessageOps {
           t.true(result.content === messageContext.records[0].content)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)
-          const found = result.reactions.find(reaction => reaction.user._id.toString() === userContext.record._id.toString())
+          const found = result.reactions.find(reaction => reaction.user.toString() === userContext.record._id.toString())
           t.true(!found)
           t.pass()
         })

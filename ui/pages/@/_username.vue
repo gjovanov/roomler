@@ -18,9 +18,8 @@
               bordered
               bottom
               left
-              dot
-              offset-x="28"
-              offset-y="28"
+              offset-x="32"
+              offset-y="32"
             >
               <v-avatar
                 class="profile"
@@ -83,7 +82,7 @@ export default {
   },
   methods: {
     isOnline () {
-      return this.$store.getters['api/room/isOnline'](this.user._id)
+      return this.$store.getters['api/auth/isOnline'](this.user._id)
     }
   }
 }

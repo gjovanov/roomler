@@ -20,14 +20,24 @@ const room = S.object()
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
 
+const user = S.object()
+  .prop('_id', S.string().required())
+  .prop('username', S.string().required())
+  .prop('email', S.string().required())
+  .prop('is_active', S.boolean().required())
+  .prop('avatar_url', S.string())
+  .prop('role', S.string())
+  .prop('user_connections', S.array().items(S.string()))
+
 const invite = S.object()
   .prop('_id', S.string())
-  .prop('inviter', S.string())
+  .prop('inviter', user)
   .prop('room', room.required())
   .prop('name', S.string())
   .prop('email', S.string())
   .prop('type', S.string())
   .prop('status', S.string().enum(statuses))
+  .prop('invitee', user)
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
 
@@ -53,7 +63,11 @@ const delete200 = S.object()
   .prop('ok', S.number().required())
   .prop('deletedCount', S.number().required())
 
+const wsInvite = S.object()
+  .prop('op')
+  .prop('data', inviteList)
 module.exports = {
+  wsInvite,
   get: {
     querystring: getQueryString,
     response: {

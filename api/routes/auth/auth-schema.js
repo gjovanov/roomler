@@ -15,6 +15,8 @@ const user = S.object()
   .prop('avatar_url', S.string())
   .prop('user_connections', S.array().items(S.string()))
 
+const userList = S.array().items(user)
+
 const registerBody = S.object()
   .prop('email', S.string().minLength(5).maxLength(255).required())
   .prop('username', S.string().minLength(8).maxLength(50).required())
@@ -131,6 +133,11 @@ module.exports = {
     params: usernameParam,
     response: {
       200: user
+    }
+  },
+  getPeers: {
+    response: {
+      200: userList
     }
   },
   delete: {

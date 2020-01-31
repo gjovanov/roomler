@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     async toggleReaction (message, emoji) {
-      const myReaction = message.reactions.find(r => r.user._id === this.$store.state.api.auth.user._id)
+      const myReaction = message.reactions.find(r => r.user === this.$store.state.api.auth.user._id)
       this.$emit('noScroll')
       if (message.has_reaction && myReaction && myReaction.name === emoji.name) {
         await this.pullReaction(message)

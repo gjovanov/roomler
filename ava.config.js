@@ -1,6 +1,6 @@
 let files = ['tests/**/*.spec.js']
 if (process.env.TEST === 'api') {
-  files = ['tests/api/**/*.spec.js']
+  files = ['tests/api/room/*.spec.js']
 }
 if (process.env.TEST === 'ui') {
   files = ['tests/ui/**/*.spec.js']

@@ -12,10 +12,12 @@ export default {
       state: this.$route.query.state
     }
     const response = await this.$store.dispatch('api/oauth/getOrCreate', payload)
+    // eslint-disable-next-line no-debugger
+    debugger
     if (!response.hasError && response.result) {
+      await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
       await this.$store.dispatch('connectWebSocket')
       await this.$store.dispatch('api/invite/acceptPendingInvites')
-      await this.$store.dispatch('api/room/getAll')
       this.$router.push({ path: `/@/${response.result.user.username}` })
     } else {
       this.$router.push({ path: '/@/auth/login' })

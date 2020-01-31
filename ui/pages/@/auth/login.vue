@@ -113,9 +113,9 @@ export default {
           password: this.password
         })
         if (!response.hasError) {
+          await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
           await this.$store.dispatch('connectWebSocket')
           await this.$store.dispatch('api/invite/acceptPendingInvites')
-          await this.$store.dispatch('api/room/getAll')
           self.$router.push({ path: '/' })
         }
       }

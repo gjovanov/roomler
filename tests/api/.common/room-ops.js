@@ -145,6 +145,32 @@ class RoomOps {
     })
   }
 
+  getPeers(fastify, test, testname, roomContexts) {
+    test.serial(`API "/api/auth/get-peers" ${testname}`, async(t) => {
+      const expectedRooms = roomContexts.map(ec => ec.record)
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/auth/get-peers`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContexts[0].token}`
+          },
+          payload: {}
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          // t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          // const result = JSON.parse(response.payload)
+          console.log(response.payload)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   update(fastify, test, testname, roomContext) {
     test.serial(`API "/api/room/update/:id" ${testname}`, async(t) => {
       const payload = roomContext.update
@@ -337,11 +363,8 @@ class RoomOps {
           t.true(Array.isArray(array))
           const users = Array.isArray(userContexts) ? userContexts : (userContexts ? [userContexts] : [])
           users.forEach(user => {
-            const arrayItem = array.find(item => item._id.toString() === user.record._id.toString())
-            t.true(!!arrayItem._id)
-            t.true(arrayItem.username === user.record.username)
-            t.true(arrayItem.email === user.record.email)
-            t.true(!arrayItem.password)
+            const arrayItem = array.find(item => item.toString() === user.record._id.toString())
+            t.true(!!arrayItem)
           })
           t.pass()
         })
@@ -382,7 +405,7 @@ class RoomOps {
 
           const users = Array.isArray(userContexts) ? userContexts : (userContexts ? [userContexts] : [])
           users.forEach(user => {
-            const arrayItem = array.find(item => item._id.toString() === user.record._id.toString())
+            const arrayItem = array.find(item => item.toString() === user.record._id.toString())
             t.true(!arrayItem)
           })
           t.pass()
@@ -424,11 +447,8 @@ class RoomOps {
           const users = Array.isArray(userContexts) ? userContexts : (userContexts ? [userContexts] : [])
           t.true(array.length === users.length)
           users.forEach(user => {
-            const arrayItem = array.find(item => item._id.toString() === user.record._id.toString())
-            t.true(!!arrayItem._id)
-            t.true(arrayItem.username === user.record.username)
-            t.true(arrayItem.email === user.record.email)
-            t.true(!arrayItem.password)
+            const arrayItem = array.find(item => item.toString() === user.record._id.toString())
+            t.true(!!arrayItem)
           })
           t.pass()
         })

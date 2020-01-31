@@ -213,7 +213,7 @@ export default {
   },
   methods: {
     isOnline () {
-      return this.$store.getters['api/room/isOnline'](this.$store.state.api.auth.user._id)
+      return this.$store.getters['api/auth/isOnline'](this.$store.state.api.auth.user._id)
     },
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
