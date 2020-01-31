@@ -22,8 +22,6 @@ export const mutations = {
     state.peers = peers
   },
   push (state, peer) {
-    // eslint-disable-next-line no-debugger
-    debugger
     const found = state.peers.find(p => p._id === peer._id)
     if (!found) {
       state.peers.push(peer)
@@ -40,9 +38,9 @@ export const mutations = {
     userConnections.forEach((userConnection) => {
       const user = state.peers.find(u => u._id === userConnection.user)
       if (user) {
-        const uconn = user.user_connections.find(uc => uc === userConnection._id)
+        const uconn = user.user_connections.find(uc => uc._id === userConnection._id)
         if (!uconn) {
-          user.user_connections.push(userConnection._id)
+          user.user_connections.push(userConnection)
         }
       }
     })
@@ -51,14 +49,12 @@ export const mutations = {
     userConnections.forEach((userConnection) => {
       const user = state.peers.find(u => u._id === userConnection.user)
       if (user) {
-        user.user_connections = user.user_connections.filter(uc => uc !== userConnection._id)
+        user.user_connections = user.user_connections.filter(uc => uc._id !== userConnection._id)
       }
     })
   },
 
   storeUserInfo (state, result) {
-    // eslint-disable-next-line no-debugger
-    debugger
     storage.set('token', result.token, true)
     state.user = result.user
     state.token = result.token
