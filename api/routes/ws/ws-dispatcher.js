@@ -21,9 +21,11 @@ class WsDispatcher {
   async getRecepients (op, messages) {
     let recepients = []
     let stringify
+    let extension = (record, userid) => record
     if (op.startsWith('MESSAGE_')) {
       recepients = messageService.recepients(messages)
       stringify = fastJson(require('../message/message-schema').wsMessage.valueOf())
+      extension = messageService.extension
     }
     if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
@@ -36,19 +38,25 @@ class WsDispatcher {
 
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
-    if (op.includes('ROOM_JOIN')) {
+    if (op.includes('ROOM_INVITE_ACCEPT')) {
       const rooms = messages.map(m => m.room)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../invite/invite-schema').wsInvite.valueOf())
     }
+    if (op.includes('ROOM_PEER_ROLE')) {
+      const rooms = messages.map(m => m.room)
+      recepients = roomService.recepients(rooms)
+      stringify = fastJson(require('../room/room-schema').wsRoomUsers.valueOf())
+    }
     // TODO: Add other ROUTES (RECEPIENTS)
     return {
       recepients,
-      stringify
+      stringify,
+      extension
     }
   }
 
-  sendRecepients (op, recepients, stringify, messages) {
+  sendRecepients (op, recepients, stringify, extension, messages) {
     recepients.forEach((r) => {
       const recepient = JSON.stringify(r)
       if (storage.clients[recepient]) {
@@ -58,9 +66,10 @@ class WsDispatcher {
             clientConns.forEach((client) => {
               if (client.readyState === 1) {
                 if (messages.length) {
+                  const data = messages.map(m => extension(m, r))
                   client.send(stringify({
                     op,
-                    data: messages
+                    data
                   }))
                 }
               }
@@ -82,8 +91,8 @@ class WsDispatcher {
   }
 
   async dispatch (op, messages, scaleout = true) {
-    const { recepients, stringify } = await this.getRecepients(op, messages)
-    this.sendRecepients(op, recepients, stringify, messages)
+    const { recepients, stringify, extension } = await this.getRecepients(op, messages)
+    this.sendRecepients(op, recepients, stringify, extension, messages)
     this.scaleoutMessages(op, messages, scaleout)
   }
 }

@@ -102,7 +102,6 @@ class AuthController {
 
   async getPeers (request, reply) {
     const users = await userService.getPeers(request.user.user._id)
-    console.log(users)
     reply.send(users)
   }
 

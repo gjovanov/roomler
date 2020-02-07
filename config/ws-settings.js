@@ -21,17 +21,26 @@ module.exports = {
     messageCreate: 'MESSAGE_CREATE',
     messageUpdate: 'MESSAGE_UPDATE',
     messageDelete: 'MESSAGE_DELETE',
+
     messageReactionPush: 'MESSAGE_REACTION_PUSH',
     messageReactionPull: 'MESSAGE_REACTION_PULL',
 
-    userConnectionOpened: 'USER_CONNECTION_OPENED',
-    userConnectionClosed: 'USER_CONNECTION_CLOSED',
+    userConnectionOpen: 'USER_CONNECTION_OPEN',
+    userConnectionClose: 'USER_CONNECTION_CLOSE',
 
     roomCreate: 'ROOM_CREATE',
     roomUpdate: 'ROOM_UPDATE',
     roomDelete: 'ROOM_DELETE',
-    roomJoin: 'ROOM_JOIN',
-    roomLeave: 'ROOM_LEAVE'
+
+    roomInviteAccept: 'ROOM_INVITE_ACCEPT',
+    roomPeerRoleUpdate: 'ROOM_PEER_ROLE_UPDATE',
+    roomPeerAdd: 'ROOM_PEER_ADD',
+    roomPeerRemove: 'ROOM_PEER_REMOVE',
+    roomPeerJoin: 'ROOM_PEER_JOIN',
+    roomPeerLeave: 'ROOM_PEER_LEAVE',
+
+    roomCallOpen: 'ROOM_CALL_OPEN',
+    roomCallClose: 'ROOM_CALL_CLOSE'
   },
   scaleout
 }

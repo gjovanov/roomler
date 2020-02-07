@@ -11,8 +11,8 @@ export default {
       root: true
     })
     if (this.$store.getters['api/auth/isAuthenticated']) {
-      await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
       await this.$store.dispatch('api/invite/acceptPendingInvites')
+      await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
     } else {
       this.$router.push({ path: '/@/auth/login' })
     }

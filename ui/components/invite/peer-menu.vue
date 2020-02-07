@@ -2,22 +2,31 @@
   <v-menu
     v-model="menu"
     open-on-hover
-    left
+    bottom
     offset-x
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        :disabled="invite.status !== 'pending'"
+        :disabled="role === 'owner'"
         v-on="on"
         outlined
         dark
       >
-        {{ invite.type }}
+        {{ role }}
       </v-btn>
     </template>
-    <v-list v-if="invite.status === 'pending'">
+    <v-list v-if="role !== 'owner'">
       <v-list-item
-        v-if="invite.type !== 'member'"
+        v-if="currentRole === 'owner'"
+        @click="openTransfer()"
+      >
+        <v-list-item-title>
+          Transfer Ownership
+        </v-list-item-title>
+      </v-list-item>
+      <v-divider />
+      <v-list-item
+        v-if="role !== 'member'"
         @click="toMember()"
       >
         <v-list-item-title>
@@ -26,7 +35,7 @@
       </v-list-item>
       <v-divider />
       <v-list-item
-        v-if="invite.type !== 'moderator'"
+        v-if="role !== 'moderator'"
         @click="toModerator()"
       >
         <v-list-item-title>
@@ -45,8 +54,16 @@ export default {
       type: Object,
       default: null
     },
-    invite: {
+    user: {
       type: Object,
+      default: null
+    },
+    role: {
+      type: String,
+      default: null
+    },
+    currentRole: {
+      type: String,
       default: null
     }
   },
@@ -57,10 +74,13 @@ export default {
   },
   methods: {
     toMember () {
-      this.$emit('toMember', this.invite)
+      this.$emit('toMember', this.user)
     },
     toModerator () {
-      this.$emit('toModerator', this.invite)
+      this.$emit('toModerator', this.user)
+    },
+    openTransfer () {
+      this.$emit('openTransfer', this.user)
     }
   }
 }

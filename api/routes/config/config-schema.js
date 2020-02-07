@@ -89,17 +89,27 @@ const wsSettings = S.object()
     .prop('messageCreate', S.string())
     .prop('messageUpdate', S.string())
     .prop('messageDelete', S.string())
+
     .prop('messageReactionPush', S.string())
     .prop('messageReactionPull', S.string())
-    .prop('userConnectionOpened', S.string())
-    .prop('userConnectionClosed', S.string())
-    .prop('statusOnline', S.string())
-    .prop('statusOffline', S.string())
+
+    .prop('userConnectionOpen', S.string())
+    .prop('userConnectionClose', S.string())
+
     .prop('roomCreate', S.string())
     .prop('roomUpdate', S.string())
     .prop('roomDelete', S.string())
-    .prop('roomJoin', S.string())
-    .prop('roomLeave', S.string())
+
+    .prop('roomInviteAccept', S.string())
+
+    .prop('roomPeerRoleUpdate', S.string())
+    .prop('roomPeerAdd', S.string())
+    .prop('roomPeerRemove', S.string())
+    .prop('roomPeerJoin', S.string())
+    .prop('roomPeerLeave', S.string())
+
+    .prop('roomCallOpen', S.string())
+    .prop('roomCallClose', S.string())
   )
 
 const emailSettings = S.object()

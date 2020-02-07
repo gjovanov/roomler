@@ -1,5 +1,4 @@
 export const handleError = (err, commit) => {
-  console.log(err)
   const data = err.response.data
   if (Array.isArray(data.errors)) {
     const invalidToken = data.errors.find(e => e.prop === 'token')

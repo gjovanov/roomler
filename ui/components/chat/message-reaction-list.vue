@@ -1,10 +1,18 @@
 <template>
   <div>
+    <view-reaction-menu
+      :open="menu.viewReaction.open"
+      :x="menu.viewReaction.x"
+      :y="menu.viewReaction.y"
+      :reactions="menu.viewReaction.reactions"
+      @hideMenu="hideMenu"
+    />
     <v-chip
       v-for="(reactionGroup, name, index) in reactions"
       :key="name"
       :class="index !== 0 ? 'ml-3' : ''"
       @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
+      @mouseover="showMenu($event, reactionGroup.list)"
       class="mt-2"
       tile
       outlined
@@ -21,7 +29,12 @@
   </div>
 </template>
 <script>
+import ViewReactionMenu from '@/components/chat/view-reaction-menu'
+
 export default {
+  components: {
+    ViewReactionMenu
+  },
   props: {
     message: {
       type: Object,
@@ -36,7 +49,31 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      menu: {
+        viewReaction: {
+          x: 0,
+          y: 0,
+          open: false,
+          reactions: []
+        }
+      }
+    }
+  },
   methods: {
+    showMenu (e, reactions) {
+      if (!this.menu.viewReaction.open) {
+        this.menu.viewReaction.x = e.clientX
+        this.menu.viewReaction.y = e.clientY - 100
+        this.menu.viewReaction.reactions = reactions
+        this.menu.viewReaction.open = true
+      }
+    },
+    hideMenu () {
+      this.menu.viewReaction.open = false
+    },
+
     async toggleReaction (message, emoji) {
       const myReaction = message.reactions.find(r => r.user === this.$store.state.api.auth.user._id)
       this.$emit('noScroll')

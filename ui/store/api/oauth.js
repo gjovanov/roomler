@@ -12,6 +12,9 @@ export const actions = {
       commit('api/auth/storeUserInfo', response.result, {
         root: true
       })
+      commit('api/auth/push', response.result.user, {
+        root: true
+      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

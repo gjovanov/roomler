@@ -33,7 +33,7 @@ class WsHandler {
 
     // notify USER CONNECTION OPENED
     if (conn.user) {
-      const op = config.wsSettings.opTypes.userConnectionOpened
+      const op = config.wsSettings.opTypes.userConnectionOpen
       wsDispatcher.dispatch(op, [userConnection])
     }
   }
@@ -66,7 +66,7 @@ class WsHandler {
       const userConnection = await require('../metric/metric-controller').pullUserConnectionWs(wss, conn)
       // notify USER CONNECTION CLOSED
       if (conn.user) {
-        const op = config.wsSettings.opTypes.userConnectionClosed
+        const op = config.wsSettings.opTypes.userConnectionClose
         wsDispatcher.dispatch(op, [userConnection])
       }
     }

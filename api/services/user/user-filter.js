@@ -15,6 +15,9 @@ class UserFilter {
     if (options.email) {
       this.filter.email = options.email
     }
+    if (options.ids) {
+      this.filter._id = { $in: options.ids }
+    }
   }
 
   getFilter () {

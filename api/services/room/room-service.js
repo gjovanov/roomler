@@ -46,7 +46,6 @@ class RoomService {
     })
       .addUserFilter(userid)
       .getFilter()
-    console.log(JSON.stringify(roomFilter))
     const pageInt = parseInt(page)
     const sizeInt = parseInt(size)
     const records = await Room
@@ -72,14 +71,14 @@ class RoomService {
     return extendRole(record)
   }
 
-  async update (userid, id, update) {
+  async update (userid, id, update, roles = ['owner', 'moderators', 'members']) {
     if (update.name) {
       update.path = slugify(update.name, slugOptions)
     }
     const roomFilter = new RoomFilter({
       id
     })
-      .addUserFilter(userid)
+      .addUserFilter(userid, roles)
       .getFilter()
     const options = {
       new: true
@@ -108,13 +107,32 @@ class RoomService {
   }
   // base methods - END
 
+  async transfer (userid, id, payload) {
+    const user = payload.user
+    let update = {
+      owner: user,
+      $pull: {
+        moderators: user,
+        members: user
+      }
+    }
+    await this.update(userid, id, update, ['owner'])
+    update = {
+      $addToSet: {
+        moderators: userid
+      }
+    }
+    const result = await this.update(user, id, update, ['owner'])
+    return result
+  }
+
   async updateList (userid, id, type, payload) {
     const users = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const update = {
       $set: {}
     }
     update.$set[type] = users
-    const result = await this.update(userid, id, update)
+    const result = await this.update(userid, id, update, ['owner', 'moderators'])
     return result
   }
 
@@ -126,7 +144,7 @@ class RoomService {
     update.$addToSet[type] = {
       $each: users
     }
-    const result = await this.update(userid, id, update)
+    const result = await this.update(userid, id, update, ['owner', 'moderators'])
     return result
   }
 
@@ -138,7 +156,7 @@ class RoomService {
     update.$pull[type] = {
       $in: users
     }
-    const result = await this.update(userid, id, update)
+    const result = await this.update(userid, id, update, ['owner', 'moderators'])
     return result
   }
 }

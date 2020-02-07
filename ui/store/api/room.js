@@ -48,10 +48,26 @@ export const actions = {
   }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomJoin) {
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteAccept) {
         data.data.forEach((invite) => {
           commit('pushUser', invite)
           commit('api/auth/push', invite.invitee, {
+            root: true
+          })
+        })
+      } else if (
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRoleUpdate ||
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerAdd ||
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRemove ||
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerJoin ||
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerLeave) {
+        data.data.forEach((record) => {
+          record.users.forEach((user) => {
+            commit('api/auth/push', user, {
+              root: true
+            })
+          })
+          commit('api/room/replace', record.room, {
             root: true
           })
         })
@@ -150,5 +166,18 @@ export const getters = {
   selectedRoom: state => (roomname) => {
     const nullo = { tags: [] }
     return roomname ? (state.rooms.find(r => r.name.toLowerCase() === roomname.toLowerCase()) || nullo) : nullo
+  },
+  getUserRole: state => (roomid, userid) => {
+    const room = state.rooms.find(r => r._id === roomid)
+    if (room) {
+      if (room.owner === userid) {
+        return 'owner'
+      } else if (room.moderators.includes(userid)) {
+        return 'moderator'
+      } else if (room.members.includes(userid)) {
+        return 'member'
+      }
+    }
+    return null
   }
 }

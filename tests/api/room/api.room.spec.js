@@ -51,6 +51,9 @@ roomOps.pull(fastify, test, 'remove multiple moderators', 'moderator', room, [us
 roomOps.updateList(fastify, test, 'set the moderator list to a list with multiple moderators', 'moderator', room, [user2, user3])
 roomOps.updateList(fastify, test, 'clear the moderator list using an empty array', 'moderator', room, [])
 
+// owner ops
+roomOps.transfer(fastify, test, 'transfer room ownershipt to selected user', room, user4)
+
 roomOps.deleteInvalidId(fastify, test, 'delete with invalid id throws a TypeError', user1, data.invalidRoomId)
 roomOps.delete(fastify, test, 'deletes the room', room)
 roomOps.getNotFoundId(fastify, test, 'get with unexisting id throws a ReferenceError', room)

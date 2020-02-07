@@ -162,7 +162,6 @@ class RoomOps {
           t.is(response.statusCode, 200)
           // t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           // const result = JSON.parse(response.payload)
-          console.log(response.payload)
           t.pass()
         })
         .catch((e) => {
@@ -333,6 +332,42 @@ class RoomOps {
     })
   }
 
+  transfer(fastify, test, testname, roomContext, userContext) {
+    test.serial(`API "/api/room/owner/transfer/:id" ${testname}`, async(t) => {
+      const payload = {}
+      payload.user = userContext && userContext.record && userContext.record._id ? userContext.record._id : null
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/owner/transfer/${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${roomContext.token}`
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const payload = JSON.parse(response.payload)
+          const result = payload.room
+          t.true(!!result._id)
+          t.true(result.name === roomContext.record.name)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          t.true(result.owner.toString() === userContext.record._id)
+          const moderators = result.moderators
+          t.true(Array.isArray(moderators))
+          const found = moderators.find(moderator => roomContext.userContext.record._id.toString() === moderator.toString())
+          t.true(!!found)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   push(fastify, test, testname, arrayType, roomContext, userContexts) {
     test.serial(`API "/api/room/${arrayType}s/push/:id" ${testname}`, async(t) => {
       const payload = {}
@@ -354,7 +389,8 @@ class RoomOps {
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
-          const result = JSON.parse(response.payload)
+          const payload = JSON.parse(response.payload)
+          const result = payload.room
           t.true(!!result._id)
           t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
@@ -395,7 +431,8 @@ class RoomOps {
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
-          const result = JSON.parse(response.payload)
+          const payload = JSON.parse(response.payload)
+          const result = payload.room
           t.true(!!result._id)
           t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
@@ -437,7 +474,8 @@ class RoomOps {
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
-          const result = JSON.parse(response.payload)
+          const payload = JSON.parse(response.payload)
+          const result = payload.room
           t.true(!!result._id)
           t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)

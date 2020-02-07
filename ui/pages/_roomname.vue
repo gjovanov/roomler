@@ -63,9 +63,9 @@ export default {
           to: `/${this.$route.params.roomname}/live`
         },
         {
-          name: 'Members',
+          name: 'Peers',
           icon: 'fa-users',
-          to: `/${this.$route.params.roomname}/members`
+          to: `/${this.$route.params.roomname}/peers`
         },
         {
           name: 'Settings',

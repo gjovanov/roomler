@@ -20,6 +20,18 @@ const media = S.object()
   .prop('rec_dir', S.string())
   .prop('notify_joining', S.boolean())
 
+const user = S.object()
+  .prop('_id', S.string().required())
+  .prop('username', S.string().required())
+  .prop('email', S.string().required())
+  .prop('is_active', S.boolean().required())
+  .prop('is_username_set', S.boolean().required())
+  .prop('is_password_set', S.boolean().required())
+  .prop('avatar_url', S.string())
+  .prop('user_connections', S.array().items(S.string()))
+
+const userList = S.array().items(user)
+
 const room = S.object()
   .prop('_id', S.string())
   .prop('owner', S.string())
@@ -35,6 +47,10 @@ const room = S.object()
   .prop('members', S.array().items(S.string()))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
+
+const roomUsers = S.object()
+  .prop('room', room)
+  .prop('users', userList)
 
 const roomUpdate = S.object()
   .prop('owner', S.string())
@@ -59,7 +75,12 @@ const delete200 = S.object()
   .prop('ok', S.number().required())
   .prop('deletedCount', S.number().required())
 
+const wsRoomUsers = S.object()
+  .prop('op')
+  .prop('data', S.array().items(roomUsers))
+
 module.exports = {
+  wsRoomUsers,
   get: {
     querystring: getQueryString,
     response: {
@@ -91,26 +112,35 @@ module.exports = {
       200: delete200
     }
   },
+  owner: {
+    transfer: {
+      params: idParams,
+      body: arrayOps,
+      response: {
+        200: roomUsers
+      }
+    }
+  },
   members: {
     push: {
       params: idParams,
       body: arrayOps,
       response: {
-        200: room
+        200: roomUsers
       }
     },
     update: {
       params: idParams,
       body: roomUpdate,
       response: {
-        200: room
+        200: roomUsers
       }
     },
     pull: {
       params: idParams,
       body: arrayOps,
       response: {
-        200: room
+        200: roomUsers
       }
     }
   },
@@ -119,21 +149,21 @@ module.exports = {
       params: idParams,
       body: arrayOps,
       response: {
-        200: room
+        200: roomUsers
       }
     },
     update: {
       params: idParams,
       body: roomUpdate,
       response: {
-        200: room
+        200: roomUsers
       }
     },
     pull: {
       params: idParams,
       body: arrayOps,
       response: {
-        200: room
+        200: roomUsers
       }
     }
   }

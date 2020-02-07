@@ -139,7 +139,6 @@ export default {
       $refs: this.$refs,
       mentionClass: 'v-btn v-btn--outlined v-size--small',
       items: () => this.users.map((u) => {
-        console.log(u)
         return { id: u._id, name: u.username, email: u.email, avatarUrl: u.avatar_url }
       }),
       templateId: 'suggestions',

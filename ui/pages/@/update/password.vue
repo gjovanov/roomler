@@ -103,9 +103,9 @@ export default {
           passwordConfirm: this.passwordConfirm
         })
         if (!response.hasError) {
+          await this.$store.dispatch('api/invite/acceptPendingInvites')
           await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
           await this.$store.dispatch('connectWebSocket')
-          await this.$store.dispatch('api/invite/acceptPendingInvites')
           handleSuccess('Your password was successfully changed.', this.$store.commit)
           self.$router.push({ path: '/' })
         }

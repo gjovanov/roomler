@@ -2,6 +2,7 @@
 const oAuthService = require('../../services/oauth/oauth-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 const dataGetter = require('./oauth-data-getter')
+const imageDownloader = require('./oauth-image-downloader')
 
 const getData = async (access, type) => {
   if (type === 'facebook') {
@@ -32,12 +33,13 @@ const getOrCreateOAuth = async (data, type) => {
     email: data.email
   })
   if (!oauth) {
+    const avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
     oauth = await oAuthService.create({
       type,
       email: data.email,
       id: data.id,
       name: data.name,
-      avatar_url: data.avatar_url
+      avatar_url: avatarUrl
     })
   }
   return oauth

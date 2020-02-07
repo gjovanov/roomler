@@ -74,7 +74,7 @@ export default {
   },
   data () {
     return {
-      rightDrawer: false,
+      rightDrawer: true,
       mini: true
     }
   },

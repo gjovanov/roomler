@@ -14,6 +14,14 @@ class MessageService {
     return messages.map(m => [m.room.owner, ...m.room.moderators, ...m.room.members]).reduce((a, b) => a.concat(b), [])
   }
 
+  extension (record, userid) {
+    const id = JSON.stringify(userid)
+    record.is_read = !!record.readby.find(u => JSON.stringify(u) === id)
+    record.has_mention = !!record.mentions.find(u => JSON.stringify(u) === id)
+    record.has_reaction = !!record.reactions.find(u => JSON.stringify(u.user) === id)
+    return record
+  }
+
   route (messages, userid) {
     const useridString = JSON.stringify(userid)
     return messages

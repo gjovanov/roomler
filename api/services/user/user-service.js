@@ -26,6 +26,17 @@ class UserService {
     return record
   }
 
+  async getAll (filter) {
+    const userFilter = new UserFilter({
+      ids: filter.ids
+    })
+      .getFilter()
+    const records = await User
+      .find(userFilter)
+      .exec()
+    return records
+  }
+
   async getPeers (userid) {
     const aggregate = new PeerFilter()
       .addMatch(userid)
@@ -37,7 +48,6 @@ class UserService {
     const records = await Room
       .aggregate(aggregate)
       .exec()
-    console.log(records)
     return records && records.length && records[0].peers ? records[0].peers : []
   }
 

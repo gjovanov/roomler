@@ -9,6 +9,7 @@ const {
 const multer = require('fastify-multer')
 const errorSchema = require('../.common/error-schema')
 const roomController = require('./room-controller')
+const roomOwnerController = require('./room-owner-controller')
 const roomMembersController = require('./room-members-controller')
 const roomModeratorsController = require('./room-moderators-controller')
 const roomSchema = require('./room-schema')
@@ -116,6 +117,21 @@ module.exports = [{
     renameSync(oldPath, newPath)
     reply.code(200).send({ src: `/uploads/${request.body.room}/${request.file.filename}` })
   }
+},
+{
+  authenticate: true,
+  method: 'PUT',
+  url: '/api/room/owner/transfer/:id',
+  schema: {
+    params: roomSchema.owner.transfer.params,
+    body: roomSchema.owner.transfer.body,
+    response: {
+      200: roomSchema.owner.transfer.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomOwnerController.transfer
 },
 {
   authenticate: true,

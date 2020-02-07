@@ -20,7 +20,7 @@
       align="center"
       justify="center"
     >
-      <v-btn :to="`/${room.path}/members?invite`" dark block outlined class="primary">
+      <v-btn :to="`/${room.path}/peers?invite`" dark block outlined class="primary">
         <v-icon>fa-users</v-icon> &nbsp; Invite peers
       </v-btn>
     </v-card-actions>

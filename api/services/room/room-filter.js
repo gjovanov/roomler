@@ -11,18 +11,25 @@ class RoomFilter {
     }
   }
 
-  addUserFilter (userid) {
+  addOwnerFilter (userid) {
+    this.filter = userid ? {
+      $and: [
+        { owner: mongoose.Types.ObjectId(userid) },
+        this.filter
+      ]
+    } : this.filter
+    return this
+  }
+
+  addUserFilter (userid, roles = ['owner', 'moderators', 'members']) {
+    const roleFilter = roles.map((r) => {
+      const result = {}
+      result[r] = mongoose.Types.ObjectId(userid)
+      return result
+    })
     this.filter = userid ? {
       $and: [{
-        $or: [{
-          owner: mongoose.Types.ObjectId(userid)
-        },
-        {
-          moderators: mongoose.Types.ObjectId(userid)
-        }, {
-          members: mongoose.Types.ObjectId(userid)
-        }
-        ]
+        $or: roleFilter
       },
       this.filter
       ]

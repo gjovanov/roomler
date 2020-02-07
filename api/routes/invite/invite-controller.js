@@ -39,7 +39,7 @@ class InviteController {
 
   async accept (request, reply) {
     const result = await inviteService.accept(request.user.user._id, request.params.id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomJoin, [result], true)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomInviteAccept, [result], true)
     reply.send(result)
   }
 

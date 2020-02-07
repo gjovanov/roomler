@@ -117,7 +117,7 @@ export default {
       tab: 0,
       page: 1,
       length: 1,
-      pageSize: 36,
+      pageSize: 18,
       menu: false,
       filter: '',
       categories

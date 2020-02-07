@@ -13,18 +13,26 @@ export const state = () => ({
   token: null,
   oauth: null,
   menu: {
-    members: false
+    members: true
   }
 })
 
 export const mutations = {
   setPeers (state, peers) {
+    if (state.user) {
+      const found = peers.find(p => p._id === state.user._id)
+      if (!found) {
+        peers.push(state.user)
+      }
+    }
     state.peers = peers
   },
   push (state, peer) {
     const found = state.peers.find(p => p._id === peer._id)
     if (!found) {
       state.peers.push(peer)
+    } else {
+      state.peers = state.peers.map(p => p._id === peer._id ? peer : p)
     }
   },
   pull (state, peerid) {
@@ -42,6 +50,8 @@ export const mutations = {
         if (!uconn) {
           user.user_connections.push(userConnection)
         }
+      } else {
+        console.log(`user ${userConnection.user} not found in ${JSON.stringify(state.peers)}`)
       }
     })
   },
@@ -90,9 +100,9 @@ export const actions = {
   }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpened) {
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpen) {
         commit('pushUserConnection', data.data)
-      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionClosed) {
+      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionClose) {
         commit('pullUserConnection', data.data)
       }
     })
@@ -104,6 +114,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/auth/register', payload)
       commit('storeUserInfo', response.result)
+      commit('replace', response.result.user)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -118,6 +129,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/auth/activate', payload)
       commit('storeUserInfo', response.result)
+      commit('replace', response.result.user)
       handleSuccess('Account was successfully activated', commit)
     } catch (err) {
       handleError(err, commit)
@@ -145,6 +157,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$put('/api/auth/update/username', payload)
       commit('storeUserInfo', response.result)
+      commit('replace', response.result.user)
     } catch (err) {
       handleError(err, commit)
     }
@@ -158,6 +171,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$put('/api/auth/update/password', payload)
       commit('storeUserInfo', response.result)
+      commit('replace', response.result.user)
     } catch (err) {
       handleError(err, commit)
     }
@@ -171,6 +185,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/auth/login', payload)
       commit('storeUserInfo', response.result)
+      commit('replace', response.result.user)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -203,6 +218,7 @@ export const actions = {
         })
         response.result = await this.$axios.$get('/api/auth/me')
         commit('storeUserInfo', response.result)
+        commit('replace', response.result.user)
       }
     } catch (err) {
       handleError(err, commit)
@@ -231,6 +247,7 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get(`/api/auth/get/${username}`)
+      commit('replace', response.result)
     } catch (err) {
       handleError(err, commit)
     }
@@ -256,6 +273,6 @@ export const getters = {
   },
   isOnline: state => (userid) => {
     const user = state.peers.find(u => u._id === userid)
-    return user && user.user_connections && user.user_connections.length
+    return user && ((state.user && state.user._id === user._id) || (user.user_connections && user.user_connections.length))
   }
 }

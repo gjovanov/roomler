@@ -28,9 +28,9 @@ export default {
       token: this.$route.query.token
     })
     if (!response.hasError) {
+      await this.$store.dispatch('api/invite/acceptPendingInvites')
       await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
       await this.$store.dispatch('connectWebSocket')
-      await this.$store.dispatch('api/invite/acceptPendingInvites')
       self.$router.push({ path: '/' })
     }
   }
