@@ -122,7 +122,7 @@ module.exports = [{
 },
 {
   method: 'GET',
-  url: '/api/auth/get/:username',
+  url: '/api/auth/get/:query',
   schema: {
     params: authSchema.get.params,
     response: {

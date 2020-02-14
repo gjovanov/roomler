@@ -76,7 +76,7 @@ export default {
       return this.$store.state.api.auth.user
     },
     room () {
-      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
+      return this.$store.state.api.room.room
     },
     members () {
       const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
@@ -93,6 +93,9 @@ export default {
     }
   },
 
+  created () {
+    this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname), { root: true })
+  },
   async mounted () {
     if (this.room) {
       await this.$store.dispatch('api/message/getAll', { room: this.room })

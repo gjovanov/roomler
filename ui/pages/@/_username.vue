@@ -74,7 +74,7 @@ export default {
       return this.$store.getters['api/auth/isActivated']
     }
   },
-  async mounted () {
+  async created () {
     const response = await this.$store.dispatch('api/auth/get', this.$route.params.username)
     if (!response.hasError) {
       this.user = response.result

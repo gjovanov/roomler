@@ -1,0 +1,221 @@
+<template>
+  <v-dialog v-model="dialog" persistent max-width="880px">
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="12"
+      >
+        <v-card>
+          <v-expansion-panels
+            v-model="panel"
+            accordion
+            multiple
+          >
+            <v-expansion-panel>
+              <v-expansion-panel-header>New invite</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-form ref="newInviteForm" v-model="isValidNewInvite" lazy-validation>
+                  <v-text-field
+                    v-model="newInvite.email"
+                    :rules="emailRules"
+                    :name="`email[${newInvite.id}]`"
+                    label="Email"
+                    autocomplete="on"
+                    required
+                    outlined
+                  />
+                  <v-spacer />
+                  <v-text-field
+                    v-model="newInvite.name"
+                    :name="`name[${newInvite.id}]`"
+                    label="Name"
+                    autocomplete="on"
+                    outlined
+                  />
+                  <v-spacer />
+                  <v-select
+                    v-model="newInvite.type"
+                    :items="types"
+                    no-data-text="Type"
+                    label="Type"
+                    outlined
+                  />
+                  <v-btn
+                    :disabled="!isValidNewInvite"
+                    @click="push"
+                    color="primary"
+                    outlined
+                    class="justify-end"
+                  >
+                    <v-icon>fa-plus</v-icon> Add invite
+                  </v-btn>
+                </v-form>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Invite list</v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <em v-if="!invites.length">
+                  Please add some invites in this list.
+                </em>
+                <v-form ref="invitesForm" v-model="areValidInvites" lazy-validation>
+                  <v-row
+                    v-for="invite in invites"
+                    :key="invite.id"
+                    justify="center"
+                  >
+                    <v-col
+                      cols="12"
+                      md="4"
+                      class="pa-0"
+                    >
+                      <v-text-field
+                        v-model="invite.email"
+                        :rules="emailRules"
+                        :name="`email[${invite.id}]`"
+                        label="Email"
+                        autocomplete="on"
+                        required
+                        outlined
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="3"
+                      class="pa-0"
+                    >
+                      <v-text-field
+                        v-model="invite.name"
+                        :name="`name[${invite.id}]`"
+                        label="Name"
+                        autocomplete="on"
+                        outlined
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="4"
+                      class="pa-0"
+                    >
+                      <v-select
+                        v-model="invite.type"
+                        :items="types"
+                        label="Type"
+                        no-data-text="Type"
+                        outlined
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="1"
+                      class="pa-0"
+                    >
+                      <v-btn
+                        @click="pop(invite)"
+                        color="red"
+                        fab
+                        small
+                      >
+                        <v-icon>fa-trash-alt</v-icon>
+                      </v-btn>
+                    </v-col>
+                    <v-divider />
+                  </v-row>
+                </v-form>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn @click="cancelPeers()" color="grey" outlined>
+              Cancel
+            </v-btn>
+            <v-btn
+              :disabled="!areValidInvites || !invites.length"
+              @click="addPeers()"
+              color="primary"
+              outlined
+            >
+              Add peers
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-dialog>
+</template>
+
+<script>
+import * as uuid from 'uuid/v4'
+
+export default {
+  props: {
+    dialog: {
+      type: Boolean,
+      default: false
+    },
+    room: {
+      type: Object,
+      default: null
+    }
+  },
+  data () {
+    const config = this.$store.state.api.config.config
+    const defaultInvite = {
+      name: '',
+      email: '',
+      type: config.dataSettings.invite.defaults.type
+    }
+    const types = config.dataSettings.invite.types
+    const newInvite = Object.assign({ id: uuid() }, defaultInvite)
+
+    return {
+      isValidNewInvite: true,
+      areValidInvites: true,
+
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /\S+@\S+\.\S+/.test(v) || 'E-mail must be valid'
+      ],
+
+      panel: [0, 1],
+      defaultInvite,
+      newInvite,
+      types,
+      invites: []
+    }
+  },
+  computed: {
+    members () {
+      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
+      const users = this.$store.getters['api/auth/getUsers'](userids)
+      return users
+    }
+  },
+  methods: {
+    cancelPeers () {
+      this.$emit('cancelPeers')
+      this.invites = []
+    },
+    push () {
+      if (this.$refs.newInviteForm.validate()) {
+        this.newInvite.room = this.room._id
+        this.invites.push(this.newInvite)
+        this.newInvite = Object.assign({ id: uuid() }, this.defaultInvite)
+      }
+    },
+    pop (invite) {
+      this.invites = this.invites.filter(i => i.id !== invite.id)
+    },
+    addPeers () {
+      if (this.$refs.invitesForm.validate()) {
+        this.$emit('addPeers', this.invites)
+        this.invites = []
+      }
+    }
+  }
+}
+</script>

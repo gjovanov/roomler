@@ -24,6 +24,17 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+    user () {
+      return this.$store.state.api.auth.user
+    },
+    room () {
+      return this.$store.state.api.room.room
+    }
+  },
+  created () {
+    this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname), { root: true })
   }
 }
 </script>

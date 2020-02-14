@@ -122,6 +122,13 @@ module.exports = {
     }
   },
   members: {
+    switch: {
+      params: idParams,
+      body: arrayOps,
+      response: {
+        200: roomUsers
+      }
+    },
     push: {
       params: idParams,
       body: arrayOps,
@@ -145,6 +152,13 @@ module.exports = {
     }
   },
   moderators: {
+    switch: {
+      params: idParams,
+      body: arrayOps,
+      response: {
+        200: roomUsers
+      }
+    },
     push: {
       params: idParams,
       body: arrayOps,

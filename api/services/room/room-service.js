@@ -6,20 +6,12 @@ const slugOptions = {
   remove: null, // regex to remove characters
   lower: true // result in lower case
 }
-const extendRole = (record) => {
-  const recordObj = record.toObject()
-  // recordObj.owner.role = 'owner'
-  // recordObj.moderators.forEach((m) => {
-  //   m.role = 'moderator'
-  // })
-  // recordObj.members.forEach((m) => {
-  //   m.role = 'member'
-  // })
-  return recordObj
-}
+
 class RoomService {
-  recepients (rooms) {
-    return rooms.map(r => [r.owner, ...r.moderators, ...r.members]).reduce((a, b) => a.concat(b), [])
+  recepients (rooms, users = []) {
+    const userIds = users.map(u => u._id.toString())
+    const roomUserIds = rooms.map(r => [r.owner.toString(), ...r.moderators.map(m => m.toString()), ...r.members.map(m => m.toString())]).reduce((a, b) => a.concat(b), [])
+    return [...new Set([...userIds, ...roomUserIds])]
   }
 
   // base methods - START
@@ -35,7 +27,7 @@ class RoomService {
     if (!record) {
       throw new ReferenceError('Room was not found.')
     }
-    return extendRole(record)
+    return record
   }
 
   async getAll (userid, page = 0, size = 10, filter = {}, sort = {
@@ -54,7 +46,7 @@ class RoomService {
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
       .exec()
-    return records.map(record => extendRole(record))
+    return records
   }
 
   async create (userid, data) {
@@ -68,7 +60,7 @@ class RoomService {
     }
     let record = new Room(data)
     record = await record.save()
-    return extendRole(record)
+    return record
   }
 
   async update (userid, id, update, roles = ['owner', 'moderators', 'members']) {
@@ -88,7 +80,7 @@ class RoomService {
     if (!record) {
       throw new ReferenceError('Room was not found.')
     }
-    return extendRole(record)
+    return record
   }
 
   async delete (userid, id) {
@@ -123,6 +115,23 @@ class RoomService {
       }
     }
     const result = await this.update(user, id, update, ['owner'])
+    return result
+  }
+
+  async switch (userid, id, type, payload) {
+    const fromType = type === 'members' ? 'moderators' : 'members'
+    const user = payload.user
+    const update = {
+      $pull: { },
+      $addToSet: { }
+    }
+    update.$pull[fromType] = user
+    update.$addToSet[type] = user
+    const roles = ['owner']
+    if (type === 'moderators') {
+      roles.push('moderators') // moderator can promote another user to moderator, only owner can demote another user to member
+    }
+    const result = await this.update(userid, id, update, roles)
     return result
   }
 

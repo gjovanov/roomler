@@ -101,6 +101,9 @@ const wsSettings = S.object()
     .prop('roomDelete', S.string())
 
     .prop('roomInviteAccept', S.string())
+    .prop('roomInviteReject', S.string())
+    .prop('roomInviteUpdate', S.string())
+    .prop('roomInviteDelete', S.string())
 
     .prop('roomPeerRoleUpdate', S.string())
     .prop('roomPeerAdd', S.string())

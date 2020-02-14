@@ -10,7 +10,7 @@ class RoomMembersController {
     const result = await roomService.push(request.user.user._id, id, 'members', payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }], true)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerAdd, [{ room: result, users }], true)
     reply.send({ room: result, users })
   }
 
@@ -28,6 +28,16 @@ class RoomMembersController {
     const payload = request.body
     const id = request.params.id
     const result = await roomService.pull(request.user.user._id, id, 'members', payload)
+    const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
+    const users = await userService.getAll({ ids: userids })
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRemove, [{ room: result, users }], true)
+    reply.send({ room: result, users })
+  }
+
+  async switch (request, reply) {
+    const payload = request.body
+    const id = request.params.id
+    const result = await roomService.switch(request.user.user._id, id, 'members', payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
     wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }], true)

@@ -11,7 +11,7 @@ const extendRecord = (record, userid, convertToObject = true) => {
 
 class MessageService {
   recepients (messages) {
-    return messages.map(m => [m.room.owner, ...m.room.moderators, ...m.room.members]).reduce((a, b) => a.concat(b), [])
+    return [...new Set(messages.map(m => [m.room.owner.toString(), ...m.room.moderators.map(u => u.toString()), ...m.room.members.map(u => u.toString())]).reduce((a, b) => a.concat(b), []))]
   }
 
   extension (record, userid) {

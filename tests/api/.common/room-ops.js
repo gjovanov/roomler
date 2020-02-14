@@ -360,6 +360,47 @@ class RoomOps {
           t.true(Array.isArray(moderators))
           const found = moderators.find(moderator => roomContext.userContext.record._id.toString() === moderator.toString())
           t.true(!!found)
+          roomContext.userContext = userContext
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
+  switch(fastify, test, testname, type, roomContext, authContext, userContext) {
+    test.serial(`API "/api/room/${type}/switch/:id" ${testname}`, async(t) => {
+      const payload = {}
+      payload.user = userContext && userContext.record && userContext.record._id ? userContext.record._id : null
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/${type}/switch/${roomContext.record._id}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authContext.token}`
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const payload = JSON.parse(response.payload)
+          const result = payload.room
+          t.true(!!result._id)
+          t.true(result.name === roomContext.record.name)
+          t.true(!!result.createdAt)
+          t.true(!!result.updatedAt)
+          const fromType = type === 'members' ? 'moderators' : 'members'
+          const fromArray = result[fromType]
+          t.true(Array.isArray(fromArray))
+          const notFound = fromArray.find(user => userContext.record._id.toString() === user.toString())
+          t.true(!notFound)
+          const toArray = result[type]
+          t.true(Array.isArray(toArray))
+          const found = toArray.find(user => userContext.record._id.toString() === user.toString())
+          t.true(!!found)
           t.pass()
         })
         .catch((e) => {

@@ -136,6 +136,21 @@ module.exports = [{
 {
   authenticate: true,
   method: 'PUT',
+  url: '/api/room/members/switch/:id',
+  schema: {
+    params: roomSchema.members.switch.params,
+    body: roomSchema.members.switch.body,
+    response: {
+      200: roomSchema.members.switch.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomMembersController.switch
+},
+{
+  authenticate: true,
+  method: 'PUT',
   url: '/api/room/members/push/:id',
   schema: {
     params: roomSchema.members.push.params,
@@ -177,6 +192,21 @@ module.exports = [{
     }
   },
   handler: roomMembersController.pull
+},
+{
+  authenticate: true,
+  method: 'PUT',
+  url: '/api/room/moderators/switch/:id',
+  schema: {
+    params: roomSchema.moderators.switch.params,
+    body: roomSchema.moderators.switch.body,
+    response: {
+      200: roomSchema.moderators.switch.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomModeratorsController.switch
 },
 {
   authenticate: true,

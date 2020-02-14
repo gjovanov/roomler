@@ -30,22 +30,20 @@ class WsDispatcher {
     if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
       recepients = roomService.recepients(rooms)
-      messages.forEach((message) => {
-        if (!recepients.includes(message.user)) {
-          recepients.push(message.user)
-        }
-      })
-
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
-    if (op.includes('ROOM_INVITE_ACCEPT')) {
+    if (op.includes('ROOM_INVITE_')) {
       const rooms = messages.map(m => m.room)
+      console.log(rooms)
       recepients = roomService.recepients(rooms)
+      console.log(recepients)
       stringify = fastJson(require('../invite/invite-schema').wsInvite.valueOf())
     }
-    if (op.includes('ROOM_PEER_ROLE')) {
+    if (op.includes('ROOM_PEER_')) {
       const rooms = messages.map(m => m.room)
-      recepients = roomService.recepients(rooms)
+      const users = messages.map(m => m.users).reduce((a, b) => [...a, ...b], [])
+
+      recepients = roomService.recepients(rooms, users)
       stringify = fastJson(require('../room/room-schema').wsRoomUsers.valueOf())
     }
     // TODO: Add other ROUTES (RECEPIENTS)

@@ -51,7 +51,7 @@ export const actions = {
     commit,
     state,
     rootState
-  }) {
+  }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
       if (data.op === rootState.api.config.config.wsSettings.opTypes.messageCreate ||
@@ -93,11 +93,22 @@ export const actions = {
 
   async getAll ({
     commit,
+    dispatch,
     state
   }, { room, before }) {
     const response = {}
     try {
+      const roomPeers = [room.owner, ...room.members, room.moderators]
       response.result = await this.$axios.$get(`/api/message/get-all?room=${room._id}&before=${before}`)
+
+      // if messages contain info about ex peers (removed from the room)
+      // then download user info for those ex peers
+      const messagePeers = [...new Set(
+        response.result
+          .map(message => [message.author, ...message.mentions, ...message.reactions.map(r => r.user)])
+          .reduce((a, b) => [...a, ...b], []))]
+      const exPeers = messagePeers.filter(p => !roomPeers.includes(p))
+      await Promise.all(exPeers.map(p => dispatch('api/auth/get', p, { root: true })))
       commit('pushAll', { room: room.path, messages: response.result })
     } catch (err) {
       handleError(err, commit)

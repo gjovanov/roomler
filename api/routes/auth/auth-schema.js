@@ -3,7 +3,7 @@ const config = require('../../../config')
 const codeTypes = config.dataSettings.code.types
 
 const usernameParam = S.object()
-  .prop('username', S.string().required())
+  .prop('query', S.string().required())
 
 const user = S.object()
   .prop('_id', S.string().required())

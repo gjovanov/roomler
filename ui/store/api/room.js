@@ -1,10 +1,11 @@
 import Tree from '../../services/tree'
 import {
-  handleError
-  // handleSuccess
+  handleError,
+  handleSuccess
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
+  room: null,
   rooms: [],
   tree: {
     source: new Tree([]),
@@ -14,6 +15,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setRoom (state, room) {
+    state.room = room
+  },
   setRooms (state, rooms) {
     state.rooms = rooms
     state.tree.source = new Tree(state.rooms)
@@ -24,10 +28,16 @@ export const mutations = {
     state.tree.source = new Tree(state.rooms)
   },
   pull (state, roomid) {
+    if (state.room && state.room._id === roomid) {
+      state.room = null
+    }
     state.rooms = state.rooms.filter(r => r._id !== roomid)
     state.tree.source = new Tree(state.rooms)
   },
   replace (state, updatedRoom) {
+    if (state.room && state.room._id === updatedRoom._id) {
+      state.room = updatedRoom
+    }
     state.rooms = state.rooms.map(r => r._id === updatedRoom._id ? updatedRoom : r)
     state.tree.source = new Tree(state.rooms)
   },
@@ -45,22 +55,13 @@ export const actions = {
     commit,
     state,
     rootState
-  }) {
+  }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteAccept) {
-        data.data.forEach((invite) => {
-          commit('pushUser', invite)
-          commit('api/auth/push', invite.invitee, {
-            root: true
-          })
-        })
-      } else if (
+      if (
         data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRoleUpdate ||
         data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerAdd ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRemove ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerJoin ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerLeave) {
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerJoin) {
         data.data.forEach((record) => {
           record.users.forEach((user) => {
             commit('api/auth/push', user, {
@@ -70,6 +71,31 @@ export const actions = {
           commit('api/room/replace', record.room, {
             root: true
           })
+        })
+      } else if (
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRemove ||
+        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerLeave) {
+        data.data.forEach(async (record) => {
+          record.users.forEach((user) => {
+            commit('api/auth/push', user, {
+              root: true
+            })
+          })
+          const userid = rootState.api.auth.user._id
+          const isUserRemoved = record.room.owner !== userid && !record.room.members.includes(userid) && !record.room.moderators.includes(userid)
+          if (isUserRemoved) {
+            handleSuccess(`You have been removed from the room '${record.room.path}'`, commit)
+            if (rootState.api.room.room && rootState.api.room.room._id === record.room._id) {
+              await router.push({ path: '/' })
+            }
+            commit('api/room/pull', record.room._id, {
+              root: true
+            })
+          } else {
+            commit('api/room/replace', record.room, {
+              root: true
+            })
+          }
         })
       }
     })

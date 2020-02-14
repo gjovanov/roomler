@@ -95,7 +95,7 @@ class AuthController {
 
   async get (request, reply) {
     const user = await userService.get({
-      username: request.params.username
+      query: request.params.query
     })
     reply.send(user)
   }

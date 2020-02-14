@@ -91,7 +91,7 @@ export default {
       return this.$store.state.api.room.rooms
     },
     room () {
-      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
+      return this.$store.state.api.room.room
     },
     menuMembers () {
       return this.$store.state.api.auth.menu.members

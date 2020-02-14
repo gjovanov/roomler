@@ -38,7 +38,7 @@
                   <v-icon>fa-users</v-icon>
                 </v-btn>
               </template>
-              <span>Members</span>
+              <span>Peers</span>
             </v-tooltip>
 
             <v-tooltip top>

@@ -97,7 +97,7 @@ export const actions = {
     commit,
     state,
     rootState
-  }) {
+  }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
       if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpen) {
@@ -243,11 +243,11 @@ export const actions = {
 
   async get ({
     commit
-  }, username) {
+  }, query) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/auth/get/${username}`)
-      commit('replace', response.result)
+      response.result = await this.$axios.$get(`/api/auth/get/${query}`)
+      commit('push', response.result)
     } catch (err) {
       handleError(err, commit)
     }

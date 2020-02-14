@@ -3,7 +3,7 @@ const messageService = require('../../services/message/message-service')
 const config = require('../../../config')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
-class InviteController {
+class MessageController {
   async get (request, reply) {
     const result = await messageService.get(request.user.user._id, request.query.id)
     reply.send(result)
@@ -56,4 +56,4 @@ class InviteController {
   }
 }
 
-module.exports = new InviteController()
+module.exports = new MessageController()

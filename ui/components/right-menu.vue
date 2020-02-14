@@ -12,7 +12,7 @@
         <v-list-item-avatar>
           <v-icon>fa-users</v-icon>
         </v-list-item-avatar>
-        <v-list-item-title>Members</v-list-item-title>
+        <v-list-item-title>Peers</v-list-item-title>
         <v-btn
           @click.stop="mini = !mini"
           icon

@@ -29,7 +29,7 @@
             v-for="message in messages[propertyName]"
             :id="'message_item_' + getMessageId(message)"
             :key="getMessageId(message)"
-            :icon="!getUser(message.author).avatar_url ? 'fa-user' : undefined"
+            :icon="!getUser(message.author) || !getUser(message.author).avatar_url ? 'fa-user' : undefined"
             data-type="message_item"
             small
           >
@@ -43,8 +43,8 @@
               offset-x="8"
               offset-y="8"
             >
-              <v-avatar v-if="getUser(message.author).avatar_url" size="32">
-                <img :src="getUser(message.author).avatar_url">
+              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="32">
+                <img :src="getUser(message.author) && getUser(message.author).avatar_url">
               </v-avatar>
             </v-badge>
             <v-hover v-slot:default="{ hover }">

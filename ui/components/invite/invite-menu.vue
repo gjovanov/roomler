@@ -2,17 +2,19 @@
   <v-menu
     v-model="menu"
     open-on-hover
-    left
+    bottom
     offset-x
   >
     <template v-slot:activator="{ on }">
       <v-btn
         :disabled="invite.status !== 'pending'"
         v-on="on"
-        outlined
+        fab
+        small
+        text
         dark
       >
-        {{ invite.type }}
+        <v-icon>fa-edit</v-icon>
       </v-btn>
     </template>
     <v-list v-if="invite.status === 'pending'">

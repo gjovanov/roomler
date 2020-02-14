@@ -2,8 +2,8 @@ import {
   storage
 } from '@/services/storage'
 import {
-  handleError
-  // handleSuccess
+  handleError,
+  handleSuccess
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
@@ -52,10 +52,54 @@ export const mutations = {
   },
   pull (state, invite) {
     state.invites = state.invites.filter(r => r._id !== invite._id)
+  },
+  replace (state, updatedInvite) {
+    state.invites = state.invites.map(r => r._id === updatedInvite._id ? updatedInvite : r)
   }
 }
 
 export const actions = {
+  subscribe ({
+    commit,
+    state,
+    rootState
+  }, router) {
+    this.$wss.subscribe('onmessage', (message) => {
+      const data = JSON.parse(message.data)
+      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteAccept) {
+        data.data.forEach((invite) => {
+          commit('api/invite/replace', invite, {
+            root: true
+          })
+          commit('api/auth/push', invite.invitee, {
+            root: true
+          })
+          commit('api/room/pushUser', invite, {
+            root: true
+          })
+          if (invite.inviter._id === rootState.api.auth.user._id) {
+            handleSuccess(`'${invite.name}' invited by, has joined the room '${invite.room.path}' under username '${invite.invitee.username}'`, commit)
+          } else if (invite.invitee._id === rootState.api.auth.user._id) {
+            handleSuccess(`You has joined the room '${invite.room.path}'`, commit)
+          } else {
+            handleSuccess(`'${invite.invitee.username}' has joined the room '${invite.room.path}'`, commit)
+          }
+        })
+      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteUpdate) {
+        data.data.forEach((invite) => {
+          commit('api/invite/replace', invite, {
+            root: true
+          })
+        })
+      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteDelete) {
+        data.data.forEach((invite) => {
+          commit('api/invite/pull', invite, {
+            root: true
+          })
+        })
+      }
+    })
+  },
   async create ({
     commit,
     state
@@ -64,6 +108,34 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/invite/create', payload)
       commit('push', response.result)
+    } catch (err) {
+      handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+  async update ({
+    commit,
+    state
+  }, payload) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$put(`/api/invite/update/${payload.id}`, payload)
+      commit('replace', response.result)
+    } catch (err) {
+      handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+  async delete ({
+    commit,
+    state
+  }, payload) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$put(`/api/invite/delete/${payload._id}`)
+      commit('pull', payload)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -108,7 +180,9 @@ export const actions = {
     try {
       commit('storePendingInvites') // Merge Cookie with Store
       if (state.pendingInvites.length) {
-        await Promise.all(state.pendingInvites.map(invite => self.$axios.$put(`/api/invite/accept/${invite}`)))
+        await Promise.all(state.pendingInvites.map(invite => self.$axios.$put(`/api/invite/accept/${invite}`).catch(() => {
+          commit('clearPendingInvites')
+        })))
         commit('clearPendingInvites')
       }
     } catch (err) {

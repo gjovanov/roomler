@@ -164,7 +164,7 @@ export default {
     },
     canManage (room) {
       const userid = this.$store.state.api.auth.user._id
-      return room.owner._id === userid || room.moderators.map(m => m._id).includes(userid)
+      return room.owner === userid || room.moderators.map(m => m._id).includes(userid)
     },
     add (item) {
       this.$router.push({ path: `/@/room/create?parent=${item.path}` })

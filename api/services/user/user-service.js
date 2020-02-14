@@ -14,6 +14,7 @@ class UserService {
   // base methods - START
   async get (filter) {
     const userFilter = new UserFilter({
+      query: filter.query,
       id: filter.id,
       username: filter.username,
       email: filter.email

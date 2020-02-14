@@ -2,46 +2,58 @@
   <v-menu
     v-model="menu"
     open-on-hover
-    bottom
+    left
     offset-x
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        :disabled="role === 'owner'"
+        :disabled="!isTransferVisible && !isToMemberVisible && !isToModeratorVisible && !isRemoveVisible"
         v-on="on"
-        outlined
+        fab
+        small
+        text
         dark
       >
-        {{ role }}
+        <v-icon>fa-edit</v-icon>
       </v-btn>
     </template>
-    <v-list v-if="role !== 'owner'">
+    <v-list v-if="isTransferVisible || isToMemberVisible || isToModeratorVisible || isRemoveVisible">
       <v-list-item
-        v-if="currentRole === 'owner'"
+        v-if="isTransferVisible"
         @click="openTransfer()"
       >
         <v-list-item-title>
           Transfer Ownership
         </v-list-item-title>
       </v-list-item>
-      <v-divider />
+      <v-divider :if="isTransferVisible" />
       <v-list-item
-        v-if="role !== 'member'"
+        v-if="isToMemberVisible"
         @click="toMember()"
       >
         <v-list-item-title>
           Demote to Member
         </v-list-item-title>
       </v-list-item>
-      <v-divider />
+      <v-divider v-if="isToMemberVisible" />
       <v-list-item
-        v-if="role !== 'moderator'"
+        v-if="isToModeratorVisible"
         @click="toModerator()"
       >
         <v-list-item-title>
           Promote to Moderator
         </v-list-item-title>
       </v-list-item>
+      <v-divider v-if="isToModeratorVisible" />
+      <v-list-item
+        v-if="isRemoveVisible"
+        @click="openPeerDelete()"
+      >
+        <v-list-item-title>
+          Remove Peer
+        </v-list-item-title>
+      </v-list-item>
+      <v-divider v-if="isRemoveVisible" />
     </v-list>
   </v-menu>
 </template>
@@ -55,6 +67,10 @@ export default {
       default: null
     },
     user: {
+      type: Object,
+      default: null
+    },
+    currentUser: {
       type: Object,
       default: null
     },
@@ -72,12 +88,33 @@ export default {
       menu: false
     }
   },
+  computed: {
+    isToMemberVisible () {
+      return this.currentUser._id !== this.user._id &&
+        this.currentRole === 'owner'
+    },
+    isToModeratorVisible () {
+      return this.currentUser._id !== this.user._id &&
+        (this.currentRole === 'owner' || (this.currentRole === 'moderator' && this.role === 'member'))
+    },
+    isTransferVisible () {
+      return this.currentUser._id !== this.user._id &&
+        this.currentRole === 'owner'
+    },
+    isRemoveVisible () {
+      return this.currentUser._id !== this.user._id &&
+        (this.currentRole === 'owner' || (this.currentRole === 'moderator' && this.role === 'member'))
+    }
+  },
   methods: {
     toMember () {
       this.$emit('toMember', this.user)
     },
     toModerator () {
       this.$emit('toModerator', this.user)
+    },
+    openPeerDelete () {
+      this.$emit('openPeerDelete', this.user, this.currentRole)
     },
     openTransfer () {
       this.$emit('openTransfer', this.user)

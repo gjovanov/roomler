@@ -33,6 +33,10 @@ module.exports = {
     roomDelete: 'ROOM_DELETE',
 
     roomInviteAccept: 'ROOM_INVITE_ACCEPT',
+    roomInviteReject: 'ROOM_INVITE_REJECT',
+    roomInviteUpdate: 'ROOM_INVITE_UPDATE',
+    roomInviteDelete: 'ROOM_INVITE_DELETE',
+
     roomPeerRoleUpdate: 'ROOM_PEER_ROLE_UPDATE',
     roomPeerAdd: 'ROOM_PEER_ADD',
     roomPeerRemove: 'ROOM_PEER_REMOVE',
