@@ -41,7 +41,8 @@
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-btn :to="{ path: `/${item.path}` }" v-on="on" block outlined class="justify-space-between pr-0">
-              <span>{{ item.short_name }}</span>
+              <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
+              <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
               <v-icon v-if="mentions(item)" small color="red">
                 fa-at
               </v-icon>
@@ -113,6 +114,9 @@ export default {
     this.setEvents()
   },
   methods: {
+    isRoomPeer (room) {
+      return this.$store.getters['api/room/isRoomPeer'](room)
+    },
     setBorderWidth () {
       const i = this.$refs.leftDrawer.$el.querySelector(
         '.v-navigation-drawer__border'

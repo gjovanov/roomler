@@ -24,7 +24,11 @@ class RoomFilter {
   addUserFilter (userid, roles = ['owner', 'moderators', 'members']) {
     const roleFilter = roles.map((r) => {
       const result = {}
-      result[r] = mongoose.Types.ObjectId(userid)
+      if (r !== 'open') {
+        result[r] = mongoose.Types.ObjectId(userid)
+      } else {
+        result.is_open = true
+      }
       return result
     })
     this.filter = userid ? {

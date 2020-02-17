@@ -30,7 +30,7 @@ class RoomService {
     return record
   }
 
-  async getAll (userid, page = 0, size = 10, filter = {}, sort = {
+  async getAll (userid, page = 0, size = 100, filter = {}, sort = {
     path: 'asc'
   }) {
     const roomFilter = new RoomFilter({
@@ -46,7 +46,10 @@ class RoomService {
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
       .exec()
-    return records
+    const paths = records.map(r => new RegExp(`^${r.path}.`, 'i'))
+    const additionalRecords = await Room.find({ $and: [{ path: { $in: paths } }, { $nor: [{ owner: userid }, { members: userid }, { moderators: userid }] }, { is_open: true }] })
+    return records.concat(additionalRecords)
+    // return records
   }
 
   async create (userid, data) {
@@ -153,7 +156,7 @@ class RoomService {
     update.$addToSet[type] = {
       $each: users
     }
-    const result = await this.update(userid, id, update, ['owner', 'moderators'])
+    const result = await this.update(userid, id, update, ['owner', 'moderators', 'open'])
     return result
   }
 
@@ -165,7 +168,7 @@ class RoomService {
     update.$pull[type] = {
       $in: users
     }
-    const result = await this.update(userid, id, update, ['owner', 'moderators'])
+    const result = await this.update(userid, id, update, ['owner', 'moderators', 'open'])
     return result
   }
 }

@@ -29,6 +29,7 @@ class WsDispatcher {
     }
     if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
+      console.log(rooms)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }

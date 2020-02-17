@@ -10,9 +10,11 @@ export const state = () => ({
 
 export const mutations = {
   initMessages (state, room) {
-    const msgs = { }
-    msgs[room] = []
-    state.messages = { ...state.messages, ...msgs }
+    if (!state.messages[room]) {
+      const msgs = { }
+      msgs[room] = []
+      state.messages = { ...state.messages, ...msgs }
+    }
   },
 
   pushAll (state, { room, messages }) {

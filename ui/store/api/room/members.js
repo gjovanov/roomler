@@ -18,7 +18,10 @@ export const actions = {
             root: true
           })
         })
-        commit('api/room/replace', { room: response.result.room }, {
+        commit('api/room/push', response.result.room, {
+          root: true
+        })
+        commit('api/message/initMessages', response.result.room.path, {
           root: true
         })
       }
@@ -43,7 +46,7 @@ export const actions = {
             root: true
           })
         })
-        commit('api/room/replace', { room: response.result.room }, {
+        commit('api/room/push', response.result.room, {
           root: true
         })
       }
@@ -68,7 +71,7 @@ export const actions = {
             root: true
           })
         })
-        commit('api/room/replace', response.result.room, {
+        commit('api/room/push', response.result.room, {
           root: true
         })
       }

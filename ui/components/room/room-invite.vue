@@ -21,17 +21,17 @@
       justify="center"
     >
       <v-container>
-        <v-row>
+        <v-row v-if="peers && peers.length">
           <v-col cols="12">
-            <v-btn :to="`/${room.path}/peers?invite`" dark block outlined class="primary">
-              <v-icon>fa-users</v-icon> &nbsp; Invite new peers
+            <v-btn :to="`/${room.path}/peers?add`" dark block outlined class="red">
+              <v-icon>fa-users</v-icon> &nbsp; Add existing peers
             </v-btn>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12">
-            <v-btn :to="`/${room.path}/peers?add`" dark block outlined class="red">
-              <v-icon>fa-users</v-icon> &nbsp; Add existing peers
+            <v-btn :to="`/${room.path}/peers?invite`" dark block outlined class="primary">
+              <v-icon>fa-users</v-icon> &nbsp; Invite new peers
             </v-btn>
           </v-col>
         </v-row>
@@ -46,6 +46,11 @@ export default {
       type: Object,
       default: null,
       required: true
+    }
+  },
+  computed: {
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
     }
   }
 }

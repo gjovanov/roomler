@@ -105,6 +105,16 @@
             </template>
           </v-list>
           <v-btn
+            v-if="peers && peers.length && canInvite"
+            @click="peerDialog = true"
+            color="red"
+            right
+            class="ml-4"
+          >
+            <v-icon>fa-users</v-icon> &nbsp; Add existing peers
+          </v-btn>
+           &nbsp;
+          <v-btn
             v-if="canInvite"
             @click="inviteDialog = true"
             color="primary"
@@ -112,16 +122,6 @@
             class="ml-4"
           >
             <v-icon>fa-users</v-icon> &nbsp; Invite new peers
-          </v-btn>
-           &nbsp;
-          <v-btn
-            v-if="canInvite"
-            @click="peerDialog = true"
-            color="red"
-            right
-            class="ml-4"
-          >
-            <v-icon>fa-users</v-icon> &nbsp; Add existing peers
           </v-btn>
         </v-col>
       </v-row>
@@ -187,6 +187,9 @@ export default {
     },
     invites () {
       return this.$store.state.api.invite.invites
+    },
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
     }
   },
   async created () {
@@ -249,8 +252,16 @@ export default {
       this.peerDialog = false
       this.$router.push({ path: `/${this.room.path}/peers` })
     },
-    async addPeers (invites) {
-      await this.$store.dispatch('api/invite/create', invites)
+    async addPeers (peers) {
+      const room = peers[0].room
+      const members = peers.filter(p => p.type === 'member').map(p => p.peer)
+      const moderators = peers.filter(p => p.type === 'moderator').map(p => p.peer)
+      await Promise.all(
+        [
+          !members.length || this.$store.dispatch('api/room/members/push', { room, users: members }),
+          !moderators.length || this.$store.dispatch('api/room/moderators/push', { room, users: moderators })
+        ]
+      )
       this.peerDialog = false
       this.$router.push({ path: `/${this.room.path}/peers` })
     },

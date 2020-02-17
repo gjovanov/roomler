@@ -23,8 +23,17 @@ export const mutations = {
     state.tree.source = new Tree(state.rooms)
   },
   push (state, room) {
-    room.children = []
-    state.rooms.push(room)
+    if (state.room && state.room._id === room._id) {
+      state.room = room
+    }
+    const found = state.rooms.find(r => r._id === room._id)
+    if (!found) {
+      state.rooms = [room, ...state.rooms].sort((a, b) => a.path.localeCompare(b.path))
+    } else {
+      state.rooms = state.rooms
+        .map(r => r._id === room._id ? room : r)
+        .sort((a, b) => a.path.localeCompare(b.path))
+    }
     state.tree.source = new Tree(state.rooms)
   },
   pull (state, roomid) {
@@ -68,7 +77,7 @@ export const actions = {
               root: true
             })
           })
-          commit('api/room/replace', record.room, {
+          commit('api/room/push', record.room, {
             root: true
           })
         })
@@ -81,6 +90,7 @@ export const actions = {
               root: true
             })
           })
+
           const userid = rootState.api.auth.user._id
           const isUserRemoved = record.room.owner !== userid && !record.room.members.includes(userid) && !record.room.moderators.includes(userid)
           if (isUserRemoved) {
@@ -88,11 +98,17 @@ export const actions = {
             if (rootState.api.room.room && rootState.api.room.room._id === record.room._id) {
               await router.push({ path: '/' })
             }
-            commit('api/room/pull', record.room._id, {
-              root: true
-            })
+            if (!record.room.is_open) {
+              commit('api/room/pull', record.room._id, {
+                root: true
+              })
+            } else {
+              commit('api/room/push', record.room, {
+                root: true
+              })
+            }
           } else {
-            commit('api/room/replace', record.room, {
+            commit('api/room/push', record.room, {
               root: true
             })
           }
@@ -205,5 +221,9 @@ export const getters = {
       }
     }
     return null
+  },
+  isRoomPeer: (state, getters, rootState) => (room, userid = null) => {
+    const user = userid || rootState.api.auth.user._id
+    return [room.owner, ...room.members, ...room.moderators].includes(user)
   }
 }

@@ -265,6 +265,11 @@ export const getters = {
   avatarUrl: (state) => {
     return state.oauth ? state.oauth.avatar_url : (state.user ? state.user.avatar_url : null)
   },
+  getPeers: (state, getters, rootState) => {
+    const me = rootState.api.auth.user._id
+    const userids = [...new Set(rootState.api.room.rooms.map(r => [r.owner, ...r.members, ...r.moderators]).reduce((a, b) => a.concat(b), []))]
+    return state.peers.filter(u => userids.includes(u._id) && u._id !== me)
+  },
   getUser: state => (userid) => {
     return state.peers.find(u => u._id === userid)
   },

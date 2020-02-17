@@ -18,7 +18,7 @@ export const actions = {
             root: true
           })
         })
-        commit('api/room/replace', response.result.room, {
+        commit('api/room/push', response.result.room, {
           root: true
         })
       }

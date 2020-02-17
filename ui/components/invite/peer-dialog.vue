@@ -15,93 +15,100 @@
             multiple
           >
             <v-expansion-panel>
-              <v-expansion-panel-header>New invite</v-expansion-panel-header>
+              <v-expansion-panel-header>New peer</v-expansion-panel-header>
               <v-expansion-panel-content>
-                <v-form ref="newInviteForm" v-model="isValidNewInvite" lazy-validation>
-                  <v-text-field
-                    v-model="newInvite.email"
-                    :rules="emailRules"
-                    :name="`email[${newInvite.id}]`"
-                    label="Email"
-                    autocomplete="on"
+                <v-form ref="newPeerForm" v-model="isValidNewPeer" lazy-validation>
+                  <v-autocomplete
+                    v-model="newPeer.peer"
+                    :rules="peerRules"
+                    :items="availablePeers"
+                    filled
+                    chips
+                    color="blue-grey lighten-2"
+                    label="Select"
+                    item-text="username"
+                    item-value="_id"
                     required
-                    outlined
-                  />
-                  <v-spacer />
-                  <v-text-field
-                    v-model="newInvite.name"
-                    :name="`name[${newInvite.id}]`"
-                    label="Name"
-                    autocomplete="on"
-                    outlined
-                  />
+                  >
+                    <template v-slot:selection="data">
+                      <v-chip
+                        v-bind="data.attrs"
+                        :input-value="data.selected"
+                        @click="data.select"
+                        @click:close="clear(data.item)"
+                        close
+                      >
+                        <v-avatar left>
+                          <v-img :src="data.item.avatar_url" />
+                        </v-avatar>
+                        {{ data.item.username }}
+                      </v-chip>
+                    </template>
+                    <template v-slot:item="data">
+                      <template v-if="typeof data.item !== 'object'">
+                        <v-list-item-content v-text="data.item" />
+                      </template>
+                      <template v-else>
+                        <v-list-item-avatar>
+                          <img :src="data.item.avatar_url">
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                          <v-list-item-title v-html="data.item.username" />
+                        </v-list-item-content>
+                      </template>
+                    </template>
+                  </v-autocomplete>
                   <v-spacer />
                   <v-select
-                    v-model="newInvite.type"
+                    v-model="newPeer.type"
                     :items="types"
                     no-data-text="Type"
                     label="Type"
                     outlined
                   />
                   <v-btn
-                    :disabled="!isValidNewInvite"
+                    :disabled="!isValidNewPeer"
                     @click="push"
                     color="primary"
                     outlined
                     class="justify-end"
                   >
-                    <v-icon>fa-plus</v-icon> Add invite
+                    <v-icon>fa-plus</v-icon> Add peer
                   </v-btn>
                 </v-form>
               </v-expansion-panel-content>
             </v-expansion-panel>
             <v-expansion-panel>
-              <v-expansion-panel-header>Invite list</v-expansion-panel-header>
+              <v-expansion-panel-header>New peers list</v-expansion-panel-header>
               <v-expansion-panel-content>
-                <em v-if="!invites.length">
-                  Please add some invites in this list.
+                <em v-if="!newPeers.length">
+                  Please add some peers in this list.
                 </em>
-                <v-form ref="invitesForm" v-model="areValidInvites" lazy-validation>
+                <v-form ref="peersForm" v-model="areValidPeers" lazy-validation>
                   <v-row
-                    v-for="invite in invites"
-                    :key="invite.id"
+                    v-for="peer in newPeers"
+                    :key="peer.peer"
                     justify="center"
                   >
                     <v-col
                       cols="12"
-                      md="4"
+                      md="6"
                       class="pa-0"
                     >
-                      <v-text-field
-                        v-model="invite.email"
-                        :rules="emailRules"
-                        :name="`email[${invite.id}]`"
-                        label="Email"
-                        autocomplete="on"
-                        required
-                        outlined
-                      />
+                      <v-chip style="width: 100%; height: 55px;">
+                        <v-avatar left>
+                          <v-img :src="getUser(peer.peer).avatar_url" />
+                        </v-avatar>
+                        {{ getUser(peer.peer).username }}
+                      </v-chip>
                     </v-col>
                     <v-col
                       cols="12"
-                      md="3"
-                      class="pa-0"
-                    >
-                      <v-text-field
-                        v-model="invite.name"
-                        :name="`name[${invite.id}]`"
-                        label="Name"
-                        autocomplete="on"
-                        outlined
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="4"
+                      md="5"
                       class="pa-0"
                     >
                       <v-select
-                        v-model="invite.type"
+                        v-model="peer.type"
                         :items="types"
                         label="Type"
                         no-data-text="Type"
@@ -114,7 +121,7 @@
                       class="pa-0"
                     >
                       <v-btn
-                        @click="pop(invite)"
+                        @click="pop(peer)"
                         color="red"
                         fab
                         small
@@ -134,7 +141,7 @@
               Cancel
             </v-btn>
             <v-btn
-              :disabled="!areValidInvites || !invites.length"
+              :disabled="!areValidPeers || !newPeers.length"
               @click="addPeers()"
               color="primary"
               outlined
@@ -149,8 +156,6 @@
 </template>
 
 <script>
-import * as uuid from 'uuid/v4'
-
 export default {
   props: {
     dialog: {
@@ -164,56 +169,64 @@ export default {
   },
   data () {
     const config = this.$store.state.api.config.config
-    const defaultInvite = {
-      name: '',
-      email: '',
+    const defaultPeer = {
+      room: this.room._id,
+      peer: null,
       type: config.dataSettings.invite.defaults.type
     }
     const types = config.dataSettings.invite.types
-    const newInvite = Object.assign({ id: uuid() }, defaultInvite)
+    const newPeer = Object.assign({ }, defaultPeer)
 
     return {
-      isValidNewInvite: true,
-      areValidInvites: true,
+      people: [],
+      isValidNewPeer: true,
+      areValidPeers: true,
 
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /\S+@\S+\.\S+/.test(v) || 'E-mail must be valid'
+      peerRules: [
+        v => !!v || 'Peer is required'
       ],
 
       panel: [0, 1],
-      defaultInvite,
-      newInvite,
+      defaultPeer,
+      newPeer,
       types,
-      invites: []
+      newPeers: []
     }
   },
   computed: {
-    members () {
-      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
-      const users = this.$store.getters['api/auth/getUsers'](userids)
-      return users
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
+    },
+    availablePeers () {
+      const peerids = this.newPeers.map(p => p.peer)
+      return this.peers.filter(p => !peerids.includes(p._id))
     }
   },
   methods: {
+    getUser (userid) {
+      return this.$store.getters['api/auth/getUser'](userid)
+    },
+    clear (peer) {
+      this.newPeer.peer = null
+    },
     cancelPeers () {
       this.$emit('cancelPeers')
-      this.invites = []
+      this.newPeers = []
     },
     push () {
-      if (this.$refs.newInviteForm.validate()) {
-        this.newInvite.room = this.room._id
-        this.invites.push(this.newInvite)
-        this.newInvite = Object.assign({ id: uuid() }, this.defaultInvite)
+      console.log(this.newPeer)
+      if (this.$refs.newPeerForm.validate()) {
+        this.newPeers.push(this.newPeer)
+        this.newPeer = Object.assign({ }, this.defaultPeer)
       }
     },
-    pop (invite) {
-      this.invites = this.invites.filter(i => i.id !== invite.id)
+    pop (peer) {
+      this.newPeers = this.newPeers.filter(i => i.peer !== peer.peer)
     },
     addPeers () {
-      if (this.$refs.invitesForm.validate()) {
-        this.$emit('addPeers', this.invites)
-        this.invites = []
+      if (this.$refs.peersForm.validate()) {
+        this.$emit('addPeers', this.newPeers)
+        this.newPeers = []
       }
     }
   }

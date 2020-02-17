@@ -5,7 +5,27 @@
       accordion
       multiple
     >
-      <v-expansion-panel v-if="members && members.length === 1">
+      <v-expansion-panel v-if="!isRoomPeer">
+        <v-expansion-panel-header>Join this room</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row
+            dense
+            align="center"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              sm="6"
+              md="4"
+            >
+              <v-btn @click="join()" dark block outlined class="red">
+                <v-icon>fa-users</v-icon> &nbsp; Join
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel v-if="isRoomPeer && members && members.length === 1">
         <v-expansion-panel-header>Invite</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row
@@ -24,13 +44,13 @@
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="members && members.length >= 1">
+      <v-expansion-panel v-if="isRoomPeer && members && members.length >= 1">
         <v-expansion-panel-header>Conference</v-expansion-panel-header>
         <v-expansion-panel-content>
           <conference :user="user" :room="room" :members="members" />
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="members && members.length >= 1">
+      <v-expansion-panel v-if="isRoomPeer && members && members.length >= 1">
         <v-expansion-panel-header>Chat</v-expansion-panel-header>
         <v-expansion-panel-content>
           <chat :elem-id="'messages-list'" :input-id="'new-message-txt'" :room="room" :messages="messages" :unreads="unreads" />
@@ -78,6 +98,9 @@ export default {
     room () {
       return this.$store.state.api.room.room
     },
+    isRoomPeer () {
+      return this.$store.getters['api/room/isRoomPeer'](this.room)
+    },
     members () {
       const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
       const users = this.$store.getters['api/auth/getUsers'](userids)
@@ -103,6 +126,9 @@ export default {
   },
 
   methods: {
+    async join () {
+      await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
+    },
     async sendMessage (content) {
       if (content) {
         const $ = cheerio.load(content)
