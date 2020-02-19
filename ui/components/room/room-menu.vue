@@ -6,10 +6,10 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        v-on="on"
         text
         dark
         x-small
+        v-on="on"
       >
         <v-icon small>
           fa-ellipsis-h

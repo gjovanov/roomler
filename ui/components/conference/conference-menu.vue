@@ -9,10 +9,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="!session"
-              v-on="on"
-              @click="joinDialog = true"
               small
               fab
+              v-on="on"
+              @click="joinDialog = true"
             >
               <v-icon>fa-phone-volume</v-icon>
             </v-btn>
@@ -23,11 +23,11 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="session"
-              v-on="on"
-              @click="leave()"
               color="red"
               small
               fab
+              v-on="on"
+              @click="leave()"
             >
               <v-icon>fa-power-off</v-icon>
             </v-btn>
@@ -38,10 +38,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="localHandle && !localHandle.screen"
-              v-on="on"
-              @click="shareScreen()"
               small
               fab
+              v-on="on"
+              @click="shareScreen()"
             >
               <v-icon>fa-share</v-icon>
             </v-btn>
@@ -52,10 +52,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="localHandle && localHandle.stream"
-              v-on="on"
-              @click="unpublish()"
               small
               fab
+              v-on="on"
+              @click="unpublish()"
             >
               <v-icon>fa-minus-circle</v-icon>
             </v-btn>
@@ -66,10 +66,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="localHandle && !localHandle.stream"
-              v-on="on"
-              @click="publishDialog = true"
               small
               fab
+              v-on="on"
+              @click="publishDialog = true"
             >
               <v-icon>fa-bullhorn</v-icon>
             </v-btn>

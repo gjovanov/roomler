@@ -29,15 +29,12 @@ class WsDispatcher {
     }
     if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
-      console.log(rooms)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
     if (op.includes('ROOM_INVITE_')) {
       const rooms = messages.map(m => m.room)
-      console.log(rooms)
       recepients = roomService.recepients(rooms)
-      console.log(recepients)
       stringify = fastJson(require('../invite/invite-schema').wsInvite.valueOf())
     }
     if (op.includes('ROOM_PEER_')) {

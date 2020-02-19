@@ -10,15 +10,16 @@
       Rooms
     </v-subheader>
     <v-treeview
-      v-model="roomTree.model"
-      :open="roomTree.open"
-      :items="roomTree.source.root"
+      v-model="modelList"
+      :open="tree.open"
+      :items="tree.items"
       hoverable
       activatable
       open-all
       dense
-      item-key="name"
+      item-key="path"
       item-text="short_name"
+      @update:open="updateOpen"
     >
       <template v-slot:prepend="{ item, open }">
         <v-badge
@@ -40,7 +41,7 @@
       <template slot="label" slot-scope="{ item }">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn :to="{ path: `/${item.path}` }" v-on="on" block outlined class="justify-space-between pr-0">
+            <v-btn :to="{ path: `/${item.path}` }" block outlined class="justify-space-between pr-0" v-on="on">
               <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
               <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
               <v-icon v-if="mentions(item)" small color="red">
@@ -84,6 +85,8 @@ export default {
   data () {
     const config = this.$store.state.api.config.config
     return {
+      modelList: [],
+      openList: [],
       leftDrawer: true,
       width: 280,
       borderSize: 5,
@@ -94,8 +97,8 @@ export default {
     }
   },
   computed: {
-    roomTree () {
-      return this.$store.getters['api/room/tree']
+    tree () {
+      return this.$store.state.api.room.tree
     },
     direction () {
       return !this.leftDrawer ? 'Open' : 'Closed'
@@ -114,6 +117,10 @@ export default {
     this.setEvents()
   },
   methods: {
+    updateOpen (newVal) {
+      console.log(newVal)
+      this.$store.commit('api/room/setOpen', newVal)
+    },
     isRoomPeer (room) {
       return this.$store.getters['api/room/isRoomPeer'](room)
     },

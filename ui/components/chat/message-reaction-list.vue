@@ -11,12 +11,12 @@
       v-for="(reactionGroup, name, index) in reactions"
       :key="name"
       :class="index !== 0 ? 'ml-3' : ''"
-      @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
-      @mouseover="showMenu($event, reactionGroup.list)"
       class="mt-2"
       tile
       outlined
       color="primary"
+      @click="toggleReaction(message, { name, char: reactionGroup.symbol })"
+      @mouseover="showMenu($event, reactionGroup.list)"
     >
       {{ reactionGroup.symbol }}
       <v-avatar

@@ -25,8 +25,8 @@
           <v-card-actions>
             <v-btn
               :disabled="!valid"
-              @click="reset()"
               color="primary"
+              @click="reset()"
             >
               Reset pasword
             </v-btn>

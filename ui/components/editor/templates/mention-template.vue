@@ -10,8 +10,8 @@
         >
           <v-list-item
             :key="index"
-            @click="extension.selectItem(user)"
             dark
+            @click="extension.selectItem(user)"
           >
             <v-list-item-avatar>
               <v-img v-if="user.avatarUrl" :src="user.avatarUrl" />

@@ -34,9 +34,9 @@
                       <v-chip
                         v-bind="data.attrs"
                         :input-value="data.selected"
+                        close
                         @click="data.select"
                         @click:close="clear(data.item)"
-                        close
                       >
                         <v-avatar left>
                           <v-img :src="data.item.avatar_url" />
@@ -68,10 +68,10 @@
                   />
                   <v-btn
                     :disabled="!isValidNewPeer"
-                    @click="push"
                     color="primary"
                     outlined
                     class="justify-end"
+                    @click="push"
                   >
                     <v-icon>fa-plus</v-icon> Add peer
                   </v-btn>
@@ -121,10 +121,10 @@
                       class="pa-0"
                     >
                       <v-btn
-                        @click="pop(peer)"
                         color="red"
                         fab
                         small
+                        @click="pop(peer)"
                       >
                         <v-icon>fa-trash-alt</v-icon>
                       </v-btn>
@@ -137,14 +137,14 @@
           </v-expansion-panels>
           <v-card-actions>
             <v-spacer />
-            <v-btn @click="cancelPeers()" color="grey" outlined>
+            <v-btn color="grey" outlined @click="cancelPeers()">
               Cancel
             </v-btn>
             <v-btn
               :disabled="!areValidPeers || !newPeers.length"
-              @click="addPeers()"
               color="primary"
               outlined
+              @click="addPeers()"
             >
               Add peers
             </v-btn>
@@ -214,7 +214,6 @@ export default {
       this.newPeers = []
     },
     push () {
-      console.log(this.newPeer)
       if (this.$refs.newPeerForm.validate()) {
         this.newPeers.push(this.newPeer)
         this.newPeer = Object.assign({ }, this.defaultPeer)

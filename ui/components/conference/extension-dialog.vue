@@ -17,9 +17,9 @@
         <v-spacer />
 
         <v-btn
-          @click="cancel()"
           color="green darken-1"
           outlined
+          @click="cancel()"
         >
           Cancel
         </v-btn>

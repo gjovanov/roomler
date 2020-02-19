@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
 const UserConnection = require('../../models/user-connection')
 const UserConnectionFilter = require('./user-connection-filter')
+const mongoose = require('mongoose')
 
 class UserConnectionService {
   // base methods - START

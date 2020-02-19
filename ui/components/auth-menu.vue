@@ -21,10 +21,10 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          v-on="on"
           outlined
           small
           style="background-color: #303030"
+          v-on="on"
         >
           <v-badge
             :color="totalMentions ? 'red' : 'orange'"
@@ -86,9 +86,9 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          v-on="on"
           text
           dark
+          v-on="on"
         >
           <v-icon>mdi-dots-vertical</v-icon>
           {{ user.username }}
@@ -153,7 +153,7 @@
 
     <v-divider vertical />
 
-    <v-btn v-if="user && isAuthenticated && !isActivated" @click="resetAccount()" text>
+    <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
       Activate
     </v-btn>
   </v-toolbar-items>

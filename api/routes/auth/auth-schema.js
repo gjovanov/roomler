@@ -1,5 +1,5 @@
-const S = require('fluent-schema')
 const config = require('../../../config')
+const S = require('fluent-schema')
 const codeTypes = config.dataSettings.code.types
 
 const usernameParam = S.object()

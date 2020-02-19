@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
-const handlebars = require('handlebars')
 const config = require('../../../config')
+const handlebars = require('handlebars')
 
 class TemplateService {
   render (template, model) {

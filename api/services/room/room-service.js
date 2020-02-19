@@ -1,6 +1,6 @@
-const slugify = require('slugify')
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
+const slugify = require('slugify')
 const slugOptions = {
   replacement: '-', // replace spaces with replacement
   remove: null, // regex to remove characters
@@ -48,8 +48,8 @@ class RoomService {
       .exec()
     const paths = records.map(r => new RegExp(`^${r.path}.`, 'i'))
     const additionalRecords = await Room.find({ $and: [{ path: { $in: paths } }, { $nor: [{ owner: userid }, { members: userid }, { moderators: userid }] }, { is_open: true }] })
-    return records.concat(additionalRecords)
-    // return records
+    const result = records.concat(additionalRecords)
+    return result
   }
 
   async create (userid, data) {

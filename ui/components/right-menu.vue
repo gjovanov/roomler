@@ -14,8 +14,8 @@
         </v-list-item-avatar>
         <v-list-item-title>Peers</v-list-item-title>
         <v-btn
-          @click.stop="mini = !mini"
           icon
+          @click.stop="mini = !mini"
         >
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>

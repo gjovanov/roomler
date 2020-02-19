@@ -9,9 +9,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.undo"
-                x-small
               >
                 <v-icon small>
                   fa-undo
@@ -24,9 +24,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.redo"
-                x-small
               >
                 <v-icon small>
                   fa-redo
@@ -40,9 +40,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.bold()"
+                x-small
                 v-on="on"
                 @click="commands.bold"
-                x-small
               >
                 <v-icon small>
                   fa-bold
@@ -56,9 +56,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.italic()"
+                x-small
                 v-on="on"
                 @click="commands.italic"
-                x-small
               >
                 <v-icon small>
                   fa-italic
@@ -72,9 +72,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.strike()"
+                x-small
                 v-on="on"
                 @click="commands.strike"
-                x-small
               >
                 <v-icon small>
                   fa-strikethrough
@@ -88,9 +88,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.underline()"
+                x-small
                 v-on="on"
                 @click="commands.underline"
-                x-small
               >
                 <v-icon small>
                   fa-underline
@@ -110,9 +110,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.paragraph()"
+                x-small
                 v-on="on"
                 @click="commands.paragraph"
-                x-small
               >
                 <v-icon small>
                   fa-paragraph
@@ -126,9 +126,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.heading({ level: 1 })"
+                x-small
                 v-on="on"
                 @click="commands.heading({ level: 1 })"
-                x-small
               >
                 H1
               </v-btn>
@@ -140,9 +140,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.heading({ level: 2 })"
+                x-small
                 v-on="on"
                 @click="commands.heading({ level: 2 })"
-                x-small
               >
                 H2
               </v-btn>
@@ -154,9 +154,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.heading({ level: 3 })"
+                x-small
                 v-on="on"
                 @click="commands.heading({ level: 3 })"
-                x-small
               >
                 H3
               </v-btn>
@@ -168,9 +168,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.bullet_list()"
+                x-small
                 v-on="on"
                 @click="commands.bullet_list"
-                x-small
               >
                 <v-icon small>
                   fa-list-ul
@@ -184,9 +184,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.ordered_list()"
+                x-small
                 v-on="on"
                 @click="commands.ordered_list"
-                x-small
               >
                 <v-icon small>
                   fa-list-ol
@@ -206,9 +206,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.todo_list()"
+                x-small
                 v-on="on"
                 @click="commands.todo_list"
-                x-small
               >
                 <v-icon small>
                   fa-check-square
@@ -222,9 +222,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.blockquote()"
+                x-small
                 v-on="on"
                 @click="commands.blockquote"
-                x-small
               >
                 <v-icon small>
                   fa-quote-right
@@ -238,9 +238,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.code_block()"
+                x-small
                 v-on="on"
                 @click="commands.code_block"
-                x-small
               >
                 <v-icon small>
                   fa-code
@@ -254,9 +254,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.image()"
+                x-small
                 v-on="on"
                 @click="showImagePrompt(commands.image)"
-                x-small
               >
                 <v-icon small>
                   fa-image
@@ -270,9 +270,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="isActive.table()"
+                x-small
                 v-on="on"
                 @click="commands.createTable({rowsCount: 3, colsCount: 3, withHeaderRow: false })"
-                x-small
               >
                 <v-icon small>
                   fa-table
@@ -292,9 +292,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.deleteTable"
-                x-small
               >
                 <v-icon small>
                   fa-trash
@@ -307,9 +307,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.addColumnBefore"
-                x-small
               >
                 +|
               </v-btn>
@@ -320,9 +320,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.addColumnAfter"
-                x-small
               >
                 |+
               </v-btn>
@@ -333,9 +333,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.deleteColumn"
-                x-small
               >
                 |x|
               </v-btn>
@@ -346,9 +346,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.addRowBefore"
-                x-small
               >
                 +_
               </v-btn>
@@ -359,9 +359,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.addRowAfter"
-                x-small
               >
                 _+
               </v-btn>
@@ -372,9 +372,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.deleteRow"
-                x-small
               >
                 _x_
               </v-btn>
@@ -385,9 +385,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
+                x-small
                 v-on="on"
                 @click="commands.toggleCellMerge"
-                x-small
               >
                 <v-icon small>
                   fa-object-group

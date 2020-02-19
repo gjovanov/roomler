@@ -55,9 +55,9 @@
                   <peer-menu
                     :room="room"
                     :user="item.user"
-                    :currentUser="currentUser"
+                    :current-user="currentUser"
                     :role="item.role"
-                    :currentRole="item.currentRole"
+                    :current-role="item.currentRole"
                     @openTransfer="openTransfer"
                     @openPeerDelete="openPeerDelete"
                     @toMember="toMember"
@@ -106,20 +106,20 @@
           </v-list>
           <v-btn
             v-if="peers && peers.length && canInvite"
-            @click="peerDialog = true"
             color="red"
             right
             class="ml-4"
+            @click="peerDialog = true"
           >
             <v-icon>fa-users</v-icon> &nbsp; Add existing peers
           </v-btn>
            &nbsp;
           <v-btn
             v-if="canInvite"
-            @click="inviteDialog = true"
             color="primary"
             right
             class="ml-4"
+            @click="inviteDialog = true"
           >
             <v-icon>fa-users</v-icon> &nbsp; Invite new peers
           </v-btn>

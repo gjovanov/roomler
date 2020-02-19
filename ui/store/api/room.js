@@ -1,16 +1,17 @@
-import Tree from '../../services/tree'
 import {
   handleError,
   handleSuccess
 } from '@/services/ajax-handlers'
 
+import { treeOps } from '../../services/tree-ops'
+
 export const state = () => ({
   room: null,
   rooms: [],
   tree: {
-    source: new Tree([]),
+    items: [],
     open: [],
-    model: []
+    active: []
   }
 })
 
@@ -19,10 +20,12 @@ export const mutations = {
     state.room = room
   },
   setRooms (state, rooms) {
+    rooms.forEach((room) => { room.children = [] })
     state.rooms = rooms
-    state.tree.source = new Tree(state.rooms)
+    state.tree.items = treeOps.buildTree(state.rooms)
   },
   push (state, room) {
+    room.children = []
     if (state.room && state.room._id === room._id) {
       state.room = room
     }
@@ -34,23 +37,23 @@ export const mutations = {
         .map(r => r._id === room._id ? room : r)
         .sort((a, b) => a.path.localeCompare(b.path))
     }
-    state.tree.source = new Tree(state.rooms)
+    treeOps.push(state.tree.items, room)
   },
   pull (state, roomid) {
     if (state.room && state.room._id === roomid) {
       state.room = null
     }
     state.rooms = state.rooms.filter(r => r._id !== roomid)
-    state.tree.source = new Tree(state.rooms)
   },
-  replace (state, updatedRoom) {
-    if (state.room && state.room._id === updatedRoom._id) {
-      state.room = updatedRoom
+  setOpen (state, list) {
+    state.tree.open = list
+  },
+  open (state, room) {
+    const parent = treeOps.findParent(state.tree.items, room)
+    if (parent) {
+      state.tree.open.push(parent.path)
     }
-    state.rooms = state.rooms.map(r => r._id === updatedRoom._id ? updatedRoom : r)
-    state.tree.source = new Tree(state.rooms)
   },
-
   pushUser (state, invite) {
     const room = state.rooms.find(r => r._id === invite.room._id)
     if (room) {
@@ -124,6 +127,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$post('/api/room/create', payload)
       commit('push', response.result)
+      commit('open', response.result)
       commit('api/message/initMessages', response.result.path, {
         root: true
       })
@@ -161,7 +165,7 @@ export const actions = {
         })
       })
     } catch (err) {
-      handleError(err, commit)
+      // handleError(err, commit)
       response.hasError = true
     }
     return response
@@ -174,7 +178,10 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$put(`/api/room/update/${payload.id}`, payload.update)
-      commit('replace', response.result)
+      commit('push', response.result)
+      commit('api/message/initMessages', response.result.path, {
+        root: true
+      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -199,9 +206,6 @@ export const actions = {
 }
 
 export const getters = {
-  tree: (state) => {
-    return state.tree
-  },
   roomPaths: (state) => {
     return state.rooms.map(r => r.path)
   },

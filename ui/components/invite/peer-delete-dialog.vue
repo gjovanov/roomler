@@ -7,10 +7,10 @@
       <v-card-text>Are you sure you want to remove <strong>{{ user.username }}</strong> from <strong>{{ room.path }}</strong> room?</v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="no()" color="grey" outlined>
+        <v-btn color="grey" outlined @click="no()">
           No
         </v-btn>
-        <v-btn @click="yes()" color="primary" outlined>
+        <v-btn color="primary" outlined @click="yes()">
           Yes
         </v-btn>
       </v-card-actions>

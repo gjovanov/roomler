@@ -1,9 +1,9 @@
-const mongoose = require('mongoose')
 const config = require('../../../config')
 const Invite = require('../../models/invite')
 const emailService = require('../email/email-service')
 const roomService = require('../room/room-service')
 const InviteFilter = require('./invite-filter')
+const mongoose = require('mongoose')
 
 class InviteService {
   // base methods - START

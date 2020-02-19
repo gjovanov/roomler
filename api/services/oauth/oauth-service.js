@@ -1,8 +1,8 @@
-const slugify = require('slugify')
-const generator = require('generate-password')
 const userService = require('../user/user-service')
 const OAuth = require('../../models/oauth')
 const OAuthFilter = require('./oauth-filter')
+const generator = require('generate-password')
+const slugify = require('slugify')
 
 const getOrCreateUser = async (data) => {
   let user = await userService.get({

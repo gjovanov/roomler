@@ -1,9 +1,9 @@
 const os = require('os')
 const process = require('process')
-const uuid = require('uuid')
 const config = require('../../../config')
 const wsDispatcher = require('./ws-dispatcher')
 const storage = require('./ws-storage')
+const uuid = require('uuid')
 const processName = `${os.hostname()}_${process.pid}`
 
 class WsHandler {

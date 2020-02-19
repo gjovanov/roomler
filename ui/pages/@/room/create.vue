@@ -32,12 +32,12 @@
                 <v-text-field
                   v-model="draftRoom.name"
                   :rules="nameRules"
-                  @keydown.enter.prevent="create()"
                   label="Room name"
                   name="name"
                   autocomplete="on"
                   outlined
                   required
+                  @keydown.enter.prevent="create()"
                 >
                   <template v-slot:append>
                     <v-tooltip
@@ -58,13 +58,13 @@
                 <v-spacer />
                 <v-text-field
                   v-model="newTag"
-                  @keydown.enter.prevent="addTag()"
                   label="Tag"
                   name="tag"
                   autocomplete="on"
                   placeholder="Add a tag and press 'Enter'"
                   outlined
                   required
+                  @keydown.enter.prevent="addTag()"
                 />
                 <v-spacer />
                 <v-row v-if="draftRoom.tags.length" justify="space-around">
@@ -86,10 +86,10 @@
                         <v-chip
                           v-for="tag in draftRoom.tags"
                           :key="tag"
-                          @click:close="removeTag(tag)"
                           class="ma-2"
                           outlined
                           close
+                          @click:close="removeTag(tag)"
                         >
                           {{ tag }}
                         </v-chip>
@@ -100,19 +100,19 @@
                 <v-spacer />
                 <v-textarea
                   v-model="draftRoom.description"
-                  @keydown.enter.prevent=""
                   label="Description"
                   name="description"
                   autocomplete="on"
                   outlined
+                  @keydown.enter.prevent=""
                 />
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-btn
                 :disabled="!draftRoom.valid"
-                @click="create()"
                 color="primary"
+                @click="create()"
               >
                 Create
               </v-btn>
@@ -125,10 +125,10 @@
 </template>
 
 <script>
-import slugify from 'slugify'
 import {
   handleSuccess
 } from '@/services/ajax-handlers'
+import slugify from 'slugify'
 
 export default {
   middleware: 'authenticated',

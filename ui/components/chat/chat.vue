@@ -54,14 +54,14 @@
                 light
               >
                 <v-btn
-                  @mouseover="showMenu($event, message)"
-                  @click="showMenu($event, message)"
                   fab
                   right
                   bottom
                   x-small
                   absolute
                   color="green"
+                  @mouseover="showMenu($event, message)"
+                  @click="showMenu($event, message)"
                 >
                   😄
                 </v-btn>
@@ -69,7 +69,7 @@
                   {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
                     <template v-slot:activator="{ on }">
-                      <v-icon v-on="on" small color="red">
+                      <v-icon small color="red" v-on="on">
                         fa-at
                       </v-icon>
                     </template>
@@ -77,7 +77,7 @@
                   </v-tooltip>
                 </v-card-title>
                 <v-card-text>
-                  <pre v-html="message.content" style="white-space: pre-wrap" />
+                  <pre style="white-space: pre-wrap" v-html="message.content" />
                 </v-card-text>
               </v-card>
             </v-hover>
@@ -95,13 +95,13 @@
 </template>
 
 <script>
-import * as uuid from 'uuid/v4'
-import * as cheerio from 'cheerio'
-import * as EmojiMap from 'emojilib'
 import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
 import AddReactionMenu from '@/components/chat/add-reaction-menu'
 import MessageReactionList from '@/components/chat/message-reaction-list'
+import * as EmojiMap from 'emojilib'
+import * as cheerio from 'cheerio'
+import * as uuid from 'uuid/v4'
 
 const scrollDirection = {
   noScroll: 'no_scroll',

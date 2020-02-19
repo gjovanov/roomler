@@ -8,11 +8,11 @@
     <template v-slot:activator="{ on }">
       <v-btn
         :disabled="invite.status !== 'pending'"
-        v-on="on"
         fab
         small
         text
         dark
+        v-on="on"
       >
         <v-icon>fa-edit</v-icon>
       </v-btn>

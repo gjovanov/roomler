@@ -1,8 +1,8 @@
+import Logo from '../../ui/components/logo.vue'
 import {
   mount
 } from '@vue/test-utils'
 import test from 'ava'
-import Logo from '../../ui/components/logo.vue'
 
 test('is a Vue instance', (t) => {
   const wrapper = mount(Logo)

@@ -16,9 +16,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="!media.video"
+                outlined
                 v-on="on"
                 @click="media.video = !media.video"
-                outlined
               >
                 <v-icon v-if="media.video">
                   fa-video
@@ -35,9 +35,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="!media.screen"
+                outlined
                 v-on="on"
                 @click="media.screen = !media.screen"
-                outlined
               >
                 <v-icon v-if="media.screen">
                   screen_share
@@ -54,9 +54,9 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :text="!media.audio"
+                outlined
                 v-on="on"
                 @click="media.audio = !media.audio"
-                outlined
               >
                 <v-icon v-if="media.audio">
                   fa-microphone
@@ -77,18 +77,18 @@
         <v-spacer />
 
         <v-btn
-          @click="cancel()"
           color="green darken-1"
           outlined
+          @click="cancel()"
         >
           Cancel
         </v-btn>
 
         <v-btn
           :disabled="!media.audio && !media.video"
-          @click="publish()"
           color="green darken-1"
           outlined
+          @click="publish()"
         >
           Publish
         </v-btn>

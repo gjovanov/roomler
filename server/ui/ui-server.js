@@ -1,11 +1,11 @@
 const {
   resolve
 } = require('path')
+const config = require('../../nuxt.config')
 const {
   Nuxt,
   Builder
 } = require('nuxt')
-const config = require('../../nuxt.config')
 const nodeEnv = process.env.NODE_ENV || 'development'
 const runBuilder = nodeEnv === 'development' || nodeEnv === 'test'
 config.dev = nodeEnv === 'development'

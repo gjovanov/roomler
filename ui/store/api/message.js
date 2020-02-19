@@ -1,8 +1,8 @@
-import * as moment from 'moment'
 import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
+import * as moment from 'moment'
 
 export const state = () => ({
   messages: {}

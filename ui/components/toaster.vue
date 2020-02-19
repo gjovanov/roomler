@@ -14,9 +14,9 @@
     >
       <strong v-if="toast.prop !== 'global'"> {{ toast.prop }} </strong> <span>{{ toast.message }}</span>
       <v-btn
-        @click="remove(index)"
         dark
         text
+        @click="remove(index)"
       >
         Close
       </v-btn>

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
 const Message = require('../../models/message')
 const MessageFilter = require('./message-filter')
+const mongoose = require('mongoose')
 const extendRecord = (record, userid, convertToObject = true) => {
   const recordObj = convertToObject ? record.toObject() : record
   recordObj.is_read = !!record.readby.find(u => u.toString() === userid.toString())

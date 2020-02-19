@@ -6,13 +6,13 @@ const {
   existsSync,
   mkdirSync
 } = require('fs')
-const multer = require('fastify-multer')
 const errorSchema = require('../.common/error-schema')
 const roomController = require('./room-controller')
 const roomOwnerController = require('./room-owner-controller')
 const roomMembersController = require('./room-members-controller')
 const roomModeratorsController = require('./room-moderators-controller')
 const roomSchema = require('./room-schema')
+const multer = require('fastify-multer')
 
 // folders
 const staticFolder = join(__dirname, '../../../ui/static')

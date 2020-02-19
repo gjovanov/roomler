@@ -17,9 +17,9 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   :text="!minimal"
+                  small
                   v-on="on"
                   @click="minimal = !minimal"
-                  small
                 >
                   <v-icon>fa-edit</v-icon>
                 </v-btn>
@@ -31,9 +31,9 @@
               <template v-slot:activator="{ on }">
                 <v-btn
                   :text="menuMembers"
+                  small
                   v-on="on"
                   @click="toggleMenuMembers()"
-                  small
                 >
                   <v-icon>fa-users</v-icon>
                 </v-btn>
@@ -44,11 +44,11 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  v-on="on"
-                  @click="send()"
                   small
                   absolute
                   right
+                  v-on="on"
+                  @click="send()"
                 >
                   <v-icon>send</v-icon>
                 </v-btn>
@@ -72,8 +72,13 @@
 
 <script>
 
-import * as EmojiMap from 'emojilib'
-import { Editor, EditorContent, Extension } from 'tiptap'
+import TiptapMenu from '@/components/editor/tiptap-menu'
+import EmojiTemplate from '@/components/editor/templates/emoji-template'
+import MentionTemplate from '@/components/editor/templates/mention-template'
+import CustomMention from '@/components/editor/extensions/custom-mention'
+import CustomEmoji from '@/components/editor/extensions/custom-emoji'
+import CustomImage from '@/components/editor/extensions/custom-image'
+import * as uuid from 'uuid/v4'
 import {
   Placeholder,
   HardBreak,
@@ -98,13 +103,8 @@ import {
   Underline,
   History
 } from 'tiptap-extensions'
-import * as uuid from 'uuid/v4'
-import TiptapMenu from '@/components/editor/tiptap-menu'
-import EmojiTemplate from '@/components/editor/templates/emoji-template'
-import MentionTemplate from '@/components/editor/templates/mention-template'
-import CustomMention from '@/components/editor/extensions/custom-mention'
-import CustomEmoji from '@/components/editor/extensions/custom-emoji'
-import CustomImage from '@/components/editor/extensions/custom-image'
+import { Editor, EditorContent, Extension } from 'tiptap'
+import * as EmojiMap from 'emojilib'
 export default {
   components: {
     EditorContent,

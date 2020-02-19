@@ -18,7 +18,7 @@
               sm="6"
               md="4"
             >
-              <v-btn @click="join()" dark block outlined class="red">
+              <v-btn dark block outlined class="red" @click="join()">
                 <v-icon>fa-users</v-icon> &nbsp; Join
               </v-btn>
             </v-col>
@@ -62,12 +62,12 @@
 </template>
 
 <script>
-import * as uuid from 'uuid/v4'
-import * as cheerio from 'cheerio'
 import Tiptap from '@/components/editor/tiptap'
 import RoomInvite from '@/components/room/room-invite'
 import Conference from '@/components/conference/conference'
 import Chat from '@/components/chat/chat'
+import * as cheerio from 'cheerio'
+import * as uuid from 'uuid/v4'
 
 const scrollDirection = {
   noScroll: 'no_scroll',
