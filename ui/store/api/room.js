@@ -4,15 +4,12 @@ import {
 } from '@/services/ajax-handlers'
 
 import { treeOps } from '../../services/tree-ops'
+import Tree from '../../services/tree'
 
 export const state = () => ({
   room: null,
   rooms: [],
-  tree: {
-    items: [],
-    open: [],
-    active: []
-  }
+  tree: new Tree([])
 })
 
 export const mutations = {
@@ -22,7 +19,9 @@ export const mutations = {
   setRooms (state, rooms) {
     rooms.forEach((room) => { room.children = [] })
     state.rooms = rooms
-    state.tree.items = treeOps.buildTree(state.rooms)
+    const open = state.tree.open
+    state.tree = new Tree(state.rooms)
+    state.tree.open = open
   },
   push (state, room) {
     room.children = []
@@ -37,18 +36,24 @@ export const mutations = {
         .map(r => r._id === room._id ? room : r)
         .sort((a, b) => a.path.localeCompare(b.path))
     }
-    treeOps.push(state.tree.items, room)
+    const open = state.tree.open
+    state.tree = new Tree(state.rooms)
+    state.tree.open = open
   },
   pull (state, roomid) {
     if (state.room && state.room._id === roomid) {
       state.room = null
     }
     state.rooms = state.rooms.filter(r => r._id !== roomid)
+    const open = state.tree.open
+    state.tree = new Tree(state.rooms)
+    state.tree.open = open
   },
   setOpen (state, list) {
     state.tree.open = list
   },
   open (state, room) {
+    state.tree.open.push(room.path)
     const parent = treeOps.findParent(state.tree.items, room)
     if (parent) {
       state.tree.open.push(parent.path)
@@ -81,6 +86,9 @@ export const actions = {
             })
           })
           commit('api/room/push', record.room, {
+            root: true
+          })
+          commit('api/message/initMessages', record.room.path, {
             root: true
           })
         })
@@ -159,6 +167,9 @@ export const actions = {
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
       commit('setRooms', response.result)
+      // eslint-disable-next-line no-debugger
+      debugger
+      commit('setOpen', response.result.map(room => room._id))
       response.result.forEach((room) => {
         commit('api/message/initMessages', room.path, {
           root: true
@@ -227,7 +238,7 @@ export const getters = {
     return null
   },
   isRoomPeer: (state, getters, rootState) => (room, userid = null) => {
-    const user = userid || rootState.api.auth.user._id
-    return [room.owner, ...room.members, ...room.moderators].includes(user)
+    const user = userid || (rootState.api.auth.user ? rootState.api.auth.user._id : null)
+    return room ? [room.owner, ...room.members, ...room.moderators].includes(user) : false
   }
 }

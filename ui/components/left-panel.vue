@@ -53,21 +53,42 @@
         </v-tooltip>
       </template>
       <template v-slot:append="{ item }">
-        <room-menu v-if="canManage(item)" :room="item" @add="add" @removeConsent="removeConsent" @remove="remove" />
+        <room-menu
+          :room="item"
+          :user="user"
+          @add="add"
+          @removeConsent="removeConsent"
+          @join="join"
+          @leaveConsent="leaveConsent"
+        />
       </template>
     </v-treeview>
-    <room-delete-dialog :dialog="dialog" :room="selectedRoom" @remove="remove" @removeCancel="removeCancel" />
+    <room-delete-dialog
+      :dialog="dialog.delete"
+      :room="selectedRoom"
+      @remove="remove"
+      @removeCancel="removeCancel"
+    />
+    <room-leave-dialog
+      :dialog="dialog.leave"
+      :room="selectedRoom"
+      :user="user"
+      @leave="leave"
+      @leaveCancel="leaveCancel"
+    />
   </v-navigation-drawer>
 </template>
 
 <script>
 
-import RoomDeleteDialog from './room/room-delete'
+import RoomDeleteDialog from './room/room-delete-dialog'
+import RoomLeaveDialog from './room/room-leave-dialog'
 import RoomMenu from './room/room-menu'
 
 export default {
   components: {
     RoomDeleteDialog,
+    RoomLeaveDialog,
     RoomMenu
   },
   props: {
@@ -92,13 +113,19 @@ export default {
       borderSize: 5,
       mini: false,
       config,
-      dialog: false,
+      dialog: {
+        delete: false,
+        leave: false
+      },
       selectedRoom: null
     }
   },
   computed: {
     tree () {
       return this.$store.state.api.room.tree
+    },
+    user () {
+      return this.$store.state.api.auth.user
     },
     direction () {
       return !this.leftDrawer ? 'Open' : 'Closed'
@@ -118,7 +145,6 @@ export default {
   },
   methods: {
     updateOpen (newVal) {
-      console.log(newVal)
       this.$store.commit('api/room/setOpen', newVal)
     },
     isRoomPeer (room) {
@@ -170,18 +196,14 @@ export default {
       return this.$store.getters['api/message/unreads'](room.path).length
     },
     mentions (room) {
-      const userid = this.$store.state.api.auth.user._id
+      const userid = this._id
       return this.$store.getters['api/message/mentions'](room.path, userid).length
-    },
-    canManage (room) {
-      const userid = this.$store.state.api.auth.user._id
-      return room.owner === userid || room.moderators.map(m => m._id).includes(userid)
     },
     add (item) {
       this.$router.push({ path: `/@/room/create?parent=${item.path}` })
     },
     removeConsent (item) {
-      this.dialog = true
+      this.dialog.delete = true
       this.selectedRoom = item
     },
     async remove (room) {
@@ -194,8 +216,24 @@ export default {
       await this.$store.dispatch('api/room/delete', room._id)
       this.$router.push({ path: '/' })
     },
-    removeCancel (roomid) {
-      this.dialog = false
+    removeCancel () {
+      this.dialog.delete = false
+      this.selectedRoom = null
+    },
+    async join (room, user) {
+      await this.$store.dispatch('api/room/members/push', { room: room._id, user: user._id })
+    },
+    leaveConsent (item) {
+      this.dialog.leave = true
+      this.selectedRoom = item
+    },
+    async leave (room, user) {
+      const type = this.$store.getters['api/room/getUserRole'](room._id, user._id)
+      await this.$store.dispatch(`api/room/${type}s/pull`, { room: room._id, user: user._id })
+      this.dialog.leave = false
+    },
+    leaveCancel () {
+      this.dialog.leave = false
       this.selectedRoom = null
     },
     goToRoom (name) {

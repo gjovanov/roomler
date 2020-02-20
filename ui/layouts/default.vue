@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
-    <left-menu v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" @toggleDrawer="toggleDrawer" />
-    <right-menu v-if="room && room._id" :drawer="menuMembers" :room="room" />
+    <left-panel v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" @toggleDrawer="toggleDrawer" />
+    <right-panel v-if="room && room._id" :drawer="menuMembers" :room="room" />
     <v-app-bar
       app
       clipped-left
@@ -56,8 +56,8 @@
 
 import Logo from '@/components/logo'
 import AuthMenu from '@/components/auth-menu'
-import LeftMenu from '@/components/left-menu'
-import RightMenu from '@/components/right-menu'
+import LeftPanel from '@/components/left-panel'
+import RightPanel from '@/components/right-panel'
 import Toaster from '@/components/toaster'
 
 export default {
@@ -65,8 +65,8 @@ export default {
   components: {
     Logo,
     AuthMenu,
-    LeftMenu,
-    RightMenu,
+    LeftPanel,
+    RightPanel,
     Toaster
   },
   data: () => ({

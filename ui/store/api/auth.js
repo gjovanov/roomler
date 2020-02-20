@@ -200,6 +200,9 @@ export const actions = {
       commit('api/room/setRooms', [], {
         root: true
       })
+      commit('api/room/setRoom', null, {
+        root: true
+      })
       commit('clearUserInfo')
     } catch (err) {
       handleError(err, commit)

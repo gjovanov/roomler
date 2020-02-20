@@ -24,10 +24,15 @@ class RoomFilter {
   addUserFilter (userid, roles = ['owner', 'moderators', 'members']) {
     const roleFilter = roles.map((r) => {
       const result = {}
-      if (r !== 'open') {
+      if (['owner', 'moderators', 'members'].includes(r)) {
         result[r] = mongoose.Types.ObjectId(userid)
-      } else {
+      } else if (r === 'open') {
         result.is_open = true
+      } else if (Array.isArray(r)) {
+        result.$or = [
+          { moderators: { $in: r } },
+          { members: { $in: r } }
+        ]
       }
       return result
     })

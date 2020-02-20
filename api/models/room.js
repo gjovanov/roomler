@@ -1,9 +1,9 @@
+const config = require('../../config')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 require('mongoose-long')(mongoose)
 const Long = mongoose.Schema.Types.Long
 const ObjectId = mongoose.Schema.Types.ObjectId
-const config = require('../../config')
 const defaults = config.dataSettings.room.defaults
 
 const schema = new Schema({

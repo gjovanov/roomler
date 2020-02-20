@@ -5,17 +5,22 @@ export default class Tree {
 
   init (rooms) {
     this.rooms = rooms
-    this.root = this.getRoot()
-    this.buildTree(this.root, this.rooms)
+    this.rooms.forEach((room) => { room.children = [] })
+    this.open = []
+    this.active = []
+    this.items = this.getRootItems(this.rooms)
+    this.buildTree(this.rooms, this.items)
   }
 
-  getRoot () {
+  getRootItems (rooms) {
     const result = []
-    this.rooms.forEach((room) => {
-      room.children = []
+    rooms.forEach((room) => {
+      if (!room.children) {
+        room.children = []
+      }
       const names = room.name.split('.')
 
-      const parent = this.rooms.find(parent => parent._id !== room._id && room.path.startsWith(parent.path))
+      const parent = rooms.find(p => p._id !== room._id && room.path.startsWith(p.path))
       if (!parent) {
         room.short_name = room.name
         result.push(room)
@@ -26,63 +31,19 @@ export default class Tree {
     return result
   }
 
-  buildTree (upperRooms, rooms) {
+  buildTree (rooms, parentRooms) {
     const self = this
-    upperRooms.forEach((upperRoom) => {
-      const lowerRooms = rooms.filter(r => r.path.startsWith(`${upperRoom.path}.`) && !`${r.path}`.replace(`${upperRoom.path}.`, '').includes('.'))
-      lowerRooms.forEach((lowerRoom) => {
-        upperRoom.children.push(lowerRoom)
+    parentRooms.forEach((parentRoom) => {
+      const children = rooms.filter(r => r._id !== parentRoom._id && r.path.startsWith(parentRoom.path))
+      children.forEach((childRoom) => {
+        const childParents = rooms.filter(r => r._id !== childRoom._id && childRoom.path.startsWith(r.path))
+          .sort((a, b) => b.path.length - a.path.length)
+        if (childParents && childParents.length && childParents[0]._id === parentRoom._id) {
+          childRoom.short_name = childRoom.name.replace(`${parentRoom.name}.`, '')
+          parentRoom.children.push(childRoom)
+        }
       })
-      self.buildTree(lowerRooms, rooms)
+      self.buildTree(rooms, parentRoom.children)
     })
-  }
-
-  push (room) {
-    const names = room.name.split('.')
-    if (names.length) {
-      names.pop()
-    }
-    const parentpath = names.join('.')
-    const parent = this.findItem(parentpath)
-    const items = parent && parent.children ? parent.children : this.root
-    let pushed = false
-    for (let i = 0; i < items.length; i++) {
-      // room vs [goran, marx, tod]
-      const compare = items[i].path.localeCompare(room.path)
-      if (compare > 0) {
-        items.splice(i, 0, room)
-        pushed = true
-        break
-      } else if (compare === 0 || room._id === items[i]._id) {
-        items.splice(i, 1, room)
-        pushed = true
-        break
-      }
-    }
-    if (!pushed) {
-      items.push(room)
-    }
-  }
-
-  findItem (roompath, items = null) {
-    if (!items) {
-      items = this.root
-    }
-
-    return items.reduce((acc, item) => {
-      if (acc) {
-        return acc
-      }
-
-      if (item.path === roompath) {
-        return item
-      }
-
-      if (item.children) {
-        return this.findItem(roompath, item.children)
-      }
-
-      return acc
-    }, null)
   }
 }

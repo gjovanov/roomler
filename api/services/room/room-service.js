@@ -90,7 +90,7 @@ class RoomService {
     const roomFilter = new RoomFilter({
       id
     })
-      .addUserFilter(userid)
+      .addUserFilter(userid, ['owner'])
       .getFilter()
     const result = await Room
       .deleteOne(roomFilter)
@@ -168,7 +168,7 @@ class RoomService {
     update.$pull[type] = {
       $in: users
     }
-    const result = await this.update(userid, id, update, ['owner', 'moderators', 'open'])
+    const result = await this.update(userid, id, update, ['owner', 'moderators', 'open', users])
     return result
   }
 }

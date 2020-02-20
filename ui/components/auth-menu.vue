@@ -60,7 +60,7 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                <span>{{ item.room.short_name }}</span>
+                <span>{{ item.room.path }}</span>
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action v-if="item.mentions">

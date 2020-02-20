@@ -105,6 +105,11 @@ export default {
         if (!response.hasError) {
           await this.$store.dispatch('api/invite/acceptPendingInvites')
           await Promise.all([this.$store.dispatch('api/room/getAll'), this.$store.dispatch('api/auth/getPeers')])
+            .then((data) => {
+              if (data && data[0] && data[0].result) {
+                return Promise.all(data[0].result.map(room => this.$store.dispatch('api/message/getAll', { room })))
+              }
+            })
           await this.$store.dispatch('connectWebSocket')
           handleSuccess('Your password was successfully changed.', this.$store.commit)
           self.$router.push({ path: '/' })

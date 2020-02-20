@@ -19,6 +19,11 @@ export const mutations = {
 
   pushAll (state, { room, messages }) {
     if (messages && messages.length) {
+      if (!state.messages[room]) {
+        const msgs = { }
+        msgs[room] = []
+        state.messages = { ...state.messages, ...msgs }
+      }
       const result = [...state.messages[room]]
       messages.forEach((message) => {
         const existingMessage = result.find(m => (m._id === message._id) || (m.client_id === message.client_id))

@@ -52,12 +52,7 @@ class MessageService {
           throw new ReferenceError('Message was not found.')
         }
         const record = extendRecord(records[0], userid, false)
-        // record.author = record.author[0]
         record.room = record.room[0]
-        // record.reactions.forEach((reaction) => {
-        //   const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
-        //   reaction.user = user
-        // })
         return record
       })
     return record
@@ -84,12 +79,7 @@ class MessageService {
       .exec()
     records = records.map((r) => {
       const record = extendRecord(r, userid, false)
-      // record.author = record.author[0]
       record.room = record.room[0]
-      // record.reactions.forEach((reaction) => {
-      //   const user = record.reactions_users.find(u => u._id.toString() === reaction.user.toString())
-      //   reaction.user = user
-      // })
       return record
     })
     return records.reverse()

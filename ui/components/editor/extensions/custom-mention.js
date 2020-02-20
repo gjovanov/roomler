@@ -2,6 +2,8 @@ import { Mention, Suggestions } from 'tiptap-extensions'
 import { replaceText } from 'tiptap-commands'
 
 import Fuse from 'fuse.js'
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/dist/svg-arrow.css'
 import tippy from 'tippy.js'
 
 export default class CustomMention extends Mention {
@@ -17,6 +19,7 @@ export default class CustomMention extends Mention {
   }
 
   renderPopup (node, templateId) {
+    console.log(node)
     if (this.options.popup) {
       return
     }
@@ -27,12 +30,16 @@ export default class CustomMention extends Mention {
       theme: 'dark',
       placement: 'top',
       inertia: true,
+      lazy: false,
       duration: [400, 200],
-      showOnInit: true,
-      arrow: true,
-      arrowType: 'round'
+      showOnCreate: true,
+      arrow: tippy.roundArrow,
+      appendTo: document.body,
+      onCreate (instance) {
+        instance.popperInstance.reference = node
+      }
     }
-    this.options.popup = tippy(node, options)
+    this.options.popup = tippy(document.createElement('div'), options)
     // we have to update tippy whenever the DOM is updated
     if (MutationObserver) {
       this.options.observer = new MutationObserver(() => {

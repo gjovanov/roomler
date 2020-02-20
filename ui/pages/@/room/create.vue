@@ -15,97 +15,175 @@
             </v-card-title>
             <v-card-text>
               <v-form ref="form" v-model="draftRoom.valid" lazy-validation>
-                <v-spacer />
-                <strong class="text-primary">Room URL: </strong>
-                <v-chip
-                  class="ma-2"
-                  color="primary"
-                  outlined
-                  pill
+                <v-expansion-panels
+                  v-model="panel"
+                  accordion
                 >
-                  <v-icon left>
-                    fa-globe
-                  </v-icon>
-                  {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'your_room_name'}` }}</em>
-                </v-chip>
-                <v-spacer />
-                <v-text-field
-                  v-model="draftRoom.name"
-                  :rules="nameRules"
-                  label="Room name"
-                  name="name"
-                  autocomplete="on"
-                  outlined
-                  required
-                  @keydown.enter.prevent="create()"
-                >
-                  <template v-slot:append>
-                    <v-tooltip
-                      bottom
-                    >
-                      <template v-slot:activator="{ on }">
-                        <v-icon
-                          v-on="on"
-                          @click="draftRoom.is_open = !draftRoom.is_open"
-                        >
-                          {{ `${draftRoom.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
-                        </v-icon>
-                      </template>
-                      {{ `${draftRoom.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
-                    </v-tooltip>
-                  </template>
-                </v-text-field>
-                <v-spacer />
-                <v-text-field
-                  v-model="newTag"
-                  label="Tag"
-                  name="tag"
-                  autocomplete="on"
-                  placeholder="Add a tag and press 'Enter'"
-                  outlined
-                  required
-                  @keydown.enter.prevent="addTag()"
-                />
-                <v-spacer />
-                <v-row v-if="draftRoom.tags.length" justify="space-around">
-                  <v-col cols="12" sm="12">
-                    <v-sheet>
-                      <v-alert
-                        border="left"
-                        dense
-                        outlined
+                  <v-expansion-panel>
+                    <v-expansion-panel-header>Basic info</v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-spacer />
+                      <strong class="text-primary">Room URL: </strong>
+                      <v-chip
+                        class="ma-2"
                         color="primary"
-                        elevation="2"
+                        outlined
+                        pill
                       >
-                        {{ `Max ${maxTagsLength} Tags (Left: ${maxTagsLength - draftRoom.tags.length})` }}
-                      </v-alert>
-                      <v-chip-group
-                        column
-                        active-class="primary--text"
+                        <v-icon left>
+                          fa-globe
+                        </v-icon>
+                        {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'your_room_name'}` }}</em>
+                      </v-chip>
+                      <v-spacer />
+                      <v-text-field
+                        v-model="draftRoom.name"
+                        :rules="nameRules"
+                        label="Room name"
+                        name="name"
+                        autocomplete="on"
+                        outlined
+                        required
+                        @keydown.enter.prevent="create()"
                       >
-                        <v-chip
-                          v-for="tag in draftRoom.tags"
-                          :key="tag"
-                          class="ma-2"
-                          outlined
-                          close
-                          @click:close="removeTag(tag)"
-                        >
-                          {{ tag }}
-                        </v-chip>
-                      </v-chip-group>
-                    </v-sheet>
-                  </v-col>
-                </v-row>
-                <v-spacer />
-                <v-textarea
-                  v-model="draftRoom.description"
-                  label="Description"
-                  name="description"
-                  autocomplete="on"
-                  outlined
-                  @keydown.enter.prevent=""
-                />
+                        <template v-slot:append>
+                          <v-tooltip
+                            bottom
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-icon
+                                v-on="on"
+                                @click="draftRoom.is_open = !draftRoom.is_open"
+                              >
+                                {{ `${draftRoom.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
+                              </v-icon>
+                            </template>
+                            {{ `${draftRoom.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
+                          </v-tooltip>
+                        </template>
+                      </v-text-field>
+                      <v-spacer />
+                      <v-text-field
+                        v-model="newTag"
+                        label="Tag"
+                        name="tag"
+                        autocomplete="on"
+                        placeholder="Add a tag and press 'Enter'"
+                        outlined
+                        required
+                        @keydown.enter.prevent="addTag()"
+                      />
+                      <v-spacer />
+                      <v-row v-if="draftRoom.tags.length" justify="space-around">
+                        <v-col cols="12" sm="12">
+                          <v-sheet>
+                            <v-alert
+                              border="left"
+                              dense
+                              outlined
+                              color="primary"
+                              elevation="2"
+                            >
+                              {{ `Max ${maxTagsLength} Tags (Left: ${maxTagsLength - draftRoom.tags.length})` }}
+                            </v-alert>
+                            <v-chip-group
+                              column
+                              active-class="primary--text"
+                            >
+                              <v-chip
+                                v-for="tag in draftRoom.tags"
+                                :key="tag"
+                                class="ma-2"
+                                outlined
+                                close
+                                @click:close="removeTag(tag)"
+                              >
+                                {{ tag }}
+                              </v-chip>
+                            </v-chip-group>
+                          </v-sheet>
+                        </v-col>
+                      </v-row>
+                      <v-spacer />
+                      <v-textarea
+                        v-model="draftRoom.description"
+                        label="Description"
+                        name="description"
+                        autocomplete="on"
+                        outlined
+                        @keydown.enter.prevent=""
+                      />
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                  <v-expansion-panel>
+                    <v-expansion-panel-header>
+                      Media
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <v-text-field
+                        v-model="media.publishers"
+                        label="Publishers"
+                        name="media.publishers"
+                        autocomplete="on"
+                        outlined
+                        required
+                      />
+                      <v-spacer />
+                      <v-text-field
+                        v-model="media.bitrate"
+                        label="Bitrate"
+                        name="media.bitrate"
+                        autocomplete="on"
+                        outlined
+                        required
+                      />
+                      <v-spacer />
+                      <v-text-field
+                        v-model="media.fir_freq"
+                        label="Fir Frequency"
+                        name="media.fir_freq"
+                        autocomplete="on"
+                        outlined
+                        required
+                      />
+                      <v-spacer />
+                      <v-combobox
+                        v-model="media.audiocodecs"
+                        :items="audiocodecs"
+                        label="Audio codecs"
+                        multiple
+                        outlined
+                        dense
+                      />
+                      <v-spacer />
+                      <v-combobox
+                        v-model="media.videocodecs"
+                        :items="videocodecs"
+                        label="Video codecs"
+                        multiple
+                        outlined
+                        dense
+                      />
+                      <v-spacer />
+                      <v-text-field
+                        v-model="media.secret"
+                        label="Secret"
+                        name="media.secret"
+                        autocomplete="on"
+                        outlined
+                      />
+                      <v-spacer />
+                      <v-text-field
+                        v-model="media.pin"
+                        label="Pin"
+                        name="media.pin"
+                        autocomplete="on"
+                        outlined
+                      />
+                      <v-spacer />
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -150,6 +228,7 @@ export default {
     const defaults = config.dataSettings.room.defaults.media
 
     return {
+      panel: 0,
       valid: true,
 
       maxTagsLength: 5,
@@ -165,6 +244,9 @@ export default {
         v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
       ],
 
+      audiocodecs: defaults.audiocodec.split(','),
+      videocodecs: defaults.videocodec.split(','),
+
       media: {
         roomid: undefined,
         permanent: true,
@@ -174,8 +256,8 @@ export default {
         pin: undefined,
         bitrate: defaults.bitrate,
         fir_freq: defaults.fir_freq,
-        audiocodec: defaults.audiocodec,
-        videocodec: defaults.videocodec,
+        audiocodecs: defaults.audiocodec.split(','),
+        videocodecs: defaults.videocodec.split(','),
         record: defaults.record,
         rec_dir: undefined,
         notify_joining: defaults.notify_joining
@@ -217,6 +299,8 @@ export default {
           tags: this.draftRoom.tags,
           media: this.media
         }
+        createPayload.media.audiocodec = createPayload.media.audiocodecs.join(',')
+        createPayload.media.videocodec = createPayload.media.videocodecs.join(',')
 
         if (this.parentRoom) {
           createPayload.parent_name = this.parentRoom.name
@@ -226,6 +310,8 @@ export default {
         if (!createResponse.hasError) {
           let room = createResponse.result
           const janusPayload = Object.assign({}, this.media)
+          janusPayload.audiocodec = janusPayload.audiocodecs.join(',')
+          janusPayload.videocodec = janusPayload.videocodecs.join(',')
           janusPayload.is_private = !this.draftRoom.is_open
           janusPayload.description = this.draftRoom.name
           janusPayload.permanent = true
