@@ -5,64 +5,145 @@
     :width="width"
     app
     clipped
+    class="pr-1"
+    style="background-color: #121212"
   >
-    <v-subheader class="mt-4 grey--text text--darken-1">
-      Rooms
-    </v-subheader>
-    <v-treeview
-      v-model="modelList"
-      :open="tree.open"
-      :items="tree.items"
-      hoverable
-      activatable
-      open-all
-      dense
-      item-key="path"
-      item-text="short_name"
-      @update:open="updateOpen"
+    <v-expansion-panels
+      v-model="panel"
+      accordion
+      tile
+      class="pa-0 ma-0"
     >
-      <template v-slot:prepend="{ item, open }">
-        <v-badge
-          :color="mentions(item) ? 'red' : 'orange'"
-          :value="unreads(item)"
-          left
-          bottom
-          overlap
-          class="align-self-center"
-        >
-          <template v-slot:badge>
-            <span>{{ unreads(item) }}</span>
-          </template>
-          <v-icon>
-            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-          </v-icon>
-        </v-badge>
-      </template>
-      <template slot="label" slot-scope="{ item }">
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-btn :to="{ path: `/${item.path}` }" block outlined class="justify-space-between pr-0" v-on="on">
-              <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
-              <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
-              <v-icon v-if="mentions(item)" small color="red">
-                fa-at
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>{{ item.name }}</span>
-        </v-tooltip>
-      </template>
-      <template v-slot:append="{ item }">
-        <room-menu
-          :room="item"
-          :user="user"
-          @add="add"
-          @removeConsent="removeConsent"
-          @join="join"
-          @leaveConsent="leaveConsent"
-        />
-      </template>
-    </v-treeview>
+      <v-expansion-panel>
+        <v-expansion-panel-header>Rooms</v-expansion-panel-header>
+        <v-expansion-panel-content class="pa-0 ma-0">
+          <v-btn
+            v-if="!tree || !tree.items || !tree.items.length"
+            to="/@/room/create"
+            dark
+            block
+            outlined
+            class="red"
+          >
+            <v-icon>fa-comment</v-icon> &nbsp; Create a room
+          </v-btn>
+          <v-treeview
+            v-if="tree && tree.items && tree.items.length"
+            v-model="modelList"
+            :open="tree.open"
+            :items="tree.items"
+            hoverable
+            activatable
+            open-all
+            dense
+            item-key="path"
+            item-text="short_name"
+            class="pa-0 ma-0"
+            @update:open="updateOpen"
+          >
+            <template v-slot:prepend="{ item, open }">
+              <v-badge
+                :color="mentions(item) ? 'red' : 'orange'"
+                :value="unreads(item)"
+                left
+                bottom
+                overlap
+                class="align-self-center"
+              >
+                <template v-slot:badge>
+                  <span>{{ unreads(item) }}</span>
+                </template>
+                <v-icon>
+                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+                </v-icon>
+              </v-badge>
+            </template>
+            <template slot="label" slot-scope="{ item }">
+              <v-tooltip right>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    :to="{ path: `/${item.path}` }"
+                    dense
+                    small
+                    block
+                    outlined
+                    class="justify-space-between pr-0"
+                    v-on="on"
+                  >
+                    <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
+                    <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
+                    <v-icon v-if="mentions(item)" small color="red">
+                      fa-at
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>{{ item.name }}</span>
+              </v-tooltip>
+            </template>
+            <template v-slot:append="{ item }">
+              <room-menu
+                :room="item"
+                :user="user"
+                @add="add"
+                @removeConsent="removeConsent"
+                @join="join"
+                @leaveConsent="leaveConsent"
+              />
+            </template>
+          </v-treeview>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>Peers</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-btn
+            v-if="(!peers || !peers.length) && tree && tree.items && tree.items.length"
+            :to="`/${tree.items[0].path}/peers?invite`"
+            dark
+            block
+            outlined
+            class="primary"
+          >
+            <v-icon>fa-users</v-icon> &nbsp; Invite new peers
+          </v-btn>
+          <v-list
+            v-if="peers && peers.length"
+            dense
+          >
+            <v-list-item
+              v-for="peer in peers"
+              :key="peer._id"
+              :href="`/@/${peer.username}`"
+              link
+            >
+              <v-list-item-icon>
+                <v-badge
+                  :color="isOnline(peer._id) ? 'green' : 'grey'"
+                  bordered
+                  bottom
+                  left
+                  dot
+                  offset-x="4"
+                  offset-y="4"
+                >
+                  <v-avatar
+                    size="36px"
+                  >
+                    <img v-if="peer.avatar_url" :src="peer.avatar_url">
+                    <v-icon v-if="!peer.avatar_url">
+                      fa-user
+                    </v-icon>
+                  </v-avatar>
+                </v-badge>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{ peer.username }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
     <room-delete-dialog
       :dialog="dialog.delete"
       :room="selectedRoom"
@@ -106,6 +187,7 @@ export default {
   data () {
     const config = this.$store.state.api.config.config
     return {
+      panel: 0,
       modelList: [],
       openList: [],
       leftDrawer: true,
@@ -127,6 +209,9 @@ export default {
     user () {
       return this.$store.state.api.auth.user
     },
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
+    },
     direction () {
       return !this.leftDrawer ? 'Open' : 'Closed'
     }
@@ -144,6 +229,9 @@ export default {
     this.setEvents()
   },
   methods: {
+    isOnline (userid) {
+      return this.$store.getters['api/auth/isOnline'](userid)
+    },
     updateOpen (newVal) {
       this.$store.commit('api/room/setOpen', newVal)
     },
@@ -203,11 +291,15 @@ export default {
       this.$router.push({ path: `/@/room/create?parent=${item.path}` })
     },
     removeConsent (item) {
+      // eslint-disable-next-line no-debugger
+      debugger
       this.dialog.delete = true
       this.selectedRoom = item
     },
     async remove (room) {
-      this.dialog = false
+      // eslint-disable-next-line no-debugger
+      debugger
+      this.dialog.delete = false
       await this.$store.dispatch('api/janus/videoroom/destroyRoom', {
         room: room.media.roomid,
         secret: room.media.secret,
@@ -243,3 +335,9 @@ export default {
 }
 
 </script>
+<style scoped>
+* >>> .v-expansion-panel-content__wrap{
+    margin: 0px !important;
+    padding: 0px !important;
+  }
+</style>

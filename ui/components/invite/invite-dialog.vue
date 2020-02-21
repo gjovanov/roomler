@@ -1,150 +1,149 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="880px">
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        md="12"
+  <v-dialog v-model="dialog" persistent hide-overlay>
+    <v-card>
+      <v-expansion-panels
+        v-model="panel"
+        accordion
+        multiple
+        tile
+        flat
       >
-        <v-card>
-          <v-expansion-panels
-            v-model="panel"
-            accordion
-            multiple
-          >
-            <v-expansion-panel>
-              <v-expansion-panel-header>New invite</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-form ref="newInviteForm" v-model="isValidNewInvite" lazy-validation>
+        <v-expansion-panel>
+          <v-expansion-panel-header>New invite</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-form ref="newInviteForm" v-model="isValidNewInvite" lazy-validation>
+              <v-text-field
+                v-model="newInvite.email"
+                :rules="emailRules"
+                :name="`email[${newInvite.id}]`"
+                label="Email"
+                autocomplete="on"
+                required
+                outlined
+                dense
+              />
+              <v-spacer />
+              <v-text-field
+                v-model="newInvite.name"
+                :name="`name[${newInvite.id}]`"
+                label="Name"
+                autocomplete="on"
+                outlined
+                dense
+              />
+              <v-spacer />
+              <v-select
+                v-model="newInvite.type"
+                :items="types"
+                no-data-text="Type"
+                label="Type"
+                outlined
+                dense
+              />
+              <v-btn
+                :disabled="!isValidNewInvite"
+                color="primary"
+                outlined
+                class="justify-end"
+                @click="push"
+              >
+                <v-icon>fa-plus</v-icon> Add invite
+              </v-btn>
+            </v-form>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header>Invite list</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <em v-if="!invites.length">
+              Please add some invites in this list.
+            </em>
+            <v-form ref="invitesForm" v-model="areValidInvites" lazy-validation>
+              <v-row
+                v-for="invite in invites"
+                :key="invite.id"
+                justify="center"
+                class="pt-0 pb-0"
+              >
+                <v-col
+                  cols="12"
+                  md="4"
+                  class="pt-0 pb-0"
+                >
                   <v-text-field
-                    v-model="newInvite.email"
+                    v-model="invite.email"
                     :rules="emailRules"
-                    :name="`email[${newInvite.id}]`"
+                    :name="`email[${invite.id}]`"
                     label="Email"
                     autocomplete="on"
+                    dense
                     required
                     outlined
                   />
-                  <v-spacer />
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="3"
+                  class="pt-0 pb-0"
+                >
                   <v-text-field
-                    v-model="newInvite.name"
-                    :name="`name[${newInvite.id}]`"
+                    v-model="invite.name"
+                    :name="`name[${invite.id}]`"
                     label="Name"
                     autocomplete="on"
+                    dense
                     outlined
                   />
-                  <v-spacer />
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  class="pt-0 pb-0"
+                >
                   <v-select
-                    v-model="newInvite.type"
+                    v-model="invite.type"
                     :items="types"
-                    no-data-text="Type"
                     label="Type"
+                    no-data-text="Type"
+                    dense
                     outlined
                   />
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="1"
+                  class="pt-0 pb-0"
+                >
                   <v-btn
-                    :disabled="!isValidNewInvite"
-                    color="primary"
-                    outlined
-                    class="justify-end"
-                    @click="push"
+                    color="red"
+                    fab
+                    x-small
+                    @click="pop(invite)"
                   >
-                    <v-icon>fa-plus</v-icon> Add invite
+                    <v-icon>fa-trash-alt</v-icon>
                   </v-btn>
-                </v-form>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-            <v-expansion-panel>
-              <v-expansion-panel-header>Invite list</v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <em v-if="!invites.length">
-                  Please add some invites in this list.
-                </em>
-                <v-form ref="invitesForm" v-model="areValidInvites" lazy-validation>
-                  <v-row
-                    v-for="invite in invites"
-                    :key="invite.id"
-                    justify="center"
-                  >
-                    <v-col
-                      cols="12"
-                      md="4"
-                      class="pa-0"
-                    >
-                      <v-text-field
-                        v-model="invite.email"
-                        :rules="emailRules"
-                        :name="`email[${invite.id}]`"
-                        label="Email"
-                        autocomplete="on"
-                        required
-                        outlined
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="3"
-                      class="pa-0"
-                    >
-                      <v-text-field
-                        v-model="invite.name"
-                        :name="`name[${invite.id}]`"
-                        label="Name"
-                        autocomplete="on"
-                        outlined
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="4"
-                      class="pa-0"
-                    >
-                      <v-select
-                        v-model="invite.type"
-                        :items="types"
-                        label="Type"
-                        no-data-text="Type"
-                        outlined
-                      />
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="1"
-                      class="pa-0"
-                    >
-                      <v-btn
-                        color="red"
-                        fab
-                        small
-                        @click="pop(invite)"
-                      >
-                        <v-icon>fa-trash-alt</v-icon>
-                      </v-btn>
-                    </v-col>
-                    <v-divider />
-                  </v-row>
-                </v-form>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn color="grey" outlined @click="cancelInvites()">
-              Cancel
-            </v-btn>
-            <v-btn
-              :disabled="!areValidInvites || !invites.length"
-              color="primary"
-              outlined
-              @click="sendInvites()"
-            >
-              Send invites
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+                </v-col>
+                <v-divider />
+              </v-row>
+            </v-form>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+      <v-card-actions>
+        <v-spacer />
+        <v-btn color="grey" outlined @click="cancelInvites()">
+          Cancel
+        </v-btn>
+        <v-btn
+          :disabled="!areValidInvites || !invites.length"
+          color="primary"
+          outlined
+          @click="sendInvites()"
+        >
+          Send invites
+        </v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 

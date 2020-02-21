@@ -7,6 +7,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
+        v-if="isTransferVisible || isToMemberVisible || isToModeratorVisible || isRemoveVisible"
         :disabled="!isTransferVisible && !isToMemberVisible && !isToModeratorVisible && !isRemoveVisible"
         fab
         small
@@ -91,11 +92,13 @@ export default {
   computed: {
     isToMemberVisible () {
       return this.currentUser._id !== this.user._id &&
-        this.currentRole === 'owner'
+        this.currentRole === 'owner' &&
+        this.role === 'moderator'
     },
     isToModeratorVisible () {
       return this.currentUser._id !== this.user._id &&
-        (this.currentRole === 'owner' || (this.currentRole === 'moderator' && this.role === 'member'))
+        (this.currentRole === 'owner' || this.currentRole === 'moderator') &&
+        this.role === 'member'
     },
     isTransferVisible () {
       return this.currentUser._id !== this.user._id &&

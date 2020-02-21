@@ -1,20 +1,14 @@
 <template>
   <client-only>
-    <v-layout v-if="room">
-      <v-row
-        align="center"
-        justify="center"
-      >
-        <v-col
-          cols="12"
-          md="12"
-        >
+    <v-expansion-panels
+      v-model="panels"
+      accordion
+      multiple
+    >
+      <v-expansion-panel>
+        <v-expansion-panel-header>Peers</v-expansion-panel-header>
+        <v-expansion-panel-content>
           <v-list three-line>
-            <v-subheader
-              v-text="'Peers'"
-            />
-
-            <v-divider />
             <template v-for="(item, index) in members">
               <v-divider
                 :key="`peer_${index}`"
@@ -48,7 +42,16 @@
                 <v-list-item-content>
                   <v-list-item-title v-text="item.user.username" />
                   <v-list-item-subtitle v-text="item.user.email" />
-                  <v-list-item-subtitle v-text="item.role" />
+                  <v-list-item-subtitle>
+                    <v-chip
+                      class="mt-2"
+                      tile
+                      outlined
+                      color="primary"
+                    >
+                      {{ item.role }}
+                    </v-chip>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
 
                 <v-list-item-action-text>
@@ -66,12 +69,22 @@
                 </v-list-item-action-text>
               </v-list-item>
             </template>
-            <v-spacer />
-            <v-subheader
-              v-if="canInvite"
-              v-text="'Invites'"
-            />
-            <v-divider v-if="canInvite" />
+          </v-list>
+          <v-btn
+            v-if="peers && peers.length && canInvite"
+            color="red"
+            right
+            class="ml-4"
+            @click="peerDialog = true"
+          >
+            <v-icon>fa-users</v-icon> &nbsp; Add existing peers
+          </v-btn>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>Invites</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-list>
             <template v-for="(item, index) in invites">
               <v-divider
                 v-if="canInvite"
@@ -105,16 +118,6 @@
             </template>
           </v-list>
           <v-btn
-            v-if="peers && peers.length && canInvite"
-            color="red"
-            right
-            class="ml-4"
-            @click="peerDialog = true"
-          >
-            <v-icon>fa-users</v-icon> &nbsp; Add existing peers
-          </v-btn>
-           &nbsp;
-          <v-btn
             v-if="canInvite"
             color="primary"
             right
@@ -123,13 +126,13 @@
           >
             <v-icon>fa-users</v-icon> &nbsp; Invite new peers
           </v-btn>
-        </v-col>
-      </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
       <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
       <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
       <peer-dialog :dialog="peerDialog" :room="room" @cancelPeers="cancelPeers" @addPeers="addPeers" />
-    </v-layout>
+    </v-expansion-panels>
   </client-only>
 </template>
 
@@ -154,6 +157,7 @@ export default {
   },
   data () {
     return {
+      panels: [0, 1],
       selectedUser: null,
       inviteDialog: false,
       peerDialog: false,

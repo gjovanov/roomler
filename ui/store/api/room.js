@@ -167,8 +167,6 @@ export const actions = {
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
       commit('setRooms', response.result)
-      // eslint-disable-next-line no-debugger
-      debugger
       commit('setOpen', response.result.map(room => room._id))
       response.result.forEach((room) => {
         commit('api/message/initMessages', room.path, {

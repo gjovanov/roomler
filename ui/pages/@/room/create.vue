@@ -14,181 +14,15 @@
               Create a Room
             </v-card-title>
             <v-card-text>
-              <v-form ref="form" v-model="draftRoom.valid" lazy-validation>
-                <v-expansion-panels
-                  v-model="panel"
-                  accordion
-                >
-                  <v-expansion-panel>
-                    <v-expansion-panel-header>Basic info</v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-spacer />
-                      <strong class="text-primary">Room URL: </strong>
-                      <v-chip
-                        class="ma-2"
-                        color="primary"
-                        outlined
-                        pill
-                      >
-                        <v-icon left>
-                          fa-globe
-                        </v-icon>
-                        {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'your_room_name'}` }}</em>
-                      </v-chip>
-                      <v-spacer />
-                      <v-text-field
-                        v-model="draftRoom.name"
-                        :rules="nameRules"
-                        label="Room name"
-                        name="name"
-                        autocomplete="on"
-                        outlined
-                        required
-                        @keydown.enter.prevent="create()"
-                      >
-                        <template v-slot:append>
-                          <v-tooltip
-                            bottom
-                          >
-                            <template v-slot:activator="{ on }">
-                              <v-icon
-                                v-on="on"
-                                @click="draftRoom.is_open = !draftRoom.is_open"
-                              >
-                                {{ `${draftRoom.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
-                              </v-icon>
-                            </template>
-                            {{ `${draftRoom.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
-                          </v-tooltip>
-                        </template>
-                      </v-text-field>
-                      <v-spacer />
-                      <v-text-field
-                        v-model="newTag"
-                        label="Tag"
-                        name="tag"
-                        autocomplete="on"
-                        placeholder="Add a tag and press 'Enter'"
-                        outlined
-                        required
-                        @keydown.enter.prevent="addTag()"
-                      />
-                      <v-spacer />
-                      <v-row v-if="draftRoom.tags.length" justify="space-around">
-                        <v-col cols="12" sm="12">
-                          <v-sheet>
-                            <v-alert
-                              border="left"
-                              dense
-                              outlined
-                              color="primary"
-                              elevation="2"
-                            >
-                              {{ `Max ${maxTagsLength} Tags (Left: ${maxTagsLength - draftRoom.tags.length})` }}
-                            </v-alert>
-                            <v-chip-group
-                              column
-                              active-class="primary--text"
-                            >
-                              <v-chip
-                                v-for="tag in draftRoom.tags"
-                                :key="tag"
-                                class="ma-2"
-                                outlined
-                                close
-                                @click:close="removeTag(tag)"
-                              >
-                                {{ tag }}
-                              </v-chip>
-                            </v-chip-group>
-                          </v-sheet>
-                        </v-col>
-                      </v-row>
-                      <v-spacer />
-                      <v-textarea
-                        v-model="draftRoom.description"
-                        label="Description"
-                        name="description"
-                        autocomplete="on"
-                        outlined
-                        @keydown.enter.prevent=""
-                      />
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                  <v-expansion-panel>
-                    <v-expansion-panel-header>
-                      Media
-                    </v-expansion-panel-header>
-                    <v-expansion-panel-content>
-                      <v-text-field
-                        v-model="media.publishers"
-                        label="Publishers"
-                        name="media.publishers"
-                        autocomplete="on"
-                        outlined
-                        required
-                      />
-                      <v-spacer />
-                      <v-text-field
-                        v-model="media.bitrate"
-                        label="Bitrate"
-                        name="media.bitrate"
-                        autocomplete="on"
-                        outlined
-                        required
-                      />
-                      <v-spacer />
-                      <v-text-field
-                        v-model="media.fir_freq"
-                        label="Fir Frequency"
-                        name="media.fir_freq"
-                        autocomplete="on"
-                        outlined
-                        required
-                      />
-                      <v-spacer />
-                      <v-combobox
-                        v-model="media.audiocodecs"
-                        :items="audiocodecs"
-                        label="Audio codecs"
-                        multiple
-                        outlined
-                        dense
-                      />
-                      <v-spacer />
-                      <v-combobox
-                        v-model="media.videocodecs"
-                        :items="videocodecs"
-                        label="Video codecs"
-                        multiple
-                        outlined
-                        dense
-                      />
-                      <v-spacer />
-                      <v-text-field
-                        v-model="media.secret"
-                        label="Secret"
-                        name="media.secret"
-                        autocomplete="on"
-                        outlined
-                      />
-                      <v-spacer />
-                      <v-text-field
-                        v-model="media.pin"
-                        label="Pin"
-                        name="media.pin"
-                        autocomplete="on"
-                        outlined
-                      />
-                      <v-spacer />
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-                </v-expansion-panels>
-              </v-form>
+              <room-manage
+                :parent-room="parentRoom"
+                @updateValid="updateValid"
+                @create="create"
+              />
             </v-card-text>
             <v-card-actions>
               <v-btn
-                :disabled="!draftRoom.valid"
+                :disabled="!valid"
                 color="primary"
                 @click="create()"
               >
@@ -206,62 +40,16 @@
 import {
   handleSuccess
 } from '@/services/ajax-handlers'
-import slugify from 'slugify'
+import RoomManage from '@/components/room/room-manage'
 
 export default {
   middleware: 'authenticated',
+  components: {
+    RoomManage
+  },
   data () {
-    const slugOptions = {
-      replacement: '-', // replace spaces with replacement
-      remove: null, // regex to remove characters
-      lower: true // result in lower case
-    }
-    const defaultRoom = {
-      valid: true,
-      name: null,
-      path: '',
-      is_open: true,
-      description: undefined,
-      tags: []
-    }
-    const config = this.$store.state.api.config.config
-    const defaults = config.dataSettings.room.defaults.media
-
     return {
-      panel: 0,
-      valid: true,
-
-      maxTagsLength: 5,
-      config,
-      url: config.appSettings.env.URL,
-      slugOptions,
-
-      draftRoom: JSON.parse(JSON.stringify(defaultRoom)),
-      newTag: null,
-
-      nameRules: [
-        v => !!v || 'Room name is required',
-        v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
-      ],
-
-      audiocodecs: defaults.audiocodec.split(','),
-      videocodecs: defaults.videocodec.split(','),
-
-      media: {
-        roomid: undefined,
-        permanent: true,
-        publishers: defaults.publishers,
-        is_private: undefined,
-        secret: undefined,
-        pin: undefined,
-        bitrate: defaults.bitrate,
-        fir_freq: defaults.fir_freq,
-        audiocodecs: defaults.audiocodec.split(','),
-        videocodecs: defaults.videocodec.split(','),
-        record: defaults.record,
-        rec_dir: undefined,
-        notify_joining: defaults.notify_joining
-      }
+      valid: false
     }
   },
   computed: {
@@ -270,60 +58,45 @@ export default {
       return result
     }
   },
-
-  watch: {
-    'draftRoom.name' (newName) {
-      this.draftRoom.path = slugify(newName, this.slugOptions)
-    }
-  },
   methods: {
-    addTag () {
-      if (!this.draftRoom.tags.includes(this.newTag) && this.draftRoom.tags.length < this.maxTagsLength) {
-        this.draftRoom.tags.push(this.newTag)
-        this.newTag = null
+    updateValid (newVal) {
+      this.valid = newVal
+    },
+    async create (room, media) {
+      // 1. create a room in our DB via the /api/room/create
+      // 2. create a room in Janus
+      // 3. update the Janus roomid in our DB via /api/room/update
+      const payload = {
+        name: room.name,
+        description: room.description,
+        is_open: room.is_open,
+        tags: room.tags,
+        media
       }
-    },
-    removeTag (tag) {
-      this.draftRoom.tags = this.draftRoom.tags.filter(t => t !== tag)
-    },
+      payload.media.audiocodec = payload.media.audiocodecs.join(',')
+      payload.media.videocodec = payload.media.videocodecs.join(',')
 
-    async create () {
-      if (this.$refs.form.validate()) {
-        // 1. create a room in our DB via the /api/room/create
-        // 2. create a room in Janus
-        // 3. update the Janus roomid in our DB via /api/room/update
-        const createPayload = {
-          name: this.draftRoom.name,
-          description: this.draftRoom.description,
-          is_open: this.draftRoom.is_open,
-          tags: this.draftRoom.tags,
-          media: this.media
-        }
-        createPayload.media.audiocodec = createPayload.media.audiocodecs.join(',')
-        createPayload.media.videocodec = createPayload.media.videocodecs.join(',')
+      if (this.parentRoom) {
+        payload.parent_name = this.parentRoom.name
+        payload.parent_path = this.parentRoom.path
+      }
+      const createResponse = await this.$store.dispatch('api/room/create', payload)
+      if (!createResponse.hasError) {
+        let savedRoom = createResponse.result
+        const janusPayload = Object.assign({}, media)
+        janusPayload.audiocodec = janusPayload.audiocodecs.join(',')
+        janusPayload.videocodec = janusPayload.videocodecs.join(',')
+        janusPayload.is_private = !savedRoom.is_open
+        janusPayload.description = savedRoom.name
+        janusPayload.permanent = true
+        const janusRoom = await this.$store.dispatch('api/janus/videoroom/createRoom', janusPayload)
 
-        if (this.parentRoom) {
-          createPayload.parent_name = this.parentRoom.name
-          createPayload.parent_path = this.parentRoom.path
-        }
-        const createResponse = await this.$store.dispatch('api/room/create', createPayload)
-        if (!createResponse.hasError) {
-          let room = createResponse.result
-          const janusPayload = Object.assign({}, this.media)
-          janusPayload.audiocodec = janusPayload.audiocodecs.join(',')
-          janusPayload.videocodec = janusPayload.videocodecs.join(',')
-          janusPayload.is_private = !this.draftRoom.is_open
-          janusPayload.description = this.draftRoom.name
-          janusPayload.permanent = true
-          const janusRoom = await this.$store.dispatch('api/janus/videoroom/createRoom', janusPayload)
-
-          const updatePayload = { id: room._id, update: { 'media.roomid': janusRoom.room } }
-          const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)
-          if (!updateResponse.hasError) {
-            room = updateResponse.result
-            handleSuccess('The room was created successfully. It\'s more fun with friends so let\'s invite some', this.$store.commit)
-            this.$router.push({ path: `/${room.path}` })
-          }
+        const updatePayload = { id: savedRoom._id, update: { 'media.roomid': janusRoom.room } }
+        const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)
+        if (!updateResponse.hasError) {
+          savedRoom = updateResponse.result
+          handleSuccess('The room was created successfully. It\'s more fun with friends so let\'s invite some', this.$store.commit)
+          this.$router.push({ path: `/${savedRoom.path}` })
         }
       }
     }
