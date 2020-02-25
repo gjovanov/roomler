@@ -1,4 +1,6 @@
 const roomService = require('../../services/room/room-service')
+const config = require('../../../config')
+const wsDispatcher = require('../ws/ws-dispatcher')
 
 class RoomController {
   async get (request, reply) {
@@ -13,6 +15,11 @@ class RoomController {
 
   async create (request, reply) {
     const payload = request.body
+    let parentRoom = null
+    if (payload.parent_id) {
+      parentRoom = await roomService.get(request.user.user._id, payload.parent_id, ['owner', 'moderators'])
+    }
+    roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
     reply.send(result)
   }
@@ -23,8 +30,24 @@ class RoomController {
     const update = {
       $set: payload
     }
-    const result = await roomService.update(request.user.user._id, id, update)
-    reply.send(result)
+    let result
+    let children = []
+    if (!payload.name) {
+      result = await roomService.update(request.user.user._id, id, update)
+    } else {
+      console.log(payload)
+      const room = await roomService.get(request.user.user._id, id)
+      const parentRoom = await roomService.getParent(room)
+      roomService.slugify(payload, parentRoom)
+      result = await roomService.update(request.user.user._id, id, update)
+      await roomService.renameChildren(room.name, payload.name)
+      children = await roomService.getChildren(result, request.user.user._id)
+    }
+    const response = { room: result, children }
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomUpdate, [response], true)
+
+    console.log(response)
+    reply.send(response)
   }
 
   async delete (request, reply) {

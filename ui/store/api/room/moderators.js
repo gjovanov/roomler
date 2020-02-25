@@ -21,9 +21,6 @@ export const actions = {
         commit('api/room/push', response.result.room, {
           root: true
         })
-        commit('api/message/initMessages', response.result.room.path, {
-          root: true
-        })
       }
     } catch (err) {
       handleError(err, commit)

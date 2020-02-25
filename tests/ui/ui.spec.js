@@ -2,7 +2,7 @@ import Logo from '../../ui/components/logo.vue'
 import {
   mount
 } from '@vue/test-utils'
-import test from 'ava'
+const test = require('ava')
 
 test('is a Vue instance', (t) => {
   const wrapper = mount(Logo)

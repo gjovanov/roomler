@@ -187,16 +187,17 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(!!result._id)
-          t.true(result.name === roomContext.update.name)
+          t.true(!!result.room)
+          t.true(!!result.room._id)
+          t.true(result.room.name === roomContext.update.name)
           if (roomContext.update.tags) {
             roomContext.update.tags.forEach(tag => {
-              t.true(result.tags.includes(tag))
+              t.true(result.room.tags.includes(tag))
             })
           }
-          t.true(!!result.createdAt)
-          t.true(!!result.updatedAt)
-          roomContext.record = result
+          t.true(!!result.room.createdAt)
+          t.true(!!result.room.updatedAt)
+          roomContext.record = result.room
           t.pass()
         })
         .catch((e) => {
@@ -433,6 +434,8 @@ class RoomOps {
           const payload = JSON.parse(response.payload)
           const result = payload.room
           t.true(!!result._id)
+          console.log(result.name)
+          console.log(roomContext.record.name)
           t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)

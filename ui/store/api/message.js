@@ -2,6 +2,7 @@ import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
+import { handleMessageAdd } from './message/handlers/message-add'
 import * as moment from 'moment'
 
 export const state = () => ({
@@ -9,29 +10,21 @@ export const state = () => ({
 })
 
 export const mutations = {
-  initMessages (state, room) {
-    if (!state.messages[room]) {
-      const msgs = { }
-      msgs[room] = []
-      state.messages = { ...state.messages, ...msgs }
-    }
-  },
-
-  pushAll (state, { room, messages }) {
+  pushAll (state, { roomid, messages }) {
     if (messages && messages.length) {
-      if (!state.messages[room]) {
+      if (!state.messages[roomid]) {
         const msgs = { }
-        msgs[room] = []
+        msgs[roomid] = []
         state.messages = { ...state.messages, ...msgs }
       }
-      const result = [...state.messages[room]]
+      const result = [...state.messages[roomid]]
       messages.forEach((message) => {
         const existingMessage = result.find(m => (m._id === message._id) || (m.client_id === message.client_id))
         if (!existingMessage) {
           result.push(message)
         }
       })
-      state.messages[room] = result
+      state.messages[roomid] = result
         .map((message) => {
           const updatedMessage = messages.find(m => (m._id === message._id) || (m.client_id === message.client_id))
           return updatedMessage || message
@@ -41,12 +34,12 @@ export const mutations = {
         })
     }
   },
-  pull (state, { room, id }) {
-    state.messages[room] = state.messages[room].filter(m => m._id !== id)
+  pull (state, { roomid, id }) {
+    state.messages[roomid] = state.messages[roomid].filter(m => m._id !== id)
   },
-  pullAll (state, { room, messages }) {
+  pullAll (state, { roomid, messages }) {
     const messageIds = messages.map(m => m._id)
-    state.messages[room] = state.messages[room]
+    state.messages[roomid] = state.messages[roomid]
       .filter((m) => {
         return !messageIds.includes(m._id)
       })
@@ -61,15 +54,7 @@ export const actions = {
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.messageCreate ||
-          data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPush ||
-          data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPull) {
-        if (Array.isArray(data.data) && data.data.length) {
-          commit('pushAll', { room: data.data[0].room.path, messages: data.data })
-        } else {
-          commit('pushAll', { room: data.data[0].room.path, messages: [data.data] })
-        }
-      }
+      handleMessageAdd(commit, state, rootState, router, data)
     })
   },
   async create ({
@@ -89,7 +74,7 @@ export const actions = {
         this.$wss.send(JSON.stringify(message))
       } else {
         response.result = await this.$axios.$post('/api/message/create', payload)
-        commit('pushAll', { room: response.result.room.path, message: response.result })
+        commit('pushAll', { roomid: response.result.room._id, message: response.result })
       }
     } catch (err) {
       handleError(err, commit)
@@ -116,7 +101,7 @@ export const actions = {
           .reduce((a, b) => [...a, ...b], []))]
       const exPeers = messagePeers.filter(p => !roomPeers.includes(p))
       await Promise.all(exPeers.map(p => dispatch('api/auth/get', p, { root: true })))
-      commit('pushAll', { room: room.path, messages: response.result })
+      commit('pushAll', { roomid: room._id, messages: response.result })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -131,7 +116,7 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$put(`/api/message/update/${payload.id}`, payload.update)
-      commit('pushAll', { room: response.result.room.path, messages: [response.result] })
+      commit('pushAll', { roomid: response.result.room._id, messages: [response.result] })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -156,22 +141,25 @@ export const actions = {
 }
 
 export const getters = {
-  dailyMessages: state => (room) => {
+  dailyMessages: state => (roomid) => {
     const dailyMessages = { }
-    state.messages[room].forEach((message) => {
-      const date = moment(message.createdAt)
-      const dateKey = date.format('YYYY-MM-DD')
-      if (!dailyMessages[dateKey]) {
-        dailyMessages[dateKey] = []
-      }
-      dailyMessages[dateKey].push(message)
-    })
+    if (state.messages[roomid]) {
+      state.messages[roomid].forEach((message) => {
+        const date = moment(message.createdAt)
+        const dateKey = date.format('YYYY-MM-DD')
+        if (!dailyMessages[dateKey]) {
+          dailyMessages[dateKey] = []
+        }
+        dailyMessages[dateKey].push(message)
+      })
+    }
+
     return dailyMessages
   },
-  unreads: state => (room) => {
+  unreads: state => (roomid) => {
     const result = []
-    if (state.messages[room]) {
-      state.messages[room].forEach((message) => {
+    if (state.messages[roomid]) {
+      state.messages[roomid].forEach((message) => {
         if (!message.is_read) {
           result.push(message)
         }
@@ -180,10 +168,10 @@ export const getters = {
     return result
   },
 
-  mentions: state => (room, userid) => {
+  mentions: state => (roomid, userid) => {
     const result = []
-    if (state.messages[room]) {
-      state.messages[room].forEach((message) => {
+    if (state.messages[roomid]) {
+      state.messages[roomid].forEach((message) => {
         if (!message.is_read && message.has_mention) {
           result.push(message)
         }

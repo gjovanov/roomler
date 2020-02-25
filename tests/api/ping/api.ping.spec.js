@@ -1,4 +1,4 @@
-import test from 'ava'
+const test = require('ava')
 const fastify = require('../../../api/api')()
 const pingOps = require('../.common/ping-ops')
 

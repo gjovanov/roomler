@@ -195,8 +195,8 @@ export default {
           .map((room) => {
             return {
               room,
-              unreads: self.$store.getters['api/message/unreads'](room.path).length,
-              mentions: self.$store.getters['api/message/mentions'](room.path, self.user._id).length
+              unreads: self.$store.getters['api/message/unreads'](room._id).length,
+              mentions: self.$store.getters['api/message/mentions'](room._id, self.user._id).length
             }
           })
           .filter(r => r.unreads > 0)

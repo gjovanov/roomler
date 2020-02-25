@@ -1,4 +1,4 @@
-// import test from 'ava'
+// const test = require('ava')
 // const puppeteer = require('puppeteer')
 // // const pti = require('puppeteer-to-istanbul')
 // const saveCoverage = require('puppeteer-coverage').saveCoverage

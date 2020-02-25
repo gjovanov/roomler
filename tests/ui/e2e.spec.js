@@ -1,5 +1,5 @@
 import uiServer from '../../server/ui/ui-server'
-import test from 'ava'
+const test = require('ava')
 
 const host = 'localhost'
 const port = 4001

@@ -25,13 +25,23 @@
       <v-divider />
       <v-list-item v-if="canManage" @click="edit()">
         <v-list-item-title>
-          <v-icon>fa-edit</v-icon> Rename
+          <v-icon>fa-edit</v-icon> Edit
         </v-list-item-title>
       </v-list-item>
       <v-divider />
       <v-list-item v-if="canDelete" @click="removeConsent()">
         <v-list-item-title>
           <v-icon>fa-trash</v-icon> Delete room
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item v-if="canManage" @click="addPeers()">
+        <v-list-item-title>
+          <v-icon>fa-users</v-icon> Add existing peers
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item v-if="canManage" @click="invitePeers()">
+        <v-list-item-title>
+          <v-icon>fa-users</v-icon> Invite new peers
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canJoin" @click="join()">
@@ -99,6 +109,12 @@ export default {
     },
     removeConsent () {
       this.$emit('removeConsent', this.room)
+    },
+    addPeers () {
+      this.$router.push({ path: `${this.room.path}/peers?add` })
+    },
+    invitePeers () {
+      this.$router.push({ path: `${this.room.path}/peers?invite` })
     },
     join () {
       this.$emit('join', this.room, this.user)

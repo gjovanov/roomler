@@ -1,10 +1,10 @@
 const os = require('os')
 const process = require('process')
-const fastJson = require('fast-json-stringify')
 const messageService = require('../../services/message/message-service')
 const roomService = require('../../services/room/room-service')
 const channel = require('../../../config').wsSettings.scaleout.channel
 const storage = require('./ws-storage')
+const fastJson = require('fast-json-stringify')
 const processName = `${os.hostname()}_${process.pid}`
 
 class WsDispatcher {
@@ -32,12 +32,18 @@ class WsDispatcher {
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
-    if (op.includes('ROOM_INVITE_')) {
+    if (op.startsWith('ROOM_UPDATE')) {
+      const children = messages.map(m => m.children).reduce((a, b) => a.concat(b), [])
+      const rooms = messages.map(m => m.room).concat(children)
+      recepients = roomService.recepients(rooms)
+      stringify = fastJson(require('../room/room-schema').wsRoomUpdate.valueOf())
+    }
+    if (op.startsWith('ROOM_INVITE_')) {
       const rooms = messages.map(m => m.room)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../invite/invite-schema').wsInvite.valueOf())
     }
-    if (op.includes('ROOM_PEER_')) {
+    if (op.startsWith('ROOM_PEER_')) {
       const rooms = messages.map(m => m.room)
       const users = messages.map(m => m.users).reduce((a, b) => [...a, ...b], [])
 

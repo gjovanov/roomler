@@ -56,17 +56,20 @@ class TreeOps {
   }
 
   findParent (rootRooms, room) {
-    const names = room.name.split('.')
-    room.short_name = names[names.length - 1]
-    if (!room.children) {
-      room.children = []
-    }
-    if (names.length) {
-      names.pop()
-    }
+    if (rootRooms && rootRooms.length && room) {
+      const names = room.name.split('.')
+      room.short_name = names[names.length - 1]
+      if (!room.children) {
+        room.children = []
+      }
+      if (names.length) {
+        names.pop()
+      }
 
-    const parentpath = names.join('.')
-    return this.findItem(rootRooms, parentpath)
+      const parentpath = names.join('.')
+      return this.findItem(rootRooms, parentpath)
+    }
+    return null
   }
 
   findItem (rootRooms, roompath) {

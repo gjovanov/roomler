@@ -1,4 +1,3 @@
-import test from 'ava'
 const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const roomOps = require('../.common/room-ops')
@@ -7,6 +6,7 @@ const UserContext = require('../.context/user-context')
 const RoomContext = require('../.context/room-context')
 const MessageContext = require('../.context/message-context')
 const data = require('./data')
+const test = require('ava')
 const owner = new UserContext(data.user.owner)
 const moderator = new UserContext(data.user.moderator)
 const member = new UserContext(data.user.member)

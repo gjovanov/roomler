@@ -3,17 +3,16 @@
     <v-expansion-panels
       v-model="panel"
       accordion
-      tile
       flat
+      tile
       class="pa-0 ma-0"
     >
       <v-expansion-panel>
         <v-expansion-panel-header>Basic info</v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-spacer v-if="!hasUpdate" />
-          <strong v-if="!hasUpdate" class="text-primary">Room URL: </strong>
+          <v-spacer />
+          <strong class="text-primary">Room URL: </strong>
           <v-chip
-            v-if="!hasUpdate"
             class="ma-2"
             color="primary"
             outlined
@@ -22,11 +21,10 @@
             <v-icon left>
               fa-globe
             </v-icon>
-            {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'your_room_name'}` }}</em>
+            {{ `${url}/${parentRoom ? parentRoom.path + '.': ''}` }}<em>{{ `${draftRoom.path || 'room_name'}` }}</em>
           </v-chip>
-          <v-spacer v-if="!hasUpdate" />
+          <v-spacer />
           <v-text-field
-            v-if="!hasUpdate"
             v-model="draftRoom.name"
             :rules="nameRules"
             label="Room name"
@@ -35,8 +33,7 @@
             dense
             outlined
             required
-            :disabled="hasUpdate"
-            @keydown.enter.prevent="create()"
+            @keydown.enter.prevent="action()"
           >
             <template v-slot:append>
               <v-tooltip
@@ -54,50 +51,27 @@
               </v-tooltip>
             </template>
           </v-text-field>
-          <v-switch v-if="hasUpdate" v-model="draftRoom.is_open" :label="draftRoom.is_open ? 'Open' : 'Closed'" />
           <v-spacer />
-          <v-text-field
-            v-model="newTag"
-            label="Tag"
-            name="tag"
-            autocomplete="on"
-            placeholder="Add a tag and press 'Enter'"
-            dense
-            outlined
-            required
-            @keydown.enter.prevent="addTag()"
-          />
-          <v-spacer />
-          <v-row v-if="draftRoom.tags.length" justify="space-around">
-            <v-col cols="12" sm="12">
-              <v-sheet>
-                <v-alert
-                  border="left"
-                  dense
-                  outlined
-                  color="primary"
-                  elevation="2"
-                >
-                  {{ `Max ${maxTagsLength} Tags (Left: ${maxTagsLength - draftRoom.tags.length})` }}
-                </v-alert>
-                <v-chip-group
-                  column
-                  active-class="primary--text"
-                >
-                  <v-chip
-                    v-for="tag in draftRoom.tags"
-                    :key="tag"
-                    class="ma-2"
-                    outlined
-                    close
-                    @click:close="removeTag(tag)"
-                  >
-                    {{ tag }}
-                  </v-chip>
-                </v-chip-group>
-              </v-sheet>
-            </v-col>
-          </v-row>
+          <v-combobox
+            v-model="draftRoom.tags"
+            :items="draftRoom.tags"
+            label="Tags"
+            placeholder="Type in Tag and press Enter"
+            multiple
+            chips
+          >
+            <template v-slot:selection="data">
+              <v-chip
+                :key="JSON.stringify(data.item)"
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                :disabled="data.disabled"
+                @click:close="data.parent.selectItem(data.item)"
+              >
+                {{ data.item }}
+              </v-chip>
+            </template>
+          </v-combobox>
           <v-spacer />
           <v-textarea
             v-model="draftRoom.description"
@@ -115,31 +89,36 @@
           Media
         </v-expansion-panel-header>
         <v-expansion-panel-content>
+          <v-spacer />
           <v-text-field
-            v-model="draftMedia.publishers"
+            v-model.number="draftMedia.publishers"
             label="Publishers"
             name="media.publishers"
             type="number"
+            min="1"
+            class="mt-4"
             dense
             outlined
             required
           />
           <v-spacer />
           <v-text-field
-            v-model="draftMedia.bitrate"
+            v-model.number="draftMedia.bitrate"
             label="Bitrate"
             name="media.bitrate"
             type="number"
+            min="0"
             dense
             outlined
             required
           />
           <v-spacer />
           <v-text-field
-            v-model="draftMedia.fir_freq"
+            v-model.number="draftMedia.fir_freq"
             label="Fir Frequency"
             name="media.fir_freq"
             type="number"
+            min="0"
             dense
             outlined
             required
@@ -169,6 +148,26 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
+    <v-spacer />
+    <v-btn
+      v-if="!hasUpdate"
+      :disabled="!draftRoom.valid"
+      color="primary"
+      class="ma-2"
+      @click="create()"
+    >
+      Create
+    </v-btn>
+    <v-spacer />
+    <v-btn
+      v-if="hasUpdate"
+      :disabled="!draftRoom.valid"
+      color="primary"
+      class="mt-4 mb-4 ml-4"
+      @click="update()"
+    >
+      Update
+    </v-btn>
   </v-form>
 </template>
 <script>
@@ -201,7 +200,37 @@ export default {
     }
     const config = this.$store.state.api.config.config
     const defaults = config.dataSettings.room.defaults.media
-
+    if (this.room) {
+      this.room.media.audiocodecs = defaults.audiocodec.split(',')
+      this.room.media.videocodecs = defaults.videocodec.split(',')
+    }
+    const draftRoom = this.room ? Object.assign({}, this.room) : {
+      valid: true,
+      name: null,
+      path: '',
+      is_open: true,
+      description: undefined,
+      tags: []
+    }
+    if (this.room && this.room.short_name) {
+      draftRoom.name = this.room.short_name
+    }
+    const draftMedia = this.room ? Object.assign({}, this.room.media) : {
+      roomid: undefined,
+      permanent: true,
+      publishers: defaults.publishers,
+      is_private: undefined,
+      secret: undefined,
+      pin: undefined,
+      bitrate: defaults.bitrate,
+      fir_freq: defaults.fir_freq,
+      audiocodecs: defaults.audiocodec.split(','),
+      videocodecs: defaults.videocodec.split(','),
+      record: defaults.record,
+      rec_dir: undefined,
+      notify_joining: defaults.notify_joining
+    }
+    draftRoom.media = draftMedia
     return {
 
       panel: 0,
@@ -222,48 +251,18 @@ export default {
       audiocodecs: defaults.audiocodec.split(','),
       videocodecs: defaults.videocodec.split(','),
 
-      draftRoom: this.room ? JSON.parse(JSON.stringify(this.room)) : {
-        valid: true,
-        name: null,
-        path: '',
-        is_open: true,
-        description: undefined,
-        tags: []
-      },
-      draftMedia: this.room && this.room.media ? JSON.parse(JSON.stringify(this.room.media)) : {
-        roomid: undefined,
-        permanent: true,
-        publishers: defaults.publishers,
-        is_private: undefined,
-        secret: undefined,
-        pin: undefined,
-        bitrate: defaults.bitrate,
-        fir_freq: defaults.fir_freq,
-        audiocodecs: defaults.audiocodec.split(','),
-        videocodecs: defaults.videocodec.split(','),
-        record: defaults.record,
-        rec_dir: undefined,
-        notify_joining: defaults.notify_joining
-      }
+      draftRoom,
+      draftMedia
     }
   },
   watch: {
     'draftRoom.name' (newName) {
       this.draftRoom.path = slugify(newName, this.slugOptions)
-    },
-    'draftRoom.valid' (newVal) {
-      this.$emit('updateValid', newVal)
     }
   },
   methods: {
-    addTag () {
-      if (this.newTag && !this.draftRoom.tags.includes(this.newTag) && this.draftRoom.tags.length < this.maxTagsLength) {
-        this.draftRoom.tags.push(this.newTag)
-        this.newTag = null
-      }
-    },
-    removeTag (tag) {
-      this.draftRoom.tags = this.draftRoom.tags.filter(t => t !== tag)
+    action () {
+      this.hasUpdate ? this.update() : this.create()
     },
     create () {
       if (this.$refs[this.formRef].validate()) {
@@ -278,3 +277,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+* >>> .v-expansion-panel-content__wrap{
+    margin: 0px !important;
+    padding: 0px !important;
+  }
+</style>

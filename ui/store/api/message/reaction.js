@@ -20,7 +20,7 @@ export const actions = {
       } else {
         response.result = await this.$axios.$put(`/api/message/reactions/push/${payload.message}`, payload.data)
         if (response.result.length) {
-          commit('api/message/pushAll', { room: response.result[0].room.path, messages: response.result }, {
+          commit('api/message/pushAll', { roomid: response.result[0].room._id, messages: response.result }, {
             root: true
           })
         }
@@ -48,7 +48,7 @@ export const actions = {
       } else {
         response.result = await this.$axios.$put(`/api/message/reactions/pull/${payload.message}`, payload.data)
         if (response.result.length) {
-          commit('api/message/pushAll', { room: response.result[0].room.path, messages: response.result }, {
+          commit('api/message/pushAll', { roomid: response.result[0].room._id, messages: response.result }, {
             root: true
           })
         }

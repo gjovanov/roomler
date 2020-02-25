@@ -85,6 +85,7 @@
                 :room="item"
                 :user="user"
                 @add="add"
+                @edit="edit"
                 @removeConsent="removeConsent"
                 @join="join"
                 @leaveConsent="leaveConsent"
@@ -281,24 +282,23 @@ export default {
       document.addEventListener('mouseup', upHandler, false)
     },
     unreads (room) {
-      return this.$store.getters['api/message/unreads'](room.path).length
+      return this.$store.getters['api/message/unreads'](room._id).length
     },
     mentions (room) {
       const userid = this._id
-      return this.$store.getters['api/message/mentions'](room.path, userid).length
+      return this.$store.getters['api/message/mentions'](room._id, userid).length
     },
-    add (item) {
-      this.$router.push({ path: `/@/room/create?parent=${item.path}` })
+    add (room) {
+      this.$router.push({ path: `/@/room/create?parent=${room.path}` })
+    },
+    edit (room) {
+      this.$router.push({ path: `/@/room/edit?room=${room.path}` })
     },
     removeConsent (item) {
-      // eslint-disable-next-line no-debugger
-      debugger
       this.dialog.delete = true
       this.selectedRoom = item
     },
     async remove (room) {
-      // eslint-disable-next-line no-debugger
-      debugger
       this.dialog.delete = false
       await this.$store.dispatch('api/janus/videoroom/destroyRoom', {
         room: room.media.roomid,

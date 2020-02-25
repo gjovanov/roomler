@@ -16,19 +16,9 @@
             <v-card-text>
               <room-manage
                 :parent-room="parentRoom"
-                @updateValid="updateValid"
                 @create="create"
               />
             </v-card-text>
-            <v-card-actions>
-              <v-btn
-                :disabled="!valid"
-                color="primary"
-                @click="create()"
-              >
-                Create
-              </v-btn>
-            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -47,11 +37,6 @@ export default {
   components: {
     RoomManage
   },
-  data () {
-    return {
-      valid: false
-    }
-  },
   computed: {
     parentRoom () {
       const result = this.$store.state.api.room.rooms.find(r => r.path === this.$route.query.parent)
@@ -59,42 +44,35 @@ export default {
     }
   },
   methods: {
-    updateValid (newVal) {
-      this.valid = newVal
-    },
     async create (room, media) {
-      // 1. create a room in our DB via the /api/room/create
-      // 2. create a room in Janus
-      // 3. update the Janus roomid in our DB via /api/room/update
-      const payload = {
-        name: room.name,
-        description: room.description,
-        is_open: room.is_open,
-        tags: room.tags,
-        media
-      }
-      payload.media.audiocodec = payload.media.audiocodecs.join(',')
-      payload.media.videocodec = payload.media.videocodecs.join(',')
+      // 1. create the room in Janus
+      // 2. create the room in our DB
 
-      if (this.parentRoom) {
-        payload.parent_name = this.parentRoom.name
-        payload.parent_path = this.parentRoom.path
-      }
-      const createResponse = await this.$store.dispatch('api/room/create', payload)
-      if (!createResponse.hasError) {
-        let savedRoom = createResponse.result
-        const janusPayload = Object.assign({}, media)
-        janusPayload.audiocodec = janusPayload.audiocodecs.join(',')
-        janusPayload.videocodec = janusPayload.videocodecs.join(',')
-        janusPayload.is_private = !savedRoom.is_open
-        janusPayload.description = savedRoom.name
-        janusPayload.permanent = true
-        const janusRoom = await this.$store.dispatch('api/janus/videoroom/createRoom', janusPayload)
+      const janusPayload = Object.assign({}, media)
+      janusPayload.audiocodec = janusPayload.audiocodecs.join(',')
+      janusPayload.videocodec = janusPayload.videocodecs.join(',')
+      janusPayload.is_private = !room.is_open
+      janusPayload.description = room.name
+      janusPayload.permanent = true
+      const janusResponse = await this.$store.dispatch('api/janus/videoroom/createRoom', janusPayload)
+      if (janusResponse.videoroom === 'created') {
+        media.roomid = janusResponse.room
+        const payload = {
+          name: room.name,
+          description: room.description,
+          is_open: room.is_open,
+          tags: room.tags,
+          media
+        }
+        payload.media.audiocodec = payload.media.audiocodecs.join(',')
+        payload.media.videocodec = payload.media.videocodecs.join(',')
 
-        const updatePayload = { id: savedRoom._id, update: { 'media.roomid': janusRoom.room } }
-        const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)
-        if (!updateResponse.hasError) {
-          savedRoom = updateResponse.result
+        if (this.parentRoom) {
+          payload.parent_id = this.parentRoom._id
+        }
+        const createResponse = await this.$store.dispatch('api/room/create', payload)
+        if (!createResponse.hasError) {
+          const savedRoom = createResponse.result
           handleSuccess('The room was created successfully. It\'s more fun with friends so let\'s invite some', this.$store.commit)
           this.$router.push({ path: `/${savedRoom.path}` })
         }

@@ -1,4 +1,4 @@
-import test from 'ava'
+const test = require('ava')
 const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const UserContext = require('../.context/user-context')

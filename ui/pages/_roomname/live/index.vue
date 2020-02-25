@@ -107,12 +107,10 @@ export default {
       return users
     },
     messages () {
-      const roomname = this.$route.params.roomname.toLowerCase()
-      return this.$store.getters['api/message/dailyMessages'](roomname)
+      return this.$store.getters['api/message/dailyMessages'](this.room._id)
     },
     unreads () {
-      const roomname = this.$route.params.roomname.toLowerCase()
-      return this.$store.getters['api/message/unreads'](roomname)
+      return this.$store.getters['api/message/unreads'](this.room._id)
     }
   },
 
@@ -122,6 +120,8 @@ export default {
   async mounted () {
     if (this.room) {
       await this.$store.dispatch('api/message/getAll', { room: this.room })
+    } else {
+      await this.$router.push({ path: '/' })
     }
   },
 

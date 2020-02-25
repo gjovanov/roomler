@@ -12,7 +12,7 @@ export const actions = {
     try {
       response.result = await this.$axios.$put('/api/message/readby/pushAll', payload)
       if (response.result.length) {
-        commit('api/message/pushAll', { room: response.result[0].room.path, messages: response.result }, {
+        commit('api/message/pushAll', { roomid: response.result[0].room._id, messages: response.result }, {
           root: true
         })
       }

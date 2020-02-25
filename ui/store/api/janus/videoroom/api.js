@@ -20,6 +20,48 @@ export const actions = {
     })
   },
 
+  edit ({
+    commit
+  }, { handleDTO, payload }) {
+    payload.request = 'edit'
+    return new Promise((resolve, reject) => {
+      handleDTO.handle.send({
+        message: payload,
+        success: (data) => {
+          if (data && data.error) {
+            reject(data.error)
+          } else {
+            resolve(data)
+          }
+        },
+        error: (error) => {
+          reject(error)
+        }
+      })
+    })
+  },
+
+  destroy ({
+    commit
+  }, { handleDTO, payload }) {
+    payload.request = 'destroy'
+    return new Promise((resolve, reject) => {
+      handleDTO.handle.send({
+        message: payload,
+        success: (data) => {
+          if (data && data.error) {
+            reject(data.error)
+          } else {
+            resolve(data)
+          }
+        },
+        error: (error) => {
+          reject(error)
+        }
+      })
+    })
+  },
+
   exists ({
     commit
   }, { handleDTO, roomid }) {
@@ -58,27 +100,6 @@ export const actions = {
             reject(data.error)
           } else {
             resolve(data.rooms)
-          }
-        },
-        error: (error) => {
-          reject(error)
-        }
-      })
-    })
-  },
-
-  destroy ({
-    commit
-  }, { handleDTO, payload }) {
-    return new Promise((resolve, reject) => {
-      payload.request = 'destroy'
-      handleDTO.handle.send({
-        message: payload,
-        success: (data) => {
-          if (data && data.error) {
-            reject(data.error)
-          } else {
-            resolve()
           }
         },
         error: (error) => {

@@ -1,10 +1,11 @@
 import {
-  handleError,
-  handleSuccess
+  handleError
 } from '@/services/ajax-handlers'
-
 import { treeOps } from '../../services/tree-ops'
 import Tree from '../../services/tree'
+import { handleRoomUpdate } from './room/handlers/room-update'
+import { handlePeerAdd } from './room/handlers/peer-add'
+import { handlePeerRemove } from './room/handlers/peer-remove'
 
 export const state = () => ({
   room: null,
@@ -75,56 +76,9 @@ export const actions = {
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRoleUpdate ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerAdd ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerJoin) {
-        data.data.forEach((record) => {
-          record.users.forEach((user) => {
-            commit('api/auth/push', user, {
-              root: true
-            })
-          })
-          commit('api/room/push', record.room, {
-            root: true
-          })
-          commit('api/message/initMessages', record.room.path, {
-            root: true
-          })
-        })
-      } else if (
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRemove ||
-        data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerLeave) {
-        data.data.forEach(async (record) => {
-          record.users.forEach((user) => {
-            commit('api/auth/push', user, {
-              root: true
-            })
-          })
-
-          const userid = rootState.api.auth.user._id
-          const isUserRemoved = record.room.owner !== userid && !record.room.members.includes(userid) && !record.room.moderators.includes(userid)
-          if (isUserRemoved) {
-            handleSuccess(`You have been removed from the room '${record.room.path}'`, commit)
-            if (rootState.api.room.room && rootState.api.room.room._id === record.room._id) {
-              await router.push({ path: '/' })
-            }
-            if (!record.room.is_open) {
-              commit('api/room/pull', record.room._id, {
-                root: true
-              })
-            } else {
-              commit('api/room/push', record.room, {
-                root: true
-              })
-            }
-          } else {
-            commit('api/room/push', record.room, {
-              root: true
-            })
-          }
-        })
-      }
+      handleRoomUpdate(commit, state, rootState, router, data)
+      handlePeerAdd(commit, state, rootState, router, data)
+      handlePeerRemove(commit, state, rootState, router, data)
     })
   },
   async create ({
@@ -136,9 +90,6 @@ export const actions = {
       response.result = await this.$axios.$post('/api/room/create', payload)
       commit('push', response.result)
       commit('open', response.result)
-      commit('api/message/initMessages', response.result.path, {
-        root: true
-      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -168,11 +119,6 @@ export const actions = {
       response.result = await this.$axios.$get('/api/room/get-all')
       commit('setRooms', response.result)
       commit('setOpen', response.result.map(room => room._id))
-      response.result.forEach((room) => {
-        commit('api/message/initMessages', room.path, {
-          root: true
-        })
-      })
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true
@@ -187,9 +133,15 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$put(`/api/room/update/${payload.id}`, payload.update)
-      commit('push', response.result)
-      commit('api/message/initMessages', response.result.path, {
-        root: true
+      const room = response.result.room
+      const children = response.result.children
+      const all = [room, ...children]
+      all.forEach((r) => {
+        commit('push', r)
+        commit('open', r)
+        if (state.room && state.room._id === r._id) {
+          state.room = r
+        }
       })
     } catch (err) {
       handleError(err, commit)
@@ -238,5 +190,8 @@ export const getters = {
   isRoomPeer: (state, getters, rootState) => (room, userid = null) => {
     const user = userid || (rootState.api.auth.user ? rootState.api.auth.user._id : null)
     return room ? [room.owner, ...room.members, ...room.moderators].includes(user) : false
+  },
+  getParent: state => (room) => {
+    return treeOps.findParent(state.rooms, room)
   }
 }

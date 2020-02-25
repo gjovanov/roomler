@@ -8,6 +8,16 @@ const slugOptions = {
 }
 
 class RoomService {
+  slugify (data, parentRoom = null) {
+    data.path = slugify(data.name, slugOptions)
+    if (parentRoom && parentRoom.path) {
+      data.path = `${parentRoom.path}.${data.path}`
+    }
+    if (parentRoom && parentRoom.name) {
+      data.name = `${parentRoom.name}.${data.name}`
+    }
+  }
+
   recepients (rooms, users = []) {
     const userIds = users.map(u => u._id.toString())
     const roomUserIds = rooms.map(r => [r.owner.toString(), ...r.moderators.map(m => m.toString()), ...r.members.map(m => m.toString())]).reduce((a, b) => a.concat(b), [])
@@ -15,11 +25,11 @@ class RoomService {
   }
 
   // base methods - START
-  async get (userid, id) {
+  async get (userid, id, roles = ['owner', 'moderators', 'members']) {
     const roomFilter = new RoomFilter({
       id
     })
-      .addUserFilter(userid)
+      .addUserFilter(userid, roles)
       .getFilter()
     const record = await Room
       .findOne(roomFilter)
@@ -46,30 +56,39 @@ class RoomService {
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
       .exec()
-    const paths = records.map(r => new RegExp(`^${r.path}.`, 'i'))
-    const additionalRecords = await Room.find({ $and: [{ path: { $in: paths } }, { $nor: [{ owner: userid }, { members: userid }, { moderators: userid }] }, { is_open: true }] })
-    const result = records.concat(additionalRecords)
+    const visibleChildrenRooms = await this.getVisibleChildren(records, userid)
+    const result = records.concat(visibleChildrenRooms)
     return result
+  }
+
+  async getParent (room) {
+    const parts = room.path.split('.')
+    if (parts && parts.length) {
+      parts.pop()
+    }
+    const parent = await Room.findOne({ path: parts.join('.') })
+    return parent
+  }
+
+  async getChildren (room, userid) {
+    const children = await Room.find({ path: new RegExp(`^${room.path}\\.`, 'i') })
+    return children
+  }
+
+  async getVisibleChildren (records, userid) {
+    const paths = records.map(r => new RegExp(`^${r.path}\\.`, 'i'))
+    const additionalRecords = await Room.find({ $and: [{ path: { $in: paths } }, { $nor: [{ owner: userid }, { members: userid }, { moderators: userid }] }, { is_open: true }] })
+    return additionalRecords
   }
 
   async create (userid, data) {
     data.owner = userid
-    data.path = slugify(data.name, slugOptions)
-    if (data.parent_path) {
-      data.path = `${data.parent_path}.${data.path}`
-    }
-    if (data.parent_name) {
-      data.name = `${data.parent_name}.${data.name}`
-    }
     let record = new Room(data)
     record = await record.save()
     return record
   }
 
   async update (userid, id, update, roles = ['owner', 'moderators', 'members']) {
-    if (update.name) {
-      update.path = slugify(update.name, slugOptions)
-    }
     const roomFilter = new RoomFilter({
       id
     })
@@ -169,6 +188,37 @@ class RoomService {
       $in: users
     }
     const result = await this.update(userid, id, update, ['owner', 'moderators', 'open', users])
+    return result
+  }
+
+  async renameChildren (oldname, newname) {
+    const oldpath = slugify(oldname, slugOptions)
+    const newpath = slugify(newname, slugOptions)
+    const options = {
+      new: true
+    }
+    const result = await Room.updateMany(
+      { path: new RegExp(`^${oldpath}\\.`, 'i') },
+      [{
+        $set: {
+          path: {
+            $concat: [
+              { $arrayElemAt: [{ $split: ['$path', oldpath] }, 0] },
+              newpath,
+              { $arrayElemAt: [{ $split: ['$path', oldpath] }, 1] }
+            ]
+          },
+          name: {
+            $concat: [
+              { $arrayElemAt: [{ $split: ['$name', oldname] }, 0] },
+              newname,
+              { $arrayElemAt: [{ $split: ['$name', oldname] }, 1] }
+            ]
+          }
+        }
+      }],
+      options
+    )
     return result
   }
 }

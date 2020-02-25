@@ -36,8 +36,7 @@ const room = S.object()
   .prop('_id', S.string())
   .prop('owner', S.string())
   .prop('name', S.string().required())
-  .prop('parent_name', S.string())
-  .prop('parent_path', S.string())
+  .prop('parent_id', S.string())
   .prop('path', S.string())
   .prop('is_open', S.boolean())
   .prop('tags', S.array().items(S.string()))
@@ -47,6 +46,8 @@ const room = S.object()
   .prop('members', S.array().items(S.string()))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
+
+const roomList = S.array().items(room)
 
 const roomUsers = S.object()
   .prop('room', room)
@@ -60,12 +61,14 @@ const roomUpdate = S.object()
   .prop('description', S.string())
   .prop('media', media)
 
+const roomUpdateResult = S.object()
+  .prop('room', room)
+  .prop('children', roomList)
+
 const userids = S.array().items(S.string())
 const arrayOps = S.object()
   .prop('users', userids)
   .prop('user', S.string())
-
-const roomList = S.array().items(room)
 
 const idParams = S.object()
   .prop('id', S.string().required())
@@ -79,8 +82,13 @@ const wsRoomUsers = S.object()
   .prop('op')
   .prop('data', S.array().items(roomUsers))
 
+const wsRoomUpdate = S.object()
+  .prop('op')
+  .prop('data', S.array().items(roomUpdateResult))
+
 module.exports = {
   wsRoomUsers,
+  wsRoomUpdate,
   get: {
     querystring: getQueryString,
     response: {
@@ -103,7 +111,7 @@ module.exports = {
     params: idParams,
     body: roomUpdate,
     response: {
-      200: room
+      200: roomUpdateResult
     }
   },
   delete: {

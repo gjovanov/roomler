@@ -70,17 +70,18 @@
               </v-list-item>
             </template>
           </v-list>
-          <v-btn
-            v-if="peers && peers.length && canInvite"
-            color="red"
-            right
-            class="ml-4"
-            @click="peerDialog = true"
-          >
-            <v-icon>fa-users</v-icon> &nbsp; Add existing peers
-          </v-btn>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-spacer />
+      <v-btn
+        v-if="peers && peers.length && canInvite"
+        color="red"
+        right
+        class="ma-4"
+        @click="peerDialog = true"
+      >
+        <v-icon>fa-users</v-icon> &nbsp; Add existing peers
+      </v-btn>
       <v-expansion-panel>
         <v-expansion-panel-header>Invites</v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -117,17 +118,18 @@
               </v-list-item>
             </template>
           </v-list>
-          <v-btn
-            v-if="canInvite"
-            color="primary"
-            right
-            class="ml-4"
-            @click="inviteDialog = true"
-          >
-            <v-icon>fa-users</v-icon> &nbsp; Invite new peers
-          </v-btn>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-spacer />
+      <v-btn
+        v-if="canInvite"
+        color="primary"
+        right
+        class="ma-4"
+        @click="inviteDialog = true"
+      >
+        <v-icon>fa-users</v-icon> &nbsp; Invite new peers
+      </v-btn>
       <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
       <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
       <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
@@ -199,14 +201,20 @@ export default {
   async created () {
     const selectedRoom = this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
     this.$store.commit('api/room/setRoom', selectedRoom, { root: true })
-    await this.$store.dispatch('api/invite/getAll', this.room._id)
-  },
-  mounted () {
-    if (this.$route.query.invite !== undefined) {
-      this.inviteDialog = true
+    if (this.room) {
+      await this.$store.dispatch('api/invite/getAll', this.room._id)
     }
-    if (this.$route.query.add !== undefined) {
-      this.peerDialog = true
+  },
+  async mounted () {
+    if (!this.room) {
+      await this.$router.push({ path: '/' })
+    } else {
+      if (this.$route.query.invite !== undefined) {
+        this.inviteDialog = true
+      }
+      if (this.$route.query.add !== undefined) {
+        this.peerDialog = true
+      }
     }
   },
   methods: {

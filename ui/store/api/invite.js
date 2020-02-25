@@ -2,9 +2,11 @@ import {
   storage
 } from '@/services/storage'
 import {
-  handleError,
-  handleSuccess
+  handleError
 } from '@/services/ajax-handlers'
+import { handleInviteAccept } from './invite/handlers/invite-accept'
+import { handleInviteUpdate } from './invite/handlers/invite-update'
+import { handleInviteDelete } from './invite/handlers/invite-delete'
 
 export const state = () => ({
   invites: [],
@@ -66,38 +68,9 @@ export const actions = {
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteAccept) {
-        data.data.forEach((invite) => {
-          commit('api/invite/replace', invite, {
-            root: true
-          })
-          commit('api/auth/push', invite.invitee, {
-            root: true
-          })
-          commit('api/room/pushUser', invite, {
-            root: true
-          })
-          if (invite.inviter._id === rootState.api.auth.user._id) {
-            handleSuccess(`'${invite.name}' invited by, has joined the room '${invite.room.path}' under username '${invite.invitee.username}'`, commit)
-          } else if (invite.invitee._id === rootState.api.auth.user._id) {
-            handleSuccess(`You has joined the room '${invite.room.path}'`, commit)
-          } else {
-            handleSuccess(`'${invite.invitee.username}' has joined the room '${invite.room.path}'`, commit)
-          }
-        })
-      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteUpdate) {
-        data.data.forEach((invite) => {
-          commit('api/invite/replace', invite, {
-            root: true
-          })
-        })
-      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteDelete) {
-        data.data.forEach((invite) => {
-          commit('api/invite/pull', invite, {
-            root: true
-          })
-        })
-      }
+      handleInviteAccept(commit, state, rootState, router, data)
+      handleInviteUpdate(commit, state, rootState, router, data)
+      handleInviteDelete(commit, state, rootState, router, data)
     })
   },
   async create ({

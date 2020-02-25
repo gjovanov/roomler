@@ -1,4 +1,4 @@
-import test from 'ava'
+const test = require('ava')
 let fastify = null
 const server = require('../../../server/api/api-server')
 const port = 5001
