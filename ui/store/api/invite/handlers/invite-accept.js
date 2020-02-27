@@ -3,6 +3,7 @@ import {
 } from '@/services/ajax-handlers'
 
 export const handleInviteAccept = (
+  dispatch,
   commit,
   state,
   rootState,

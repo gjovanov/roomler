@@ -6,6 +6,8 @@ import {
   handleError,
   handleSuccess
 } from '@/services/ajax-handlers'
+import { handleUserConnectionPush } from './auth/handlers/user-connection-push'
+import { handleUserConnectionPull } from './auth/handlers/user-connection-pull'
 
 export const state = () => ({
   peers: [],
@@ -94,17 +96,15 @@ export const mutations = {
 
 export const actions = {
   subscribe ({
+    dispatch,
     commit,
     state,
     rootState
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionOpen) {
-        commit('pushUserConnection', data.data)
-      } else if (data.op === rootState.api.config.config.wsSettings.opTypes.userConnectionClose) {
-        commit('pullUserConnection', data.data)
-      }
+      handleUserConnectionPush(dispatch, commit, state, rootState, router, data)
+      handleUserConnectionPull(dispatch, commit, state, rootState, router, data)
     })
   },
   async register ({
@@ -268,11 +268,6 @@ export const getters = {
   avatarUrl: (state) => {
     return state.oauth ? state.oauth.avatar_url : (state.user ? state.user.avatar_url : null)
   },
-  getPeers: (state, getters, rootState) => {
-    const me = rootState.api.auth.user._id
-    const userids = [...new Set(rootState.api.room.rooms.map(r => [r.owner, ...r.members, ...r.moderators]).reduce((a, b) => a.concat(b), []))]
-    return state.peers.filter(u => userids.includes(u._id) && u._id !== me)
-  },
   getUser: state => (userid) => {
     return state.peers.find(u => u._id === userid)
   },
@@ -282,5 +277,14 @@ export const getters = {
   isOnline: state => (userid) => {
     const user = state.peers.find(u => u._id === userid)
     return user && ((state.user && state.user._id === user._id) || (user.user_connections && user.user_connections.length))
+  },
+  getPeers: (state, getters, rootState) => {
+    const me = rootState.api.auth.user._id
+    const userids = [...new Set(rootState.api.room.rooms.map(r => [r.owner, ...r.members, ...r.moderators]).reduce((a, b) => a.concat(b), []))]
+    return state.peers.filter(u => userids.includes(u._id) && u._id !== me)
+  },
+  getRoomPeers: (state, getters, rootState) => (room) => {
+    const userids = room && room._id ? [room.owner, ...room.moderators, ...room.members] : []
+    return getters.getUsers(userids)
   }
 }

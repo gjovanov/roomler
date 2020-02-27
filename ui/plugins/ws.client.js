@@ -9,7 +9,6 @@ export default ({
   // }
   const wss = new WsService(apiUrl.replace(/^http/, 'ws'))
   inject('wss', wss)
-  console.log(app.router.currentRoute)
   app.store.dispatch('api/message/subscribe', app.router)
   app.store.dispatch('api/auth/subscribe', app.router)
   app.store.dispatch('api/room/subscribe', app.router)

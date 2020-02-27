@@ -162,6 +162,12 @@ export default {
     room: {
       type: Object,
       default: null
+    },
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
@@ -191,9 +197,6 @@ export default {
     }
   },
   computed: {
-    peers () {
-      return this.$store.getters['api/auth/getPeers']
-    },
     availablePeers () {
       const peerids = this.newPeers.map(p => p.peer)
       return this.peers.filter(p =>

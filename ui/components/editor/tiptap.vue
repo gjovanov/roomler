@@ -126,6 +126,10 @@ export default {
     gallery: {
       type: String,
       default: ''
+    },
+    menuMembers: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -228,11 +232,6 @@ export default {
       editor,
       customMention,
       customEmoji
-    }
-  },
-  computed: {
-    menuMembers () {
-      return this.$store.state.api.auth.menu.members
     }
   },
   beforeDestroy () {

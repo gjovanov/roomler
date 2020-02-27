@@ -1,4 +1,5 @@
 export const handleMessageAdd = (
+  dispatch,
   commit,
   state,
   rootState,

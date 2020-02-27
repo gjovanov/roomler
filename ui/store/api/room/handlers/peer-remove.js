@@ -3,6 +3,7 @@ import {
 } from '@/services/ajax-handlers'
 
 export const handlePeerRemove = (
+  dispatch,
   commit,
   state,
   rootState,

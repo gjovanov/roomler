@@ -8,7 +8,14 @@
       class="pa-0 ma-0"
     >
       <v-expansion-panel>
-        <v-expansion-panel-header>Basic info</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-info
+            </v-icon> &nbsp;
+            <span>BASIC INFO</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-spacer />
           <strong class="text-primary">Room URL: </strong>
@@ -86,7 +93,12 @@
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          Media
+          <div>
+            <v-icon>
+              fa-sliders-h
+            </v-icon> &nbsp;
+            <span>MEDIA</span>
+          </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-spacer />
@@ -156,7 +168,7 @@
       class="ma-2"
       @click="create()"
     >
-      Create
+      <v-icon>fa-plus</v-icon> &nbsp; Create
     </v-btn>
     <v-spacer />
     <v-btn
@@ -166,7 +178,7 @@
       class="mt-4 mb-4 ml-4"
       @click="update()"
     >
-      Update
+      <v-icon>fa-edit</v-icon> &nbsp; Update
     </v-btn>
   </v-form>
 </template>

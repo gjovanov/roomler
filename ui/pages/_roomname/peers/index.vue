@@ -3,13 +3,15 @@
     <v-expansion-panels
       v-model="panels"
       accordion
+      flat
+      tile
       multiple
     >
       <v-expansion-panel>
         <v-expansion-panel-header>Peers</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list three-line>
-            <template v-for="(item, index) in members">
+            <template v-for="(item, index) in roomPeers">
               <v-divider
                 :key="`peer_${index}`"
                 :inset="true"
@@ -104,7 +106,16 @@
                 <v-list-item-content>
                   <v-list-item-title v-text="item.email" />
                   <v-list-item-subtitle v-text="item.name" />
-                  <v-list-item-action-text v-text="`${item.type} (${item.status})`" />
+                  <v-list-item-action-text>
+                    <v-chip
+                      class="mt-2"
+                      tile
+                      outlined
+                      color="primary"
+                    >
+                      {{ item.type }}
+                    </v-chip> {{ `(${item.status})` }}
+                  </v-list-item-action-text>
                 </v-list-item-content>
 
                 <v-list-item-action>
@@ -125,15 +136,15 @@
         v-if="canInvite"
         color="primary"
         right
-        class="ma-4"
+        class="mt-4 ml-4 mr-4 mb-12"
         @click="inviteDialog = true"
       >
-        <v-icon>fa-users</v-icon> &nbsp; Invite new peers
+        <v-icon>fa-paper-plane</v-icon> &nbsp; Invite new peers
       </v-btn>
       <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
       <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
       <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
-      <peer-dialog :dialog="peerDialog" :room="room" @cancelPeers="cancelPeers" @addPeers="addPeers" />
+      <peer-dialog :dialog="peerDialog" :room="room" :peers="peers" @cancelPeers="cancelPeers" @addPeers="addPeers" />
     </v-expansion-panels>
   </client-only>
 </template>
@@ -180,10 +191,9 @@ export default {
     canInvite () {
       return ['owner', 'moderator'].includes(this.currentRole)
     },
-    members () {
+    roomPeers () {
       const self = this
-      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
-      const users = this.$store.getters['api/auth/getUsers'](userids)
+      const users = this.$store.getters['api/auth/getRoomPeers'](this.room)
       return users.map(u => (
         {
           user: u,

@@ -41,17 +41,17 @@
       </v-list-item>
       <v-list-item v-if="canManage" @click="invitePeers()">
         <v-list-item-title>
-          <v-icon>fa-users</v-icon> Invite new peers
+          <v-icon>fa-paper-plane</v-icon> Invite new peers
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canJoin" @click="join()">
         <v-list-item-title>
-          <v-icon>fa-sign-in-alt</v-icon> Join
+          <v-icon>fa-sign-in-alt</v-icon> Join this room
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canLeave && !isOwner" @click="leaveConsent()">
         <v-list-item-title>
-          <v-icon>fa-sign-out-alt</v-icon> Leave
+          <v-icon>fa-sign-out-alt</v-icon> Leave this room
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -111,10 +111,16 @@ export default {
       this.$emit('removeConsent', this.room)
     },
     addPeers () {
-      this.$router.push({ path: `${this.room.path}/peers?add` })
+      const self = this
+      this.$router.push({ name: 'roomname-live' }, () => {
+        self.$router.push({ name: 'roomname-peers', params: { roomname: self.room.path }, query: { add: null } })
+      })
     },
     invitePeers () {
-      this.$router.push({ path: `${this.room.path}/peers?invite` })
+      const self = this
+      this.$router.push({ name: 'roomname-live' }, () => {
+        self.$router.push({ name: 'roomname-peers', params: { roomname: self.room.path }, query: { invite: null } })
+      })
     },
     join () {
       this.$emit('join', this.room, this.user)

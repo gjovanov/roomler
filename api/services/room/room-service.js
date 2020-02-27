@@ -1,5 +1,7 @@
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
+const RoomRenameFilter = require('./room-rename-filter')
+const RoomChildrenFilter = require('./room-children-filter')
 const slugify = require('slugify')
 const slugOptions = {
   replacement: '-', // replace spaces with replacement
@@ -66,18 +68,37 @@ class RoomService {
     if (parts && parts.length) {
       parts.pop()
     }
-    const parent = await Room.findOne({ path: parts.join('.') })
+    const parent = await Room.findOne({ path: parts.join('.') }).exec()
     return parent
   }
 
+  async getParents (room) {
+    const parts = room.path.split('.')
+    if (parts && parts.length) {
+      parts.pop()
+      const paths = parts.map((part, index) => parts.reduce((acc, curr, ind) => {
+        if (ind <= index) {
+          return acc ? `${acc}.${curr}` : `${curr}`
+        }
+        return acc
+      }, ''))
+      const parents = await Room.find({ path: { $in: paths } }).exec()
+      return parents
+    }
+    return []
+  }
+
   async getChildren (room, userid) {
-    const children = await Room.find({ path: new RegExp(`^${room.path}\\.`, 'i') })
+    const children = await Room.find({ path: new RegExp(`^${room.path}\\.`, 'i') }).exec()
     return children
   }
 
   async getVisibleChildren (records, userid) {
-    const paths = records.map(r => new RegExp(`^${r.path}\\.`, 'i'))
-    const additionalRecords = await Room.find({ $and: [{ path: { $in: paths } }, { $nor: [{ owner: userid }, { members: userid }, { moderators: userid }] }, { is_open: true }] })
+    const filter = new RoomChildrenFilter({
+      records,
+      userid
+    })
+    const additionalRecords = await Room.find(filter.getFilter()).exec()
     return additionalRecords
   }
 
@@ -197,26 +218,15 @@ class RoomService {
     const options = {
       new: true
     }
+    const roomRenameFilter = new RoomRenameFilter({
+      oldname,
+      oldpath,
+      newname,
+      newpath
+    })
     const result = await Room.updateMany(
-      { path: new RegExp(`^${oldpath}\\.`, 'i') },
-      [{
-        $set: {
-          path: {
-            $concat: [
-              { $arrayElemAt: [{ $split: ['$path', oldpath] }, 0] },
-              newpath,
-              { $arrayElemAt: [{ $split: ['$path', oldpath] }, 1] }
-            ]
-          },
-          name: {
-            $concat: [
-              { $arrayElemAt: [{ $split: ['$name', oldname] }, 0] },
-              newname,
-              { $arrayElemAt: [{ $split: ['$name', oldname] }, 1] }
-            ]
-          }
-        }
-      }],
+      roomRenameFilter.getFilter(),
+      roomRenameFilter.getUpdate(),
       options
     )
     return result

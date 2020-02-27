@@ -1,4 +1,5 @@
 export const handlePeerAdd = (
+  dispatch,
   commit,
   state,
   rootState,

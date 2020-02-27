@@ -82,12 +82,17 @@ const wsRoomUsers = S.object()
   .prop('op')
   .prop('data', S.array().items(roomUsers))
 
+const wsRoomCreate = S.object()
+  .prop('op')
+  .prop('data', roomList)
+
 const wsRoomUpdate = S.object()
   .prop('op')
   .prop('data', S.array().items(roomUpdateResult))
 
 module.exports = {
   wsRoomUsers,
+  wsRoomCreate,
   wsRoomUpdate,
   get: {
     querystring: getQueryString,

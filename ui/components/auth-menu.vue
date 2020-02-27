@@ -128,7 +128,7 @@
         <v-divider />
         <v-list-item @click="goToCreateRoom">
           <v-list-item-title>
-            <v-icon>fa-comment</v-icon> Create new room
+            <v-icon>fa-plus</v-icon> Create new room
           </v-list-item-title>
         </v-list-item>
         <v-divider />

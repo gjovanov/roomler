@@ -15,7 +15,14 @@
       class="pa-0 ma-0"
     >
       <v-expansion-panel>
-        <v-expansion-panel-header>Rooms</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-sitemap
+            </v-icon> &nbsp;
+            <span>ROOMS</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-0 ma-0">
           <v-btn
             v-if="!tree || !tree.items || !tree.items.length"
@@ -67,6 +74,7 @@
                     small
                     block
                     outlined
+                    :color="item.is_root ? 'orange' : ''"
                     class="justify-space-between pr-0"
                     v-on="on"
                   >
@@ -95,7 +103,14 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
-        <v-expansion-panel-header>Peers</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-users
+            </v-icon> &nbsp;
+            <span>PEERS</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-btn
             v-if="(!peers || !peers.length) && tree && tree.items && tree.items.length"
@@ -183,6 +198,20 @@ export default {
       default: () => {
         return []
       }
+    },
+    peers: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    tree: {
+      type: Object,
+      default: null
+    },
+    user: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -204,15 +233,6 @@ export default {
     }
   },
   computed: {
-    tree () {
-      return this.$store.state.api.room.tree
-    },
-    user () {
-      return this.$store.state.api.auth.user
-    },
-    peers () {
-      return this.$store.getters['api/auth/getPeers']
-    },
     direction () {
       return !this.leftDrawer ? 'Open' : 'Closed'
     }
@@ -314,6 +334,7 @@ export default {
     },
     async join (room, user) {
       await this.$store.dispatch('api/room/members/push', { room: room._id, user: user._id })
+      await this.$store.dispatch('api/message/getAll', { room })
     },
     leaveConsent (item) {
       this.dialog.leave = true

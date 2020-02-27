@@ -1,7 +1,20 @@
 <template>
   <v-app id="inspire">
-    <left-panel v-if="isAuthenticated" :drawer="leftMenu" :rooms="rooms" @toggleDrawer="toggleDrawer" />
-    <right-panel v-if="room && room._id" :drawer="menuMembers" :room="room" />
+    <left-panel
+      v-if="isAuthenticated"
+      :drawer="leftMenu"
+      :rooms="rooms"
+      :tree="tree"
+      :peer="peers"
+      :user="user"
+      @toggleDrawer="toggleDrawer"
+    />
+    <right-panel
+      v-if="room && room._id"
+      :drawer="menuMembers"
+      :room="room"
+      :peers="peers"
+    />
     <v-app-bar
       app
       clipped-left
@@ -92,6 +105,12 @@ export default {
     },
     room () {
       return this.$store.state.api.room.room
+    },
+    tree () {
+      return this.$store.state.api.room.tree
+    },
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
     },
     menuMembers () {
       return this.$store.state.api.auth.menu.members

@@ -8,24 +8,39 @@
       class="pa-0 ma-0"
     >
       <v-expansion-panel>
-        <v-expansion-panel-header>Basic info</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-info
+            </v-icon> &nbsp;
+            <span>BASIC INFO</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-switch
-            v-model="room.is_open"
-            :label="room.is_open ? 'Open' : 'Closed'"
-            disabled
-          />
-          <v-spacer />
           <v-text-field
             v-model="room.name"
             label="Room name"
             name="name"
             autocomplete="on"
-            dense
-            outlined
-            required
             disabled
-          />
+            required
+          >
+            <template v-slot:append>
+              <v-tooltip
+                bottom
+              >
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    v-on="on"
+                  >
+                    {{ `${room.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
+                  </v-icon>
+                </template>
+                {{ `${room.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
+              </v-tooltip>
+            </template>
+          </v-text-field>
+          <v-spacer />
           <v-combobox
             v-model="room.tags"
             :items="room.tags"
@@ -52,15 +67,18 @@
             label="Description"
             name="description"
             autocomplete="on"
-            dense
-            outlined
             disabled
           />
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel>
         <v-expansion-panel-header>
-          Media
+          <div>
+            <v-icon>
+              fa-sliders-h
+            </v-icon> &nbsp;
+            <span>MEDIA</span>
+          </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-spacer />
@@ -70,8 +88,6 @@
             name="media.publishers"
             type="number"
             class="mt-4"
-            dense
-            outlined
             required
             disabled
           />
@@ -81,8 +97,6 @@
             label="Bitrate"
             name="media.bitrate"
             type="number"
-            dense
-            outlined
             required
             disabled
           />
@@ -92,8 +106,6 @@
             label="Fir Frequency"
             name="media.fir_freq"
             type="number"
-            dense
-            outlined
             required
             disabled
           />
@@ -102,9 +114,7 @@
             v-model="roomAudioCodecs"
             :items="audiocodecs"
             label="Audio codecs"
-            dense
             multiple
-            outlined
             disabled
           />
           <v-spacer />
@@ -112,20 +122,18 @@
             v-model="roomVideoCodecs"
             :items="videocodecs"
             label="Video codecs"
-            dense
             multiple
-            outlined
             disabled
           />
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-spacer />
       <v-btn
-        color="primary"
-        class="mt-4 mb-4 ml-4"
+        color="red"
+        class="mt-4 mb-4 ml-4 mb-8"
         :to="`/@/room/edit?room=${room.path}`"
       >
-        Update
+        <v-icon>fa-edit</v-icon> &nbsp; Edit
       </v-btn>
     </v-expansion-panels>
   </client-only>

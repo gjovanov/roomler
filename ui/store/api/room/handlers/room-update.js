@@ -1,4 +1,5 @@
 export const handleRoomUpdate = (
+  dispatch,
   commit,
   state,
   rootState,

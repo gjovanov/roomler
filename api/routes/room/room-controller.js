@@ -21,6 +21,9 @@ class RoomController {
     }
     roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
+    const parents = await roomService.getParents(result)
+    const messages = [result, ...parents]
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCreate, messages, true)
     reply.send(result)
   }
 
@@ -35,7 +38,7 @@ class RoomController {
     if (!payload.name) {
       result = await roomService.update(request.user.user._id, id, update)
     } else {
-      console.log(payload)
+      // slugify using parent's name and rename the children
       const room = await roomService.get(request.user.user._id, id)
       const parentRoom = await roomService.getParent(room)
       roomService.slugify(payload, parentRoom)
@@ -45,8 +48,6 @@ class RoomController {
     }
     const response = { room: result, children }
     wsDispatcher.dispatch(config.wsSettings.opTypes.roomUpdate, [response], true)
-
-    console.log(response)
     reply.send(response)
   }
 

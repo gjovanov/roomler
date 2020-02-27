@@ -12,7 +12,7 @@
         <v-list-item-avatar>
           <v-icon>fa-users</v-icon>
         </v-list-item-avatar>
-        <v-list-item-title>Room peers</v-list-item-title>
+        <v-list-item-title>ROOM PEERS</v-list-item-title>
         <v-btn
           icon
           @click.stop="mini = !mini"
@@ -24,7 +24,7 @@
       <v-divider />
       <v-list dense>
         <v-list-item
-          v-for="user in members"
+          v-for="user in peers"
           :key="user._id"
           :href="`/@/${user.username}`"
           link
@@ -70,19 +70,18 @@ export default {
       default () {
         return null
       }
+    },
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
     return {
       rightDrawer: true,
       mini: true
-    }
-  },
-  computed: {
-    members () {
-      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
-      const users = this.$store.getters['api/auth/getUsers'](userids)
-      return users
     }
   },
   watch: {

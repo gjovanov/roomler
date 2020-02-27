@@ -1,4 +1,5 @@
 export const handleInviteDelete = (
+  dispatch,
   commit,
   state,
   rootState,

@@ -48,13 +48,14 @@ export const mutations = {
 
 export const actions = {
   subscribe ({
+    dispatch,
     commit,
     state,
     rootState
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleMessageAdd(commit, state, rootState, router, data)
+      handleMessageAdd(dispatch, commit, state, rootState, router, data)
     })
   },
   async create ({

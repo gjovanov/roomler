@@ -32,6 +32,11 @@ class WsDispatcher {
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
     }
+    if (op.startsWith('ROOM_CREATE')) {
+      const rooms = messages
+      recepients = roomService.recepients(rooms)
+      stringify = fastJson(require('../room/room-schema').wsRoomCreate.valueOf())
+    }
     if (op.startsWith('ROOM_UPDATE')) {
       const children = messages.map(m => m.children).reduce((a, b) => a.concat(b), [])
       const rooms = messages.map(m => m.room).concat(children)

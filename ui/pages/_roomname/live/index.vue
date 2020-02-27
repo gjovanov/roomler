@@ -6,7 +6,14 @@
       multiple
     >
       <v-expansion-panel v-if="!isRoomPeer">
-        <v-expansion-panel-header>Join this room</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-sign-in-alt
+            </v-icon> &nbsp;
+            <span>JOIN THIS ROOM</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row
             dense
@@ -25,36 +32,57 @@
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="isRoomPeer && members && members.length === 1">
-        <v-expansion-panel-header>Invite</v-expansion-panel-header>
+      <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length === 1">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-paper-plane
+            </v-icon> &nbsp;
+            <span>INVITE</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row
-            v-if="members && members.length === 1"
+            v-if="roomPeers && roomPeers.length === 1"
             dense
             align="center"
             justify="center"
           >
             <v-col
               cols="12"
-              sm="6"
-              md="4"
+              sm="4"
+              md="3"
             >
-              <room-invite :room="room" />
+              <room-invite :room="room" :peers="peers" />
             </v-col>
           </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="isRoomPeer && members && members.length >= 1">
-        <v-expansion-panel-header>Conference</v-expansion-panel-header>
+      <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length >= 1">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-video
+            </v-icon> &nbsp;
+            <span>CONFERENCE</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <conference :user="user" :room="room" :members="members" />
+          <conference :user="user" :room="room" :room-peers="roomPeers" />
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="isRoomPeer && members && members.length >= 1">
-        <v-expansion-panel-header>Chat</v-expansion-panel-header>
+      <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length >= 1">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-comments
+            </v-icon> &nbsp;
+            <span>CHAT</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <chat :elem-id="'messages-list'" :input-id="'new-message-txt'" :room="room" :messages="messages" :unreads="unreads" />
-          <tiptap :elem-id="'new-message-txt'" :users="members" :gallery="room.path" @sendMessage="sendMessage" />
+          <tiptap :elem-id="'new-message-txt'" :users="roomPeers" :gallery="room.path" :menu-members="menuMembers" @sendMessage="sendMessage" />
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -101,16 +129,20 @@ export default {
     isRoomPeer () {
       return this.$store.getters['api/room/isRoomPeer'](this.room)
     },
-    members () {
-      const userids = this.room && this.room._id ? [this.room.owner, ...this.room.moderators, ...this.room.members] : []
-      const users = this.$store.getters['api/auth/getUsers'](userids)
-      return users
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
+    },
+    roomPeers () {
+      return this.$store.getters['api/auth/getRoomPeers'](this.room)
     },
     messages () {
       return this.$store.getters['api/message/dailyMessages'](this.room._id)
     },
     unreads () {
       return this.$store.getters['api/message/unreads'](this.room._id)
+    },
+    menuMembers () {
+      return this.$store.state.api.auth.menu.members
     }
   },
 
@@ -128,6 +160,7 @@ export default {
   methods: {
     async join () {
       await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
+      await this.$store.dispatch('api/message/getAll', { room: this.room })
     },
     async sendMessage (content) {
       if (content) {

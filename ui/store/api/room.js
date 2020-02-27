@@ -3,6 +3,7 @@ import {
 } from '@/services/ajax-handlers'
 import { treeOps } from '../../services/tree-ops'
 import Tree from '../../services/tree'
+import { handleRoomCreate } from './room/handlers/room-create'
 import { handleRoomUpdate } from './room/handlers/room-update'
 import { handlePeerAdd } from './room/handlers/peer-add'
 import { handlePeerRemove } from './room/handlers/peer-remove'
@@ -70,15 +71,17 @@ export const mutations = {
 
 export const actions = {
   subscribe ({
+    dispatch,
     commit,
     state,
     rootState
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleRoomUpdate(commit, state, rootState, router, data)
-      handlePeerAdd(commit, state, rootState, router, data)
-      handlePeerRemove(commit, state, rootState, router, data)
+      handleRoomCreate(dispatch, commit, state, rootState, router, data)
+      handleRoomUpdate(dispatch, commit, state, rootState, router, data)
+      handlePeerAdd(dispatch, commit, state, rootState, router, data)
+      handlePeerRemove(dispatch, commit, state, rootState, router, data)
     })
   },
   async create ({

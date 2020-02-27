@@ -40,8 +40,8 @@
                 size="36px"
               >
                 <img
-                  v-if="getMember(handleDTO.display_name).avatar_url"
-                  :src="getMember(handleDTO.display_name).avatar_url"
+                  v-if="getPeer(handleDTO.display_name).avatar_url"
+                  :src="getPeer(handleDTO.display_name).avatar_url"
                   alt="Avatar"
                 >
                 <v-icon
@@ -97,8 +97,8 @@
                 size="36px"
               >
                 <img
-                  v-if="getMember(handleDTO.display_name).avatar_url"
-                  :src="getMember(handleDTO.display_name).avatar_url"
+                  v-if="getPeer(handleDTO.display_name).avatar_url"
+                  :src="getPeer(handleDTO.display_name).avatar_url"
                   alt="Avatar"
                 >
                 <v-icon
@@ -154,8 +154,8 @@
                 size="36px"
               >
                 <img
-                  v-if="getMember(handleDTO.display_name).avatar_url"
-                  :src="getMember(handleDTO.display_name).avatar_url"
+                  v-if="getPeer(handleDTO.display_name).avatar_url"
+                  :src="getPeer(handleDTO.display_name).avatar_url"
                   alt="Avatar"
                 >
                 <v-icon
@@ -199,7 +199,7 @@ export default {
       type: Object,
       default: null
     },
-    members: {
+    roomPeers: {
       type: Array,
       default () {
         return []
@@ -245,8 +245,8 @@ export default {
         this.session = await this.$store.dispatch('api/janus/session/destroy', { sessionDTO: this.session })
       }
     },
-    getMember (username) {
-      return this.members.find(u => u.username === username) || { }
+    getPeer (username) {
+      return this.roomPeers.find(u => u.username === username) || { }
     },
     setVideoMuted (handleDTO) {
       this.$nextTick(() => {

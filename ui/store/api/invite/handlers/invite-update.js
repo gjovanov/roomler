@@ -1,4 +1,5 @@
 export const handleInviteUpdate = (
+  dispatch,
   commit,
   state,
   rootState,
