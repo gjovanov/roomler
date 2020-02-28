@@ -5,6 +5,7 @@ import { treeOps } from '../../services/tree-ops'
 import Tree from '../../services/tree'
 import { handleRoomCreate } from './room/handlers/room-create'
 import { handleRoomUpdate } from './room/handlers/room-update'
+import { handleRoomDelete } from './room/handlers/room-delete'
 import { handlePeerAdd } from './room/handlers/peer-add'
 import { handlePeerRemove } from './room/handlers/peer-remove'
 
@@ -51,6 +52,15 @@ export const mutations = {
     state.tree = new Tree(state.rooms)
     state.tree.open = open
   },
+  pullAll (state, ids) {
+    if (state.room && ids.includes(state.room._id)) {
+      state.room = null
+    }
+    state.rooms = state.rooms.filter(r => !ids.includes(r._id))
+    const open = state.tree.open
+    state.tree = new Tree(state.rooms)
+    state.tree.open = open
+  },
   setOpen (state, list) {
     state.tree.open = list
   },
@@ -80,6 +90,8 @@ export const actions = {
       const data = JSON.parse(message.data)
       handleRoomCreate(dispatch, commit, state, rootState, router, data)
       handleRoomUpdate(dispatch, commit, state, rootState, router, data)
+      handleRoomDelete(dispatch, commit, state, rootState, router, data)
+
       handlePeerAdd(dispatch, commit, state, rootState, router, data)
       handlePeerRemove(dispatch, commit, state, rootState, router, data)
     })
@@ -160,7 +172,8 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$delete(`/api/room/delete/${id}`)
-      commit('pull', id)
+      const ids = [response.result.room._id, ...response.result.children.map(r => r._id)]
+      commit('pullAll', ids)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

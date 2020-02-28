@@ -43,6 +43,12 @@ class WsDispatcher {
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../room/room-schema').wsRoomUpdate.valueOf())
     }
+    if (op.startsWith('ROOM_DELETE')) {
+      const children = messages.map(m => m.children).reduce((a, b) => a.concat(b), [])
+      const rooms = messages.map(m => m.room).concat(children)
+      recepients = roomService.recepients(rooms)
+      stringify = fastJson(require('../room/room-schema').wsRoomDelete.valueOf())
+    }
     if (op.startsWith('ROOM_INVITE_')) {
       const rooms = messages.map(m => m.room)
       recepients = roomService.recepients(rooms)

@@ -97,8 +97,11 @@ export default {
       return this.isOwner
     },
     canManage () {
-      return this.room && this.user && (this.canDelete || this.room.moderators.includes(this.user._id))
+      return this.room && this.user && (this.isOwner || this.room.moderators.includes(this.user._id))
     }
+  },
+  mounted () {
+    console.log(this.$router.currentRoute)
   },
   methods: {
     add () {
@@ -111,16 +114,10 @@ export default {
       this.$emit('removeConsent', this.room)
     },
     addPeers () {
-      const self = this
-      this.$router.push({ name: 'roomname-live' }, () => {
-        self.$router.push({ name: 'roomname-peers', params: { roomname: self.room.path }, query: { add: null } })
-      })
+      this.$router.push({ path: `/${this.room.path}/peers?add` })
     },
     invitePeers () {
-      const self = this
-      this.$router.push({ name: 'roomname-live' }, () => {
-        self.$router.push({ name: 'roomname-peers', params: { roomname: self.room.path }, query: { invite: null } })
-      })
+      this.$router.push({ path: `/${this.room.path}/peers?invite` })
     },
     join () {
       this.$emit('join', this.room, this.user)

@@ -7,6 +7,11 @@ const getAllQueryString = S.object()
   .prop('page', S.integer())
   .prop('size', S.integer())
 
+const deleteResult = S.object()
+  .prop('n', S.number().required())
+  .prop('ok', S.number().required())
+  .prop('deletedCount', S.number().required())
+
 const media = S.object()
   .prop('roomid', S.number())
   .prop('publishers', S.number())
@@ -65,6 +70,11 @@ const roomUpdateResult = S.object()
   .prop('room', room)
   .prop('children', roomList)
 
+const roomDeleteResult = S.object()
+  .prop('room', room)
+  .prop('children', roomList)
+  .prop('result', deleteResult)
+
 const userids = S.array().items(S.string())
 const arrayOps = S.object()
   .prop('users', userids)
@@ -72,11 +82,6 @@ const arrayOps = S.object()
 
 const idParams = S.object()
   .prop('id', S.string().required())
-
-const delete200 = S.object()
-  .prop('n', S.number().required())
-  .prop('ok', S.number().required())
-  .prop('deletedCount', S.number().required())
 
 const wsRoomUsers = S.object()
   .prop('op')
@@ -90,10 +95,15 @@ const wsRoomUpdate = S.object()
   .prop('op')
   .prop('data', S.array().items(roomUpdateResult))
 
+const wsRoomDelete = S.object()
+  .prop('op')
+  .prop('data', S.array().items(roomDeleteResult))
+
 module.exports = {
   wsRoomUsers,
   wsRoomCreate,
   wsRoomUpdate,
+  wsRoomDelete,
   get: {
     querystring: getQueryString,
     response: {
@@ -122,7 +132,7 @@ module.exports = {
   delete: {
     params: idParams,
     response: {
-      200: delete200
+      200: roomDeleteResult
     }
   },
   owner: {

@@ -65,8 +65,6 @@ export default {
           update[path] = d.val
         })
 
-      // eslint-disable-next-line no-debugger
-      debugger
       if (diff.find(d => d.path.includes('media'))) {
         let janusResponse = await this.$store.dispatch('api/janus/videoroom/destroyRoom', { room: media.roomid, secret: media.secret, permanent: media.permanent })
 
@@ -85,8 +83,6 @@ export default {
         }
       }
       const updatePayload = { id: room._id, update }
-      // eslint-disable-next-line no-debugger
-      debugger
       const updateResponse = await this.$store.dispatch('api/room/update', updatePayload)
       if (!updateResponse.hasError) {
         const savedRoom = updateResponse.result.room

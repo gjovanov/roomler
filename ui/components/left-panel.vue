@@ -318,14 +318,17 @@ export default {
       this.dialog.delete = true
       this.selectedRoom = item
     },
-    async remove (room) {
+    async remove (roomToDelete) {
       this.dialog.delete = false
-      await this.$store.dispatch('api/janus/videoroom/destroyRoom', {
-        room: room.media.roomid,
-        secret: room.media.secret,
-        permanent: true
-      })
-      await this.$store.dispatch('api/room/delete', room._id)
+      const { result: { room, children } } = await this.$store.dispatch('api/room/delete', roomToDelete._id)
+      const all = [room, ...children]
+      await Promise.all(all.map(r =>
+        this.$store.dispatch('api/janus/videoroom/destroyRoom', {
+          room: r.media.roomid,
+          secret: r.media.secret,
+          permanent: true
+        })
+      ))
       this.$router.push({ path: '/' })
     },
     removeCancel () {

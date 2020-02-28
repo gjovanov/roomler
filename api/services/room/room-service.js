@@ -2,6 +2,7 @@ const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
 const RoomRenameFilter = require('./room-rename-filter')
 const RoomChildrenFilter = require('./room-children-filter')
+const RoomDeleteFilter = require('./room-delete-filter')
 const slugify = require('slugify')
 const slugOptions = {
   replacement: '-', // replace spaces with replacement
@@ -126,14 +127,13 @@ class RoomService {
     return record
   }
 
-  async delete (userid, id) {
-    const roomFilter = new RoomFilter({
-      id
+  async delete (room) {
+    const roomFilter = new RoomDeleteFilter({
+      room
     })
-      .addUserFilter(userid, ['owner'])
       .getFilter()
     const result = await Room
-      .deleteOne(roomFilter)
+      .deleteMany(roomFilter)
       .exec()
     if (!result.deletedCount) {
       throw new ReferenceError('Room was not found.')

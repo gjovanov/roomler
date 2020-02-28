@@ -257,7 +257,7 @@ class RoomOps {
     })
   }
 
-  delete(fastify, test, testname, context) {
+  delete(fastify, test, testname, context, userContext) {
     test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
       await fastify
         .inject({
@@ -265,16 +265,18 @@ class RoomOps {
           url: `/api/room/delete/${context.record._id}`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.token}`
+            Authorization: `Bearer ${userContext.token}`
           }
         })
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(result.ok === 1)
-          t.true(result.n > 0)
-          t.true(result.deletedCount > 0)
+          t.true(!!result.room)
+          t.true(!!result.result)
+          t.true(result.result.ok === 1)
+          t.true(result.result.n > 0)
+          t.true(result.result.deletedCount > 0)
           t.pass()
         })
         .catch((e) => {

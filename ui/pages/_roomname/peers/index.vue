@@ -160,6 +160,7 @@ import PeerDeleteDialog from '@/components/invite/peer-delete-dialog'
 
 export default {
   middleware: 'authenticated',
+  // watchQuery: ['add', 'invite'],
   components: {
     InviteDialog,
     InviteMenu,

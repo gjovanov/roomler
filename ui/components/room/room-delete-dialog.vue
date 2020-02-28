@@ -1,21 +1,45 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="290">
-      <v-card>
-        <v-card-title class="headline">
-          Warning
-        </v-card-title>
-        <v-card-text>Are you sure you want to delete this room?</v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="grey" outlined @click="no()">
-            No
-          </v-btn>
-          <v-btn color="primary" outlined @click="yes()">
-            Yes
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+      <v-form ref="roomDeleteForm" v-model="valid" lazy-validation>
+        <v-card v-if="room">
+          <v-card-title class="headline">
+            Danger
+          </v-card-title>
+          <v-card-text>
+            <p>
+              Are you sure you want to delete room '{{ room.short_name }}'?
+            </p>
+            <p v-if="room.children && room.children.length">
+              <strong>Warning:</strong> children rooms will be also deleted.
+            </p>
+            <p>
+              This operation cannot be reversed!
+            </p>
+            <v-text-field
+              v-model="name"
+              :rules="nameRules"
+              label="Room name"
+              placeholder="Enter room name"
+              name="name"
+              autocomplete="on"
+              dense
+              outlined
+              required
+              @keydown.enter.prevent="yes()"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="grey" outlined @click="no()">
+              No
+            </v-btn>
+            <v-btn color="primary" outlined :disabled="!valid" @click="yes()">
+              Yes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
   </v-row>
 </template>
@@ -32,12 +56,24 @@ export default {
       default: null
     }
   },
+  data () {
+    return {
+      valid: false,
+      name: null,
+      nameRules: [
+        v => !!v || 'Room name is required',
+        v => this.room.short_name === this.name || 'Room name must match the name of the room you are trying to delete'
+      ]
+    }
+  },
   methods: {
     no () {
       this.$emit('removeCancel', this.room)
     },
     yes () {
-      this.$emit('remove', this.room)
+      if (this.$refs.roomDeleteForm.validate()) {
+        this.$emit('remove', this.room)
+      }
     }
   }
 }

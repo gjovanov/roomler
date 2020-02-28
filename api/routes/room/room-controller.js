@@ -22,8 +22,7 @@ class RoomController {
     roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
     const parents = await roomService.getParents(result)
-    const messages = [result, ...parents]
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCreate, messages, true)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCreate, [result, ...parents], true)
     reply.send(result)
   }
 
@@ -52,8 +51,21 @@ class RoomController {
   }
 
   async delete (request, reply) {
-    const result = await roomService.delete(request.user.user._id, request.params.id)
-    reply.send(result)
+    const room = await roomService.get(request.user.user._id, request.params.id)
+    const children = await roomService.getChildren(room, request.user.user._id)
+    const parents = await roomService.getParents(room)
+    const isOwner = !!([room, ...parents].find(r => r.owner.toString() === request.user.user._id.toString()))
+    if (!isOwner) {
+      throw new Error('Delete operation not allowed! You need to be owner of either the this or any parent room.')
+    }
+    const result = await roomService.delete(room)
+    const response = {
+      room,
+      children,
+      result
+    }
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomDelete, [response], true)
+    reply.send(response)
   }
 }
 

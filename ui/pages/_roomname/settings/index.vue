@@ -129,6 +129,7 @@
       </v-expansion-panel>
       <v-spacer />
       <v-btn
+        v-if="canManage"
         color="red"
         class="mt-4 mb-4 ml-4 mb-8"
         :to="`/@/room/edit?room=${room.path}`"
@@ -160,6 +161,9 @@ export default {
     },
     room () {
       return this.$store.state.api.room.room
+    },
+    canManage () {
+      return this.room && this.user && (this.room.owner === this.user._id || this.room.moderators.includes(this.user._id))
     },
     roomAudioCodecs () {
       return this.room.media.audiocodec.split(',')
