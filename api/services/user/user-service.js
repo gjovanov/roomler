@@ -199,20 +199,20 @@ class UserService {
     return user
   }
 
-  async pushUserConnection (userid, id) {
+  async pushConnection (userid, id) {
     const update = {
       $addToSet: {
-        user_connections: id
+        connections: id
       }
     }
     const result = await this.update(userid, update)
     return result
   }
 
-  async pullUserConnection (userid, id) {
+  async pullConnection (userid, id) {
     const update = {
       $pull: {
-        user_connections: id
+        connections: id
       }
     }
     const result = await this.update(userid, update)

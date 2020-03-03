@@ -231,6 +231,28 @@ class RoomService {
     )
     return result
   }
+
+  async pushCall (userid, id) {
+    const update = {
+      $addToSet: {
+        calls: id
+      }
+    }
+    const result = await this.update(userid, update)
+    return result
+  }
+
+  async pullCalls (userid, ids) {
+    const update = {
+      $pull: {
+        calls: {
+          $in: ids
+        }
+      }
+    }
+    const result = await this.update(userid, update)
+    return result
+  }
 }
 
 module.exports = new RoomService()

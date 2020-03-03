@@ -6,8 +6,8 @@ import {
   handleError,
   handleSuccess
 } from '@/services/ajax-handlers'
-import { handleUserConnectionPush } from './auth/handlers/user-connection-push'
-import { handleUserConnectionPull } from './auth/handlers/user-connection-pull'
+import { handleConnectionPush } from './auth/handlers/connection-push'
+import { handleConnectionPull } from './auth/handlers/connection-pull'
 
 export const state = () => ({
   peers: [],
@@ -44,24 +44,24 @@ export const mutations = {
     state.peers = state.peers.map(p => p._id === updatedPeer._id ? updatedPeer : p)
   },
 
-  pushUserConnection (state, userConnections) {
-    userConnections.forEach((userConnection) => {
-      const user = state.peers.find(u => u._id === userConnection.user)
+  pushConnection (state, connections) {
+    connections.forEach((connection) => {
+      const user = state.peers.find(u => u._id === connection.user)
       if (user) {
-        const uconn = user.user_connections.find(uc => uc._id === userConnection._id)
+        const uconn = user.connections.find(uc => uc._id === connection._id)
         if (!uconn) {
-          user.user_connections.push(userConnection)
+          user.connections.push(connection)
         }
       } else {
-        console.log(`user ${userConnection.user} not found in ${JSON.stringify(state.peers)}`)
+        console.log(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
       }
     })
   },
-  pullUserConnection (state, userConnections) {
-    userConnections.forEach((userConnection) => {
-      const user = state.peers.find(u => u._id === userConnection.user)
+  pullConnection (state, connections) {
+    connections.forEach((connection) => {
+      const user = state.peers.find(u => u._id === connection.user)
       if (user) {
-        user.user_connections = user.user_connections.filter(uc => uc._id !== userConnection._id)
+        user.connections = user.connections.filter(uc => uc._id !== connection._id)
       }
     })
   },
@@ -103,8 +103,8 @@ export const actions = {
   }, router) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleUserConnectionPush(dispatch, commit, state, rootState, router, data)
-      handleUserConnectionPull(dispatch, commit, state, rootState, router, data)
+      handleConnectionPush(dispatch, commit, state, rootState, router, data)
+      handleConnectionPull(dispatch, commit, state, rootState, router, data)
     })
   },
   async register ({
@@ -276,12 +276,14 @@ export const getters = {
   },
   isOnline: state => (userid) => {
     const user = state.peers.find(u => u._id === userid)
-    return user && ((state.user && state.user._id === user._id) || (user.user_connections && user.user_connections.length))
+    return user && ((state.user && state.user._id === user._id) || (user.connections && user.connections.length))
   },
   getPeers: (state, getters, rootState) => {
     const me = rootState.api.auth.user._id
     const userids = [...new Set(rootState.api.room.rooms.map(r => [r.owner, ...r.members, ...r.moderators]).reduce((a, b) => a.concat(b), []))]
-    return state.peers.filter(u => userids.includes(u._id) && u._id !== me)
+    const result = state.peers.filter(u => userids.includes(u._id) && u._id !== me)
+    console.log(result)
+    return result
   },
   getRoomPeers: (state, getters, rootState) => (room) => {
     const userids = room && room._id ? [room.owner, ...room.moderators, ...room.members] : []

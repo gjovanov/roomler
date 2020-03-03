@@ -12,7 +12,8 @@ const config = {
   dbSettings: require('./db-settings'),
   dataSettings: require('./data-settings'),
   wsSettings: require('./ws-settings'),
-  emailSettings: require('./email-settings')
+  emailSettings: require('./email-settings'),
+  geoipSettings: require('./geoip-settings')
 }
 
 module.exports = config

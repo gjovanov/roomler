@@ -34,7 +34,7 @@
           <v-icon>fa-trash</v-icon> Delete room
         </v-list-item-title>
       </v-list-item>
-      <v-list-item v-if="canManage" @click="addPeers()">
+      <v-list-item v-if="canManage && peers && peers.length" @click="addPeers()">
         <v-list-item-title>
           <v-icon>fa-users</v-icon> Add existing peers
         </v-list-item-title>
@@ -69,6 +69,12 @@ export default {
     user: {
       type: Object,
       default: null
+    },
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
     }
   },
   data () {
@@ -101,7 +107,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$router.currentRoute)
+    console.log(this.peers.length)
   },
   methods: {
     add () {

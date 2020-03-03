@@ -13,7 +13,7 @@ const user = S.object()
   .prop('is_username_set', S.boolean().required())
   .prop('is_password_set', S.boolean().required())
   .prop('avatar_url', S.string())
-  .prop('user_connections', S.array().items(S.string()))
+  .prop('connections', S.array().items(S.string()))
 
 const userList = S.array().items(user)
 
@@ -62,7 +62,7 @@ const delete200 = S.object()
   .prop('ok', S.number().required())
   .prop('deletedCount', S.number().required())
 
-const userConnection = S.object()
+const connection = S.object()
   .prop('_id', S.string().required())
   .prop('conn_id', S.string().required())
   .prop('process_name', S.string().required())
@@ -72,14 +72,14 @@ const userConnection = S.object()
   .prop('country_name', S.string())
   .prop('user', S.string())
 
-const userConnectionList = S.array().items(userConnection)
+const connectionList = S.array().items(connection)
 
-const wsUserConnection = S.object()
+const wsConnection = S.object()
   .prop('op')
-  .prop('data', userConnectionList)
+  .prop('data', connectionList)
 
 module.exports = {
-  wsUserConnection,
+  wsConnection,
   register: {
     body: registerBody,
     response: {

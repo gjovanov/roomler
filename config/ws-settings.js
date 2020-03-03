@@ -25,8 +25,8 @@ module.exports = {
     messageReactionPush: 'MESSAGE_REACTION_PUSH',
     messageReactionPull: 'MESSAGE_REACTION_PULL',
 
-    userConnectionOpen: 'USER_CONNECTION_OPEN',
-    userConnectionClose: 'USER_CONNECTION_CLOSE',
+    connectionOpen: 'CONNECTION_OPEN',
+    connectionClose: 'CONNECTION_CLOSE',
 
     roomCreate: 'ROOM_CREATE',
     roomUpdate: 'ROOM_UPDATE',

@@ -23,7 +23,7 @@ export const handleInviteAccept = (
       if (invite.inviter._id === rootState.api.auth.user._id) {
         handleSuccess(`'${invite.name}' invited by, has joined the room '${invite.room.path}' under username '${invite.invitee.username}'`, commit)
       } else if (invite.invitee._id === rootState.api.auth.user._id) {
-        handleSuccess(`You has joined the room '${invite.room.path}'`, commit)
+        handleSuccess(`You have joined the room '${invite.room.path}'`, commit)
       } else {
         handleSuccess(`'${invite.invitee.username}' has joined the room '${invite.room.path}'`, commit)
       }

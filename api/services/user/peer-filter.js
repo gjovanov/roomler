@@ -62,12 +62,12 @@ class PeerFilter {
           { $match: { $expr: { $in: ['$_id', '$$users'] } } },
           {
             $lookup: {
-              from: 'user_connections',
-              let: { user_connections: '$user_connections' },
+              from: 'connections',
+              let: { connections: '$connections' },
               pipeline: [
-                { $match: { $expr: { $in: ['$_id', '$$user_connections'] } } }
+                { $match: { $expr: { $in: ['$_id', '$$connections'] } } }
               ],
-              as: 'user_connections'
+              as: 'connections'
             }
           }
         ],

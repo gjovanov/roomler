@@ -1,45 +1,45 @@
 const userService = require('../../services/user/user-service')
 const performanceService = require('../../services/performance/performance-service')
-const userConnectionService = require('../../services/user-connection/user-connection-service')
+const connectionService = require('../../services/connection/connection-service')
 
 class MetricController {
-  async pushUserConnectionWs (wss, conn, payload) {
+  async pushConnectionWs (wss, conn, payload) {
     try {
-      performanceService.performance.mark('UserConnectionCreate start')
-      const userConnection = await userConnectionService.create(conn.user ? conn.user._id : null, payload)
-      performanceService.performance.mark('UserConnectionCreate end')
-      performanceService.performance.measure('UserConnectionCreate', 'UserConnectionCreate start', 'UserConnectionCreate end')
+      performanceService.performance.mark('ConnectionCreate start')
+      const connection = await connectionService.create(conn.user ? conn.user._id : null, payload)
+      performanceService.performance.mark('ConnectionCreate end')
+      performanceService.performance.measure('ConnectionCreate', 'ConnectionCreate start', 'ConnectionCreate end')
 
       if (conn.user) {
-        performanceService.performance.mark('UserConnectionUpdate start')
-        await userService.pushUserConnection(conn.user._id, userConnection._id)
-        performanceService.performance.mark('UserConnectionUpdate end')
-        performanceService.performance.measure('UserConnectionUpdate', 'UserConnectionUpdate start', 'UserConnectionUpdate end')
+        performanceService.performance.mark('ConnectionUpdate start')
+        await userService.pushConnection(conn.user._id, connection._id)
+        performanceService.performance.mark('ConnectionUpdate end')
+        performanceService.performance.measure('ConnectionUpdate', 'ConnectionUpdate start', 'ConnectionUpdate end')
       }
 
-      return userConnection
+      return connection
     } catch (err) {
       console.log(err)
     }
   }
 
-  async pullUserConnectionWs (wss, conn) {
-    const id = conn.user_connection_id
+  async pullConnectionWs (wss, conn) {
+    const id = conn.connection_id
     if (id) {
       try {
-        performanceService.performance.mark('UserConnectionClose start')
-        const userConnection = await userConnectionService.close(id)
-        performanceService.performance.mark('UserConnectionClose end')
-        performanceService.performance.measure('UserConnectionClose', 'UserConnectionCreate start', 'UserConnectionCreate end')
+        performanceService.performance.mark('ConnectionClose start')
+        const connection = await connectionService.close(id)
+        performanceService.performance.mark('ConnectionClose end')
+        performanceService.performance.measure('ConnectionClose', 'ConnectionCreate start', 'ConnectionCreate end')
 
-        if (conn.user && userConnection) {
-          performanceService.performance.mark('UserConnectionUpdate start')
-          await userService.pullUserConnection(conn.user._id, userConnection._id)
-          performanceService.performance.mark('UserConnectionUpdate end')
-          performanceService.performance.measure('UserConnectionUpdate', 'UserConnectionUpdate start', 'UserConnectionUpdate end')
+        if (conn.user && connection) {
+          performanceService.performance.mark('ConnectionUpdate start')
+          await userService.pullConnection(conn.user._id, connection._id)
+          performanceService.performance.mark('ConnectionUpdate end')
+          performanceService.performance.measure('ConnectionUpdate', 'ConnectionUpdate start', 'ConnectionUpdate end')
         }
 
-        return userConnection
+        return connection
       } catch (err) {
         console.log(err)
       }

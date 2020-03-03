@@ -1,5 +1,11 @@
 module.exports = {
-  user_connection: {
+  call: {
+    statuses: ['open', 'closed', 'stale'],
+    defaults: {
+      status: 'open'
+    }
+  },
+  connection: {
     statuses: ['open', 'closed', 'stale'],
     defaults: {
       status: 'open'

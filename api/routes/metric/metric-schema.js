@@ -1,6 +1,6 @@
 const S = require('fluent-schema')
 
-const userConnection = S.object()
+const connection = S.object()
   .prop('_id', S.string().required())
   .prop('conn_id', S.string().required())
   .prop('process_name', S.string().required())
@@ -10,12 +10,12 @@ const userConnection = S.object()
   .prop('country_name', S.string())
   .prop('user', S.string())
 
-const userConnectionList = S.array().items(userConnection)
+const connectionList = S.array().items(connection)
 
-const wsUserConnection = S.object()
+const wsConnection = S.object()
   .prop('op')
-  .prop('data', userConnectionList)
+  .prop('data', connectionList)
 
 module.exports = {
-  wsUserConnection
+  wsConnection
 }

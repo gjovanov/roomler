@@ -27,7 +27,7 @@ const user = S.object()
   .prop('is_active', S.boolean().required())
   .prop('avatar_url', S.string())
   .prop('role', S.string())
-  .prop('user_connections', S.array().items(S.string()))
+  .prop('connections', S.array().items(S.string()))
 
 const invite = S.object()
   .prop('_id', S.string())

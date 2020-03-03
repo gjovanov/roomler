@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent hide-overlay>
+  <v-dialog v-model="dialog" persistent retain-focus max-width="800px">
     <v-card>
       <v-expansion-panels
         v-model="panel"

@@ -77,7 +77,7 @@ class InviteService {
             .populate('room')
             .populate('inviter')
             .populate('invitee')
-            .populate('invitee.user_connections')
+            .populate('invitee.connections')
             .execPopulate()
           const acceptUrl = `${config.appSettings.env.URL}${config.authSettings.inviteAcceptPage}?invite=${row._id}`
           await emailService.send(user._id, {
@@ -119,7 +119,7 @@ class InviteService {
           .populate('room')
           .populate('inviter')
           .populate('invitee')
-          .populate('invitee.user_connections')
+          .populate('invitee.connections')
       })
 
     return record

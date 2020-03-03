@@ -8,13 +8,13 @@
           </v-card-title>
           <v-card-text>
             <p>
-              Are you sure you want to delete room '{{ room.short_name }}'?
+              Please type the name of your room to confirm deletion: <strong>{{ room.short_name }}</strong>
             </p>
             <p v-if="room.children && room.children.length">
               <strong>Warning:</strong> children rooms will be also deleted.
             </p>
             <p>
-              This operation cannot be reversed!
+              This operation cannot be reverted!
             </p>
             <v-text-field
               v-model="name"

@@ -5,7 +5,7 @@
       :drawer="leftMenu"
       :rooms="rooms"
       :tree="tree"
-      :peer="peers"
+      :peers="peers"
       :user="user"
       @toggleDrawer="toggleDrawer"
     />

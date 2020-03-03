@@ -92,6 +92,7 @@
               <room-menu
                 :room="item"
                 :user="user"
+                :peers="peers"
                 @add="add"
                 @edit="edit"
                 @removeConsent="removeConsent"

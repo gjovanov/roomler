@@ -1,6 +1,7 @@
 const os = require('os')
 const process = require('process')
 const config = require('../../../config')
+const geoipService = require('../../services/geoip/geoip-service')
 const wsDispatcher = require('./ws-dispatcher')
 const storage = require('./ws-storage')
 const uuid = require('uuid')
@@ -10,11 +11,13 @@ class WsHandler {
   /*
     On Connection:
     1. Push the WS connection in the WS Storage
-    2. Create UserConnection DB entry & push it in user.user_connections collection
+    2. Create a Connection DB entry & push it in user.connections collection
     3. Notify all Peers based on Rooms
   */
   async onConnection (wss, conn, req) {
     const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+    const geoip = await geoipService.get(ipAddress)
+    console.log(geoip)
     conn.id = uuid()
     if (req.user) {
       conn.user = req.user
@@ -28,13 +31,16 @@ class WsHandler {
       process_name: processName,
       ip_address: ipAddress
     }
-    const userConnection = await require('../metric/metric-controller').pushUserConnectionWs(wss, conn, payload)
-    conn.user_connection_id = userConnection._id
+    if (geoip) {
+      payload.geoip = geoip
+    }
+    const connection = await require('../metric/metric-controller').pushConnectionWs(wss, conn, payload)
+    conn.connection_id = connection._id
 
     // notify USER CONNECTION OPENED
     if (conn.user) {
-      const op = config.wsSettings.opTypes.userConnectionOpen
-      wsDispatcher.dispatch(op, [userConnection])
+      const op = config.wsSettings.opTypes.connectionOpen
+      wsDispatcher.dispatch(op, [connection])
     }
   }
 
@@ -52,7 +58,7 @@ class WsHandler {
   /*
     On Close:
     1. Pull out the WS conn from the WS Storage
-    2. Close the UserConnection DB entry & pull it out of the user.user_connections collection
+    2. Close the Connection DB entry & pull it out of the user.connections collection
     3. Notify all Peers based on Rooms
   */
   async onClose (wss, conn) {
@@ -62,12 +68,12 @@ class WsHandler {
       console.log(`WS Client 'ANONYMOUS' disconnected from '${processName}'`)
     }
     storage.pull(conn)
-    if (conn.user_connection_id) {
-      const userConnection = await require('../metric/metric-controller').pullUserConnectionWs(wss, conn)
+    if (conn.connection_id) {
+      const connection = await require('../metric/metric-controller').pullConnectionWs(wss, conn)
       // notify USER CONNECTION CLOSED
       if (conn.user) {
-        const op = config.wsSettings.opTypes.userConnectionClose
-        wsDispatcher.dispatch(op, [userConnection])
+        const op = config.wsSettings.opTypes.connectionClose
+        wsDispatcher.dispatch(op, [connection])
       }
     }
   }

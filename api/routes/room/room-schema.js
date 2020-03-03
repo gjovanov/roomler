@@ -33,7 +33,7 @@ const user = S.object()
   .prop('is_username_set', S.boolean().required())
   .prop('is_password_set', S.boolean().required())
   .prop('avatar_url', S.string())
-  .prop('user_connections', S.array().items(S.string()))
+  .prop('connections', S.array().items(S.string()))
 
 const userList = S.array().items(user)
 

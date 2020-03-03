@@ -47,9 +47,9 @@ const schema = new Schema({
   avatar_url: {
     type: String
   },
-  user_connections: [{
+  connections: [{
     type: ObjectId,
-    ref: 'user_connections',
+    ref: 'connections',
     index: true
   }]
 }, {

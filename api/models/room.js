@@ -92,7 +92,12 @@ const schema = new Schema({
       type: Boolean,
       default: defaults.media.notify_joining
     }
-  }
+  },
+  calls: [{
+    type: ObjectId,
+    ref: 'calls',
+    index: true
+  }]
 }, {
   timestamps: true
 })

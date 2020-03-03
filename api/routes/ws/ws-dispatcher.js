@@ -27,10 +27,10 @@ class WsDispatcher {
       stringify = fastJson(require('../message/message-schema').wsMessage.valueOf())
       extension = messageService.extension
     }
-    if (op.startsWith('USER_CONNECTION_') && messages.length && messages[0].user) {
+    if (op.startsWith('CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
       recepients = roomService.recepients(rooms)
-      stringify = fastJson(require('../metric/metric-schema').wsUserConnection.valueOf())
+      stringify = fastJson(require('../metric/metric-schema').wsConnection.valueOf())
     }
     if (op.startsWith('ROOM_CREATE')) {
       const rooms = messages
