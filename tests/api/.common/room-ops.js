@@ -436,8 +436,6 @@ class RoomOps {
           const payload = JSON.parse(response.payload)
           const result = payload.room
           t.true(!!result._id)
-          console.log(result.name)
-          console.log(roomContext.record.name)
           t.true(result.name === roomContext.record.name)
           t.true(!!result.createdAt)
           t.true(!!result.updatedAt)

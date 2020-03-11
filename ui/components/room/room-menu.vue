@@ -106,9 +106,6 @@ export default {
       return this.room && this.user && (this.isOwner || this.room.moderators.includes(this.user._id))
     }
   },
-  mounted () {
-    console.log(this.peers.length)
-  },
   methods: {
     add () {
       this.$emit('add', this.room)

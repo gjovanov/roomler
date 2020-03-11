@@ -19,7 +19,6 @@ export default class CustomMention extends Mention {
   }
 
   renderPopup (node, templateId) {
-    console.log(node)
     if (this.options.popup) {
       return
     }
