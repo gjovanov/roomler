@@ -1,4 +1,4 @@
-FROM gjovanov/node-alpine-edge
+FROM gjovanov/node-alpine-edge:13.11.0
 LABEL maintainer="Goran Jovanov <goran.jovanov@gmail.com>"
 
 # Version
