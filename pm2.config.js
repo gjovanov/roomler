@@ -1,6 +1,5 @@
 const config = require('./config')
 config.appSettings.env.NODE_ENV = 'production'
-config.appSettings.env.URL = 'http://localhost:3000'
 
 // WIN-10: Check port usage
 // Get-Process -Id (Get-NetTCPConnection -LocalPort 3002).OwningProcess
