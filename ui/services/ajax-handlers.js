@@ -1,5 +1,5 @@
 export const handleError = (err, commit) => {
-  const data = err.response.data
+  const data = err && err.response && err.response.data ? err.response.data : err
   if (Array.isArray(data.errors)) {
     const invalidToken = data.errors.find(e => e.prop === 'token')
     if (invalidToken) {
@@ -13,14 +13,16 @@ export const handleError = (err, commit) => {
       })
     }
   } else {
-    if (data.message && data.message.includes('E11000 duplicate key error collection')) {
-      const index = data.message.indexOf('{')
+    const prop = data && data.name ? data.name : 'unexpected'
+    const message = data && data.message ? data.message : data
+    if (message.includes('E11000 duplicate key error collection')) {
+      const index = message.indexOf('{')
       data.name = 'global'
-      data.message = `${data.message.substring(index)} is taken`
+      data.message = `${message.substring(index)} is taken`
     }
     commit('toast/push', {
-      prop: data.name,
-      message: data.message,
+      prop,
+      message,
       error: true
     }, {
       root: true

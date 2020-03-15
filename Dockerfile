@@ -8,6 +8,7 @@ ADD VERSION .
 ENV NODE_ENV production
 ENV HOST 0.0.0.0
 ENV PORT 3000
+ENV WS_SCALEOUT_ENABLED true
 
 # Install packages & git clone source code and build the application
 RUN apk add --update --no-cache --virtual .build-deps \
@@ -31,4 +32,4 @@ WORKDIR /roomler
 EXPOSE 3000
 
 # Define the Run command
-CMD ["npm", "run", "start:ui"]
+CMD ["npm", "run", "start"]

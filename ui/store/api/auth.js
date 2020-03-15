@@ -279,7 +279,7 @@ export const getters = {
     return user && ((state.user && state.user._id === user._id) || (user.connections && user.connections.length))
   },
   getPeers: (state, getters, rootState) => {
-    const me = rootState.api.auth.user._id
+    const me = rootState.api.auth.user ? rootState.api.auth.user._id : null
     const userids = [...new Set(rootState.api.room.rooms.map(r => [r.owner, ...r.members, ...r.moderators]).reduce((a, b) => a.concat(b), []))]
     const result = state.peers.filter(u => userids.includes(u._id) && u._id !== me)
     return result
