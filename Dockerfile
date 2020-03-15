@@ -21,7 +21,8 @@ RUN apk add --update --no-cache --virtual .build-deps \
   npm i && \
   npm run build && \
   apk del .build-deps vips-dev fftw-dev && \
-  rm -rf /var/cache/apk/*
+  rm -rf /var/cache/apk/* && \
+  rm -rf /tmp/*
 
 # Volumes
 VOLUME /roomler/ui/static/uploads
