@@ -2,7 +2,7 @@ const userService = require('../../services/user/user-service')
 const performanceService = require('../../services/performance/performance-service')
 const connectionService = require('../../services/connection/connection-service')
 
-class MetricController {
+class ConnectionController {
   async pushConnectionWs (wss, conn, payload) {
     try {
       performanceService.performance.mark('ConnectionCreate start')
@@ -47,4 +47,4 @@ class MetricController {
   }
 }
 
-module.exports = new MetricController()
+module.exports = new ConnectionController()

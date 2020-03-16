@@ -16,10 +16,31 @@ export const state = () => ({
   oauth: null,
   menu: {
     members: true
+  },
+  audio: {
+    connectionPush: null,
+    connectionPull: null
   }
 })
 
 export const mutations = {
+  playSound (state, type) {
+    let audioToPlay = null
+    if (type === 'connection_push') {
+      if (state.audio.connectionPush === null) {
+        state.audio.connectionPush = new Audio('/audio/uber_online.mp3')
+      }
+      audioToPlay = state.audio.connectionPush
+    } else if (type === 'connection_pull') {
+      if (state.audio.connectionPull === null) {
+        state.audio.connectionPull = new Audio('/audio/uber_offline.mp3')
+      }
+      audioToPlay = state.audio.connectionPull
+    }
+    if (audioToPlay) {
+      audioToPlay.play()
+    }
+  },
   setPeers (state, peers) {
     if (state.user) {
       const found = peers.find(p => p._id === state.user._id)
@@ -204,6 +225,7 @@ export const actions = {
         root: true
       })
       commit('clearUserInfo')
+      commit('playSound', 'connection_pull')
     } catch (err) {
       handleError(err, commit)
     }

@@ -34,7 +34,7 @@ class WsHandler {
     if (geoip) {
       payload.geoip = geoip
     }
-    const connection = await require('../metric/metric-controller').pushConnectionWs(wss, conn, payload)
+    const connection = await require('../connection/connection-controller').pushConnectionWs(wss, conn, payload)
     conn.connection_id = connection._id
 
     // notify USER CONNECTION OPENED
@@ -69,7 +69,7 @@ class WsHandler {
     }
     storage.pull(conn)
     if (conn.connection_id) {
-      const connection = await require('../metric/metric-controller').pullConnectionWs(wss, conn)
+      const connection = await require('../connection/connection-controller').pullConnectionWs(wss, conn)
       // notify USER CONNECTION CLOSED
       if (conn.user) {
         const op = config.wsSettings.opTypes.connectionClose

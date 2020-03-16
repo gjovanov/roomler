@@ -9,5 +9,6 @@ export const handleConnectionPull = (
     commit('api/auth/pullConnection', data.data, {
       root: true
     })
+    commit('playSound', 'connection_pull')
   }
 }

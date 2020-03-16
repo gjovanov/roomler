@@ -27,6 +27,7 @@ export const handleInviteAccept = (
       } else {
         handleSuccess(`'${invite.invitee.username}' has joined the room '${invite.room.path}'`, commit)
       }
+      commit('playSound', 'invite_accept')
     })
   }
 }

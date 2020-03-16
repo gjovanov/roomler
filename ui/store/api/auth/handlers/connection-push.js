@@ -9,5 +9,6 @@ export const handleConnectionPush = (
     commit('api/auth/pushConnection', data.data, {
       root: true
     })
+    commit('playSound', 'connection_push')
   }
 }
