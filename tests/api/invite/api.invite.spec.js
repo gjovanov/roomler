@@ -36,7 +36,7 @@ inviteOps.getNotFoundId(fastify, test, 'get with unexisting id throws a Referenc
 inviteOps.updateNotFoundId(fastify, test, 'update with unexisting id throws a ReferenceError', invite, 1)
 inviteOps.deleteNotFoundId(fastify, test, 'delete with unexisting id throws a ReferenceError', invite, 1)
 
-roomOps.delete(fastify, test, 'deletes the invite room', room)
+roomOps.delete(fastify, test, 'deletes the invite room', room, inviter)
 authOps.delete(fastify, test, 'deletes the inviter user account', inviter)
 authOps.delete(fastify, test, 'deletes the invitee member user account', inviteeMember)
 authOps.delete(fastify, test, 'deletes the invitee moderator user account', inviteeModerator)

@@ -1,4 +1,4 @@
-export const handleMessageCreate = (
+export const handleMessageCreate = async (
   dispatch,
   commit,
   state,
@@ -15,6 +15,6 @@ export const handleMessageCreate = (
         root: true
       })
     }
-    commit('playSound', 'message_create')
+    await dispatch('sound/playSound', 'message_create', { root: true })
   }
 }

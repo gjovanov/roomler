@@ -1,4 +1,4 @@
-export const handleReactionPull = (
+export const handleReactionPull = async (
   dispatch,
   commit,
   state,
@@ -15,6 +15,6 @@ export const handleReactionPull = (
         root: true
       })
     }
-    commit('playSound', 'reaction_pull')
+    await dispatch('sound/playSound', 'reaction_pull', { root: true })
   }
 }

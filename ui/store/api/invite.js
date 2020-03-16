@@ -10,25 +10,10 @@ import { handleInviteDelete } from './invite/handlers/invite-delete'
 
 export const state = () => ({
   invites: [],
-  pendingInvites: [],
-  audio: {
-    inviteAccept: null
-  }
+  pendingInvites: []
 })
 
 export const mutations = {
-  playSound (state, type) {
-    let audioToPlay = null
-    if (type === 'invite_accept') {
-      if (state.audio.inviteAccept === null) {
-        state.audio.inviteAccept = new Audio('/audio/sunny.mp3')
-      }
-      audioToPlay = state.audio.inviteAccept
-    }
-    if (audioToPlay) {
-      audioToPlay.play()
-    }
-  },
   storePendingInvites (state, invite) {
     const result = []
     if (invite) {

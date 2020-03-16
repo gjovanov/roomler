@@ -15,8 +15,8 @@ module.exports = {
     env: {
       NODE_ENV: config.appSettings.env.NODE_ENV,
       HOST: '0.0.0.0',
-      PORT: 3000,
-      PORT_API: 3000,
+      PORT: config.appSettings.env.PORT,
+      PORT_API: config.appSettings.env.PORT_API,
       URL: config.appSettings.env.URL,
       API_URL: config.appSettings.env.API_URL
     }

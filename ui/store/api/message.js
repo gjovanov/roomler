@@ -8,37 +8,10 @@ import { handleReactionPull } from './message/handlers/reaction-pull'
 import * as moment from 'moment'
 
 export const state = () => ({
-  messages: {},
-  audio: {
-    messageCreate: null,
-    reactionPush: null,
-    reactionPull: null
-  }
+  messages: {}
 })
 
 export const mutations = {
-  playSound (state, type) {
-    let audioToPlay = null
-    if (type === 'message_create') {
-      if (state.audio.messageCreate === null) {
-        state.audio.messageCreate = new Audio('/audio/case-closed.mp3')
-      }
-      audioToPlay = state.audio.messageCreate
-    } else if (type === 'reaction_push') {
-      if (state.audio.reactionPush === null) {
-        state.audio.reactionPush = new Audio('/audio/definite.mp3')
-      }
-      audioToPlay = state.audio.reactionPush
-    } else if (type === 'reaction_pull') {
-      if (state.audio.reactionPull === null) {
-        state.audio.reactionPull = new Audio('/audio/served.mp3')
-      }
-      audioToPlay = state.audio.reactionPull
-    }
-    if (audioToPlay) {
-      audioToPlay.play()
-    }
-  },
   pushAll (state, { roomid, messages }) {
     if (messages && messages.length) {
       if (!state.messages[roomid]) {

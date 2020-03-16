@@ -43,7 +43,7 @@ messageOps.getNotFoundId(fastify, test, 'get with unexisting id throws a Referen
 messageOps.updateNotFoundId(fastify, test, 'update with unexisting id throws a ReferenceError', ownerMessages, 1)
 messageOps.deleteNotFoundId(fastify, test, 'delete with unexisting id throws a ReferenceError', ownerMessages, 1)
 
-roomOps.delete(fastify, test, 'deletes the messages room', room)
+roomOps.delete(fastify, test, 'deletes the messages room', room, owner)
 authOps.delete(fastify, test, 'deletes the owners user used in messages room', owner)
 authOps.delete(fastify, test, 'deletes the moderators user used in messages room', moderator)
 authOps.delete(fastify, test, 'deletes the members user used in messages room', member)

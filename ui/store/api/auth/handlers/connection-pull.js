@@ -1,4 +1,4 @@
-export const handleConnectionPull = (
+export const handleConnectionPull = async (
   dispatch,
   commit,
   state,
@@ -9,6 +9,6 @@ export const handleConnectionPull = (
     commit('api/auth/pullConnection', data.data, {
       root: true
     })
-    commit('playSound', 'connection_pull')
+    await dispatch('sound/playSound', 'connection_pull', { root: true })
   }
 }

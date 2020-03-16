@@ -10,7 +10,7 @@ export const handleInviteAccept = (
   router,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteAccept) {
-    data.data.forEach((invite) => {
+    data.data.forEach(async (invite) => {
       commit('api/invite/replace', invite, {
         root: true
       })
@@ -27,7 +27,7 @@ export const handleInviteAccept = (
       } else {
         handleSuccess(`'${invite.invitee.username}' has joined the room '${invite.room.path}'`, commit)
       }
-      commit('playSound', 'invite_accept')
+      await dispatch('sound/playSound', 'invite_accept', { root: true })
     })
   }
 }
