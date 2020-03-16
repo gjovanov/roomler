@@ -40,7 +40,7 @@ class WsHandler {
     // notify USER CONNECTION OPENED
     if (conn.user) {
       const op = config.wsSettings.opTypes.connectionOpen
-      wsDispatcher.dispatch(op, [connection])
+      wsDispatcher.dispatch(op, [connection], true)
     }
   }
 
@@ -73,7 +73,7 @@ class WsHandler {
       // notify USER CONNECTION CLOSED
       if (conn.user) {
         const op = config.wsSettings.opTypes.connectionClose
-        wsDispatcher.dispatch(op, [connection])
+        wsDispatcher.dispatch(op, [connection], true)
       }
     }
   }
