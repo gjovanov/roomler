@@ -1,6 +1,6 @@
 {
   "name": "roomer.live",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "description": "Roomler.live - Video collaboration tool using WebRTC (Janus Gateway)",
   "author": "Goran Jovanov",
   "private": true,
