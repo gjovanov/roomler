@@ -1,10 +1,9 @@
-# WARNING
-THIS PROJECT IS STILL HEAVILY IN DEVELOPMENT. USE ONLY IF U HAVE THE BALLS (PARDON MY FRENCH LADIES) AND DARE TO DIVE INTO THE UNKNOWN :)
-
 # Roomler
 
-> Roomler.Live - Live video collaboration tool using WebRTC (Janus Gateway)
+> Roomler.Live - Live video conferencing & collaboration tool using WebRTC (Janus Gateway)
 
+It's like Slack on Crack and Microsoft Teams on Steroids.
+All that fully free and open source. 
 
 
 # Install packages
@@ -65,9 +64,13 @@ docker run -d --name roomler \
     -e API_URL=https://roomler.live \
     -p 8082:3000 \
     -e DB_CONN=YOUR_DB_CONN \
+    -e WS_SCALEOUT_ENABLED=true \
+    -e WS_SCALEOUT_HOST=redis \
     -e SENDGRID_API_KEY=YOUR_SEND_GRID_KEY \
     -e FACEBOOK_ID=YOUR_FACEBOOK_ID \
     -e FACEBOOK_SECRET=YOUR_FACEBOOK_SECRET \
+    -e GOOGLE_ID=YOUR_GOOGLE_ID \
+    -e GOOGLE_SECRET=YOUR_GOOGLE_SECRET \
     -e GITHUB_ID=YOUR_GITHUB_ID \
     -e GITHUB_SECRET=YOUR_GITHUB_SECRET \
     -e LINKEDIN_ID=YOUR_LINKEDIN_ID \

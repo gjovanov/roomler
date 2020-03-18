@@ -5,7 +5,6 @@ class ApiServer {
 
   async up (port = process.env.PORT || 3001, host = process.env.HOST || 'localhost') {
     try {
-      // await dbConnect()
       const address = await this.fastify.listen(port, host)
       this.fastify.swagger()
       console.log(`API SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)

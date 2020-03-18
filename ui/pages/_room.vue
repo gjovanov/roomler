@@ -78,7 +78,7 @@ export default {
   },
   computed: {
     room () {
-      return this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname)
+      return this.$store.getters['api/room/selectedRoom'](this.$route.params.room)
     }
   },
   methods: {

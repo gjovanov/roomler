@@ -21,13 +21,13 @@ class DomUtils {
 
   isScrolledIntoView (el) {
     const rect = el.getBoundingClientRect()
-    const elemTop = rect.top
-    const elemBottom = rect.bottom
+    // const elemTop = rect.top
+    // const elemBottom = rect.bottom
 
-    // Only completely visible elements return true:
-    const isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight)
+    // previous version
+    // const isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight)
     // Partially visible elements return true:
-    // isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+    const isVisible = !(rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth || rect.top > window.innerHeight)
     return isVisible
   }
 }

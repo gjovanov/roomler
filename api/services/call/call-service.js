@@ -16,10 +16,11 @@ class CallService {
     return record
   }
 
-  async getAll (user, room, status = 'open') {
+  async getAll (user, room, connection, status = 'open') {
     const callUserFilter = new CallUserFilter({
       user,
       room,
+      connection,
       status
     })
       .getFilter()

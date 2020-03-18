@@ -4,36 +4,48 @@ const config = require('../../../config')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
 class RoomCallsController {
-  async push (request, reply) {
-    // if there are open calls, then a) close them, b) remove pull them from room.calls
-    // then create new call and push it to room.calls
-    const roomid = request.params.id
-    const userid = request.user.user._id
-    const openCalls = await callService.getAll(request.user.user._id, roomid, 'open')
-    if (openCalls && openCalls.length) {
-      const ids = openCalls.map(c => c._id)
-      await Promise.all([callService.closeAll(ids), roomService.pullCalls(userid, ids)])
+  async pushWs (wss, conn, msg) {
+    if (conn.user) {
+      const payload = msg
+      try {
+        // if there are open calls, then a) close them, b) remove pull them from room.calls
+        // then create new call and push it to room.calls
+        const roomid = payload.roomid
+        const userid = conn.user._id
+        const openCalls = await callService.getAll(userid, roomid, conn.connection_id, 'open')
+        if (openCalls && openCalls.length) {
+          const ids = openCalls.map(c => c._id)
+          await Promise.all([callService.closeAll(ids), roomService.pullCalls(userid, ids)])
+        }
+        const call = await callService.create(userid, { room: roomid })
+        const room = await roomService.pushCall(userid, call._id)
+        wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallOpen, [room], true)
+      } catch (err) {
+        console.log(err)
+      }
     }
-    const call = await callService.create(request.user.user._id, { room: roomid })
-    const room = await roomService.pushCall(request.user.user._id, call._id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallOpen, [room], true)
-    reply.send(room)
   }
 
-  async pull (request, reply) {
-    const roomid = request.params.id
-    const userid = request.user.user._id
-    const openCalls = await callService.getAll(request.user.user._id, roomid, 'open')
-    let room
-    if (openCalls && openCalls.length) {
-      const ids = openCalls.map(c => c._id)
-      await callService.closeAll(ids)
-      room = await roomService.pullAllCalls(userid, ids)
-    } else {
-      room = await roomService.get(userid, roomid)
+  async pullWs (wss, conn, msg) {
+    if (conn.user) {
+      const payload = msg
+      try {
+        const roomid = payload.roomid
+        const userid = conn.user._id
+        const openCalls = await callService.getAll(userid, roomid, conn.connection_id, 'open')
+        let room
+        if (openCalls && openCalls.length) {
+          const ids = openCalls.map(c => c._id)
+          await callService.closeAll(ids)
+          room = await roomService.pullCalls(userid, ids)
+        } else {
+          room = await roomService.get(userid, roomid)
+        }
+        wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallClose, [room], true)
+      } catch (err) {
+        console.log(err)
+      }
     }
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallClose, [room], true)
-    reply.send(room)
   }
 }
 

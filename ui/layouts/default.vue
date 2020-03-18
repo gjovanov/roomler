@@ -14,6 +14,7 @@
       :drawer="menuMembers"
       :room="room"
       :peers="peers"
+      :room-peers="roomPeers"
     />
     <v-app-bar
       app
@@ -111,6 +112,9 @@ export default {
     },
     peers () {
       return this.$store.getters['api/auth/getPeers']
+    },
+    roomPeers () {
+      return this.$store.getters['api/auth/getRoomPeers'](this.room)
     },
     menuMembers () {
       return this.$store.state.api.auth.menu.members

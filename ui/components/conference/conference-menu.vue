@@ -34,7 +34,7 @@
           </template>
           <span>Hang up</span>
         </v-tooltip>
-        <v-tooltip v-if="localHandle && !localHandle.screen" top>
+        <!-- <v-tooltip v-if="localHandle && !localHandle.screen" top>
           <template v-slot:activator="{ on }">
             <v-btn
               v-if="localHandle && !localHandle.screen"
@@ -47,7 +47,7 @@
             </v-btn>
           </template>
           <span>Share screen</span>
-        </v-tooltip>
+        </v-tooltip> -->
         <v-tooltip v-if="localHandle && localHandle.stream" top>
           <template v-slot:activator="{ on }">
             <v-btn

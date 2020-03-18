@@ -99,11 +99,16 @@ const wsRoomDelete = S.object()
   .prop('op')
   .prop('data', S.array().items(roomDeleteResult))
 
+const wsRoomCall = S.object()
+  .prop('op')
+  .prop('data', roomList)
+
 module.exports = {
   wsRoomUsers,
   wsRoomCreate,
   wsRoomUpdate,
   wsRoomDelete,
+  wsRoomCall,
   get: {
     querystring: getQueryString,
     response: {

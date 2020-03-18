@@ -77,6 +77,20 @@ class WsHandler {
       }
     }
   }
+
+  onShutdown (wss) {
+    console.log('ON SHUT DOWN')
+    for (const client in storage.clients) {
+      const clientConns = storage.clients[client]
+      clientConns.map(async (conn) => {
+        const connection = await require('../connection/connection-controller').pullConnectionWs(wss, conn)
+        if (conn.user) {
+          const op = config.wsSettings.opTypes.connectionClose
+          wsDispatcher.dispatch(op, [connection], true)
+        }
+      })
+    }
+  }
 }
 
 module.exports = new WsHandler()

@@ -136,11 +136,16 @@ function fastifyWs (fastify, opts, next) {
 
   fastify.decorate('ws', wss)
 
-  fastify.addHook('onClose', (fastify, done) => {
-    if (fastify.scaleout) {
-      fastify.scaleout.publisher.quit()
-      fastify.scaleout.subscriber.quit()
-    }
+  fastify.addHook('onClose', (fi, done) => {
+    fastify.log.info('HERE')
+    // opts.handler.onShutdown(wss)
+    fastify.log.info('HERE2')
+
+    // if (fastify.scaleout) {
+    //   fastify.scaleout.publisher.quit()
+    //   fastify.scaleout.subscriber.quit()
+    // }
+
     fastify.ws.close(done)
   })
 

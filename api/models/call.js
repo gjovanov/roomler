@@ -21,6 +21,7 @@ const schema = new Schema({
   connection: {
     type: ObjectId,
     ref: 'connections',
+    required: 'ConnectionIsRequired',
     index: true
   },
   status: {

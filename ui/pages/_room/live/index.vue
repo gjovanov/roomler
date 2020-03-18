@@ -147,7 +147,7 @@ export default {
   },
 
   created () {
-    this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](this.$route.params.roomname), { root: true })
+    this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](this.$route.params.room), { root: true })
   },
   async mounted () {
     if (this.room) {

@@ -24,7 +24,7 @@
       <v-divider />
       <v-list dense>
         <v-list-item
-          v-for="user in peers"
+          v-for="user in roomPeers"
           :key="user._id"
           :href="`/@/${user.username}`"
           link
@@ -72,6 +72,12 @@ export default {
       }
     },
     peers: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    roomPeers: {
       type: Array,
       default () {
         return []
