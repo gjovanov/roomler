@@ -13,10 +13,7 @@ export const state = () => ({
   peers: [],
   user: null,
   token: null,
-  oauth: null,
-  menu: {
-    members: true
-  }
+  oauth: null
 })
 
 export const mutations = {
@@ -89,10 +86,6 @@ export const mutations = {
     state.user = null
     state.token = null
     state.oauth = null
-  },
-
-  toggleMenu (state, menu) {
-    state.menu[menu] = !state.menu[menu]
   }
 }
 

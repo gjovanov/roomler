@@ -30,10 +30,10 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  :text="menuMembers"
+                  :text="panelRight"
                   small
                   v-on="on"
-                  @click="toggleMenuMembers()"
+                  @click="togglePanelRight()"
                 >
                   <v-icon>fa-users</v-icon>
                 </v-btn>
@@ -127,7 +127,7 @@ export default {
       type: String,
       default: ''
     },
-    menuMembers: {
+    panelRight: {
       type: Boolean,
       default: true
     }
@@ -250,8 +250,8 @@ export default {
       const response = await this.$axios.post('api/room/upload', formData, { headers })
       return response.data.src
     },
-    toggleMenuMembers () {
-      this.$store.commit('api/auth/toggleMenu', 'members')
+    togglePanelRight () {
+      this.$store.commit('panel/toggle', 'right')
     }
   }
 }

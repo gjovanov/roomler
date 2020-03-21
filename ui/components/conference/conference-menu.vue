@@ -134,7 +134,7 @@ export default {
       }
       janusPayload.media.room = janusPayload.media.roomid
       janusPayload.media.request = 'create'
-      this.$emit('join', janusPayload)
+      this.$store.dispatch('api/conference/join', janusPayload)
     },
     async shareScreen () {
       if (!this.$Janus.isExtensionEnabled()) {
@@ -163,7 +163,7 @@ export default {
       await this.$store.dispatch('api/janus/videoroom/api/unpublish', { handleDTO: this.localHandle })
     },
     leave () {
-      this.$emit('leave')
+      this.$store.dispatch('api/conference/leave')
     }
   }
 }

@@ -26,7 +26,7 @@
         <v-list-item
           v-for="user in roomPeers"
           :key="user._id"
-          :href="`/@/${user.username}`"
+          :to="`/@/${user.username}`"
           link
         >
           <v-list-item-icon>
@@ -96,7 +96,7 @@ export default {
     },
     rightDrawer (value) {
       if (value !== this.drawer) {
-        this.$store.commit('api/auth/toggleMenu', 'members')
+        this.$store.commit('panel/toggle', 'right')
       }
     }
   },

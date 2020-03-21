@@ -137,6 +137,10 @@ export default {
       default () {
         return []
       }
+    },
+    panelChat: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -182,6 +186,11 @@ export default {
           self.scroll = scrollDirection.bottom
         }, 300)
       })
+    },
+    panelChat (newVal) {
+      if (newVal) {
+        this.scrollMessages(true)
+      }
     }
   },
 

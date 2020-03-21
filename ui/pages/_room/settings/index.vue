@@ -3,7 +3,6 @@
     <v-expansion-panels
       v-model="panel"
       accordion
-      flat
       tile
       class="pa-0 ma-0"
     >
@@ -149,7 +148,7 @@ export default {
     const defaults = config.dataSettings.room.defaults.media
 
     return {
-      panel: 0,
+      panel: null,
       url: config.appSettings.env.URL,
       audiocodecs: defaults.audiocodec.split(','),
       videocodecs: defaults.videocodec.split(',')
@@ -172,11 +171,8 @@ export default {
       return this.room.media.videocodec.split(',')
     }
   },
-  created () {
-    const selectedRoom = this.$store.getters['api/room/selectedRoom'](this.$route.params.room)
-    this.$store.commit('api/room/setRoom', selectedRoom, { root: true })
-  },
   async mounted () {
+    this.$store.commit('panel/set', { panel: 'chat', value: false }, { root: true })
     if (!this.room) {
       await this.$router.push({ path: '/' })
     }

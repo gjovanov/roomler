@@ -8,7 +8,14 @@
       multiple
     >
       <v-expansion-panel>
-        <v-expansion-panel-header>Peers</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-users
+            </v-icon> &nbsp;
+            <span>PEERS</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list three-line>
             <template v-for="(item, index) in roomPeers">
@@ -85,7 +92,14 @@
         <v-icon>fa-users</v-icon> &nbsp; Add existing peers
       </v-btn>
       <v-expansion-panel>
-        <v-expansion-panel-header>Invites</v-expansion-panel-header>
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-paper-plane
+            </v-icon> &nbsp;
+            <span>INVITES</span>
+          </div>
+        </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-list>
             <template v-for="(item, index) in invites">
@@ -209,14 +223,8 @@ export default {
       return this.$store.getters['api/auth/getPeers']
     }
   },
-  async created () {
-    const selectedRoom = this.$store.getters['api/room/selectedRoom'](this.$route.params.room)
-    this.$store.commit('api/room/setRoom', selectedRoom, { root: true })
-    if (this.room) {
-      await this.$store.dispatch('api/invite/getAll', this.room._id)
-    }
-  },
   async mounted () {
+    this.$store.commit('panel/set', { panel: 'chat', value: false }, { root: true })
     if (!this.room) {
       await this.$router.push({ path: '/' })
     } else {

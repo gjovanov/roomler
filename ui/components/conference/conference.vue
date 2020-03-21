@@ -3,20 +3,13 @@
     fluid
     class="pa-0"
   >
-    <conference-menu
-      :user="user"
-      :room="room"
-      :session="session"
-      :local-handle="localHandle"
-      @join="join"
-      @leave="leave"
-    />
     <v-row
       v-if="session && screens && screens.length"
     >
       <v-col
         sm="12"
         cols="12"
+        class="pa-0 ma-0"
       >
         <v-subheader>Screens</v-subheader>
       </v-col>
@@ -29,11 +22,13 @@
         :key="handleDTO.id"
         sm="12"
         cols="12"
+        class="pa-0 ma-0"
       >
-        <v-card>
-          <v-card-title>
+        <v-card flat>
+          <v-card-title class="pa-0 ma-0">
             <v-btn
               outlined
+              tile
               block
             >
               <v-avatar
@@ -53,7 +48,7 @@
               {{ handleDTO.display_name }}
             </v-btn>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0 ma-0">
             <video
               v-if="handleDTO.stream"
               :id="handleDTO.id"
@@ -72,6 +67,7 @@
       <v-col
         sm="12"
         cols="12"
+        class="pa-0 ma-0"
       >
         <v-subheader>Publishers</v-subheader>
       </v-col>
@@ -86,11 +82,13 @@
         md="4"
         lg="3"
         cols="12"
+        class="pa-0 ma-0"
       >
-        <v-card>
-          <v-card-title>
+        <v-card flat>
+          <v-card-title class="pa-0 ma-0">
             <v-btn
               outlined
+              tile
               block
             >
               <v-avatar
@@ -110,7 +108,7 @@
               {{ handleDTO.display_name }}
             </v-btn>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0 ma-0">
             <video
               v-if="handleDTO.stream"
               :id="handleDTO.id"
@@ -129,6 +127,7 @@
       <v-col
         sm="12"
         cols="12"
+        class="pa-0 ma-0"
       >
         <v-subheader>Attendees</v-subheader>
       </v-col>
@@ -143,11 +142,13 @@
         md="4"
         lg="3"
         cols="12"
+        class="pa-0 ma-0"
       >
-        <v-card>
-          <v-card-title>
+        <v-card flat>
+          <v-card-title class="pa-0 ma-0">
             <v-btn
               outlined
+              tile
               block
             >
               <v-avatar
@@ -167,7 +168,7 @@
               {{ handleDTO.display_name }}
             </v-btn>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0 ma-0">
             <video
               v-if="handleDTO.stream"
               :id="handleDTO.id"
@@ -184,12 +185,8 @@
 </template>
 
 <script>
-import ConferenceMenu from '@/components/conference/conference-menu'
 
 export default {
-  components: {
-    ConferenceMenu
-  },
   props: {
     user: {
       type: Object,
@@ -199,6 +196,16 @@ export default {
       type: Object,
       default: null
     },
+    session: {
+      type: Object,
+      default: null
+    },
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
     roomPeers: {
       type: Array,
       default () {
@@ -206,15 +213,8 @@ export default {
       }
     }
   },
-  data () {
-    return {
-      session: null
-    }
-  },
+
   computed: {
-    localHandle () {
-      return this.session && this.session.handleDTOs ? this.session.handleDTOs.find(h => h.isLocal) : null
-    },
     screens () {
       return this.session.handleDTOs.filter(h => h.screen && h.stream)
     },
@@ -238,15 +238,15 @@ export default {
   },
   methods: {
     async join (janusPayload) {
-      this.session = await this.$store.dispatch('api/janus/videoroom/join', janusPayload)
+      await this.$store.dispatch('api/conference/join', janusPayload)
     },
     async leave () {
-      if (this.session) {
-        this.session = await this.$store.dispatch('api/janus/session/destroy', { sessionDTO: this.session })
-      }
+      await this.$store.dispatch('api/conference/leave')
     },
     getPeer (username) {
-      return this.roomPeers.find(u => u.username === username) || { }
+      console.log(username)
+      console.log(this.peers.length)
+      return this.peers.find(u => u.username === username) || { }
     },
     setVideoMuted (handleDTO) {
       this.$nextTick(() => {

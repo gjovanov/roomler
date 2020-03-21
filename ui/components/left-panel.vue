@@ -14,7 +14,7 @@
       tile
       class="pa-0 ma-0"
     >
-      <v-expansion-panel>
+      <v-expansion-panel style="background-color: #363636;">
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -103,7 +103,7 @@
           </v-treeview>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel>
+      <v-expansion-panel style="background-color: #363636;">
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -130,7 +130,7 @@
             <v-list-item
               v-for="peer in peers"
               :key="peer._id"
-              :href="`/@/${peer.username}`"
+              :to="`/@/${peer.username}`"
               link
             >
               <v-list-item-icon>
@@ -223,7 +223,7 @@ export default {
       openList: [],
       leftDrawer: true,
       width: 280,
-      borderSize: 5,
+      borderSize: 4,
       mini: false,
       config,
       dialog: {
@@ -243,7 +243,9 @@ export default {
       this.leftDrawer = value
     },
     leftDrawer (value) {
-      this.$emit('toggleDrawer', value)
+      if (value !== this.drawer) {
+        this.$store.commit('panel/toggle', 'left')
+      }
     }
   },
   mounted () {
