@@ -20,21 +20,16 @@
           v-if="room"
           tile
           small
-          :text="!panelChat"
           class="v-btn--active"
           :to="`/${room.path}`"
           v-on="on"
         >
-          <v-icon v-if="panelChat" small>
+          <v-icon small>
             fa-comments
-          </v-icon>
-          <v-icon v-if="!panelChat" small>
-            fa-comment-slash
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="panelChat">Hide chat</span>
-      <span v-if="!panelChat">Show chat</span>
+      <span>Chat</span>
     </v-tooltip>
 
     <v-tooltip v-if="!session" bottom left>

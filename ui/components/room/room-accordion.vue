@@ -183,7 +183,9 @@ export default {
 
   watch: {
     async room (newVal) {
-      await this.$store.dispatch('api/message/getAll', { room: this.room })
+      if (newVal) {
+        await this.$store.dispatch('api/message/getAll', { room: newVal })
+      }
     },
     isRoomRoute (newVal) {
       this.$store.commit('panel/set', { panel: 'chat', value: newVal }, { root: true })

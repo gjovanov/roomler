@@ -149,7 +149,6 @@ export default {
   watch: {
     $route (to, from) {
       if (to.params.room) {
-        console.log(to)
         this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](to.params.room), { root: true })
       }
     }

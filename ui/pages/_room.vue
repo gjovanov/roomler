@@ -15,7 +15,6 @@
 export default {
   middleware: 'authenticated',
   mounted () {
-    console.log('room')
     this.$store.commit('panel/set', { panel: 'chat', value: true }, { root: true })
   }
 }

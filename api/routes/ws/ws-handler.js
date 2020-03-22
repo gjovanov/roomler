@@ -17,7 +17,6 @@ class WsHandler {
   async onConnection (wss, conn, req) {
     const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     const geoip = await geoipService.get(ipAddress)
-    console.log(geoip)
     conn.id = uuid()
     if (req.user) {
       conn.user = req.user

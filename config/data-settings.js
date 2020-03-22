@@ -20,7 +20,7 @@ module.exports = {
         bitrate: 128000,
         fir_freq: 0,
         audiocodec: 'opus,pcmu',
-        videocodec: 'vp9,vp8,h264',
+        videocodec: 'vp8,h264',
         record: false,
         notify_joining: true
       }

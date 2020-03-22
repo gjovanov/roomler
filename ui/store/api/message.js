@@ -95,7 +95,7 @@ export const actions = {
   }, { room, before }) {
     const response = {}
     try {
-      const roomPeers = [room.owner, ...room.members, room.moderators]
+      const roomPeers = room ? [room.owner, ...room.members, ...room.moderators] : []
       response.result = await this.$axios.$get(`/api/message/get-all?room=${room._id}&before=${before}`)
 
       // if messages contain info about ex peers (removed from the room)

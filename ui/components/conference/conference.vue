@@ -244,8 +244,6 @@ export default {
       await this.$store.dispatch('api/conference/leave')
     },
     getPeer (username) {
-      console.log(username)
-      console.log(this.peers.length)
       return this.peers.find(u => u.username === username) || { }
     },
     setVideoMuted (handleDTO) {

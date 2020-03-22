@@ -48,7 +48,7 @@ export const actions = {
     const handleDTO = await dispatch('api/janus/handle/attachPublisher', { sessionDTO, args: payload.janus }, { root: true })
     const result = await dispatch('api/janus/videoroom/api/exists', { handleDTO, roomid: payload.janus.roomid }, { root: true })
     if (!result.exists) {
-      await dispatch('api/janus/videoroom/api/create', { handleDTO, room: payload.media }, { root: true })
+      await dispatch('api/janus/videoroom/api/create', { handleDTO, payload: payload.media }, { root: true })
     }
     await dispatch('api/janus/videoroom/api/joinPublisher', { handleDTO }, { root: true })
     return sessionDTO
