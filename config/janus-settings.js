@@ -1,9 +1,9 @@
 module.exports = {
   url: 'wss://mcu.xplorify.net/janus_ws',
   iceServers: [{
-    urls: 'turn:94.130.141.98:3478?transport=tcp', // process.env.TURN_URL || 'turn:numb.viagenie.ca',
-    username: 'hammer', // process.env.TURN_USERNAME || 'webrtc@live.com',
-    credential: 'somepassword' // process.env.TURN_PASSWORD || 'muazkh'
+    urls: process.env.TURN_URL || 'turn:numb.viagenie.ca',
+    username: process.env.TURN_USERNAME || 'webrtc@live.com',
+    credential: process.env.TURN_PASSWORD || 'muazkh'
   }],
   plugins: {
     videoroom: 'janus.plugin.videoroom',
