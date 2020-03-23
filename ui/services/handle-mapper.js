@@ -36,8 +36,10 @@ export const toHandleDTO = (sessionDTO, args) => {
     isPublisher: args.isPublisher !== undefined ? args.isPublisher : false,
     isLocal: args.isLocal !== undefined ? args.isLocal : true,
 
+    resolutions: ['lowres', 'lowres-16:9', 'stdres', 'stdres-16:9', 'hires', 'hires-16:9'],
     audio: args.audio !== undefined ? args.audio : true,
     video: args.video !== undefined ? args.video : true,
+    videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'stdres',
     screen: args.screen !== undefined ? args.screen : false,
     data: args.data !== undefined ? args.data : false,
 

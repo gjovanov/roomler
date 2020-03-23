@@ -2,14 +2,12 @@
   <v-bottom-navigation
     v-model="bottomNav"
     padless
-    fixed
     absolute
     shift
     style="background-color: #363636;"
   >
     <v-btn value="privacy" to="/tos/privacy">
-      Privacy
-      <v-icon>fa-user-secret</v-icon>
+      Privacy terms
     </v-btn>
   </v-bottom-navigation>
 </template>

@@ -17,7 +17,7 @@
         <conference :user="user" :room="room" :peers="peers" :room-peers="roomPeers" :session="session" />
       </v-expansion-panel-content>
     </v-expansion-panel>
-    <v-expansion-panel v-if="!isRoomPeer">
+    <v-expansion-panel v-if="panelChat && !isRoomPeer">
       <v-expansion-panel-header>
         <div>
           <v-icon>
@@ -44,7 +44,7 @@
         </v-row>
       </v-expansion-panel-content>
     </v-expansion-panel>
-    <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length === 0">
+    <v-expansion-panel v-if="panelChat && isRoomPeer && roomPeers && roomPeers.length === 0">
       <v-expansion-panel-header>
         <div>
           <v-icon>
@@ -92,7 +92,6 @@
           :elem-id="'new-message-txt'"
           :users="roomPeers"
           :gallery="room.path"
-          :panel-right="panelRight"
           @sendMessage="sendMessage"
         />
       </v-expansion-panel-content>

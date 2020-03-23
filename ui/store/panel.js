@@ -1,7 +1,7 @@
 
 export const state = () => ({
   left: true,
-  right: false,
+  right: true,
   join: true,
   invite: true,
   chat: true,

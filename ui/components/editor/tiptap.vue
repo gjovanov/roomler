@@ -30,20 +30,6 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  :text="panelRight"
-                  small
-                  v-on="on"
-                  @click="togglePanelRight()"
-                >
-                  <v-icon>fa-users</v-icon>
-                </v-btn>
-              </template>
-              <span>Peers</span>
-            </v-tooltip>
-
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn
                   small
                   absolute
                   right
@@ -126,10 +112,6 @@ export default {
     gallery: {
       type: String,
       default: ''
-    },
-    panelRight: {
-      type: Boolean,
-      default: true
     }
   },
   data () {
@@ -249,9 +231,6 @@ export default {
       const headers = { 'Content-Type': 'multipart/form-data' }
       const response = await this.$axios.post('api/room/upload', formData, { headers })
       return response.data.src
-    },
-    togglePanelRight () {
-      this.$store.commit('panel/toggle', 'right')
     }
   }
 }

@@ -208,13 +208,17 @@ export default {
     },
     roomPeers () {
       const self = this
-      const users = this.$store.getters['api/auth/getRoomPeers'](this.room)
-      return users.map(u => (
-        {
-          user: u,
-          role: self.room ? self.$store.getters['api/room/getUserRole'](self.room._id, u._id) : '',
-          currentRole: self.currentRole
-        }))
+      const users = (this.currentUser ? [this.currentUser] : []).concat(this.$store.getters['api/auth/getRoomPeers'](this.room))
+      return users
+        .map(u => (
+          {
+            user: u,
+            role: self.room ? self.$store.getters['api/room/getUserRole'](self.room._id, u._id) : '',
+            currentRole: self.currentRole
+          }))
+        .sort((a, b) => {
+          return a.user.username.localeCompare(b.user.username)
+        })
     },
     invites () {
       return this.$store.state.api.invite.invites

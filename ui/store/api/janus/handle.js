@@ -130,7 +130,7 @@ export const actions = {
 
   createOffer ({
     commit
-  }, { handleDTO }) {
+  }, { handleDTO, replace = undefined }) {
     return new Promise((resolve, reject) => {
       handleDTO.handle.createOffer({
         iceRestart: handleDTO.iceRestart,
@@ -138,8 +138,11 @@ export const actions = {
           audioRecv: false,
           videoRecv: false,
           audioSend: handleDTO.audio,
-          video: handleDTO.screen ? 'screen' : handleDTO.video,
-          data: handleDTO.data
+          audio: handleDTO.audio,
+          video: handleDTO.screen ? 'screen' : (handleDTO.video ? handleDTO.videoResolution : false),
+          data: handleDTO.data,
+          replaceAudio: (replace && replace.audio ? replace.audio : undefined),
+          replaceVideo: (replace && replace.video ? replace.video : undefined)
         },
         simulcast: handleDTO.simulcast,
         trickle: handleDTO.trickle,

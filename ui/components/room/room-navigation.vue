@@ -43,30 +43,11 @@
           @click="joinDialog = true"
         >
           <v-icon small>
-            fa-sign-in-alt
+            fa-phone-volume
           </v-icon>
         </v-btn>
       </template>
       <span>Join conference</span>
-    </v-tooltip>
-
-    <v-tooltip v-if="session" bottom left>
-      <template v-slot:activator="{ on }">
-        <v-btn
-          v-if="session"
-          color="red"
-          tile
-          small
-          class="v-btn--active"
-          v-on="on"
-          @click="leave()"
-        >
-          <v-icon small>
-            fa-sign-out-alt
-          </v-icon>
-        </v-btn>
-      </template>
-      <span>Hang up</span>
     </v-tooltip>
 
     <v-tooltip v-if="localHandle && localHandle.stream" bottom left>
@@ -80,11 +61,73 @@
           @click="unpublish()"
         >
           <v-icon small>
-            fa-minus-circle
+            fa-stop-circle
           </v-icon>
         </v-btn>
       </template>
       <span>Unpublish</span>
+    </v-tooltip>
+
+    <v-tooltip v-if="localHandle && !localHandle.screen" bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="localHandle && !localHandle.screen"
+          tile
+          small
+          class="v-btn--active"
+          v-on="on"
+          @click="startScreenSharing()"
+        >
+          <v-icon>fa-share</v-icon>
+        </v-btn>
+      </template>
+      <span>Share screen</span>
+    </v-tooltip>
+
+    <v-tooltip v-if="localHandle" bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="localHandle"
+          tile
+          small
+          :text="localHandle.video"
+          class="v-btn--active"
+          v-on="on"
+          @click="toggleVideo()"
+        >
+          <v-icon v-if="localHandle.video">
+            fa-video
+          </v-icon>
+          <v-icon v-if="!localHandle.video">
+            fa-video-slash
+          </v-icon>
+        </v-btn>
+      </template>
+      <span v-if="localHandle.video">Stop video</span>
+      <span v-if="!localHandle.video">Start video</span>
+    </v-tooltip>
+
+    <v-tooltip v-if="localHandle" bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="localHandle"
+          tile
+          small
+          :text="localHandle.audio"
+          class="v-btn--active"
+          v-on="on"
+          @click="toggleAudio()"
+        >
+          <v-icon v-if="localHandle.audio">
+            fa-microphone
+          </v-icon>
+          <v-icon v-if="!localHandle.audio">
+            fa-microphone-slash
+          </v-icon>
+        </v-btn>
+      </template>
+      <span v-if="localHandle.audio">Mute microphone</span>
+      <span v-if="!localHandle.audio">Unmute microphone</span>
     </v-tooltip>
 
     <v-tooltip v-if="localHandle && !localHandle.stream" bottom left>
@@ -103,6 +146,25 @@
         </v-btn>
       </template>
       <span>Publish</span>
+    </v-tooltip>
+
+    <v-tooltip v-if="session" bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="session"
+          color="red"
+          tile
+          small
+          class="v-btn--active"
+          v-on="on"
+          @click="leave()"
+        >
+          <v-icon small>
+            fa-phone-slash
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>Hang up</span>
     </v-tooltip>
 
     <v-tooltip bottom left>
@@ -223,7 +285,8 @@ export default {
     toggle (panel) {
       this.$store.commit('panel/toggle', panel)
     },
-    join (media) {
+    async join (media) {
+      await this.$router.push({ path: `/${this.room.path}` })
       this.joinDialog = false
       const config = this.$store.state.api.config.config
       const janusPayload = {
@@ -241,20 +304,56 @@ export default {
       janusPayload.media.request = 'create'
       this.$store.dispatch('api/conference/join', { janusPayload, room: this.room })
     },
-    async shareScreen () {
+    async startScreenSharing () {
       if (!this.$Janus.isExtensionEnabled()) {
         this.extensionDialog = true
       } else {
+        try {
+          this.$store.commit('api/janus/videoroom/updates/setMedia', {
+            handleDTO: this.localHandle,
+            media: {
+              audio: true,
+              video: false,
+              screen: true
+            }
+          })
+          await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { video: true } })
+            .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    },
+    async toggleVideo () {
+      try {
         this.$store.commit('api/janus/videoroom/updates/setMedia', {
           handleDTO: this.localHandle,
           media: {
-            audio: false,
-            video: false,
-            screen: true
+            audio: true,
+            video: !this.localHandle.video,
+            screen: false
           }
         })
-        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { video: true } })
           .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async toggleAudio () {
+      try {
+        this.$store.commit('api/janus/videoroom/updates/setMedia', {
+          handleDTO: this.localHandle,
+          media: {
+            audio: !this.localHandle.audio,
+            video: this.localHandle.video,
+            screen: this.localHandle.screen
+          }
+        })
+        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { audio: true } })
+          .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+      } catch (e) {
+        console.log(e)
       }
     },
     async publish (media) {

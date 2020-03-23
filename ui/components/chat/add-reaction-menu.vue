@@ -156,7 +156,10 @@ export default {
       this.tab = 0
       this.$nextTick(() => {
         setTimeout(() => {
-          self.$refs['emoji-filter'].focus()
+          const emojiFilter = self.$refs['emoji-filter']
+          if (emojiFilter) {
+            emojiFilter.focus()
+          }
         }, 400)
       })
     },

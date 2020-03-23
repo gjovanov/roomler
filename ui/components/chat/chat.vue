@@ -202,6 +202,10 @@ export default {
     })
   },
 
+  mounted () {
+    this.scrollMessages(true)
+  },
+
   beforeDestroy () {
     window.removeEventListener('focus', this.readUnreads)
   },

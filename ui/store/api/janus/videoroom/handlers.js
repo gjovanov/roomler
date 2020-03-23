@@ -9,6 +9,7 @@ export const actions = {
     commit,
     dispatch
   }, { handleDTO, msg, jsep }) {
+    this.$Janus.log(`onmessage: ${msg}`)
     if (msg.videoroom === 'joined') {
       this.$Janus.log('onmessage:joined')
       await dispatch('handleJoined', { handleDTO, msg })

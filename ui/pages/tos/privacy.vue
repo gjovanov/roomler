@@ -129,5 +129,8 @@
     <p>Our data protection officer's contact details are: <a href="mailto:goran.jovanov@Roomler.live">Goran Jovanov</a></p>
 
     <p>For any questions about this privacy policy, please contact admin@Roomler.com.</p>
+    <p>
+      &nbsp;
+    </p>
   </div>
 </template>

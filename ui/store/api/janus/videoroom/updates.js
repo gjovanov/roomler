@@ -27,22 +27,27 @@ export const mutations = {
     }
   },
   clearStream (state, { handleDTO }) {
+    console.log('clearStream')
     handleDTO.stream = null
   },
   consentDialog (state, { handleDTO, on }) {
     handleDTO.consentDialog = on
   },
   webrtcState (state, { handleDTO, on, reason }) {
+    console.log(`webrtcState: '${on}', ${reason}`)
     handleDTO.webrtcState = on
     handleDTO.webrtcStateReason = reason
   },
   iceState (state, { handleDTO, on }) {
+    console.log(`iceState: '${on}'`)
     handleDTO.iceState = on
   },
   mediaState (state, { handleDTO, type, on }) {
+    console.log(`mediaState: '${on}', ${type}`)
     handleDTO.mediaState[type] = on
   },
   slowLink (state, { handleDTO, on }) {
+    console.log(`slowLink: '${on}'`)
     handleDTO.slowLink = on
   },
   onlocalstream (state, { handleDTO, stream }) {
