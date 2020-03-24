@@ -18,7 +18,7 @@
         <v-expansion-panel-header>
           <div>
             <v-icon>
-              fa-sitemap
+              account_tree
             </v-icon> &nbsp;
             <span>ROOMS</span>
           </div>

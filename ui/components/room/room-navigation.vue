@@ -9,7 +9,7 @@
     <publish-dialog :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
     <extension-dialog :open="extensionDialog" @cancel="extensionDialog = false" />
     <v-toolbar-title>
-      {{ room.name.toUpperCase() }}
+      {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room.name.toUpperCase() }}
     </v-toolbar-title>
 
     <v-spacer />
@@ -68,20 +68,27 @@
       <span>Unpublish</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle && !localHandle.screen" bottom left>
+    <v-tooltip v-if="localHandle" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
-          v-if="localHandle && !localHandle.screen"
+          v-if="localHandle"
           tile
           small
+          :text="localHandle.screen"
           class="v-btn--active"
           v-on="on"
-          @click="startScreenSharing()"
+          @click="toggleScreen()"
         >
-          <v-icon>fa-share</v-icon>
+          <v-icon v-if="!localHandle.screen">
+            screen_share
+          </v-icon>
+          <v-icon v-if="localHandle.screen">
+            stop_screen_share
+          </v-icon>
         </v-btn>
       </template>
-      <span>Share screen</span>
+      <span v-if="localHandle.screen">Stop sharing screen</span>
+      <span v-if="!localHandle.screen">Start sharing screen</span>
     </v-tooltip>
 
     <v-tooltip v-if="localHandle" bottom left>
@@ -255,6 +262,10 @@ export default {
     session: {
       type: Object,
       default: null
+    },
+    conferenceRoom: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -287,6 +298,8 @@ export default {
     },
     async join (media) {
       await this.$router.push({ path: `/${this.room.path}` })
+      this.$store.commit('panel/set', { panel: 'left', value: false }, { root: true })
+
       this.joinDialog = false
       const config = this.$store.state.api.config.config
       const janusPayload = {
@@ -304,21 +317,19 @@ export default {
       janusPayload.media.request = 'create'
       this.$store.dispatch('api/conference/join', { janusPayload, room: this.room })
     },
-    async startScreenSharing () {
+    async toggleScreen () {
       if (!this.$Janus.isExtensionEnabled()) {
         this.extensionDialog = true
       } else {
         try {
-          this.$store.commit('api/janus/videoroom/updates/setMedia', {
-            handleDTO: this.localHandle,
-            media: {
-              audio: true,
-              video: false,
-              screen: true
-            }
-          })
-          await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { video: true } })
-            .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+          const media = {
+            audio: this.localHandle.audio,
+            video: false,
+            screen: !this.localHandle.screen
+          }
+          this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
+          const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+          this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep })
         } catch (e) {
           console.log(e)
         }
@@ -326,32 +337,28 @@ export default {
     },
     async toggleVideo () {
       try {
-        this.$store.commit('api/janus/videoroom/updates/setMedia', {
-          handleDTO: this.localHandle,
-          media: {
-            audio: true,
-            video: !this.localHandle.video,
-            screen: false
-          }
-        })
-        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { video: true } })
-          .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+        const media = {
+          audio: this.localHandle.audio,
+          video: !this.localHandle.video,
+          screen: false
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
+        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep })
       } catch (e) {
         console.log(e)
       }
     },
     async toggleAudio () {
       try {
-        this.$store.commit('api/janus/videoroom/updates/setMedia', {
-          handleDTO: this.localHandle,
-          media: {
-            audio: !this.localHandle.audio,
-            video: this.localHandle.video,
-            screen: this.localHandle.screen
-          }
-        })
-        await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle, replace: { audio: true } })
-          .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+        const media = {
+          audio: !this.localHandle.audio,
+          video: this.localHandle.video,
+          screen: this.localHandle.screen
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
+        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep })
       } catch (e) {
         console.log(e)
       }
@@ -359,14 +366,15 @@ export default {
     async publish (media) {
       this.publishDialog = false
       this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
-      await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
-        .then(jsep => this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep }))
+      const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
+      this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep })
     },
     async unpublish () {
       this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media: { audio: false, video: false, screen: false, data: false } })
       await this.$store.dispatch('api/janus/videoroom/api/unpublish', { handleDTO: this.localHandle })
     },
     leave () {
+      this.$store.commit('panel/set', { panel: 'left', value: true }, { root: true })
       this.$store.dispatch('api/conference/leave')
     }
   }

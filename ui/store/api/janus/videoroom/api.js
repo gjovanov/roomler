@@ -186,21 +186,50 @@ export const actions = {
     })
   },
 
-  configure ({
+  listparticipants ({
     commit
-  }, { handleDTO, jsep }) {
+  }, { handleDTO }) {
     return new Promise((resolve, reject) => {
       const request = {
+        request: 'listparticipants',
+        room: handleDTO.roomid
+      }
+      handleDTO.handle.send({
+        message: request,
+        success: (data) => {
+          if (data && data.error) {
+            reject(data.error)
+          } else {
+            resolve(data)
+          }
+        },
+        error: (error) => {
+          reject(error)
+        }
+      })
+    })
+  },
+
+  configure ({
+    commit
+  }, { handleDTO, jsep, replace = undefined }) {
+    return new Promise((resolve, reject) => {
+      const audio = handleDTO.audio
+      const screen = handleDTO.screen
+      const video = handleDTO.video
+      const data = handleDTO.data
+      const request = {
         request: 'configure',
-        audio: handleDTO.audio,
-        video: handleDTO.video || handleDTO.screen,
-        data: handleDTO.data,
+        audio,
+        video: video || screen,
+        data,
         // bitrate: handleDTO.bitrate,
         // keyframe: handleDTO.keyframe,
         // record: handleDTO.record,
         // filename: handleDTO.filename,
-        display: handleDTO.display
+        display: handleDTO.display_name + (screen ? '|Screenshare' : '')
       }
+      console.log(request)
       handleDTO.handle.send({
         message: request,
         jsep,

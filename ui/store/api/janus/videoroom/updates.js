@@ -75,9 +75,14 @@ export const mutations = {
     if (msg.display) {
       handleDTO.display = msg.display
       handleDTO.display_name = msg.display.replace('|Screenshare', '')
-      if (handleDTO.display.includes('|Screenshare')) {
-        handleDTO.screen = true
+      const screenshare = handleDTO.display.includes('|Screenshare')
+      if (!screenshare) {
+        handleDTO.video = true && (msg.video === undefined || msg.video)
+        handleDTO.screen = false
+      }
+      if (screenshare) {
         handleDTO.video = false
+        handleDTO.screen = true
       }
     }
   }

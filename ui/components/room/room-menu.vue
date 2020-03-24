@@ -19,7 +19,7 @@
     <v-list>
       <v-list-item v-if="canManage" @click="add()">
         <v-list-item-title>
-          <v-icon>fa-plus</v-icon> Add nested room
+          <v-icon>fa-plus</v-icon> Create nested room
         </v-list-item-title>
       </v-list-item>
       <v-divider />

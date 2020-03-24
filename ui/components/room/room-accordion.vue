@@ -4,13 +4,13 @@
     accordion
     multiple
   >
-    <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length >= 0" v-show="session">
+    <v-expansion-panel v-show="session">
       <v-expansion-panel-header>
         <div>
           <v-icon>
             fa-phone
           </v-icon> &nbsp;
-          <span>CONFERENCE - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room.name.toUpperCase() }}</span>
+          <span>CONFERENCE - [{{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room.name.toUpperCase() }}]</span>
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
@@ -23,7 +23,7 @@
           <v-icon>
             fa-sign-in-alt
           </v-icon> &nbsp;
-          <span>JOIN THIS ROOM</span>
+          <span>JOIN THIS ROOM - [{{ room.name.toUpperCase() }}]</span>
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
@@ -44,7 +44,7 @@
         </v-row>
       </v-expansion-panel-content>
     </v-expansion-panel>
-    <v-expansion-panel v-if="panelChat && isRoomPeer && roomPeers && roomPeers.length === 0">
+    <v-expansion-panel v-if="panelChat && isRoomPeer && roomPeers && roomPeers.length === 0" v-show="!session">
       <v-expansion-panel-header>
         <div>
           <v-icon>
@@ -76,7 +76,7 @@
           <v-icon>
             fa-comments
           </v-icon> &nbsp;
-          <span>CHAT - {{ room.name.toUpperCase() }}</span>
+          <span>CHAT - [{{ room.name.toUpperCase() }}]</span>
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content>

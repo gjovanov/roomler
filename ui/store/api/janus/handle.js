@@ -130,20 +130,24 @@ export const actions = {
 
   createOffer ({
     commit
-  }, { handleDTO, replace = undefined }) {
+  }, { handleDTO }) {
     return new Promise((resolve, reject) => {
+      const media = {
+        audioRecv: false,
+        videoRecv: false,
+        audioSend: handleDTO.audio,
+        audio: handleDTO.audio,
+        video: handleDTO.screen ? 'screen' : (handleDTO.video ? handleDTO.videoResolution : false),
+        data: handleDTO.data,
+        addAudio: handleDTO.audio === true && handleDTO.mediaState.audio === false ? true : undefined,
+        removeAudio: handleDTO.audio === false && handleDTO.mediaState.audio === true ? true : undefined,
+        addVideo: (handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === false ? true : undefined,
+        removeVideo: (handleDTO.video === false && handleDTO.screen === false) && handleDTO.mediaState.video === true ? true : undefined,
+        replaceVideo: (handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === true ? true : undefined
+      }
       handleDTO.handle.createOffer({
         iceRestart: handleDTO.iceRestart,
-        media: {
-          audioRecv: false,
-          videoRecv: false,
-          audioSend: handleDTO.audio,
-          audio: handleDTO.audio,
-          video: handleDTO.screen ? 'screen' : (handleDTO.video ? handleDTO.videoResolution : false),
-          data: handleDTO.data,
-          replaceAudio: (replace && replace.audio ? replace.audio : undefined),
-          replaceVideo: (replace && replace.video ? replace.video : undefined)
-        },
+        media,
         simulcast: handleDTO.simulcast,
         trickle: handleDTO.trickle,
         success: (jsep) => {

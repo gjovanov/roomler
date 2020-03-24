@@ -7,17 +7,6 @@
       v-if="session && screens && screens.length"
     >
       <v-col
-        sm="12"
-        cols="12"
-        class="pa-0 ma-0"
-      >
-        <v-subheader>Screens</v-subheader>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="session && screens && screens.length"
-    >
-      <v-col
         v-for="handleDTO in screens"
         :key="handleDTO.id"
         sm="12"
@@ -54,22 +43,12 @@
               :id="handleDTO.id"
               :srcObject.prop="handleDTO.stream"
               :muted="handleDTO.isPublisher ? setVideoMuted(handleDTO) : ''"
+              :poster="getPeer(handleDTO.display_name).avatar_url"
               width="100%"
               autoplay
             />
           </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="session && publishers && publishers.length"
-    >
-      <v-col
-        sm="12"
-        cols="12"
-        class="pa-0 ma-0"
-      >
-        <v-subheader>Publishers</v-subheader>
       </v-col>
     </v-row>
     <v-row
@@ -114,6 +93,7 @@
               :id="handleDTO.id"
               :srcObject.prop="handleDTO.stream"
               :muted="handleDTO.isPublisher ? setVideoMuted(handleDTO) : ''"
+              :poster="getPeer(handleDTO.display_name).avatar_url"
               width="100%"
               autoplay
             />

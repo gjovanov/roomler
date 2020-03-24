@@ -7,6 +7,7 @@
             :room="room"
             :user="user"
             :session="session"
+            :conference-room="conferenceRoom"
           />
         </v-col>
       </v-row>

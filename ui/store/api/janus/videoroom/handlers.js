@@ -32,6 +32,7 @@ export const actions = {
     }
     if (msg.configured === 'ok') {
       this.$Janus.log('onmessage:configured')
+      this.$Janus.log(msg)
       await dispatch('handleConfigured', { handleDTO })
     }
     if (msg.unpublished) {
@@ -147,9 +148,23 @@ export const actions = {
     }
   },
 
-  handleConfigured ({
-    commit
+  async handleConfigured ({
+    commit,
+    dispatch
   }, { handleDTO }) {
+    const result = await dispatch('api/janus/videoroom/api/listparticipants', { handleDTO }, { root: true })
+    if (result.participants) {
+      result.participants.forEach((p) => {
+        const handle = handleDTO.sessionDTO.handleDTOs.find(h => h.id === p.id)
+        if (handle) {
+          const msg = {
+            display: p.display,
+            video: handle.video
+          }
+          commit('api/janus/videoroom/updates/updateIds', { handleDTO: handle, msg }, { root: true })
+        }
+      })
+    }
     this.$Janus.log('Configuration has finished')
   },
 
