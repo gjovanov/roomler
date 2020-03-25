@@ -208,7 +208,7 @@ export default {
     },
     roomPeers () {
       const self = this
-      const users = (this.currentUser ? [this.currentUser] : []).concat(this.$store.getters['api/auth/getRoomPeers'](this.room))
+      const users = this.$store.getters['api/auth/getRoomPeers'](this.room)
       return users
         .map(u => (
           {

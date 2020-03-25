@@ -14,7 +14,15 @@
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
-        <conference :user="user" :room="room" :peers="peers" :room-peers="roomPeers" :session="session" />
+        <conference
+          :user="user"
+          :room="room"
+          :session="session"
+          :peers="peers"
+          :room-peers="roomPeers"
+          :conference-room="conferenceRoom"
+        />
+        <portal-target name="center" />
       </v-expansion-panel-content>
     </v-expansion-panel>
     <v-expansion-panel v-if="panelChat && !isRoomPeer">
@@ -79,7 +87,7 @@
           <span>CHAT - [{{ room.name.toUpperCase() }}]</span>
         </div>
       </v-expansion-panel-header>
-      <v-expansion-panel-content>
+      <v-expansion-panel-content style="height: 100%">
         <chat
           :elem-id="'messages-list'"
           :input-id="'new-message-txt'"

@@ -7,7 +7,9 @@
     clipped
     class="pr-1"
     style="background-color: #121212"
+    mini
   >
+    <portal-target name="ceonference-left" />
     <v-expansion-panels
       v-model="panel"
       accordion
@@ -160,7 +162,21 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-expansion-panel v-if="conferenceRoom" style="background-color: #363636;">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-comments
+            </v-icon> &nbsp;
+            <span>CHAT - {{ conferenceRoom.name }}</span>
+          </div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <portal-target name="chat-left" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-expansion-panels>
+
     <room-delete-dialog
       :dialog="dialog.delete"
       :room="selectedRoom"
@@ -211,6 +227,14 @@ export default {
       default: null
     },
     user: {
+      type: Object,
+      default: null
+    },
+    session: {
+      type: Object,
+      default: null
+    },
+    conferenceRoom: {
       type: Object,
       default: null
     }

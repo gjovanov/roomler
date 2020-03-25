@@ -1,13 +1,17 @@
 
 export const state = () => ({
   session: null,
-  room: null
+  room: null,
+  position: 'center'
 })
 
 export const mutations = {
   set (state, { session, room }) {
     state.session = session
     state.room = room
+  },
+  setPosition (state, position) {
+    state.position = position
   }
 }
 

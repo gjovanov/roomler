@@ -1,5 +1,5 @@
-const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
+const colors = require('vuetify/es5/util/colors').default
 const env = config.appSettings.env
 
 const nuxtConfig = {
@@ -71,7 +71,8 @@ const nuxtConfig = {
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    'portal-vue/nuxt'
   ],
   /*
    ** Axios module configuration

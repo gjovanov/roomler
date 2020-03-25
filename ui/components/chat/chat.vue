@@ -1,105 +1,25 @@
 <template>
-  <div
-    :id="elemId"
-    :ref="elemId"
-    v-scroll:[`#${elemId}`]="onMessagesScroll"
-    style="height: calc(100vh - 500px); overflow-y: auto; overflow-x: hidden"
-  >
-    <add-reaction-menu
-      :open="menu.addReaction.open"
-      :emojis="emojis"
-      :x="menu.addReaction.x"
-      :y="menu.addReaction.y"
-      :message="menu.addReaction.message"
-      @hideMenu="hideMenu"
-      @noScroll="noScroll"
+  <portal :to="name === 'conference' ? 'chat-left' : 'chat-center'">
+    <chat-messages
+      :elem-id="messageListId"
+      :input-id="newMessageId"
+      :room="room"
+      :messages="messages"
+      :unreads="unreads"
+      :panel-chat="panelChat"
     />
-    <template v-for="(value, propertyName) in messages">
-      <v-subheader :key="`subheader_${propertyName}`">
-        {{ propertyName }}
-      </v-subheader>
-      <v-timeline
-        :key="propertyName"
-        dense
-      >
-        <v-scroll-y-reverse-transition
-          group
-        >
-          <v-timeline-item
-            v-for="message in messages[propertyName]"
-            :id="'message_item_' + getMessageId(message)"
-            :key="getMessageId(message)"
-            :icon="!getUser(message.author) || !getUser(message.author).avatar_url ? 'fa-user' : undefined"
-            data-type="message_item"
-            small
-          >
-            <v-badge
-              slot="icon"
-              :color="isOnline(message.author) ? 'green' : 'grey'"
-              bordered
-              bottom
-              left
-              dot
-              offset-x="8"
-              offset-y="8"
-            >
-              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="32">
-                <img :src="getUser(message.author) && getUser(message.author).avatar_url">
-              </v-avatar>
-            </v-badge>
-            <v-hover v-slot:default="{ hover }">
-              <v-card
-                :elevation="hover ? 16 : 2"
-                :class="message.has_mention && !message.is_read ? 'mr-4 red lighten-4' : (!message.is_read || !message._id ? 'mr-4 orange lighten-4' : 'mr-4 white')"
-                light
-              >
-                <v-btn
-                  fab
-                  right
-                  bottom
-                  x-small
-                  absolute
-                  color="green"
-                  @mouseover="showMenu($event, message)"
-                  @click="showMenu($event, message)"
-                >
-                  😄
-                </v-btn>
-                <v-card-title class="overline">
-                  {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
-                  <v-tooltip v-if="message.has_mention" right>
-                    <template v-slot:activator="{ on }">
-                      <v-icon small color="red" v-on="on">
-                        fa-at
-                      </v-icon>
-                    </template>
-                    <span>You are mentioned in this messsage!</span>
-                  </v-tooltip>
-                </v-card-title>
-                <v-card-text>
-                  <pre style="white-space: pre-wrap" v-html="message.content" />
-                </v-card-text>
-              </v-card>
-            </v-hover>
-            <v-spacer />
-            <message-reaction-list
-              :message="message"
-              :reactions="getReactions(message)"
-              @noScroll="noScroll"
-            />
-          </v-timeline-item>
-        </v-scroll-y-reverse-transition>
-      </v-timeline>
-    </template>
-  </div>
+    <tiptap
+      :elem-id="newMessageId"
+      :users="roomPeers"
+      :gallery="room.path"
+      @sendMessage="sendMessage"
+    />
+  </portal>
 </template>
 
 <script>
-import { domUtils } from '@/utils/dom-utils'
-import { datetimeUtils } from '@/utils/datetime-utils'
-import AddReactionMenu from '@/components/chat/add-reaction-menu'
-import MessageReactionList from '@/components/chat/message-reaction-list'
-import * as EmojiMap from 'emojilib'
+import Tiptap from '@/components/editor/tiptap'
+import ChatMessages from '@/components/chat/chat-messages'
 import * as cheerio from 'cheerio'
 import * as uuid from 'uuid/v4'
 
@@ -110,181 +30,72 @@ const scrollDirection = {
 }
 export default {
   components: {
-    AddReactionMenu,
-    MessageReactionList
+    Tiptap,
+    ChatMessages
   },
   props: {
-    elemId: {
+    name: {
       type: String,
-      default: ''
+      default: null
     },
-    inputId: {
-      type: String,
-      default: ''
+    user: {
+      type: Object,
+      default: null
     },
     room: {
       type: Object,
       default: null
     },
-    messages: {
-      type: Object,
-      default () {
-        return {}
-      }
-    },
-    unreads: {
+    roomPeers: {
       type: Array,
       default () {
         return []
       }
-    },
-    panelChat: {
-      type: Boolean,
-      default: true
     }
   },
   data () {
-    const emojis = EmojiMap.ordered.map((name) => {
-      const result = { ...EmojiMap.lib[name], name, key: uuid() }
-      return result
-    })
     return {
-      emojis,
-      datetimeUtils,
-      autoScrollTimeout: null,
-      manualScrollTimeout: null,
-      mouseoverTimeout: null,
-      selectedMessage: null,
-      menu: {
-        addReaction: {
-          x: 0,
-          y: 0,
-          open: false,
-          message: null
-        },
-        reactionMembers: {
-          x: 0,
-          y: 0,
-          open: false
-        }
-      },
-      scroll: scrollDirection.bottom
+      panels: 0,
+      reverse: false,
+      menu: false,
+      scroll: scrollDirection.noScroll
+    }
+  },
+  computed: {
+    messageListId () {
+      return `messages-list-${this.name}`
+    },
+    newMessageId () {
+      return `new-message-${this.name}`
+    },
+    isRoomPeer () {
+      return this.$store.getters['api/room/isRoomPeer'](this.room)
+    },
+    messages () {
+      return this.$store.getters['api/message/dailyMessages'](this.room._id)
+    },
+    unreads () {
+      return this.$store.getters['api/message/unreads'](this.room._id)
+    },
+    panelRight () {
+      return this.$store.state.panel.right
+    },
+    panelChat () {
+      return this.$store.state.panel.chat
     }
   },
 
   watch: {
-    messages (newVal, oldVal) {
-      const self = this
-      this.$nextTick(() => {
-        if (self.autoScrollTimeout) {
-          clearTimeout(self.autoScrollTimeout)
-        }
-        self.autoScrollTimeout = setTimeout(() => {
-          if (self.scroll === scrollDirection.bottom || self.scroll === scrollDirection.top) {
-            self.scrollMessages(self.scroll === scrollDirection.bottom)
-          }
-          self.scroll = scrollDirection.bottom
-        }, 300)
-      })
-    },
-    panelChat (newVal) {
+    async room (newVal) {
       if (newVal) {
-        this.scrollMessages(true)
+        await this.$store.dispatch('api/message/getAll', { room: newVal })
       }
     }
   },
-
-  beforeMount () {
-    const self = this
-    window.addEventListener('focus', this.readUnreads)
-    window.addEventListener('unload', () => {
-      window.removeEventListener('focus', self.readUnreads)
-    })
-  },
-
-  mounted () {
-    this.scrollMessages(true)
-  },
-
-  beforeDestroy () {
-    window.removeEventListener('focus', this.readUnreads)
-  },
-
   methods: {
-    getUser (userid) {
-      return this.$store.getters['api/auth/getUser'](userid)
-    },
-    isOnline (userid) {
-      return this.$store.getters['api/auth/isOnline'](userid)
-    },
-    getReactions (message) {
-      const result = this.$store.getters['api/message/reactions'](message)
-      return result
-    },
-
-    showMenu (e, message) {
-      if (!this.menu.addReaction.open) {
-        this.menu.addReaction.x = e.clientX
-        this.menu.addReaction.y = e.clientY - 100
-        this.menu.addReaction.message = message
-        this.menu.addReaction.open = true
-      }
-    },
-    hideMenu () {
-      this.menu.addReaction.open = false
-    },
-
-    getMessageId (message) {
-      return message._id || message.client_id
-    },
-    scrollMessages (bottom = true) {
-      const messagesList = this.$refs[this.elemId]
-      if (messagesList) {
-        const newScrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
-        messagesList.scrollTop = newScrollTop
-        this.$vuetify.goTo(`#${this.inputId}`)
-      }
-    },
-    noScroll () {
-      this.scroll = scrollDirection.noScroll
-    },
-    onMessagesScroll (e) {
-      if (this.manualScrollTimeout) {
-        clearTimeout(this.manualScrollTimeout)
-      }
-      this.manualScrollTimeout = setTimeout(async () => {
-        await this.readUnreads()
-        if (e.target.scrollTop === 0) {
-          this.scroll = scrollDirection.top
-          await this.loadPreviousMessages()
-        }
-      }, 100)
-    },
-    async loadPreviousMessages () {
-      const payload = { room: this.room }
-      const messageKeys = Object.keys(this.messages).sort().reverse()
-      if (this.messages && messageKeys.length) {
-        payload.before = this.messages[messageKeys[0]][0].createdAt
-      }
-      await this.$store.dispatch('api/message/getAll', payload)
-    },
-    async readUnreads () {
-      const self = this
-      if (this.unreads && document.hasFocus()) {
-        const messagesInView = []
-        this.unreads.forEach((message) => {
-          const messageList = document.getElementById(self.elemId)
-          const messageItem = document.getElementById(`message_item_${self.getMessageId(message)}`)
-          const inView = domUtils.isScrolledIntoView(messageItem)
-          if (messageList && messageItem && inView) {
-            messagesInView.push(message._id)
-          }
-        })
-        if (messagesInView && messagesInView.length) {
-          this.scroll = scrollDirection.noScroll
-          await this.$store.dispatch('api/message/readby/pushAll', messagesInView)
-        }
-      }
+    async join () {
+      await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
+      await this.$store.dispatch('api/message/getAll', { room: this.room })
     },
     async sendMessage (content) {
       if (content) {
@@ -305,15 +116,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.v-timeline-item__divider {
-  min-width: 64px;
-}
-.v-timeline--dense .v-timeline-item__body {
-  max-width: calc(100% - 64px);
-}
-.v-application--is-ltr .v-timeline--dense:not(.v-timeline--reverse):before {
-    left: calc(32px - 1px)
-}
-</style>

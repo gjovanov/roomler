@@ -7,6 +7,8 @@
       :tree="tree"
       :peers="peers"
       :user="user"
+      :session="session"
+      :conference-room="conferenceRoom"
     />
     <right-panel
       v-if="room && room._id"
@@ -39,31 +41,11 @@
         fluid
       >
         <v-row
-          v-if="areRoomRoutes"
           justify="center"
           align="stretch"
           align-content="start"
-          class="pt-0 mt-0 pb-0 mb-0"
         >
-          <v-col cols="12" class="pb-0 mb-0">
-            <room-panel
-              :room="room"
-              :session="session"
-              :conference-room="conferenceRoom"
-              :user="user"
-              :peers="peers"
-              :room-peers="roomPeers"
-              :is-room-route="isRoomRoute"
-            />
-          </v-col>
-        </v-row>
-        <v-row
-          justify="center"
-          align="stretch"
-          align-content="start"
-          class="pt-0 mt-0"
-        >
-          <v-col class="pt-0 mt-0">
+          <v-col>
             <nuxt />
           </v-col>
         </v-row>
@@ -80,7 +62,7 @@ import Logo from '@/components/logo'
 import AuthPanel from '@/components/auth-panel'
 import LeftPanel from '@/components/left-panel'
 import RightPanel from '@/components/right-panel'
-import RoomPanel from '@/components/room-panel'
+// import RoomPanel from '@/components/room-panel'
 import BottomPanel from '@/components/bottom-panel'
 import Toaster from '@/components/toaster'
 
@@ -91,7 +73,7 @@ export default {
     AuthPanel,
     LeftPanel,
     RightPanel,
-    RoomPanel,
+    // RoomPanel,
     BottomPanel,
     Toaster
   },
@@ -129,6 +111,9 @@ export default {
     },
     conferenceRoom () {
       return this.$store.state.api.conference.room
+    },
+    conferencePosition () {
+      return this.$store.state.api.conference.position
     },
     tree () {
       return this.$store.state.api.room.tree

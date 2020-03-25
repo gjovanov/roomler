@@ -1,167 +1,169 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0"
-  >
-    <v-row
-      v-if="session && screens && screens.length"
+  <portal :to="`conference-${conferencePosition}`">
+    <v-container
+      fluid
+      class="pa-0"
     >
-      <v-col
-        v-for="handleDTO in screens"
-        :key="handleDTO.id"
-        sm="12"
-        cols="12"
-        class="pa-0 ma-0"
+      <v-row
+        v-if="session && screens && screens.length"
       >
-        <v-card flat>
-          <v-card-title class="pa-0 ma-0">
-            <v-btn
-              outlined
-              tile
-              block
-            >
-              <v-avatar
-                size="36px"
+        <v-col
+          v-for="handleDTO in screens"
+          :key="handleDTO.id"
+          sm="12"
+          cols="12"
+          class="pa-0 ma-0"
+        >
+          <v-card flat>
+            <v-card-title class="pa-0 ma-0">
+              <v-btn
+                outlined
+                tile
+                block
               >
-                <img
-                  v-if="getPeer(handleDTO.display_name).avatar_url"
-                  :src="getPeer(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
+                <v-avatar
+                  size="36px"
                 >
-                <v-icon
-                  v-else
-                >
-                  fa-user
-                </v-icon>
-              </v-avatar>
-              {{ handleDTO.display_name }}
-            </v-btn>
-          </v-card-title>
-          <v-card-text class="pa-0 ma-0">
-            <video
-              v-if="handleDTO.stream"
-              :id="handleDTO.id"
-              :srcObject.prop="handleDTO.stream"
-              :muted="handleDTO.isPublisher ? setVideoMuted(handleDTO) : ''"
-              :poster="getPeer(handleDTO.display_name).avatar_url"
-              width="100%"
-              autoplay
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="session && publishers && publishers.length"
-    >
-      <v-col
-        v-for="handleDTO in publishers"
-        :key="handleDTO.id"
-        sm="12"
-        md="4"
-        lg="3"
-        cols="12"
-        class="pa-0 ma-0"
+                  <img
+                    v-if="getPeer(handleDTO.display_name).avatar_url"
+                    :src="getPeer(handleDTO.display_name).avatar_url"
+                    alt="Avatar"
+                  >
+                  <v-icon
+                    v-else
+                  >
+                    fa-user
+                  </v-icon>
+                </v-avatar>
+                {{ handleDTO.display_name }}
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0 ma-0">
+              <video
+                :id="handleDTO.id"
+                :srcObject.prop="handleDTO.stream"
+                :poster="getPeer(handleDTO.display_name).avatar_url"
+                width="100%"
+                height="100%"
+                autoplay
+                controls
+              />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="session && publishers && publishers.length"
       >
-        <v-card flat>
-          <v-card-title class="pa-0 ma-0">
-            <v-btn
-              outlined
-              tile
-              block
-            >
-              <v-avatar
-                size="36px"
+        <v-col
+          v-for="handleDTO in publishers"
+          :key="handleDTO.id"
+          sm="12"
+          md="4"
+          lg="3"
+          cols="12"
+          class="pa-0 ma-0"
+        >
+          <v-card flat>
+            <v-card-title class="pa-0 ma-0">
+              <v-btn
+                outlined
+                tile
+                block
               >
-                <img
-                  v-if="getPeer(handleDTO.display_name).avatar_url"
-                  :src="getPeer(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
+                <v-avatar
+                  size="36px"
                 >
-                <v-icon
-                  v-else
-                >
-                  fa-user
-                </v-icon>
-              </v-avatar>
-              {{ handleDTO.display_name }}
-            </v-btn>
-          </v-card-title>
-          <v-card-text class="pa-0 ma-0">
-            <video
-              v-if="handleDTO.stream"
-              :id="handleDTO.id"
-              :srcObject.prop="handleDTO.stream"
-              :muted="handleDTO.isPublisher ? setVideoMuted(handleDTO) : ''"
-              :poster="getPeer(handleDTO.display_name).avatar_url"
-              width="100%"
-              autoplay
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="session && attendees && attendees.length"
-    >
-      <v-col
-        sm="12"
-        cols="12"
-        class="pa-0 ma-0"
+                  <img
+                    v-if="getPeer(handleDTO.display_name).avatar_url"
+                    :src="getPeer(handleDTO.display_name).avatar_url"
+                    alt="Avatar"
+                  >
+                  <v-icon
+                    v-else
+                  >
+                    fa-user
+                  </v-icon>
+                </v-avatar>
+                {{ handleDTO.display_name }}
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0 ma-0">
+              <video
+                :id="handleDTO.id"
+                :srcObject.prop="handleDTO.stream"
+                :poster="getPeer(handleDTO.display_name).avatar_url"
+                width="100%"
+                height="100%"
+                autoplay
+                controls
+              />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="session && attendees && attendees.length"
       >
-        <v-subheader>Attendees</v-subheader>
-      </v-col>
-    </v-row>
-    <v-row
-      v-if="session && attendees && attendees.length"
-    >
-      <v-col
-        v-for="handleDTO in attendees"
-        :key="handleDTO.id"
-        sm="12"
-        md="4"
-        lg="3"
-        cols="12"
-        class="pa-0 ma-0"
+        <v-col
+          sm="12"
+          cols="12"
+          class="pa-0 ma-0"
+        >
+          <v-subheader>Attendees</v-subheader>
+        </v-col>
+      </v-row>
+      <v-row
+        v-if="session && attendees && attendees.length"
       >
-        <v-card flat>
-          <v-card-title class="pa-0 ma-0">
-            <v-btn
-              outlined
-              tile
-              block
-            >
-              <v-avatar
-                size="36px"
+        <v-col
+          v-for="handleDTO in attendees"
+          :key="handleDTO.id"
+          sm="12"
+          md="4"
+          lg="3"
+          cols="12"
+          class="pa-0 ma-0"
+        >
+          <v-card flat>
+            <v-card-title class="pa-0 ma-0">
+              <v-btn
+                outlined
+                tile
+                block
               >
-                <img
-                  v-if="getPeer(handleDTO.display_name).avatar_url"
-                  :src="getPeer(handleDTO.display_name).avatar_url"
-                  alt="Avatar"
+                <v-avatar
+                  size="36px"
                 >
-                <v-icon
-                  v-else
-                >
-                  fa-user
-                </v-icon>
-              </v-avatar>
-              {{ handleDTO.display_name }}
-            </v-btn>
-          </v-card-title>
-          <v-card-text class="pa-0 ma-0">
-            <video
-              v-if="handleDTO.stream"
-              :id="handleDTO.id"
-              :srcObject.prop="handleDTO.stream"
-              :muted="handleDTO.isPublisher ? setVideoMuted(handleDTO) : ''"
-              width="100%"
-              autoplay
-            />
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                  <img
+                    v-if="getPeer(handleDTO.display_name).avatar_url"
+                    :src="getPeer(handleDTO.display_name).avatar_url"
+                    alt="Avatar"
+                  >
+                  <v-icon
+                    v-else
+                  >
+                    fa-user
+                  </v-icon>
+                </v-avatar>
+                {{ handleDTO.display_name }}
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0 ma-0">
+              <video
+                :id="handleDTO.id"
+                :srcObject.prop="handleDTO.stream"
+                :poster="getPeer(handleDTO.display_name).avatar_url"
+                width="100%"
+                height="100%"
+                autoplay
+              />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </portal>
 </template>
 
 <script>
@@ -179,6 +181,14 @@ export default {
     session: {
       type: Object,
       default: null
+    },
+    conferenceRoom: {
+      type: Object,
+      default: null
+    },
+    conferencePosition: {
+      type: String,
+      default: ''
     },
     peers: {
       type: Array,
@@ -203,6 +213,16 @@ export default {
     },
     attendees () {
       return this.session.handleDTOs.filter(h => !h.audio && !h.video && !h.stream)
+    },
+    localHandle () {
+      return this.$store.getters['api/conference/localHandle']
+    }
+  },
+  watch: {
+    'localHandle.stream' (newVal) {
+      if (newVal && this.localHandle) {
+        this.setVideoMuted(this.localHandle)
+      }
     }
   },
   mounted () {
@@ -217,6 +237,12 @@ export default {
     document.removeEventListener('beforeunload', this.leave)
   },
   methods: {
+    handleVideoPaused ($event) {
+      console.log($event)
+    },
+    handleVideoEnded ($event) {
+      console.log($event)
+    },
     async join (janusPayload) {
       await this.$store.dispatch('api/conference/join', janusPayload)
     },
@@ -227,14 +253,27 @@ export default {
       return this.peers.find(u => u.username === username) || { }
     },
     setVideoMuted (handleDTO) {
+      console.log('MUTED')
       this.$nextTick(() => {
-        const video = document.getElementById('' + handleDTO.id)
-        if (video) {
-          video.setAttribute('muted', 'muted')
-          video.muted = true
-        }
+        setTimeout(() => {
+          console.log(`MUTED2: ${handleDTO.id}`)
+          const video = document.getElementById(handleDTO.id)
+          if (video) {
+            console.log('MUTED3')
+            console.log('setting muted')
+            video.setAttribute('muted', 'muted')
+            video.muted = true
+            console.log('MUTED4')
+          }
+        }, 100)
       })
     }
   }
 }
 </script>
+
+<style>
+video {
+   object-fit: scale-down;
+}
+</style>
