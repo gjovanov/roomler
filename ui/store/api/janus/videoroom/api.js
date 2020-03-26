@@ -229,7 +229,6 @@ export const actions = {
         // filename: handleDTO.filename,
         display: handleDTO.display_name + (screen ? '|Screenshare' : '')
       }
-      console.log(request)
       handleDTO.handle.send({
         message: request,
         jsep,

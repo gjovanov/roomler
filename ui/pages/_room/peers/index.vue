@@ -16,7 +16,7 @@
             <span>PEERS</span>
           </div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        <v-expansion-panel-content class="justify-center">
           <v-list three-line>
             <template v-for="(item, index) in roomPeers">
               <v-divider
@@ -79,18 +79,24 @@
               </v-list-item>
             </template>
           </v-list>
+          <v-divider />
+          <v-tooltip bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-if="peers && peers.length && canInvite"
+                color="red"
+                right
+                class="ma-4"
+                @click="peerDialog = true"
+                v-on="on"
+              >
+                <v-icon>fa-plus</v-icon>
+              </v-btn>
+            </template>
+            <span>Add existing peers</span>
+          </v-tooltip>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-spacer />
-      <v-btn
-        v-if="peers && peers.length && canInvite"
-        color="red"
-        right
-        class="ma-4"
-        @click="peerDialog = true"
-      >
-        <v-icon>fa-users</v-icon> &nbsp; Add existing peers
-      </v-btn>
       <v-expansion-panel>
         <v-expansion-panel-header>
           <div>
@@ -143,18 +149,25 @@
               </v-list-item>
             </template>
           </v-list>
+          <v-divider />
+          <v-tooltip bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-if="canInvite"
+                color="primary"
+                right
+                class="mt-4 ml-4 mr-4 mb-12"
+                @click="inviteDialog = true"
+                v-on="on"
+              >
+                <v-icon>fa-paper-plane</v-icon>
+              </v-btn>
+            </template>
+            <span>Invite new peers</span>
+          </v-tooltip>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-spacer />
-      <v-btn
-        v-if="canInvite"
-        color="primary"
-        right
-        class="mt-4 ml-4 mr-4 mb-12"
-        @click="inviteDialog = true"
-      >
-        <v-icon>fa-paper-plane</v-icon> &nbsp; Invite new peers
-      </v-btn>
+
       <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
       <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
       <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />

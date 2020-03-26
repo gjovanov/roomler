@@ -1,59 +1,73 @@
 <template>
   <client-only>
-    <v-container>
-      <v-row>
-        <v-col cols="12">
+    <v-expansion-panels
+      v-model="panels"
+      accordion
+      style="height: 100%"
+    >
+      <v-expansion-panel v-if="!isRoomPeer">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-sign-in-alt
+            </v-icon> &nbsp;
+            <span>JOIN THIS ROOM - [{{ room && room.name ? room.name.toUpperCase() : '' }}]</span>
+          </div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row
+            dense
+            align="center"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              sm="6"
+              md="4"
+            >
+              <v-btn dark block outlined class="red" @click="join()">
+                <v-icon>fa-users</v-icon> &nbsp; Join
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel v-if="isRoomPeer && roomPeers && roomPeers.length >= 0">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-comments
+            </v-icon> &nbsp;
+            <span>CONFERENCE - [{{ room.name.toUpperCase() }}]</span>
+          </div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content style="height: 100%" class="pb-0">
           <conference-navigation
             :user="user"
             :room="room"
             :session="session"
-            :local-handle="localHandle"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <chat
-            :name="'conference'"
-            :user="user"
-            :room="room"
-            :room-peers="roomPeers"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12">
-          <conference
-            :user="user"
-            :room="room"
-            :session="session"
-            :peers="peers"
-            :room-peers="roomPeers"
             :conference-room="conferenceRoom"
-            :conference-position="conferencePostion"
           />
           <portal-target name="conference-center" />
-        </v-col>
-      </v-row>
-    </v-container>
+          <portal-target name="chat-center" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </client-only>
 </template>
 
 <script>
-import Chat from '@/components/chat/chat'
-import Conference from '@/components/conference/conference'
+
 import ConferenceNavigation from '@/components/conference/conference-navigation'
 
 export default {
   middleware: 'authenticated',
   components: {
-    Chat,
-    Conference,
     ConferenceNavigation
   },
   data () {
     return {
-      panels: [0, 1]
+      panels: 0
     }
   },
   computed: {
@@ -72,12 +86,6 @@ export default {
     conferenceRoom () {
       return this.$store.state.api.conference.room
     },
-    conferencePostion () {
-      return this.$store.state.api.conference.position
-    },
-    localHandle () {
-      return this.$store.getters['api/conference/localHandle']
-    },
     peers () {
       return this.$store.getters['api/auth/getPeers']
     },
@@ -94,16 +102,12 @@ export default {
   beforeRouteLeave (to, from, next) {
     this.$store.commit('api/conference/setPosition', 'left', { root: true })
     next(true)
+  },
+  methods: {
+    async join () {
+      await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
+      await this.$store.dispatch('api/message/getAll', { room: this.room })
+    }
   }
 }
 </script>
-
-<style>
-table {
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid black;
-}
-</style>

@@ -9,13 +9,13 @@
       :user="user"
       :session="session"
       :conference-room="conferenceRoom"
+      :conference-position="conferencePosition"
     />
     <right-panel
       v-if="room && room._id"
       :drawer="panelRight"
       :room="room"
       :peers="peers"
-      :room-peers="roomPeers"
     />
     <v-app-bar
       app
@@ -33,6 +33,20 @@
 
       <auth-panel />
     </v-app-bar>
+
+    <conference
+      :user="user"
+      :room="room"
+      :session="session"
+      :peers="peers"
+      :conference-room="conferenceRoom"
+      :conference-position="conferencePosition"
+    />
+    <chat
+      :name="'conference'"
+      :user="user"
+      :room="conferenceRoom"
+    />
 
     <v-content class="pt-9 ma-0">
       <v-container
@@ -62,7 +76,8 @@ import Logo from '@/components/logo'
 import AuthPanel from '@/components/auth-panel'
 import LeftPanel from '@/components/left-panel'
 import RightPanel from '@/components/right-panel'
-// import RoomPanel from '@/components/room-panel'
+import Conference from '@/components/conference/conference'
+import Chat from '@/components/chat/chat'
 import BottomPanel from '@/components/bottom-panel'
 import Toaster from '@/components/toaster'
 
@@ -73,7 +88,8 @@ export default {
     AuthPanel,
     LeftPanel,
     RightPanel,
-    // RoomPanel,
+    Conference,
+    Chat,
     BottomPanel,
     Toaster
   },
@@ -120,9 +136,6 @@ export default {
     },
     peers () {
       return this.$store.getters['api/auth/getPeers']
-    },
-    roomPeers () {
-      return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     panelLeft () {
       return this.$store.state.panel.left

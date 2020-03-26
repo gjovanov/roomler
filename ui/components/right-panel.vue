@@ -76,18 +76,17 @@ export default {
       default () {
         return []
       }
-    },
-    roomPeers: {
-      type: Array,
-      default () {
-        return []
-      }
     }
   },
   data () {
     return {
       rightDrawer: true,
       mini: true
+    }
+  },
+  computed: {
+    roomPeers () {
+      return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     }
   },
   watch: {

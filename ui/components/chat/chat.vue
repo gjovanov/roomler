@@ -1,5 +1,5 @@
 <template>
-  <portal :to="name === 'conference' ? 'chat-left' : 'chat-center'">
+  <portal v-if="room" :to="name === 'conference' ? 'chat-left' : 'chat-center'">
     <chat-messages
       :elem-id="messageListId"
       :input-id="newMessageId"
@@ -45,12 +45,6 @@ export default {
     room: {
       type: Object,
       default: null
-    },
-    roomPeers: {
-      type: Array,
-      default () {
-        return []
-      }
     }
   },
   data () {
@@ -67,6 +61,9 @@ export default {
     },
     newMessageId () {
       return `new-message-${this.name}`
+    },
+    roomPeers () {
+      return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     isRoomPeer () {
       return this.$store.getters['api/room/isRoomPeer'](this.room)

@@ -3,6 +3,7 @@
     <v-expansion-panels
       v-model="panels"
       accordion
+      style="height: 100%"
     >
       <v-expansion-panel v-if="!isRoomPeer">
         <v-expansion-panel-header>
@@ -10,7 +11,7 @@
             <v-icon>
               fa-sign-in-alt
             </v-icon> &nbsp;
-            <span>JOIN THIS ROOM - [{{ room.name.toUpperCase() }}]</span>
+            <span>JOIN THIS ROOM - [{{ room && room.name ? room.name.toUpperCase() : '' }}]</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -63,7 +64,7 @@
             <v-icon>
               fa-comments
             </v-icon> &nbsp;
-            <span>CHAT - [{{ room.name.toUpperCase() }}]</span>
+            <span>CHAT - [{{ room ? room.name.toUpperCase() : '' }}]</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content style="height: 100%" class="pb-0">
@@ -71,7 +72,6 @@
             :name="'center'"
             :user="user"
             :room="room"
-            :room-peers="roomPeers"
           />
           <portal-target name="chat-center" />
         </v-expansion-panel-content>

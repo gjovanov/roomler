@@ -1,114 +1,47 @@
 <template>
   <client-only>
-    <v-card
-      lg="12"
-      md="12"
-    >
-      <v-toolbar
-        v-if="room"
-        tile
-        dense
-        style="background-color: #363636; height: 56px;"
-      >
-        <v-toolbar-title>
-          {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room.name.toUpperCase() }}
-        </v-toolbar-title>
-
-        <v-spacer />
-
-        <v-tooltip bottom left>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="room"
-              tile
-              light
-              :to="`/${room.path}/chat`"
-              v-on="on"
-            >
-              <v-icon>
-                fa-comments
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Chat</span>
-        </v-tooltip>
-
-        <v-tooltip bottom left>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="room"
-              tile
-              light
-              :to="`/${room.path}/calls`"
-              v-on="on"
-            >
-              <v-icon>
-                fa-phone-volume
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Calls</span>
-        </v-tooltip>
-
-        <v-tooltip bottom left>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="room"
-              tile
-              light
-              :to="`/${room.path}/peers`"
-              v-on="on"
-            >
-              <v-icon>
-                fa-users
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Manage peers</span>
-        </v-tooltip>
-
-        <v-spacer />
-
-        <v-tooltip bottom left>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-if="room"
-              tile
-              light
-              :to="`/${room.path}/settings`"
-              v-on="on"
-            >
-              <v-icon>
-                fa-cog
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Manage settings</span>
-        </v-tooltip>
-      </v-toolbar>
-      <nuxt-child />
-    </v-card>
+    <v-container fluid class="pa-0 ma-0">
+      <v-row>
+        <v-col cols="12" class="pa-0 ma-0">
+          <room-navigation
+            :room="room"
+            :conference-room="conferenceRoom"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" class="pt-0">
+          <nuxt-child />
+        </v-col>
+      </v-row>
+    </v-container>
   </client-only>
 </template>
 
 <script>
+import RoomNavigation from '@/components/room/room-navigation'
 
 export default {
   middleware: 'authenticated',
+  components: {
+    RoomNavigation
+  },
   computed: {
     room () {
       return this.$store.state.api.room.room
+    },
+    session () {
+      return this.$store.state.api.conference.session
     },
     conferenceRoom () {
       return this.$store.state.api.conference.room
     }
   },
-  mounted () {
-    this.$store.commit('panel/set', { panel: 'chat', value: true }, { root: true })
+  async mounted () {
+    await this.$store.dispatch('api/room/get', this.$route.params.room)
   },
   beforeRouteLeave (to, from, next) {
-    const session = this.$store.state.api.conference.session
-    if (session) {
+    if (this.session) {
       const answer = window.confirm('Do you really want to leave from the conference? If you select "OK" you will get disconnected!')
       if (answer) {
         next()

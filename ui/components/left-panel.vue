@@ -3,19 +3,35 @@
     ref="leftDrawer"
     v-model="leftDrawer"
     :width="width"
+    height="%100"
     app
     clipped
     class="pr-1"
     style="background-color: #121212"
     mini
   >
-    <portal-target name="ceonference-left" />
+    <nuxt-link v-show="conferenceRoom && conferencePosition === 'left'" :to="conferenceRoom ? `/${conferenceRoom.path}/calls` : ''">
+      <portal-target name="conference-left" />
+    </nuxt-link>
     <v-expansion-panels
       v-model="panel"
       accordion
       tile
       class="pa-0 ma-0"
     >
+      <v-expansion-panel v-show="conferenceRoom && conferencePosition === 'center'" style="background-color: #363636;">
+        <v-expansion-panel-header>
+          <div>
+            <v-icon>
+              fa-comments
+            </v-icon> &nbsp;
+            <span>CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
+          </div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <portal-target name="chat-left" />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <v-expansion-panel style="background-color: #363636;">
         <v-expansion-panel-header>
           <div>
@@ -76,7 +92,6 @@
                     small
                     block
                     outlined
-                    :color="item.is_root ? 'orange' : ''"
                     class="justify-space-between pr-0"
                     v-on="on"
                   >
@@ -162,19 +177,6 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel v-if="conferenceRoom" style="background-color: #363636;">
-        <v-expansion-panel-header>
-          <div>
-            <v-icon>
-              fa-comments
-            </v-icon> &nbsp;
-            <span>CHAT - {{ conferenceRoom.name }}</span>
-          </div>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <portal-target name="chat-left" />
-        </v-expansion-panel-content>
-      </v-expansion-panel>
     </v-expansion-panels>
 
     <room-delete-dialog
@@ -237,12 +239,16 @@ export default {
     conferenceRoom: {
       type: Object,
       default: null
+    },
+    conferencePosition: {
+      type: String,
+      default: null
     }
   },
   data () {
     const config = this.$store.state.api.config.config
     return {
-      panel: 0,
+      panel: 1,
       modelList: [],
       openList: [],
       leftDrawer: true,
@@ -260,6 +266,12 @@ export default {
   computed: {
     direction () {
       return !this.leftDrawer ? 'Open' : 'Closed'
+    },
+    panelChange () {
+      return {
+        conferenceRoom: this.conferenceRoom,
+        conferencePosition: this.conferencePosition
+      }
     }
   },
   watch: {
@@ -269,6 +281,13 @@ export default {
     leftDrawer (value) {
       if (value !== this.drawer) {
         this.$store.commit('panel/toggle', 'left')
+      }
+    },
+    panelChange (value) {
+      if (value.conferenceRoom && value.conferenceRoom && value.conferencePosition === 'center') {
+        this.panel = 0
+      } else {
+        this.panel = 1
       }
     }
   },
@@ -340,6 +359,9 @@ export default {
     },
     edit (room) {
       this.$router.push({ path: `/@/room/edit?room=${room.path}` })
+    },
+    goToConference (room) {
+      this.$router.push({ path: `/${this.conferenceRoom.path}/calls` })
     },
     removeConsent (item) {
       this.dialog.delete = true

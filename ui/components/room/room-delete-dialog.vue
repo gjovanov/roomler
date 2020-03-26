@@ -69,10 +69,12 @@ export default {
   methods: {
     no () {
       this.$emit('removeCancel', this.room)
+      this.name = null
     },
     yes () {
       if (this.$refs.roomDeleteForm.validate()) {
         this.$emit('remove', this.room)
+        this.name = null
       }
     }
   }

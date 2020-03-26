@@ -1,12 +1,12 @@
 <template>
   <v-toolbar
-    v-if="room"
+    v-if="room || conferenceRoom"
     tile
     dense
     style="background-color: #363636; height: 56px;"
   >
     <v-toolbar-title>
-      {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room.name.toUpperCase() }}
+      {{ room && room.name ? room.name.toUpperCase() : '' }}
     </v-toolbar-title>
 
     <v-spacer />
@@ -16,12 +16,11 @@
         <v-btn
           v-if="room"
           tile
-          small
-          class="v-btn--active"
-          :to="`/${room.path}`"
+          light
+          :to="`/${room.path}/chat`"
           v-on="on"
         >
-          <v-icon small>
+          <v-icon>
             fa-comments
           </v-icon>
         </v-btn>
@@ -29,41 +28,38 @@
       <span>Chat</span>
     </v-tooltip>
 
-    <v-tooltip bottom left>
+    <v-tooltip v-if="!conferenceRoom || (room && conferenceRoom && room._id == conferenceRoom._id)" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
           tile
-          small
-          class="v-btn--active"
-          :to="`/${room.path}/peers`"
+          light
+          :to="`/${room.path}/calls`"
           v-on="on"
         >
-          <v-icon small>
-            fa-users
+          <v-icon>
+            fa-phone-volume
           </v-icon>
         </v-btn>
       </template>
-      <span>Manage peers</span>
+      <span>Calls</span>
     </v-tooltip>
 
     <v-tooltip bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
-          v-show="!session"
           tile
-          small
-          class="v-btn--active"
-          :to="`/${room.path}/settings`"
+          light
+          :to="`/${room.path}/peers`"
           v-on="on"
         >
-          <v-icon small>
-            fa-cog
+          <v-icon>
+            fa-users
           </v-icon>
         </v-btn>
       </template>
-      <span>Manage settings</span>
+      <span>Manage peers</span>
     </v-tooltip>
 
     <v-spacer />
@@ -73,22 +69,16 @@
         <v-btn
           v-if="room"
           tile
-          small
-          :text="panelRight"
-          class="v-btn--active"
-          @click="toggle('right')"
+          light
+          :to="`/${room.path}/settings`"
           v-on="on"
         >
-          <v-icon v-if="panelRight" small>
-            fa-caret-square-right
-          </v-icon>
-          <v-icon v-if="!panelRight" small>
-            fa-caret-square-left
+          <v-icon>
+            fa-cog
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="panelRight">Hide right panel</span>
-      <span v-if="!panelRight">Show right panel</span>
+      <span>Manage settings</span>
     </v-tooltip>
   </v-toolbar>
 </template>
@@ -97,15 +87,7 @@
 
 export default {
   props: {
-    user: {
-      type: Object,
-      default: null
-    },
     room: {
-      type: Object,
-      default: null
-    },
-    session: {
       type: Object,
       default: null
     },

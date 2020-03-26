@@ -17,6 +17,7 @@
               <v-btn
                 :text="!media.video"
                 outlined
+                tile
                 v-on="on"
                 @click="media.video = !media.video"
               >
@@ -36,6 +37,7 @@
               <v-btn
                 :text="!media.screen"
                 outlined
+                tile
                 v-on="on"
                 @click="media.screen = !media.screen"
               >
@@ -55,6 +57,7 @@
               <v-btn
                 :text="!media.audio"
                 outlined
+                tile
                 v-on="on"
                 @click="media.audio = !media.audio"
               >
@@ -79,6 +82,7 @@
         <v-btn
           color="green darken-1"
           outlined
+          tile
           @click="cancel()"
         >
           Cancel
@@ -88,6 +92,7 @@
           :disabled="!media.audio && !media.video"
           color="green darken-1"
           outlined
+          tile
           @click="publish()"
         >
           Publish

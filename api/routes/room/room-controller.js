@@ -4,7 +4,7 @@ const wsDispatcher = require('../ws/ws-dispatcher')
 
 class RoomController {
   async get (request, reply) {
-    const result = await roomService.get(request.user.user._id, request.query.id)
+    const result = await roomService.get(request.user.user._id, request.query)
     reply.send(result)
   }
 
@@ -17,7 +17,9 @@ class RoomController {
     const payload = request.body
     let parentRoom = null
     if (payload.parent_id) {
-      parentRoom = await roomService.get(request.user.user._id, payload.parent_id, ['owner', 'moderators'])
+      parentRoom = await roomService.get(request.user.user._id, {
+        id: payload.parent_id
+      }, ['owner', 'moderators'])
     }
     roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
@@ -38,7 +40,9 @@ class RoomController {
       result = await roomService.update(request.user.user._id, id, update)
     } else {
       // slugify using parent's name and rename the children
-      const room = await roomService.get(request.user.user._id, id)
+      const room = await roomService.get(request.user.user._id, {
+        id
+      })
       const parentRoom = await roomService.getParent(room)
       roomService.slugify(payload, parentRoom)
       result = await roomService.update(request.user.user._id, id, update)
@@ -51,9 +55,12 @@ class RoomController {
   }
 
   async delete (request, reply) {
-    const room = await roomService.get(request.user.user._id, request.params.id)
+    const room = await roomService.get(request.user.user._id, {
+      id: request.params.id
+    })
     const children = await roomService.getChildren(room, request.user.user._id)
     const parents = await roomService.getParents(room)
+
     const isOwner = !!([room, ...parents].find(r => r.owner.toString() === request.user.user._id.toString()))
     if (!isOwner) {
       throw new Error('Delete operation not allowed! You need to be owner of either the this or any parent room.')

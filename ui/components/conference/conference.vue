@@ -15,29 +15,6 @@
           class="pa-0 ma-0"
         >
           <v-card flat>
-            <v-card-title class="pa-0 ma-0">
-              <v-btn
-                outlined
-                tile
-                block
-              >
-                <v-avatar
-                  size="36px"
-                >
-                  <img
-                    v-if="getPeer(handleDTO.display_name).avatar_url"
-                    :src="getPeer(handleDTO.display_name).avatar_url"
-                    alt="Avatar"
-                  >
-                  <v-icon
-                    v-else
-                  >
-                    fa-user
-                  </v-icon>
-                </v-avatar>
-                {{ handleDTO.display_name }}
-              </v-btn>
-            </v-card-title>
             <v-card-text class="pa-0 ma-0">
               <video
                 :id="handleDTO.id"
@@ -65,29 +42,6 @@
           class="pa-0 ma-0"
         >
           <v-card flat>
-            <v-card-title class="pa-0 ma-0">
-              <v-btn
-                outlined
-                tile
-                block
-              >
-                <v-avatar
-                  size="36px"
-                >
-                  <img
-                    v-if="getPeer(handleDTO.display_name).avatar_url"
-                    :src="getPeer(handleDTO.display_name).avatar_url"
-                    alt="Avatar"
-                  >
-                  <v-icon
-                    v-else
-                  >
-                    fa-user
-                  </v-icon>
-                </v-avatar>
-                {{ handleDTO.display_name }}
-              </v-btn>
-            </v-card-title>
             <v-card-text class="pa-0 ma-0">
               <video
                 :id="handleDTO.id"
@@ -126,29 +80,6 @@
           class="pa-0 ma-0"
         >
           <v-card flat>
-            <v-card-title class="pa-0 ma-0">
-              <v-btn
-                outlined
-                tile
-                block
-              >
-                <v-avatar
-                  size="36px"
-                >
-                  <img
-                    v-if="getPeer(handleDTO.display_name).avatar_url"
-                    :src="getPeer(handleDTO.display_name).avatar_url"
-                    alt="Avatar"
-                  >
-                  <v-icon
-                    v-else
-                  >
-                    fa-user
-                  </v-icon>
-                </v-avatar>
-                {{ handleDTO.display_name }}
-              </v-btn>
-            </v-card-title>
             <v-card-text class="pa-0 ma-0">
               <video
                 :id="handleDTO.id"
@@ -195,16 +126,13 @@ export default {
       default () {
         return []
       }
-    },
-    roomPeers: {
-      type: Array,
-      default () {
-        return []
-      }
     }
   },
 
   computed: {
+    roomPeers () {
+      return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
+    },
     screens () {
       return this.session.handleDTOs.filter(h => h.screen && h.stream)
     },
@@ -223,6 +151,16 @@ export default {
       if (newVal && this.localHandle) {
         this.setVideoMuted(this.localHandle)
       }
+    },
+    'localHandle.stream.videoTracks' (newVal) {
+      if (newVal && this.localHandle) {
+        this.setVideoMuted(this.localHandle)
+      }
+    }
+  },
+  updated () {
+    if (this.localHandle) {
+      this.setVideoMuted(this.localHandle)
     }
   },
   mounted () {
@@ -237,12 +175,6 @@ export default {
     document.removeEventListener('beforeunload', this.leave)
   },
   methods: {
-    handleVideoPaused ($event) {
-      console.log($event)
-    },
-    handleVideoEnded ($event) {
-      console.log($event)
-    },
     async join (janusPayload) {
       await this.$store.dispatch('api/conference/join', janusPayload)
     },
@@ -253,17 +185,12 @@ export default {
       return this.peers.find(u => u.username === username) || { }
     },
     setVideoMuted (handleDTO) {
-      console.log('MUTED')
       this.$nextTick(() => {
         setTimeout(() => {
-          console.log(`MUTED2: ${handleDTO.id}`)
           const video = document.getElementById(handleDTO.id)
           if (video) {
-            console.log('MUTED3')
-            console.log('setting muted')
             video.setAttribute('muted', 'muted')
             video.muted = true
-            console.log('MUTED4')
           }
         }, 100)
       })

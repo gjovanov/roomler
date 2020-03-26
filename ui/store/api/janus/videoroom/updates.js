@@ -27,7 +27,6 @@ export const mutations = {
     }
   },
   clearStream (state, { handleDTO }) {
-    console.log('clearStream')
     handleDTO.stream = null
   },
   consentDialog (state, { handleDTO, on }) {

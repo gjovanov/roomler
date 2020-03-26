@@ -1,7 +1,8 @@
 const S = require('fluent-schema')
 
 const getQueryString = S.object()
-  .prop('id', S.string().required())
+  .prop('id', S.string())
+  .prop('query', S.string())
 
 const getAllQueryString = S.object()
   .prop('page', S.integer())

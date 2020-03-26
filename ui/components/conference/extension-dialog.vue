@@ -19,6 +19,7 @@
         <v-btn
           color="green darken-1"
           outlined
+          tile
           @click="cancel()"
         >
           Cancel
@@ -27,6 +28,7 @@
         <v-btn
           color="green darken-1"
           outlined
+          tile
           link
           href="https://chrome.google.com/webstore/detail/janus-webrtc-screensharin/hapfgfdkleiggjjpfpenajgdnfckjpaj"
           target="_blank"

@@ -148,7 +148,7 @@ export default {
     const defaults = config.dataSettings.room.defaults.media
 
     return {
-      panel: null,
+      panel: 0,
       url: config.appSettings.env.URL,
       audiocodecs: defaults.audiocodec.split(','),
       videocodecs: defaults.videocodec.split(',')

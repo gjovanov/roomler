@@ -4,6 +4,25 @@
     <publish-dialog :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
     <extension-dialog :open="extensionDialog" @cancel="extensionDialog = false" />
 
+    <v-tooltip v-if="!localHandle " bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="!localHandle"
+          tile
+          small
+          class="v-btn--active"
+          color="green"
+          v-on="on"
+          @click="joinDialog = true"
+        >
+          <v-icon small>
+            fa-phone-volume
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>Join the conference</span>
+    </v-tooltip>
+
     <v-tooltip v-if="localHandle && localHandle.stream" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
@@ -154,7 +173,7 @@ export default {
       type: Object,
       default: null
     },
-    localHandle: {
+    conferenceRoom: {
       type: Object,
       default: null
     }
@@ -166,9 +185,12 @@ export default {
       extensionDialog: false
     }
   },
-  mounted () {
-    if (!this.session) {
-      this.joinDialog = true
+  computed: {
+    selectedRoom () {
+      return this.conferenceRoom ? this.conferenceRoom : this.room
+    },
+    localHandle () {
+      return this.$store.getters['api/conference/localHandle']
     }
   },
   methods: {
@@ -180,18 +202,18 @@ export default {
       const config = this.$store.state.api.config.config
       const janusPayload = {
         janus: {
-          roomid: this.room.media.roomid,
+          roomid: this.selectedRoom.media.roomid,
           plugin: config.janusSettings.plugins.videoroom,
           display: this.user && this.user.username ? this.user.username : 'Anonymous',
           video: media.video,
           audio: media.audio,
           screen: media.screen
         },
-        media: this.room.media
+        media: this.selectedRoom.media
       }
       janusPayload.media.room = janusPayload.media.roomid
       janusPayload.media.request = 'create'
-      this.$store.dispatch('api/conference/join', { janusPayload, room: this.room })
+      this.$store.dispatch('api/conference/join', { janusPayload, room: this.selectedRoom })
     },
     async toggleScreen () {
       if (!this.$Janus.isExtensionEnabled()) {

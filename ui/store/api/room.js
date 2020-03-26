@@ -18,6 +18,9 @@ export const state = () => ({
 export const mutations = {
   setRoom (state, room) {
     state.room = room
+    if (!state.rooms.length) {
+      state.rooms = [room]
+    }
   },
   setRooms (state, rooms) {
     rooms.forEach((room) => { room.children = [] })
@@ -114,10 +117,12 @@ export const actions = {
   async get ({
     commit,
     state
-  }, id) {
+  }, query) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/room/get?id=${id}`)
+      response.result = await this.$axios.$get(`/api/room/get?query=${query}`)
+      console.log(`SETTING ROOM RESULT: ${response.result}`)
+      commit('setRoom', response.result)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -205,7 +210,7 @@ export const getters = {
   },
   isRoomPeer: (state, getters, rootState) => (room, userid = null) => {
     const user = userid || (rootState.api.auth.user ? rootState.api.auth.user._id : null)
-    return room ? [room.owner, ...room.members, ...room.moderators].includes(user) : false
+    return room && room._id ? [room.owner, ...room.members, ...room.moderators].includes(user) : false
   },
   getParent: state => (room) => {
     return treeOps.findParent(state.rooms, room)

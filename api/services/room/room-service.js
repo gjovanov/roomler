@@ -28,9 +28,10 @@ class RoomService {
   }
 
   // base methods - START
-  async get (userid, id, roles = ['owner', 'moderators', 'members']) {
+  async get (userid, query, roles = ['owner', 'moderators', 'members', 'open']) {
     const roomFilter = new RoomFilter({
-      id
+      id: query.id,
+      query: query.query
     })
       .addUserFilter(userid, roles)
       .getFilter()
