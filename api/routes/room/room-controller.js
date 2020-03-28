@@ -4,7 +4,8 @@ const wsDispatcher = require('../ws/ws-dispatcher')
 
 class RoomController {
   async get (request, reply) {
-    const result = await roomService.get(request.user.user._id, request.query)
+    const user = request.user
+    const result = await roomService.get(user && user.user ? user.user._id : null, request.query)
     reply.send(result)
   }
 
@@ -23,7 +24,7 @@ class RoomController {
     }
     roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
-    const parents = await roomService.getParents(result)
+    const parents = result.is_open ? await roomService.getParents(result) : []
     wsDispatcher.dispatch(config.wsSettings.opTypes.roomCreate, [result, ...parents], true)
     reply.send(result)
   }
@@ -50,7 +51,8 @@ class RoomController {
       children = await roomService.getChildren(result, request.user.user._id)
     }
     const response = { room: result, children }
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomUpdate, [response], true)
+    const parents = result.is_open ? await roomService.getParents(result) : []
+    wsDispatcher.dispatch(config.wsSettings.opTypes.roomUpdate, [response, ...parents], true)
     reply.send(response)
   }
 

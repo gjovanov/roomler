@@ -127,14 +127,23 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-spacer />
-      <v-btn
-        v-if="canManage"
-        color="red"
-        class="mt-4 mb-4 ml-4 mb-8"
-        :to="`/@/room/edit?room=${room.path}`"
-      >
-        <v-icon>fa-edit</v-icon> &nbsp; Edit
-      </v-btn>
+      <v-tooltip bottom left>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="canManage"
+            color="red"
+            class="mt-4 mb-4 ml-4 mb-8"
+            :to="`/@/room/edit?room=${room.path}`"
+            tile
+            v-on="on"
+          >
+            <v-icon small>
+              fa-edit
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>Edit</span>
+      </v-tooltip>
     </v-expansion-panels>
   </client-only>
 </template>

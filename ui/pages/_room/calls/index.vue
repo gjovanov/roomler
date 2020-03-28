@@ -11,7 +11,7 @@
             <v-icon>
               fa-sign-in-alt
             </v-icon> &nbsp;
-            <span>JOIN THIS ROOM - [{{ room && room.name ? room.name.toUpperCase() : '' }}]</span>
+            <span>JOIN THIS ROOM - {{ room && room.name ? room.name.toUpperCase() : '' }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -38,7 +38,7 @@
             <v-icon>
               fa-comments
             </v-icon> &nbsp;
-            <span>CONFERENCE - [{{ room.name.toUpperCase() }}]</span>
+            <span>CONFERENCE - {{ room.name.toUpperCase() }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content style="height: 100%" class="pb-0">

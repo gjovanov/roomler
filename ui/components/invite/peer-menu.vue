@@ -91,21 +91,29 @@ export default {
   },
   computed: {
     isToMemberVisible () {
-      return this.currentUser._id !== this.user._id &&
+      return this.currentUser &&
+        this.user &&
+        this.currentUser._id !== this.user._id &&
         this.currentRole === 'owner' &&
         this.role === 'moderator'
     },
     isToModeratorVisible () {
-      return this.currentUser._id !== this.user._id &&
+      return this.currentUser &&
+        this.user &&
+        this.currentUser._id !== this.user._id &&
         (this.currentRole === 'owner' || this.currentRole === 'moderator') &&
         this.role === 'member'
     },
     isTransferVisible () {
-      return this.currentUser._id !== this.user._id &&
+      return this.currentUser &&
+        this.user &&
+        this.currentUser._id !== this.user._id &&
         this.currentRole === 'owner'
     },
     isRemoveVisible () {
-      return this.currentUser._id !== this.user._id &&
+      return this.currentUser &&
+        this.user &&
+        this.currentUser._id !== this.user._id &&
         (this.currentRole === 'owner' || (this.currentRole === 'moderator' && this.role === 'member'))
     }
   },

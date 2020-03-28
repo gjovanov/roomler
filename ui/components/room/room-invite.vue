@@ -35,6 +35,13 @@
             </v-btn>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12">
+            <v-btn :to="`/${room.path}/peers?link`" dark block outlined class="orange">
+              <v-icon>fa-link</v-icon> &nbsp; Share room link
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-container>
     </v-card-actions>
   </v-card>

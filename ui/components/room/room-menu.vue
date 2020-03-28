@@ -22,18 +22,18 @@
           <v-icon>fa-plus</v-icon> Create nested room
         </v-list-item-title>
       </v-list-item>
-      <v-divider />
       <v-list-item v-if="canManage" @click="edit()">
         <v-list-item-title>
           <v-icon>fa-edit</v-icon> Edit
         </v-list-item-title>
       </v-list-item>
-      <v-divider />
       <v-list-item v-if="canDelete" @click="removeConsent()">
         <v-list-item-title>
           <v-icon>fa-trash</v-icon> Delete room
         </v-list-item-title>
       </v-list-item>
+      <v-divider />
+
       <v-list-item v-if="canManage && peers && peers.length" @click="addPeers()">
         <v-list-item-title>
           <v-icon>fa-users</v-icon> Add existing peers
@@ -42,6 +42,11 @@
       <v-list-item v-if="canManage" @click="invitePeers()">
         <v-list-item-title>
           <v-icon>fa-paper-plane</v-icon> Invite new peers
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item v-if="canManage" @click="linkPeers()">
+        <v-list-item-title>
+          <v-icon>fa-link</v-icon> Share room link
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canJoin" @click="join()">
@@ -121,6 +126,9 @@ export default {
     },
     invitePeers () {
       this.$router.push({ path: `/${this.room.path}/peers?invite` })
+    },
+    linkPeers () {
+      this.$router.push({ path: `/${this.room.path}/peers?link` })
     },
     join () {
       this.$emit('join', this.room, this.user)

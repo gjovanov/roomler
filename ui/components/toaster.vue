@@ -12,7 +12,7 @@
       :bottom="true"
       :color="toast.error ? 'error' : 'success'"
     >
-      <strong v-if="toast.prop !== 'global'"> {{ toast.prop }} </strong> <span>{{ toast.message }}</span>
+      <strong v-if="toast.prop !== 'global'"> {{ toast.prop }} </strong> &nbsp; <span>{{ toast.message }}</span>
       <v-btn
         dark
         text

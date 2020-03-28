@@ -29,7 +29,7 @@
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <portal-target name="chat-left" />
+          <portal-target name="chat-left" class="ml-1 mr-1" />
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel style="background-color: #363636;">
