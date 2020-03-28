@@ -42,9 +42,13 @@ export const actions = {
           commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
-          // if (on === 'disconnected') {
-          //   dispatch('api/janus/handle/createOffer', { handleDTO, iceRestart: true }, { root: true })
-          // }
+          if (on === 'disconnected') {
+            if (handleDTO.isPublisher) {
+              dispatch('api/janus/handle/iceRestartPublisher', { handleDTO }, { root: true })
+            } else {
+              dispatch('api/janus/handle/iceRestartSubscriber', { handleDTO }, { root: true })
+            }
+          }
           commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
@@ -161,6 +165,30 @@ export const actions = {
         }
       })
     })
+  },
+
+  iceRestartPublisher ({
+    commit
+  }, { handleDTO }) {
+    handleDTO.handle.createOffer({
+      iceRestart: true,
+      media: {
+        audioRecv: false,
+        videoRecv: false,
+        audioSend: handleDTO.audio,
+        videoSend: handleDTO.video || handleDTO.screen
+      },
+      success (jsep) {
+        const publish = { request: 'configure', refresh: true }
+        handleDTO.handle.send({ message: publish, jsep })
+      }
+    })
+  },
+
+  iceRestartSubscriber ({
+    commit
+  }, { handleDTO }) {
+    handleDTO.handle.send({ message: { request: 'configure', refresh: true } })
   },
 
   createAnswer ({
