@@ -42,6 +42,9 @@ export const actions = {
           commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
+          if (on === 'disconnected') {
+            dispatch('api/janus/handle/createOffer', { handleDTO, iceRestart: true }, { root: true })
+          }
           commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
@@ -130,7 +133,7 @@ export const actions = {
 
   createOffer ({
     commit
-  }, { handleDTO }) {
+  }, { handleDTO, iceRestart = undefined }) {
     return new Promise((resolve, reject) => {
       const media = {
         audioRecv: false,
@@ -146,7 +149,7 @@ export const actions = {
         replaceVideo: (handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === true ? true : undefined
       }
       handleDTO.handle.createOffer({
-        iceRestart: handleDTO.iceRestart,
+        iceRestart,
         media,
         simulcast: handleDTO.simulcast,
         trickle: handleDTO.trickle,

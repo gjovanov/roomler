@@ -214,6 +214,8 @@ export default {
     }
     const config = this.$store.state.api.config.config
     const defaults = config.dataSettings.room.defaults.media
+    const videocodecs = config.janusSettings.videoCodecs
+    const audiocodecs = config.janusSettings.audioCodecs
     if (this.room) {
       this.room.media.audiocodecs = defaults.audiocodec.split(',')
       this.room.media.videocodecs = defaults.videocodec.split(',')
@@ -262,8 +264,8 @@ export default {
         v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
       ],
 
-      audiocodecs: defaults.audiocodec.split(','),
-      videocodecs: defaults.videocodec.split(','),
+      audiocodecs,
+      videocodecs,
 
       draftRoom,
       draftMedia
