@@ -99,10 +99,10 @@ export default {
   }),
   computed: {
     areRoomRoutes () {
-      return this.$route.name.startsWith('room')
+      return this.$route && this.$route.name && this.$route.name.startsWith('room')
     },
     isRoomRoute () {
-      return this.$route.name === 'room'
+      return this.$route && this.$route.name === 'room'
     },
     fillHeight () {
       return !this.areRoomRoutes
@@ -144,18 +144,8 @@ export default {
       return this.$store.state.panel.right
     }
   },
-  watch: {
-    $route (to, from) {
-      if (to.params.room) {
-        this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](to.params.room), { root: true })
-      }
-    }
-  },
   created () {
     this.$vuetify.theme.dark = true
-    if (this.$route.params.room) {
-      this.$store.commit('api/room/setRoom', this.$store.getters['api/room/selectedRoom'](this.$route.params.room), { root: true })
-    }
   },
   methods: {
     toggle (panel) {

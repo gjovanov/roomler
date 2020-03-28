@@ -1,3 +1,4 @@
+const config = require('../../../config')
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
 const RoomRenameFilter = require('./room-rename-filter')
@@ -39,7 +40,7 @@ class RoomService {
       .findOne(roomFilter)
       .exec()
     if (!record) {
-      throw new ReferenceError('Room was not found.')
+      throw new ReferenceError('Room was not found or you don\'t have access to it.')
     }
     return record
   }
@@ -191,12 +192,15 @@ class RoomService {
 
   async push (userid, id, type, payload) {
     const users = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
+    const remainingTypes = config.dataSettings.invite.types.map(t => `${t}s`).filter(t => t !== type)
     const update = {
-      $addToSet: {}
+      $addToSet: {},
+      $pullAll: {}
     }
-    update.$addToSet[type] = {
-      $each: users
-    }
+    remainingTypes.forEach((t) => {
+      update.$pullAll[t] = users
+    })
+    update.$addToSet[type] = users
     const result = await this.update(userid, id, update, ['owner', 'moderators', 'open'])
     return result
   }

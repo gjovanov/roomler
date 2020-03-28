@@ -166,6 +166,7 @@
       :disabled="!draftRoom.valid"
       color="primary"
       class="ma-2"
+      tile
       @click="create()"
     >
       <v-icon>fa-plus</v-icon> &nbsp; Create
@@ -176,6 +177,7 @@
       :disabled="!draftRoom.valid"
       color="primary"
       class="mt-4 mb-4 ml-4"
+      tile
       @click="update()"
     >
       <v-icon>fa-edit</v-icon> &nbsp; Update

@@ -10,7 +10,8 @@ import { handleInviteDelete } from './invite/handlers/invite-delete'
 
 export const state = () => ({
   invites: [],
-  pendingInvites: []
+  pendingInvites: [],
+  pendingJoins: []
 })
 
 export const mutations = {
@@ -39,9 +40,38 @@ export const mutations = {
     state.pendingInvites = result
     storage.set('pendingInvites', JSON.stringify(state.pendingInvites), true)
   },
+  storePendingJoins (state, join) {
+    const result = []
+    if (join) {
+      result.push(join)
+    }
+
+    // Merge with Cookie Pending Invites
+    let joins = storage.get('pendingJoins')
+    if (joins && joins.trim()) {
+      joins = JSON.parse(joins.trim())
+      joins.forEach((i) => {
+        if (!result.includes(i)) {
+          result.push(i)
+        }
+      })
+    }
+    // Merge with State Pending Joins
+    state.pendingJoins.forEach((i) => {
+      if (!result.includes(i)) {
+        result.push(i)
+      }
+    })
+    state.pendingJoins = result
+    storage.set('pendingJoins', JSON.stringify(state.pendingJoins), true)
+  },
   clearPendingInvites (state) {
     state.pendingInvites = []
     storage.set('pendingInvites', state.pendingInvites, true)
+  },
+  clearPendingJoins (state) {
+    state.pendingJoins = []
+    storage.set('pendingJoins', state.pendingJoins, true)
   },
 
   setInvites (state, invites) {
@@ -158,6 +188,34 @@ export const actions = {
           commit('clearPendingInvites')
         })))
         commit('clearPendingInvites')
+      }
+    } catch (err) {
+      handleError(err, commit)
+    }
+    return response
+  },
+
+  async acceptPendingJoins ({
+    commit,
+    dispatch,
+    state
+  }, userid) {
+    const response = {}
+    try {
+      commit('storePendingJoins') // Merge Cookie with Store
+      // roomid|type => type=[member,moderator]
+      // parts[0]=roomid
+      // parts[1]=type
+      if (state.pendingJoins.length) {
+        await Promise.all(state.pendingJoins.map(async (join) => {
+          const parts = join.split('|')
+          const { result } = await dispatch(`api/room/${parts[1]}s/push`, { room: parts[0], user: userid }, { root: true })
+          await dispatch('api/message/getAll', { room: result.room }, { root: true })
+        }))
+          .catch((e) => {
+            console.log(e)
+          })
+        commit('clearPendingJoins')
       }
     } catch (err) {
       handleError(err, commit)

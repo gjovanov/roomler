@@ -18,12 +18,12 @@ export const state = () => ({
 export const mutations = {
   setRoom (state, room) {
     state.room = room
-    if (!state.rooms.length) {
+    if (!state.rooms.length && room && room._id) {
       state.rooms = [room]
     }
   },
   setRooms (state, rooms) {
-    rooms.forEach((room) => { room.children = [] })
+    rooms.filter(r => !!r).forEach((room) => { room.children = [] })
     state.rooms = rooms
     const open = state.tree.open
     state.tree = new Tree(state.rooms)
@@ -121,7 +121,6 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get(`/api/room/get?query=${query}`)
-      console.log(`SETTING ROOM RESULT: ${response.result}`)
       commit('setRoom', response.result)
     } catch (err) {
       handleError(err, commit)
@@ -137,7 +136,7 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
-      commit('setRooms', response.result)
+      commit('setRooms', response.result ? response.result : [])
       commit('setOpen', response.result.map(room => room._id))
     } catch (err) {
       // handleError(err, commit)
@@ -192,8 +191,7 @@ export const getters = {
     return state.rooms.map(r => r.path)
   },
   selectedRoom: state => (room) => {
-    const nullo = { tags: [] }
-    return room ? (state.rooms.find(r => r.name.toLowerCase() === room.toLowerCase() || r._id === room) || nullo) : nullo
+    return room ? state.rooms.find(r => r && room && ((r.name && r.name.toLowerCase() === room.toLowerCase()) || r._id === room)) : null
   },
   getUserRole: state => (roomid, userid) => {
     const room = state.rooms.find(r => r._id === roomid)

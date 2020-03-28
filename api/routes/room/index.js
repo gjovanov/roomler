@@ -32,7 +32,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 module.exports = [{
-  authenticate: true,
   method: 'GET',
   url: '/api/room/get',
   schema: {

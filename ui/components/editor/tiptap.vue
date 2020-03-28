@@ -18,10 +18,14 @@
                 <v-btn
                   :text="!minimal"
                   small
+                  tile
+                  light
                   v-on="on"
                   @click="minimal = !minimal"
                 >
-                  <v-icon>fa-edit</v-icon>
+                  <v-icon small>
+                    fa-edit
+                  </v-icon>
                 </v-btn>
               </template>
               <span>Format</span>
@@ -33,10 +37,15 @@
                   small
                   absolute
                   right
+                  tile
+                  light
+                  style="right: 0px;"
                   v-on="on"
                   @click="send()"
                 >
-                  <v-icon>send</v-icon>
+                  <v-icon small>
+                    send
+                  </v-icon>
                 </v-btn>
               </template>
               <span>Send message</span>

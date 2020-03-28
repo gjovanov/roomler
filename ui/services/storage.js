@@ -19,7 +19,7 @@ class Storage {
       return item.includes(`${key}=`)
     })
     if (cookieValue) {
-      cookieValue = cookieValue.toString().replace(`${key}=`, '')
+      cookieValue = cookieValue.toString().replace(`${key}=`, '').trim()
     }
     return cookieValue || this.sessionStorage[key] || this.localStorage[key]
   }

@@ -87,10 +87,13 @@
                 color="red"
                 right
                 class="ma-4"
+                small
                 @click="peerDialog = true"
                 v-on="on"
               >
-                <v-icon>fa-plus</v-icon>
+                <v-icon small>
+                  fa-plus
+                </v-icon>
               </v-btn>
             </template>
             <span>Add existing peers</span>
@@ -156,14 +159,36 @@
                 v-if="canInvite"
                 color="primary"
                 right
+                small
                 class="mt-4 ml-4 mr-4 mb-12"
                 @click="inviteDialog = true"
                 v-on="on"
               >
-                <v-icon>fa-paper-plane</v-icon>
+                <v-icon small>
+                  fa-paper-plane
+                </v-icon>
               </v-btn>
             </template>
             <span>Invite new peers</span>
+          </v-tooltip>
+
+          <v-tooltip bottom left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-if="canInvite"
+                color="orange"
+                right
+                small
+                class="mt-4 ml-4 mr-4 mb-12"
+                @click="linkDialog = true"
+                v-on="on"
+              >
+                <v-icon small>
+                  fa-link
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Share room link</span>
           </v-tooltip>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -171,6 +196,7 @@
       <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
       <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
       <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
+      <link-dialog :dialog="linkDialog" :room="room" @close="linkDialog = false" />
       <peer-dialog :dialog="peerDialog" :room="room" :peers="peers" @cancelPeers="cancelPeers" @addPeers="addPeers" />
     </v-expansion-panels>
   </client-only>
@@ -179,6 +205,7 @@
 <script>
 
 import InviteDialog from '@/components/invite/invite-dialog'
+import LinkDialog from '@/components/invite/link-dialog'
 import InviteMenu from '@/components/invite/invite-menu'
 import PeerDialog from '@/components/invite/peer-dialog'
 import PeerMenu from '@/components/invite/peer-menu'
@@ -190,6 +217,7 @@ export default {
   // watchQuery: ['add', 'invite'],
   components: {
     InviteDialog,
+    LinkDialog,
     InviteMenu,
     PeerDialog,
     PeerMenu,
@@ -201,6 +229,7 @@ export default {
       panels: [0, 1],
       selectedUser: null,
       inviteDialog: false,
+      linkDialog: false,
       peerDialog: false,
       transferDialog: false,
       peerDeleteDialog: false
@@ -250,6 +279,9 @@ export default {
       }
       if (this.$route.query.add !== undefined) {
         this.peerDialog = true
+      }
+      if (this.$route.query.link !== undefined) {
+        this.linkDialog = true
       }
     }
   },
