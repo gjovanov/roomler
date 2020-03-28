@@ -16,7 +16,7 @@
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn
-                  :text="!minimal"
+                  :outlined="!minimal"
                   small
                   tile
                   light
