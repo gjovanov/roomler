@@ -42,9 +42,9 @@ export const actions = {
           commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
-          if (on === 'disconnected') {
-            dispatch('api/janus/handle/createOffer', { handleDTO, iceRestart: true }, { root: true })
-          }
+          // if (on === 'disconnected') {
+          //   dispatch('api/janus/handle/createOffer', { handleDTO, iceRestart: true }, { root: true })
+          // }
           commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
