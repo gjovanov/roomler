@@ -42,13 +42,13 @@ export const actions = {
           commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
-          if (on === 'disconnected') {
-            if (handleDTO.isPublisher) {
-              dispatch('api/janus/handle/iceRestartPublisher', { handleDTO }, { root: true })
-            } else {
-              dispatch('api/janus/handle/iceRestartSubscriber', { handleDTO }, { root: true })
-            }
-          }
+          // if (on === 'disconnected') {
+          //   if (handleDTO.isPublisher) {
+          //     dispatch('api/janus/handle/iceRestartPublisher', { handleDTO }, { root: true })
+          //   } else {
+          //     dispatch('api/janus/handle/iceRestartSubscriber', { handleDTO }, { root: true })
+          //   }
+          // }
           commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
