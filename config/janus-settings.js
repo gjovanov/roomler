@@ -1,5 +1,5 @@
 module.exports = {
-  url: process.env.JANUS_URL || 'https://mcu.xplorify.net/janus_http',
+  url: process.env.JANUS_URL || 'wss://mcu.xplorify.net/janus_ws',
   iceServers: [{
     urls: process.env.TURN_URL || 'turn:numb.viagenie.ca',
     username: process.env.TURN_USERNAME || 'webrtc@live.com',
