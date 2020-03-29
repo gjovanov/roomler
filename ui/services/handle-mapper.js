@@ -39,7 +39,7 @@ export const toHandleDTO = (sessionDTO, args) => {
     resolutions: ['lowres', 'lowres-16:9', 'stdres', 'stdres-16:9', 'hires', 'hires-16:9'],
     audio: args.audio !== undefined ? args.audio : true,
     video: args.video !== undefined ? args.video : true,
-    videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'stdres',
+    videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'lowres',
     screen: args.screen !== undefined ? args.screen : false,
     data: args.data !== undefined ? args.data : false,
 
