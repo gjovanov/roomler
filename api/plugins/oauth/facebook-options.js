@@ -1,6 +1,7 @@
 const config = require('../../../config')
 const defaultState = require('./default-state')
 const oauthPlugin = require('fastify-oauth2')
+console.log(process.env.FACEBOOK_ID)
 module.exports = {
   name: 'facebook',
   credentials: {

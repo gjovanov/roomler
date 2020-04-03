@@ -128,10 +128,10 @@
       <span>Publish</span>
     </v-tooltip>
 
-    <v-tooltip v-if="session" bottom left>
+    <v-tooltip v-if="conferenceSession" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
-          v-if="session"
+          v-if="conferenceSession"
           color="red"
           tile
           small
@@ -169,7 +169,7 @@ export default {
       type: Object,
       default: null
     },
-    session: {
+    conferenceSession: {
       type: Object,
       default: null
     },

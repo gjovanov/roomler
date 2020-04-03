@@ -232,7 +232,7 @@ export default {
       type: Object,
       default: null
     },
-    session: {
+    conferenceSession: {
       type: Object,
       default: null
     },

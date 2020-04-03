@@ -7,7 +7,7 @@
       :tree="tree"
       :peers="peers"
       :user="user"
-      :session="session"
+      :conference-session="conferenceSession"
       :conference-room="conferenceRoom"
       :conference-position="conferencePosition"
     />
@@ -34,26 +34,31 @@
       <auth-panel />
     </v-app-bar>
 
-    <conference
-      :user="user"
-      :room="room"
-      :session="session"
-      :peers="peers"
-      :conference-room="conferenceRoom"
-      :conference-position="conferencePosition"
-    />
-    <chat
-      :name="'conference'"
-      :user="user"
-      :room="conferenceRoom"
-    />
-
     <v-content class="pt-9 ma-0">
       <v-container
         :fill-height="fillHeight"
         class="pa-0 ma-0"
         fluid
       >
+        <v-row
+          justify="center"
+          align="stretch"
+          align-content="start"
+        >
+          <v-col>
+            <room-panel
+              :rooms="rooms"
+              :room="room"
+              :peers="peers"
+              :user="user"
+              :room-route="roomRoute"
+              :conference-session="conferenceSession"
+              :conference-room="conferenceRoom"
+              :conference-position="conferencePosition"
+              :invites="invites"
+            />
+          </v-col>
+        </v-row>
         <v-row
           justify="center"
           align="stretch"
@@ -76,8 +81,7 @@ import Logo from '@/components/logo'
 import AuthPanel from '@/components/auth-panel'
 import LeftPanel from '@/components/left-panel'
 import RightPanel from '@/components/right-panel'
-import Conference from '@/components/conference/conference'
-import Chat from '@/components/chat/chat'
+import RoomPanel from '@/components/room-panel'
 import BottomPanel from '@/components/bottom-panel'
 import Toaster from '@/components/toaster'
 
@@ -88,8 +92,7 @@ export default {
     AuthPanel,
     LeftPanel,
     RightPanel,
-    Conference,
-    Chat,
+    RoomPanel,
     BottomPanel,
     Toaster
   },
@@ -101,8 +104,10 @@ export default {
     areRoomRoutes () {
       return this.$route && this.$route.name && this.$route.name.startsWith('room')
     },
-    isRoomRoute () {
-      return this.$route && this.$route.name === 'room'
+    roomRoute () {
+      return this.$route && this.$route.name.startsWith('room-')
+        ? this.$route.name.replace('room-', '')
+        : null
     },
     fillHeight () {
       return !this.areRoomRoutes
@@ -116,13 +121,16 @@ export default {
     user () {
       return this.$store.state.api.auth.user
     },
+    peers () {
+      return this.$store.getters['api/auth/getPeers']
+    },
     rooms () {
       return this.$store.state.api.room.rooms
     },
     room () {
       return this.$store.state.api.room.room
     },
-    session () {
+    conferenceSession () {
       return this.$store.state.api.conference.session
     },
     conferenceRoom () {
@@ -134,8 +142,8 @@ export default {
     tree () {
       return this.$store.state.api.room.tree
     },
-    peers () {
-      return this.$store.getters['api/auth/getPeers']
+    invites () {
+      return this.$store.state.api.invite.invites
     },
     panelLeft () {
       return this.$store.state.panel.left

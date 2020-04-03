@@ -56,6 +56,7 @@
     "cheerio": "^1.0.0-rc.3",
     "cross-env": "^7.0.0",
     "deep-object-diff": "^1.1.0",
+    "dotenv": "^8.2.0",
     "emoji-mart-vue-fast": "^7.0.0",
     "emojilib": "^2.4.0",
     "fast-json-stringify": "^1.16.3",

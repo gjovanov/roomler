@@ -1,0 +1,201 @@
+<template>
+  <div>
+    <v-list three-line>
+      <template v-for="(item, index) in roomPeers">
+        <v-divider
+          :key="`peer_${index}`"
+          :inset="true"
+        />
+
+        <v-list-item
+          :key="item.user._id"
+        >
+          <v-list-item-icon>
+            <v-badge
+              :color="isOnline(item.user._id) ? 'green' : 'grey'"
+              bordered
+              bottom
+              left
+              dot
+              offset-x="9"
+              offset-y="9"
+            >
+              <v-avatar
+                size="32px"
+              >
+                <img v-if="item.user.avatar_url" :src="item.user.avatar_url">
+                <v-icon v-if="!item.user.avatar_url">
+                  fa-user
+                </v-icon>
+              </v-avatar>
+            </v-badge>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title v-text="item.user.username" />
+            <v-list-item-subtitle v-text="item.user.email" />
+            <v-list-item-subtitle>
+              <v-chip
+                class="mt-2"
+                tile
+                outlined
+                color="primary"
+              >
+                {{ item.role }}
+              </v-chip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action-text>
+            <peer-menu
+              :room="room"
+              :user="item.user"
+              :current-user="user"
+              :role="item.role"
+              :current-role="item.currentRole"
+              @openTransfer="openTransfer"
+              @openPeerDelete="openPeerDelete"
+              @toMember="toMember"
+              @toModerator="toModerator"
+            />
+          </v-list-item-action-text>
+        </v-list-item>
+      </template>
+    </v-list>
+    <v-tooltip bottom left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-if="peers && peers.length && canInvite"
+          color="red"
+          right
+          class="ma-4"
+          small
+          @click="peerDialog = true"
+          v-on="on"
+        >
+          <v-icon small>
+            fa-plus
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>Add existing peers</span>
+    </v-tooltip>
+    <peer-dialog :dialog="peerDialog" :room="room" :peers="peers" @cancelPeers="cancelPeers" @addPeers="addPeers" />
+    <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
+    <peer-delete-dialog :dialog="peerDeleteDialog" :room="room" :user="selectedUser" @peerDelete="peerDelete" @peerDeleteCancel="peerDeleteCancel" />
+  </div>
+</template>
+
+<script>
+
+import PeerMenu from '@/components/invite/peer-menu'
+import PeerDialog from '@/components/invite/peer-dialog'
+import OwnershipDialog from '@/components/invite/ownership-dialog'
+import PeerDeleteDialog from '@/components/invite/peer-delete-dialog'
+
+export default {
+  components: {
+    PeerMenu,
+    PeerDialog,
+    OwnershipDialog,
+    PeerDeleteDialog
+  },
+  props: {
+    user: {
+      type: Object,
+      default: null
+    },
+    room: {
+      type: Object,
+      default: null
+    },
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+  data () {
+    return {
+      selectedUser: null,
+      peerDialog: false,
+      transferDialog: false,
+      peerDeleteDialog: false
+    }
+  },
+  computed: {
+    currentRole () {
+      return this.room && this.user ? this.$store.getters['api/room/getUserRole'](this.room._id, this.user._id) : ''
+    },
+    canInvite () {
+      return ['owner', 'moderator'].includes(this.currentRole)
+    },
+    roomPeers () {
+      const self = this
+      const users = this.$store.getters['api/auth/getRoomPeers'](this.room)
+      return users
+        .map(u => (
+          {
+            user: u,
+            role: self.room ? self.$store.getters['api/room/getUserRole'](self.room._id, u._id) : '',
+            currentRole: self.currentRole
+          }))
+        .sort((a, b) => {
+          return a.user.username.localeCompare(b.user.username)
+        })
+    }
+  },
+  methods: {
+    isOnline (userid) {
+      return this.$store.getters['api/auth/isOnline'](userid)
+    },
+    async addPeers (peers) {
+      const room = peers[0].room
+      const members = peers.filter(p => p.type === 'member').map(p => p.peer)
+      const moderators = peers.filter(p => p.type === 'moderator').map(p => p.peer)
+      await Promise.all(
+        [
+          !members.length || this.$store.dispatch('api/room/members/push', { room, users: members }),
+          !moderators.length || this.$store.dispatch('api/room/moderators/push', { room, users: moderators })
+        ]
+      )
+      this.peerDialog = false
+      this.$router.push({ path: `/${this.room.path}/peers` })
+    },
+    cancelPeers () {
+      this.peerDialog = false
+      this.$router.push({ path: `/${this.room.path}/peers` })
+    },
+    openTransfer (user) {
+      this.selectedUser = user
+      this.transferDialog = true
+    },
+    transferCancel () {
+      this.transferDialog = false
+    },
+    openPeerDelete (user) {
+      this.selectedUser = user
+      this.peerDeleteDialog = true
+    },
+    peerDeleteCancel () {
+      this.peerDeleteDialog = false
+    },
+    async peerDelete (user) {
+      const type = this.$store.getters['api/room/getUserRole'](this.room._id, user._id)
+      await this.$store.dispatch(`api/room/${type}s/pull`, { room: this.room._id, user: user._id })
+      this.peerDeleteDialog = false
+    },
+    async toOwner (user) {
+      await this.$store.dispatch('api/room/owner/transfer', { room: this.room._id, user: user._id })
+      this.transferDialog = false
+    },
+    async toModerator (user) {
+      await this.$store.dispatch('api/room/moderators/switch', { room: this.room._id, user: user._id })
+    },
+    async toMember (user) {
+      await this.$store.dispatch('api/room/members/switch', { room: this.room._id, user: user._id })
+    }
+  }
+}
+</script>

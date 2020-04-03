@@ -5,7 +5,7 @@
       class="pa-0"
     >
       <v-row
-        v-if="session && screens && screens.length"
+        v-if="conferenceSession && screens && screens.length"
       >
         <v-col
           v-for="handleDTO in screens"
@@ -30,7 +30,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="session && publishers && publishers.length"
+        v-if="conferenceSession && publishers && publishers.length"
       >
         <v-col
           v-for="handleDTO in publishers"
@@ -57,7 +57,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="session && attendees && attendees.length"
+        v-if="conferenceSession && attendees && attendees.length"
       >
         <v-col
           sm="12"
@@ -68,7 +68,7 @@
         </v-col>
       </v-row>
       <v-row
-        v-if="session && attendees && attendees.length"
+        v-if="conferenceSession && attendees && attendees.length"
       >
         <v-col
           v-for="handleDTO in attendees"
@@ -101,6 +101,12 @@
 
 export default {
   props: {
+    peers: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
     user: {
       type: Object,
       default: null
@@ -109,7 +115,7 @@ export default {
       type: Object,
       default: null
     },
-    session: {
+    conferenceSession: {
       type: Object,
       default: null
     },
@@ -120,12 +126,6 @@ export default {
     conferencePosition: {
       type: String,
       default: ''
-    },
-    peers: {
-      type: Array,
-      default () {
-        return []
-      }
     }
   },
 
@@ -134,13 +134,13 @@ export default {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     screens () {
-      return this.session.handleDTOs.filter(h => h.screen && h.stream)
+      return this.conferenceSession.handleDTOs.filter(h => h.screen && h.stream)
     },
     publishers () {
-      return this.session.handleDTOs.filter(h => (h.audio || h.video) && !h.screen && h.stream)
+      return this.conferenceSession.handleDTOs.filter(h => (h.audio || h.video) && !h.screen && h.stream)
     },
     attendees () {
-      return this.session.handleDTOs.filter(h => !h.audio && !h.video && !h.stream)
+      return this.conferenceSession.handleDTOs.filter(h => !h.audio && !h.video && !h.stream)
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
