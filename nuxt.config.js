@@ -6,9 +6,6 @@ const nuxtConfig = {
   srcDir: 'ui',
   mode: 'universal',
 
-  /*
-   ** Headers of the page
-   */
   head: {
     titleTemplate: '%s - ' + process.env.npm_package_name,
     title: process.env.npm_package_name || '',
@@ -33,40 +30,20 @@ const nuxtConfig = {
     }
     ]
   },
-  /*
-   ** Customize the progress-bar color
-   */
   loading: {
     color: '#fff'
   },
-  /*
-   ** Global CSS
-   */
   css: [],
-
   env,
-
   router: {
     middleware: 'check-auth'
   },
-
-  // serverMiddleware: [{
-  //   path: '/',
-  //   handler: '../api/api.js'
-  // }],
-
-  /*
-   ** Plugins to load before mounting the App
-   */
   plugins: [
     '@/plugins/axios',
     '@/plugins/icons',
     '@/plugins/janus.client',
     '@/plugins/ws.client'
   ],
-  /*
-   ** Nuxt.js modules
-   */
   modules: [
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
@@ -74,18 +51,14 @@ const nuxtConfig = {
     '@nuxtjs/pwa',
     'portal-vue/nuxt'
   ],
-  /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
+  buildModules: [
+    '@nuxtjs/moment'
+  ],
   axios: {
     // credentials: true
   },
-  /*
-   ** vuetify module configuration
-   ** https://github.com/nuxt-community/vuetify-module
-   */
   vuetify: {
+    treeShake: true,
     theme: {
       light: {
         background: '#cccccc',
@@ -109,13 +82,7 @@ const nuxtConfig = {
       }
     }
   },
-  /*
-   ** Build configuration
-   */
   build: {
-    /*
-     ** You can extend webpack config here
-     */
     extend (config, ctx) {
       config.resolve.alias.vue = 'vue/dist/vue.common'
       config.devtool = '#source-map' // ctx.isClient ? '#source-map' : '#inline-source-map'
