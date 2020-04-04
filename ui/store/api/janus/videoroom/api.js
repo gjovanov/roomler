@@ -121,6 +121,7 @@ export const actions = {
         display: handleDTO.display,
         token: handleDTO.token
       }
+      console.log(`REQUEST: ${JSON.stringify(request)}`)
       handleDTO.handle.send({
         message: request,
         success: () => {
@@ -227,7 +228,7 @@ export const actions = {
         // keyframe: handleDTO.keyframe,
         // record: handleDTO.record,
         // filename: handleDTO.filename,
-        display: handleDTO.display_name + (screen ? '|Screenshare' : '')
+        display: handleDTO.display
       }
       handleDTO.handle.send({
         message: request,

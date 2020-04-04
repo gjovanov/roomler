@@ -3,7 +3,6 @@ config.appSettings.env.NODE_ENV = 'production'
 
 // WIN-10: Check port usage
 // Get-Process -Id (Get-NetTCPConnection -LocalPort 3002).OwningProcess
-console.log(config.appSettings.env.NODE_ENV)
 module.exports = {
   apps: [{
     name: 'roomler',

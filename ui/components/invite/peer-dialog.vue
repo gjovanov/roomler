@@ -201,6 +201,7 @@ export default {
       const peerids = this.newPeers.map(p => p.peer)
       return this.peers.filter(p =>
         !peerids.includes(p._id) &&
+        this.room &&
         this.room.owner !== p._id &&
         !this.room.members.includes(p._id) &&
         !this.room.moderators.includes(p._id))

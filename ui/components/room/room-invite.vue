@@ -1,5 +1,6 @@
 <template>
   <v-card
+    v-if="room"
     color="white"
     hover
     light
@@ -51,8 +52,7 @@ export default {
   props: {
     room: {
       type: Object,
-      default: null,
-      required: true
+      default: null
     },
     peers: {
       type: Array,

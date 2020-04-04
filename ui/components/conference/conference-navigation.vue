@@ -23,7 +23,7 @@
       <span>Join the conference</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle && localHandle.stream" bottom left>
+    <!-- <v-tooltip v-if="localHandle && localHandle.stream" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle && localHandle.stream"
@@ -39,7 +39,7 @@
         </v-btn>
       </template>
       <span>Unpublish</span>
-    </v-tooltip>
+    </v-tooltip> -->
 
     <v-tooltip v-if="localHandle" bottom left>
       <template v-slot:activator="{ on }">
@@ -110,7 +110,7 @@
       <span v-if="!localHandle.audio">Unmute microphone</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle && !localHandle.stream" bottom left>
+    <!-- <v-tooltip v-if="localHandle && !localHandle.stream" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle && !localHandle.stream"
@@ -126,7 +126,7 @@
         </v-btn>
       </template>
       <span>Publish</span>
-    </v-tooltip>
+    </v-tooltip> -->
 
     <v-tooltip v-if="conferenceSession" bottom left>
       <template v-slot:activator="{ on }">
@@ -195,19 +195,16 @@ export default {
   },
   methods: {
     join (media) {
-      // await this.$router.push({ path: `/${this.room.path}` })
-      // this.$store.commit('panel/set', { panel: 'left', value: false }, { root: true })
-
       this.joinDialog = false
       const config = this.$store.state.api.config.config
+      const mediaPart = ['audio', 'video', 'data', 'screen'].filter(key => media[key] === true).join(',')
+      const displayPart = this.user && this.user.username ? this.user.username : 'Anonymous'
+      const display = `${displayPart}|${mediaPart}`
       const janusPayload = {
         janus: {
           roomid: this.selectedRoom.media.roomid,
           plugin: config.janusSettings.plugins.videoroom,
-          display: this.user && this.user.username ? this.user.username : 'Anonymous',
-          video: media.video,
-          audio: media.audio,
-          screen: media.screen
+          display
         },
         media: this.selectedRoom.media
       }
@@ -225,13 +222,6 @@ export default {
             video: false,
             screen: !this.localHandle.screen
           }
-          const videoElem = document.getElementById('' + this.localHandle.id)
-          if (videoElem) {
-            videoElem.load() // show poster
-            videoElem.setAttribute('controls', 'controls')
-            videoElem.setAttribute('muted', 'muted')
-            videoElem.muted = true
-          }
           this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
           const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })
           this.$store.dispatch('api/janus/videoroom/api/configure', { handleDTO: this.localHandle, jsep })
@@ -246,13 +236,6 @@ export default {
           audio: this.localHandle.audio,
           video: !this.localHandle.video,
           screen: false
-        }
-        const videoElem = document.getElementById('' + this.localHandle.id)
-        if (videoElem) {
-          videoElem.load() // show poster
-          videoElem.setAttribute('controls', 'controls')
-          videoElem.setAttribute('muted', 'muted')
-          videoElem.muted = true
         }
         this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDTO: this.localHandle, media })
         const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDTO: this.localHandle })

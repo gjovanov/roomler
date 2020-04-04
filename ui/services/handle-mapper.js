@@ -1,23 +1,41 @@
 
 import * as uuid from 'uuid/v4'
-export const toHandleDTO = (sessionDTO, args) => {
-  if (args.display && args.display.includes('|Screenshare')) {
-    args.screen = true
-  }
-  if (args.screen) {
-    if (!args.display.includes('|Screenshare')) {
-      args.display += '|Screenshare'
-    }
-    args.video = false
-  }
-  args.display_name = args.display ? args.display.replace('|Screenshare', '') : args.display
 
+export const displayToMedia = (display) => {
+  // display='username|media' => media=data,audio,video,screen
+  // e.g. johnson|audio,video
+  const result = {
+    display: null,
+    display_name: null,
+    data: null,
+    audio: null,
+    video: null,
+    screen: null
+  }
+  result.display = display
+  result.display_name = display // default
+  if (display) {
+    const parts = display.split('|')
+    if (parts.length >= 1) {
+      result.display_name = parts[0] // override
+    }
+    if (parts.length >= 2) {
+      result.data = parts[1].includes('data')
+      result.audio = parts[1].includes('audio')
+      result.video = parts[1].includes('video')
+      result.screen = parts[1].includes('screen')
+    }
+  }
+  return result
+}
+export const toHandleDTO = (sessionDTO, args) => {
+  const media = displayToMedia(args.display)
   const result = {
     id: args.id || uuid(),
     private_id: args.private_id || uuid(),
     feed: null,
-    display: args.display,
-    display_name: args.display_name,
+    display: media.display,
+    display_name: media.display_name,
     sessionDTO,
     plugin: args.plugin || 'janus.plugin.videoroom',
     roomid: args.roomid || null,
@@ -37,11 +55,12 @@ export const toHandleDTO = (sessionDTO, args) => {
     isLocal: args.isLocal !== undefined ? args.isLocal : true,
 
     resolutions: ['lowres', 'lowres-16:9', 'stdres', 'stdres-16:9', 'hires', 'hires-16:9'],
-    audio: args.audio !== undefined ? args.audio : true,
-    video: args.video !== undefined ? args.video : true,
     videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'lowres',
-    screen: args.screen !== undefined ? args.screen : false,
-    data: args.data !== undefined ? args.data : false,
+
+    data: media.data !== undefined ? media.data : false,
+    audio: media.audio !== undefined ? media.audio : true,
+    video: media.video !== undefined ? media.video : true,
+    screen: media.screen !== undefined ? media.screen : false,
 
     audioCodec: args.audioCodec || null,
     videoCodec: args.videoCodec || null,
@@ -52,6 +71,5 @@ export const toHandleDTO = (sessionDTO, args) => {
 
     stream: null
   }
-
   return result
 }

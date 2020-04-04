@@ -9,7 +9,7 @@
       :user="user"
       :conference-session="conferenceSession"
       :conference-room="conferenceRoom"
-      :conference-position="conferencePosition"
+      :room-route="roomRoute"
     />
     <right-panel
       v-if="room && room._id"
@@ -41,6 +41,7 @@
         fluid
       >
         <v-row
+          v-show="room"
           justify="center"
           align="stretch"
           align-content="start"
@@ -54,7 +55,6 @@
               :room-route="roomRoute"
               :conference-session="conferenceSession"
               :conference-room="conferenceRoom"
-              :conference-position="conferencePosition"
               :invites="invites"
             />
           </v-col>
@@ -135,9 +135,6 @@ export default {
     },
     conferenceRoom () {
       return this.$store.state.api.conference.room
-    },
-    conferencePosition () {
-      return this.$store.state.api.conference.position
     },
     tree () {
       return this.$store.state.api.room.tree

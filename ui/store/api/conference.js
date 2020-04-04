@@ -1,8 +1,7 @@
 
 export const state = () => ({
   session: null,
-  room: null,
-  position: 'left'
+  room: null
 })
 
 export const mutations = {

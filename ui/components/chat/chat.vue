@@ -45,6 +45,10 @@ export default {
     room: {
       type: Object,
       default: null
+    },
+    roomRoute: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -78,7 +82,7 @@ export default {
       return this.$store.state.panel.right
     },
     panelChat () {
-      return this.$store.state.panel.chat
+      return this.roomRoute === 'chat'
     }
   },
 
@@ -90,10 +94,6 @@ export default {
     }
   },
   methods: {
-    async join () {
-      await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
-      await this.$store.dispatch('api/message/getAll', { room: this.room })
-    },
     async sendMessage (content) {
       if (content) {
         const $ = cheerio.load(content)

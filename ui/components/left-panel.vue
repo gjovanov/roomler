@@ -10,7 +10,7 @@
     style="background-color: #121212"
     mini
   >
-    <nuxt-link v-show="conferenceRoom && conferencePosition === 'left'" :to="conferenceRoom ? `/${conferenceRoom.path}/calls` : ''">
+    <nuxt-link v-show="conferenceRoom && roomRoute !== 'calls'" :to="conferenceRoom ? `/${conferenceRoom.path}/calls` : ''">
       <portal-target name="conference-left" />
     </nuxt-link>
     <v-expansion-panels
@@ -19,7 +19,7 @@
       tile
       class="pa-0 ma-0"
     >
-      <v-expansion-panel v-show="conferenceRoom && conferencePosition === 'center'" style="background-color: #363636;">
+      <v-expansion-panel v-show="conferenceRoom && roomRoute === 'calls'" style="background-color: #363636;">
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -240,7 +240,7 @@ export default {
       type: Object,
       default: null
     },
-    conferencePosition: {
+    roomRoute: {
       type: String,
       default: null
     }
@@ -270,7 +270,7 @@ export default {
     panelChange () {
       return {
         conferenceRoom: this.conferenceRoom,
-        conferencePosition: this.conferencePosition
+        roomRoute: this.roomRoute
       }
     }
   },
@@ -284,7 +284,7 @@ export default {
       }
     },
     panelChange (value) {
-      if (value.conferenceRoom && value.conferenceRoom && value.conferencePosition === 'center') {
+      if (value.conferenceRoom && value.roomRoute === 'calls') {
         this.panel = 0
       } else {
         this.panel = 1

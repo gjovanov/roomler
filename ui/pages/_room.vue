@@ -1,7 +1,7 @@
 <template>
   <client-only>
     <div>
-      &nbsp;
+      <nuxt-child />
     </div>
   </client-only>
 </template>

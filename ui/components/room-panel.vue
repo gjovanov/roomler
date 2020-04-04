@@ -1,22 +1,25 @@
 <template>
-  <v-container fluid class="pa-0 ma-0">
-    <v-row v-if="room && room._id">
+  <v-container
+    fluid
+    class="pa-0 ma-0"
+    style="height: 100%"
+  >
+    <v-row v-show="room && room._id">
       <v-col cols="12" class="pa-0 ma-0">
         <room-navigation
           :room="room"
-          :conference-room="conferenceRoom"
+          :room-route="roomRoute"
         />
       </v-col>
     </v-row>
-    <v-row v-if="room && room._id">
+    <v-row v-show="room && room._id">
       <v-col cols="12" class="pt-0">
         <v-expansion-panels
           v-model="panels"
           accordion
-          multiple
           style="height: 100%"
         >
-          <v-expansion-panel v-if="room && !isRoomPeer && roomRoute === 'chat'">
+          <v-expansion-panel v-show="room && !isRoomPeer && roomRoute === 'chat'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -43,7 +46,7 @@
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && isRoomPeer && roomPeers && roomPeers.length === 1 && roomRoute === 'chat'">
+          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length === 1 && roomRoute === 'chat'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -54,7 +57,7 @@
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-row
-                v-if="roomPeers && roomPeers.length === 1"
+                v-show="roomPeers && roomPeers.length === 1"
                 dense
                 align="center"
                 justify="center"
@@ -69,7 +72,7 @@
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && roomRoute === 'calls'">
+          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && roomRoute === 'calls'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -91,12 +94,18 @@
                 :peers="peers"
                 :conference-session="conferenceSession"
                 :conference-room="conferenceRoom"
-                :conference-position="conferencePosition"
+                :room-route="roomRoute"
+              />
+              <chat
+                :name="'conference'"
+                :user="user"
+                :room="conferenceRoom"
+                :room-route="roomRoute"
               />
               <portal-target name="conference-center" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && (roomRoute === 'chat' || roomRoute === 'calls')">
+          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && roomRoute === 'chat'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -110,16 +119,12 @@
                 :name="'center'"
                 :user="user"
                 :room="room"
-              />
-              <chat
-                :name="'conference'"
-                :user="user"
-                :room="conferenceRoom"
+                :room-route="roomRoute"
               />
               <portal-target name="chat-center" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && roomRoute === 'peers'">
+          <v-expansion-panel v-show="room && roomRoute === 'peers'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -132,7 +137,7 @@
               <room-peers :room="room" :user="user" :peers="peers" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && roomRoute === 'peers'">
+          <v-expansion-panel v-show="room && roomRoute === 'peers'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -145,7 +150,7 @@
               <room-invites :room="room" :user="user" :invites="invites" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && roomRoute === 'settings'">
+          <v-expansion-panel v-show="room && roomRoute === 'settings'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -158,7 +163,7 @@
               <room-basic-info :room="room" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-if="room && roomRoute === 'settings'">
+          <v-expansion-panel v-show="room && roomRoute === 'settings'">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -246,7 +251,7 @@ export default {
   },
   data () {
     return {
-      panels: [0]
+      panels: 0
     }
   },
   computed: {

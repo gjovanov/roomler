@@ -1,29 +1,44 @@
+import { displayToMedia } from '@/services/handle-mapper'
 
 export const mutations = {
   setPublisher (state, { handleDTO, isPublisher }) {
     handleDTO.isPublisher = isPublisher
   },
   setMedia (state, { handleDTO, media }) {
-    if (media.screen !== undefined) {
-      if (media.screen === true) {
-        if (!handleDTO.display.includes('|Screenshare')) {
-          handleDTO.display += '|Screenshare'
-        }
-        media.video = false
-      }
-      if (media.screen === false) {
-        handleDTO.display = handleDTO.display.replace('|Screenshare', '')
-      }
-      handleDTO.screen = media.screen
-    }
-    if (media.video !== undefined) {
-      handleDTO.video = media.video
+    const mediaPart = ['audio', 'video', 'data', 'screen'].filter(key => media[key] === true).join(',')
+    const displayPart = handleDTO.display_name
+    handleDTO.display = `${displayPart}|${mediaPart}`
+    if (media.data !== undefined) {
+      handleDTO.data = media.data
     }
     if (media.audio !== undefined) {
       handleDTO.audio = media.audio
     }
-    if (media.data !== undefined) {
+    if (media.video !== undefined) {
+      handleDTO.video = media.video
+    }
+    if (media.screen !== undefined) {
+      handleDTO.screen = media.screen
+    }
+  },
+  setDisplay (state, { handleDTO, display }) {
+    if (display) {
+      const media = displayToMedia(display)
+      handleDTO.display = media.display
+      handleDTO.display_name = media.display_name
       handleDTO.data = media.data
+      handleDTO.audio = media.audio
+      handleDTO.video = media.video
+      handleDTO.screen = media.screen
+      handleDTO.display = media.display
+    }
+  },
+  setId (state, { handleDTO, id, privateId }) {
+    if (id) {
+      handleDTO.id = id
+    }
+    if (privateId) {
+      handleDTO.private_id = privateId
     }
   },
   clearStream (state, { handleDTO }) {
@@ -62,27 +77,5 @@ export const mutations = {
   },
   oncleanup (state, { handleDTO }) {
     handleDTO.stream = null
-  },
-
-  updateIds (state, { handleDTO, msg }) {
-    if (msg.id) {
-      handleDTO.id = msg.id
-    }
-    if (msg.private_id) {
-      handleDTO.private_id = msg.private_id
-    }
-    if (msg.display) {
-      handleDTO.display = msg.display
-      handleDTO.display_name = msg.display.replace('|Screenshare', '')
-      const screenshare = handleDTO.display.includes('|Screenshare')
-      if (!screenshare) {
-        handleDTO.video = true && (msg.video === undefined || msg.video)
-        handleDTO.screen = false
-      }
-      if (screenshare) {
-        handleDTO.video = false
-        handleDTO.screen = true
-      }
-    }
   }
 }

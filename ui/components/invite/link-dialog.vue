@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog" persistent retain-focus max-width="800px">
-    <v-card>
+    <v-card v-if="room">
       <v-expansion-panels
         v-model="panel"
         accordion

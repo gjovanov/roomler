@@ -61,8 +61,8 @@ export const actions = {
     dispatch
   }, { handleDTO, msg }) {
     this.$Janus.log('handleJoined')
-    commit('api/janus/videoroom/updates/updateIds', { handleDTO, msg }, { root: true })
-
+    commit('api/janus/videoroom/updates/setId', { handleDTO, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/videoroom/updates/setDisplay', { handleDTO, display: msg.display }, { root: true })
     if (handleDTO.audio || handleDTO.video || handleDTO.screen) {
       dispatch('api/janus/handle/createOffer', { handleDTO }, { root: true })
         .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDTO, jsep }, { root: true }))
@@ -80,10 +80,6 @@ export const actions = {
       roomid: handleDTO.roomid,
       display,
       ptype: 'attendee',
-      audio: false,
-      video: false,
-      screen: false,
-      data: false,
       id
     }
     dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
@@ -93,7 +89,8 @@ export const actions = {
     dispatch
   }, { handleDTO, msg }) {
     this.$Janus.log('handleAttached')
-    commit('api/janus/videoroom/updates/updateIds', { handleDTO, msg }, { root: true })
+    commit('api/janus/videoroom/updates/setId', { handleDTO, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/videoroom/updates/setDisplay', { handleDTO, display: msg.display }, { root: true })
   },
   handlePublishers ({
     commit,
@@ -104,19 +101,14 @@ export const actions = {
       const display = publishers[p].display
       const audioCodec = publishers[p].audio_codec
       const videoCodec = publishers[p].video_codec
-      const myDisplay = handleDTO.display.replace('|Screenshare', '')
-      const otherDisplay = display.replace('|Screenshare', '')
-      if (myDisplay !== otherDisplay) {
+      const myid = handleDTO.id
+      if (myid !== id) {
         const args = {
           plugin: handleDTO.plugin,
           roomid: handleDTO.roomid,
           display,
           ptype: 'subscriber',
           id,
-
-          audio: !!audioCodec,
-          video: !!videoCodec,
-
           audioCodec,
           videoCodec
         }
@@ -138,10 +130,6 @@ export const actions = {
         roomid: handleDTO.roomid,
         display,
         ptype: 'attendee',
-        audio: false,
-        video: false,
-        screen: false,
-        data: false,
         id
       }
       dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
@@ -157,11 +145,7 @@ export const actions = {
       result.participants.forEach((p) => {
         const handle = handleDTO.sessionDTO.handleDTOs.find(h => h.id === p.id)
         if (handle) {
-          const msg = {
-            display: p.display,
-            video: handle.video
-          }
-          commit('api/janus/videoroom/updates/updateIds', { handleDTO: handle, msg }, { root: true })
+          commit('api/janus/videoroom/updates/setDisplay', { handleDTO: handle, display: p.display }, { root: true })
         }
       })
     }
@@ -205,9 +189,6 @@ export const actions = {
     dispatch
   }, { handleDTO, jsep }) {
     this.$Janus.log('handleJsep')
-    // if (!handleDTO.screen) {
-
-    // }
     if (handleDTO.isPublisher) {
       this.$Janus.log('handleRemoteJsep')
       handleDTO.handle.handleRemoteJsep({ jsep })

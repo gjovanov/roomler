@@ -52,15 +52,5 @@ export const actions = {
     }
     await dispatch('api/janus/videoroom/api/joinPublisher', { handleDTO }, { root: true })
     return sessionDTO
-  },
-
-  async shareScreen ({
-    commit,
-    dispatch,
-    rootState
-  }, payload) {
-    const handleDTO = await dispatch('api/janus/handle/attachPublisher', { sessionDTO: payload.sessionDTO, args: payload.janus }, { root: true })
-    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDTO }, { root: true })
-    return handleDTO
   }
 }

@@ -142,18 +142,34 @@ export const actions = {
       const media = {
         audioRecv: false,
         videoRecv: false,
-        audioSend: handleDTO.audio,
+        // audioSend: handleDTO.audio,
         audio: handleDTO.audio,
         video: handleDTO.screen ? 'screen' : (handleDTO.video ? handleDTO.videoResolution : false),
-        data: handleDTO.data,
-        addAudio: handleDTO.audio === true && handleDTO.mediaState.audio === false ? true : undefined,
-        removeAudio: handleDTO.audio === false && handleDTO.mediaState.audio === true ? true : undefined,
-        addVideo: (handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === false ? true : undefined,
-        removeVideo: (handleDTO.video === false && handleDTO.screen === false) && handleDTO.mediaState.video === true ? true : undefined,
-        replaceVideo: (handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === true ? true : undefined
+        data: handleDTO.data
+      }
+      let restart = false
+      if (handleDTO.audio === true && handleDTO.mediaState.audio === false) {
+        media.addAudio = true
+        restart = true
+      }
+      if (handleDTO.audio === false && handleDTO.mediaState.audio === true) {
+        media.removeAudio = true
+        restart = true
+      }
+      if ((handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === false) {
+        media.addVideo = true
+        restart = true
+      }
+      if ((handleDTO.video === false && handleDTO.screen === false) && handleDTO.mediaState.video === true) {
+        media.removeVideo = true
+        restart = true
+      }
+      if ((handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === true) {
+        media.replaceVideo = true
+        restart = true
       }
       handleDTO.handle.createOffer({
-        iceRestart,
+        iceRestart: iceRestart !== undefined ? iceRestart : restart,
         media,
         simulcast: handleDTO.simulcast,
         trickle: handleDTO.trickle,
@@ -195,13 +211,17 @@ export const actions = {
     commit
   }, { handleDTO, jsep }) {
     return new Promise((resolve, reject) => {
+      const media = {
+        audioSend: false,
+        videoSend: false,
+        audioRecv: true,
+        videoRecv: true,
+        data: handleDTO.data
+      }
+      console.log(media)
       handleDTO.handle.createAnswer({
         jsep,
-        media: {
-          audioSend: false,
-          videoSend: false,
-          data: handleDTO.data
-        },
+        media,
         success: (jsepObj) => {
           resolve(jsepObj)
         },

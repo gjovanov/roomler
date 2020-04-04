@@ -1,6 +1,6 @@
 <template>
   <v-toolbar
-    v-if="room || conferenceRoom"
+    v-if="room && roomRoute"
     tile
     dense
     style="background-color: #363636; height: 56px;"
@@ -11,7 +11,7 @@
 
     <v-spacer />
 
-    <v-tooltip bottom left>
+    <v-tooltip v-if="room" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
@@ -28,7 +28,7 @@
       <span>Chat</span>
     </v-tooltip>
 
-    <v-tooltip v-if="!conferenceRoom || (room && conferenceRoom && room._id == conferenceRoom._id)" bottom left>
+    <v-tooltip v-if="room" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
@@ -45,7 +45,7 @@
       <span>Calls</span>
     </v-tooltip>
 
-    <v-tooltip bottom left>
+    <v-tooltip v-if="room" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
@@ -64,7 +64,7 @@
 
     <v-spacer />
 
-    <v-tooltip bottom left>
+    <v-tooltip v-if="room" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="room"
@@ -91,29 +91,9 @@ export default {
       type: Object,
       default: null
     },
-    conferenceRoom: {
-      type: Object,
+    roomRoute: {
+      type: String,
       default: null
-    }
-  },
-
-  computed: {
-    panelLeft () {
-      return this.$store.state.panel.left
-    },
-    panelRight () {
-      return this.$store.state.panel.right
-    },
-    panelChat () {
-      return this.$store.state.panel.chat
-    },
-    panelConference () {
-      return this.$store.state.panel.conference
-    }
-  },
-  methods: {
-    toggle (panel) {
-      this.$store.commit('panel/toggle', panel)
     }
   }
 }

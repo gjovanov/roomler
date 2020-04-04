@@ -202,8 +202,9 @@ export default {
     })
   },
 
-  mounted () {
+  async mounted () {
     this.scrollMessages(true)
+    await this.readUnreads()
   },
 
   beforeDestroy () {
