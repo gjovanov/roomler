@@ -38,7 +38,7 @@
           v-on="on"
         >
           <v-icon>
-            fa-phone-volume
+            fa-phone
           </v-icon>
         </v-btn>
       </template>

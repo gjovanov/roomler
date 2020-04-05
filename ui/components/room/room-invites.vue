@@ -42,7 +42,7 @@
         </v-list-item>
       </template>
     </v-list>
-    <v-tooltip bottom left>
+    <v-tooltip v-if="canInvite" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="canInvite"
@@ -61,7 +61,7 @@
       <span>Invite new peers</span>
     </v-tooltip>
 
-    <v-tooltip bottom left>
+    <v-tooltip v-if="canInvite" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="canInvite"
@@ -109,6 +109,14 @@ export default {
     room: {
       type: Object,
       default: null
+    },
+    roomRoute: {
+      type: String,
+      default: null
+    },
+    roomQuery: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -118,11 +126,28 @@ export default {
     }
   },
   computed: {
+    dialogStarter () {
+      return {
+        peers: this.roomRoute === 'peers',
+        invite: !!(this.roomQuery && (this.roomQuery.invite === null || this.roomQuery.invite === true)),
+        link: !!(this.roomQuery && (this.roomQuery.link === null || this.roomQuery.link === true))
+      }
+    },
     canInvite () {
       return ['owner', 'moderator'].includes(this.currentRole)
     },
     currentRole () {
       return this.room && this.user ? this.$store.getters['api/room/getUserRole'](this.room._id, this.user._id) : ''
+    }
+  },
+  watch: {
+    'dialogStarter' (value) {
+      if (value.peers && value.invite) {
+        this.inviteDialog = true
+      }
+      if (value.peers && value.link) {
+        this.linkDialog = true
+      }
     }
   },
   methods: {

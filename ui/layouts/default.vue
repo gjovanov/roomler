@@ -53,6 +53,7 @@
               :peers="peers"
               :user="user"
               :room-route="roomRoute"
+              :room-query="roomQuery"
               :conference-session="conferenceSession"
               :conference-room="conferenceRoom"
               :invites="invites"
@@ -109,6 +110,10 @@ export default {
         ? this.$route.name.replace('room-', '')
         : null
     },
+    roomQuery () {
+      const query = this.roomRoute ? this.$route.query : null
+      return query
+    },
     fillHeight () {
       return !this.areRoomRoutes
     },
@@ -122,7 +127,8 @@ export default {
       return this.$store.state.api.auth.user
     },
     peers () {
-      return this.$store.getters['api/auth/getPeers']
+      const result = this.$store.getters['api/auth/getPeers']
+      return result
     },
     rooms () {
       return this.$store.state.api.room.rooms
