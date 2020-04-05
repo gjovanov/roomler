@@ -43,15 +43,17 @@
           class="pa-0 ma-0"
         >
           <v-card flat>
-            <v-card-text class="pa-0 ma-0">
+            <v-card-text class="pa-0 ma-0" style="max-height: 240px">
               <video
                 :id="handleDTO.id"
                 :srcObject.prop="handleDTO.stream"
                 :poster="getPeer(handleDTO.display_name).avatar_url"
                 width="100%"
-                height="240"
+                height="100%"
+                style="max-height: 240px"
                 autoplay
                 controls
+                @suspend="showVideoPoster(handleDTO)"
               />
               <media-buttons :handle="handleDTO" />
             </v-card-text>
@@ -104,10 +106,10 @@ export default {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     screens () {
-      return this.conferenceSession.handleDTOs.filter(h => h.screen)
+      return this.conferenceSession.handleDTOs.filter(h => h.screen && !h.isLocal)
     },
     publishers () {
-      return this.conferenceSession.handleDTOs.filter(h => !h.screen)
+      return this.conferenceSession.handleDTOs.filter(h => !(h.screen && !h.isLocal))
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
@@ -116,38 +118,24 @@ export default {
       return this.roomRoute === 'calls' ? 'center' : 'left'
     }
   },
-  watch: {
-    'localHandle.stream' (newVal) {
-      if (newVal && this.localHandle) {
-        this.setVideoMuted(this.localHandle)
-      }
-      if (!newVal) {
-        this.showVideoPoster()
-      }
-    },
-    'localHandle.stream.videoTracks' (newVal) {
-      if (newVal && this.localHandle) {
-        this.setVideoMuted(this.localHandle)
-      }
-      if (newVal && newVal.length === 0) {
-        this.showVideoPoster(this.localHandle)
-      }
-    }
-  },
   updated () {
-    const self = this
     if (this.localHandle) {
       this.setVideoMuted(this.localHandle)
-      if (this.conferenceSession && this.conferenceSession.handleDTOs) {
-        console.log('update')
-        this.conferenceSession.handleDTOs.forEach((h) => {
-          console.log(h.id)
-          if (!h.stream || !h.stream.videoTracks || h.stream.videoTracks.length === 0) {
-            console.log('show poster')
-            self.showVideoPoster(h)
+    }
+    if (this.conferenceSession && this.conferenceSession.handleDTOs) {
+      this.conferenceSession.handleDTOs.filter(h => !(h.isLocal && h.screen)).forEach(async (h) => {
+        if (h.stream) {
+          const video = document.getElementById(h.id)
+          if (video) {
+            video.setAttribute('autoplay', 'autoplay')
+            try {
+              await video.play()
+            } catch (e) {
+              console.log(e)
+            }
           }
-        })
-      }
+        }
+      })
     }
   },
   mounted () {
@@ -170,12 +158,20 @@ export default {
     },
     setVideoMuted (handleDTO) {
       this.$nextTick(() => {
-        setTimeout(() => {
+        setTimeout(async () => {
           if (handleDTO) {
             const video = document.getElementById(handleDTO.id)
             if (video) {
               video.setAttribute('muted', 'muted')
               video.muted = true
+              if (handleDTO.isLocal && handleDTO.screen) {
+                try {
+                  await video.load()
+                  await video.pause()
+                } catch (e) {
+                  console.log(e)
+                }
+              }
             }
           }
         }, 100)
@@ -188,6 +184,7 @@ export default {
             const video = document.getElementById(handleDTO.id)
             if (video) {
               video.load()
+              video.setAttribute('autoplay', 'autoplay')
             }
           }
         }, 100)

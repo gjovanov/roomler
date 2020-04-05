@@ -62,7 +62,7 @@
         </v-list-item>
       </template>
     </v-list>
-    <v-tooltip bottom left>
+    <v-tooltip v-if="peers && peers.length && canInvite" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="peers && peers.length && canInvite"
@@ -114,6 +114,14 @@ export default {
       default () {
         return []
       }
+    },
+    roomRoute: {
+      type: String,
+      default: null
+    },
+    roomQuery: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -125,11 +133,19 @@ export default {
     }
   },
   computed: {
+    dialogStarter () {
+      return {
+        peers: this.roomRoute === 'peers',
+        add: !!(this.roomQuery && (this.roomQuery.add === null || this.roomQuery.add === true))
+      }
+    },
     currentRole () {
-      return this.room && this.user ? this.$store.getters['api/room/getUserRole'](this.room._id, this.user._id) : ''
+      const role = this.room && this.user ? this.$store.getters['api/room/getUserRole'](this.room._id, this.user._id) : ''
+      return role
     },
     canInvite () {
-      return ['owner', 'moderator'].includes(this.currentRole)
+      const result = ['owner', 'moderator'].includes(this.currentRole)
+      return result
     },
     roomPeers () {
       const self = this
@@ -144,6 +160,13 @@ export default {
         .sort((a, b) => {
           return a.user.username.localeCompare(b.user.username)
         })
+    }
+  },
+  watch: {
+    'dialogStarter' (value) {
+      if (value.peers && value.add) {
+        this.peerDialog = true
+      }
     }
   },
   methods: {

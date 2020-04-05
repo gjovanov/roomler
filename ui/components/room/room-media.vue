@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="room">
     <v-spacer />
     <v-text-field
       v-model="room.media.publishers"

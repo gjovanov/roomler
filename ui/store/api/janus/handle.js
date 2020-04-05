@@ -39,22 +39,71 @@ export const actions = {
           commit('api/janus/videoroom/updates/consentDialog', { handleDTO, on }, { root: true })
         },
         webrtcState: (on, reason) => {
+          if (!on) {
+            const toast = {
+              prop: 'global',
+              message: `${handleDTO.isLocal ? 'You have ' : handleDTO.display_name + ' has '} disconnected`,
+              error: true
+            }
+            commit('toast/push', toast, {
+              root: true
+            })
+          } else {
+            const toast = {
+              prop: 'global',
+              message: `${handleDTO.isLocal ? 'You have ' : handleDTO.display_name + ' has '} connected`
+            }
+            commit('toast/push', toast, {
+              root: true
+            })
+          }
+
           commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
         },
         iceState: (on) => {
-          // if (on === 'disconnected') {
-          //   if (handleDTO.isPublisher) {
-          //     dispatch('api/janus/handle/iceRestartPublisher', { handleDTO }, { root: true })
-          //   } else {
-          //     dispatch('api/janus/handle/iceRestartSubscriber', { handleDTO }, { root: true })
-          //   }
-          // }
+          if (on === 'disconnected') {
+            const toast = {
+              prop: 'global',
+              message: `ICE disconnected for ${handleDTO.isLocal ? 'You' : handleDTO.display_name}. Check your internet connection, refresh the page and try again`,
+              error: true
+            }
+            commit('toast/push', toast, {
+              root: true
+            })
+          } else if (on === 'failed') {
+            const toast = {
+              prop: 'global',
+              message: `ICE failed for ${handleDTO.isLocal ? 'You' : handleDTO.display_name}. Turn off your firewall or antivirus and try again`,
+              error: true
+            }
+            commit('toast/push', toast, {
+              root: true
+            })
+          }
+
           commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
         },
         mediaState: (type, on) => {
           commit('api/janus/videoroom/updates/mediaState', { handleDTO, type, on }, { root: true })
         },
         slowLink: (on) => {
+          let message = on
+            ? `Slow network connection detected for '${handleDTO.display_name}'`
+            : `Very slow network connection detected for '${handleDTO.display_name}'`
+          if (handleDTO.video) {
+            message += '. Try turning off your camera'
+          }
+          if (handleDTO.screen) {
+            message += '. Try stopping screen share'
+          }
+          const toast = {
+            prop: 'global',
+            message,
+            error: true
+          }
+          commit('toast/push', toast, {
+            root: true
+          })
           commit('api/janus/videoroom/updates/slowLink', { handleDTO, on }, { root: true })
         },
         onlocalstream: (stream) => {

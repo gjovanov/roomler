@@ -9,7 +9,7 @@ export const state = () => ({
       audio: null
     },
     message_create: {
-      file_name: '/audio/accomplished.mp3',
+      file_name: '/audio/all-eyes-on-me.mp3',
       audio: null
     },
     reaction_push: {

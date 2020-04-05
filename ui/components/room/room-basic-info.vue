@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="room">
     <v-text-field
       v-model="room.name"
       label="Room name"

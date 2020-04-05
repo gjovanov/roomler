@@ -19,7 +19,7 @@
           accordion
           style="height: 100%"
         >
-          <v-expansion-panel v-show="room && !isRoomPeer && roomRoute === 'chat'">
+          <v-expansion-panel v-show="joinPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -46,7 +46,7 @@
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length === 1 && roomRoute === 'chat'">
+          <v-expansion-panel v-show="invitePanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -72,7 +72,7 @@
               </v-row>
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && roomRoute === 'calls'">
+          <v-expansion-panel v-show="callsPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -105,7 +105,7 @@
               <portal-target name="conference-center" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && isRoomPeer && roomPeers && roomPeers.length >= 0 && roomRoute === 'chat'">
+          <v-expansion-panel v-show="chatPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -124,7 +124,7 @@
               <portal-target name="chat-center" />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && roomRoute === 'peers'">
+          <v-expansion-panel v-show="peersPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -134,10 +134,16 @@
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
-              <room-peers :room="room" :user="user" :peers="peers" />
+              <room-peers
+                :room="room"
+                :user="user"
+                :peers="peers"
+                :room-route="roomRoute"
+                :room-query="roomQuery"
+              />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && roomRoute === 'peers'">
+          <v-expansion-panel v-show="peersPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -147,10 +153,16 @@
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
-              <room-invites :room="room" :user="user" :invites="invites" />
+              <room-invites
+                :room="room"
+                :user="user"
+                :invites="invites"
+                :room-route="roomRoute"
+                :room-query="roomQuery"
+              />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && roomRoute === 'settings'">
+          <v-expansion-panel v-show="settingsPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -160,10 +172,12 @@
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <room-basic-info :room="room" />
+              <room-basic-info
+                :room="room"
+              />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="room && roomRoute === 'settings'">
+          <v-expansion-panel v-show="settingsPanel">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -173,7 +187,10 @@
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-              <room-media :user="user" :room="room" />
+              <room-media
+                :user="user"
+                :room="room"
+              />
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -230,6 +247,10 @@ export default {
       type: String,
       default: null
     },
+    roomQuery: {
+      type: Object,
+      default: null
+    },
     conferenceSession: {
       type: Object,
       default: null
@@ -255,11 +276,59 @@ export default {
     }
   },
   computed: {
+    joinPanel () {
+      return this.room && !this.isRoomPeer && this.roomRoute === 'chat'
+    },
+    invitePanel () {
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length === 1 && this.roomRoute === 'chat'
+    },
+    callsPanel () {
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute === 'calls'
+    },
+    chatPanel () {
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute === 'chat'
+    },
+    peersPanel () {
+      return this.room && this.roomRoute === 'peers'
+    },
+    invitesPanel () {
+      return this.peersPanel && (
+        this.roomQuery.invite === null ||
+        this.roomQuery.invite === true ||
+        this.roomQuery.link === null ||
+        this.roomQuery.link === true)
+    },
+    settingsPanel () {
+      return this.room && this.roomRoute === 'settings'
+    },
+    panel () {
+      if (this.joinPanel) {
+        return 0
+      } else if (this.invitePanel) {
+        return 1
+      } else if (this.callsPanel) {
+        return 2
+      } else if (this.chatPanel) {
+        return 3
+      } else if (this.invitesPanel) {
+        return 5
+      } else if (this.peersPanel) {
+        return 4
+      } else if (this.settingsPanel) {
+        return 6
+      }
+      return 0
+    },
     roomPeers () {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     isRoomPeer () {
       return this.$store.getters['api/room/isRoomPeer'](this.room)
+    }
+  },
+  watch: {
+    'panel' (newVal) {
+      this.panels = newVal
     }
   },
   methods: {
