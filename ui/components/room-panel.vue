@@ -87,6 +87,7 @@
                 :room="room"
                 :conference-session="conferenceSession"
                 :conference-room="conferenceRoom"
+                :room-route="roomRoute"
               />
               <conference
                 :user="user"

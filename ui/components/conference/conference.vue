@@ -8,24 +8,24 @@
         v-if="conferenceSession && screens && screens.length"
       >
         <v-col
-          v-for="handleDTO in screens"
-          :key="handleDTO.id"
+          v-for="handleDto in screens"
+          :key="handleDto.id"
           sm="12"
           cols="12"
           class="pa-0 ma-0"
         >
-          <v-card flat>
+          <v-card elevation="12">
             <v-card-text class="pa-0 ma-0">
               <video
-                :id="handleDTO.id"
-                :srcObject.prop="handleDTO.stream"
-                :poster="getPeer(handleDTO.display_name).avatar_url"
+                :id="handleDto.id"
+                :srcObject.prop="handleDto.stream"
+                :poster="getPeer(handleDto.display_name).avatar_url"
                 width="100%"
                 height="100%"
                 autoplay
                 controls
               />
-              <!-- <media-buttons :handle="handleDTO" /> -->
+              <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
             </v-card-text>
           </v-card>
         </v-col>
@@ -34,28 +34,28 @@
         v-if="conferenceSession && publishers && publishers.length"
       >
         <v-col
-          v-for="handleDTO in publishers"
-          :key="handleDTO.id"
+          v-for="handleDto in publishers"
+          :key="handleDto.id"
           sm="12"
           md="4"
           lg="3"
           cols="12"
           class="pa-0 ma-0"
         >
-          <v-card flat>
+          <v-card elevation="12">
             <v-card-text class="pa-0 ma-0" style="max-height: 240px">
               <video
-                :id="handleDTO.id"
-                :srcObject.prop="handleDTO.stream"
-                :poster="getPeer(handleDTO.display_name).avatar_url"
+                :id="handleDto.id"
+                :srcObject.prop="handleDto.stream"
+                :poster="getPeer(handleDto.display_name).avatar_url"
                 width="100%"
                 height="100%"
                 style="max-height: 240px"
-                autoplay
-                controls
-                @suspend="showVideoPoster(handleDTO)"
+                :autoplay="handleDto.audio || handleDto.video || handleDto.screen"
+                :controls="handleDto.audio || handleDto.video || handleDto.screen"
+                @suspend="showVideoPoster(handleDto)"
               />
-              <media-buttons :handle="handleDTO" />
+              <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
             </v-card-text>
           </v-card>
         </v-col>
@@ -106,10 +106,10 @@ export default {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     screens () {
-      return this.conferenceSession.handleDTOs.filter(h => h.screen && !h.isLocal)
+      return this.conferenceSession.handleDtos.filter(h => h.screen && !h.isLocal)
     },
     publishers () {
-      return this.conferenceSession.handleDTOs.filter(h => !(h.screen && !h.isLocal))
+      return this.conferenceSession.handleDtos.filter(h => !(h.screen && !h.isLocal))
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
@@ -122,8 +122,8 @@ export default {
     if (this.localHandle) {
       this.setVideoMuted(this.localHandle)
     }
-    if (this.conferenceSession && this.conferenceSession.handleDTOs) {
-      this.conferenceSession.handleDTOs.filter(h => !(h.isLocal && h.screen)).forEach(async (h) => {
+    if (this.conferenceSession && this.conferenceSession.handleDtos) {
+      this.conferenceSession.handleDtos.filter(h => !(h.isLocal && h.screen)).forEach(async (h) => {
         if (h.stream) {
           const video = document.getElementById(h.id)
           if (video) {
@@ -156,32 +156,24 @@ export default {
     getPeer (username) {
       return this.peers.find(u => u.username === username) || { }
     },
-    setVideoMuted (handleDTO) {
+    setVideoMuted (handleDto) {
       this.$nextTick(() => {
-        setTimeout(async () => {
-          if (handleDTO) {
-            const video = document.getElementById(handleDTO.id)
+        setTimeout(() => {
+          if (handleDto) {
+            const video = document.getElementById(handleDto.id)
             if (video) {
               video.setAttribute('muted', 'muted')
               video.muted = true
-              if (handleDTO.isLocal && handleDTO.screen) {
-                try {
-                  await video.load()
-                  await video.pause()
-                } catch (e) {
-                  console.log(e)
-                }
-              }
             }
           }
         }, 100)
       })
     },
-    showVideoPoster (handleDTO) {
+    showVideoPoster (handleDto) {
       this.$nextTick(() => {
         setTimeout(() => {
-          if (handleDTO) {
-            const video = document.getElementById(handleDTO.id)
+          if (handleDto) {
+            const video = document.getElementById(handleDto.id)
             if (video) {
               video.load()
               video.setAttribute('autoplay', 'autoplay')

@@ -1,17 +1,17 @@
-import { toHandleDTO } from '@/services/handle-mapper'
+import { HandleDto } from '@/services/handle-dto'
 
 export const mutations = {
-  set (state, { handleDTO, handle }) {
-    handleDTO.handle = handle
+  set (state, { handleDto, handle }) {
+    handleDto.handle = handle
   },
-  push (state, { sessionDTO, handleDTO }) {
-    const handles = sessionDTO.handleDTOs.filter(h => h.id !== handleDTO.id)
-    handles.push(handleDTO)
-    sessionDTO.handleDTOs = handles
+  push (state, { sessionDto, handleDto }) {
+    const handles = sessionDto.handleDtos.filter(h => h.id !== handleDto.id)
+    handles.push(handleDto)
+    sessionDto.handleDtos = handles
   },
-  pull (state, { sessionDTO, handleDTO }) {
-    handleDTO.handle = null
-    sessionDTO.handleDTOs = sessionDTO.handleDTOs.filter(h => h.id !== handleDTO.id)
+  pull (state, { sessionDto, handleDto }) {
+    handleDto.handle = null
+    sessionDto.handleDtos = sessionDto.handleDtos.filter(h => h.id !== handleDto.id)
   }
 }
 
@@ -19,115 +19,59 @@ export const actions = {
   attach ({
     commit,
     dispatch
-  }, { sessionDTO, args }) {
+  }, { sessionDto, args }) {
     const self = this
     self.$Janus.debug('Attaching')
     return new Promise((resolve, reject) => {
-      const handleDTO = toHandleDTO(sessionDTO, args)
-      commit('push', { sessionDTO, handleDTO })
-      sessionDTO.session.attach({
-        plugin: handleDTO.plugin,
-        opaqueId: handleDTO.opaqueId,
+      const handleDto = new HandleDto(sessionDto, args)
+      commit('push', { sessionDto, handleDto })
+      sessionDto.session.attach({
+        plugin: handleDto.plugin,
+        opaqueId: handleDto.opaqueId,
         success: (handle) => {
-          commit('set', { handleDTO, handle })
-          resolve(handleDTO)
+          commit('set', { handleDto, handle })
+          resolve(handleDto)
         },
         error: (error) => {
           reject(error)
         },
         consentDialog: (on) => {
-          commit('api/janus/videoroom/updates/consentDialog', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/consentDialog', { handleDto, on }, { root: true })
         },
         webrtcState: (on, reason) => {
-          if (!on) {
-            const toast = {
-              prop: 'global',
-              message: `${handleDTO.isLocal ? 'You have ' : handleDTO.display_name + ' has '} disconnected`,
-              error: true
-            }
-            commit('toast/push', toast, {
-              root: true
-            })
-          } else {
-            const toast = {
-              prop: 'global',
-              message: `${handleDTO.isLocal ? 'You have ' : handleDTO.display_name + ' has '} connected`
-            }
-            commit('toast/push', toast, {
-              root: true
-            })
-          }
-
-          commit('api/janus/videoroom/updates/webrtcState', { handleDTO, on, reason }, { root: true })
+          commit('api/janus/videoroom/updates/webrtcState', { handleDto, on, reason }, { root: true })
         },
         iceState: (on) => {
-          if (on === 'disconnected') {
-            const toast = {
-              prop: 'global',
-              message: `ICE disconnected for ${handleDTO.isLocal ? 'You' : handleDTO.display_name}. Check your internet connection, refresh the page and try again`,
-              error: true
-            }
-            commit('toast/push', toast, {
-              root: true
-            })
-          } else if (on === 'failed') {
-            const toast = {
-              prop: 'global',
-              message: `ICE failed for ${handleDTO.isLocal ? 'You' : handleDTO.display_name}. Turn off your firewall or antivirus and try again`,
-              error: true
-            }
-            commit('toast/push', toast, {
-              root: true
-            })
-          }
-
-          commit('api/janus/videoroom/updates/iceState', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/iceState', { handleDto, on }, { root: true })
         },
         mediaState: (type, on) => {
-          commit('api/janus/videoroom/updates/mediaState', { handleDTO, type, on }, { root: true })
+          commit('api/janus/videoroom/updates/mediaState', { handleDto, type, on }, { root: true })
         },
         slowLink: (on) => {
-          let message = on
-            ? `Slow network connection detected for '${handleDTO.display_name}'`
-            : `Very slow network connection detected for '${handleDTO.display_name}'`
-          if (handleDTO.video) {
-            message += '. Try turning off your camera'
-          }
-          if (handleDTO.screen) {
-            message += '. Try stopping screen share'
-          }
-          const toast = {
-            prop: 'global',
-            message,
-            error: true
-          }
-          commit('toast/push', toast, {
-            root: true
-          })
-          commit('api/janus/videoroom/updates/slowLink', { handleDTO, on }, { root: true })
+          commit('api/janus/videoroom/updates/slowLink', { handleDto, on }, { root: true })
         },
         onlocalstream: (stream) => {
-          commit('api/janus/videoroom/updates/onlocalstream', { handleDTO, stream }, { root: true })
+          commit('api/janus/videoroom/updates/onlocalstream', { handleDto, stream, commit }, { root: true })
         },
         onremotestream: (stream) => {
-          commit('api/janus/videoroom/updates/onremotestream', { handleDTO, stream }, { root: true })
+          commit('api/janus/videoroom/updates/onremotestream', { handleDto, stream, commit }, { root: true })
         },
         ondataopen: () => {
-          commit('api/janus/videoroom/updates/ondataopen', { handleDTO }, { root: true })
+          commit('api/janus/videoroom/updates/ondataopen', { handleDto }, { root: true })
         },
         ondata: (data) => {
-          dispatch('api/janus/videoroom/handlers/ondata', { handleDTO, data }, { root: true })
+          dispatch('api/janus/videoroom/handlers/ondata', { handleDto, data }, { root: true })
         },
         oncleanup: () => {
-          commit('api/janus/videoroom/updates/oncleanup', { handleDTO }, { root: true })
-          // commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
+          commit('api/janus/videoroom/updates/oncleanup', { handleDto }, { root: true })
+          // commit('api/janus/handle/pull', { sessionDto, handleDto }, { root: true })
         },
         ondetached: () => {
           self.$Janus.debug('Detaching.............')
-          // commit('api/janus/handle/pull', { sessionDTO, handleDTO }, { root: true })
+          // commit('api/janus/handle/pull', { sessionDto, handleDto }, { root: true })
         },
         onmessage: (msg, jsep) => {
-          dispatch('api/janus/videoroom/handlers/onmessage', { handleDTO, msg, jsep }, { root: true })
+          dispatch('api/janus/videoroom/handlers/onmessage', { handleDto, msg, jsep }, { root: true })
         }
       })
     })
@@ -137,41 +81,42 @@ export const actions = {
     {
       commit,
       dispatch
-    }, { sessionDTO, args }) {
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args }, { root: true })
-    commit('api/janus/videoroom/updates/setPublisher', { handleDTO, isPublisher: true }, { root: true })
-    return handleDTO
+    }, { sessionDto, args }) {
+    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args }, { root: true })
+    commit('api/janus/videoroom/updates/setPublisher', { handleDto, isPublisher: true }, { root: true })
+    return handleDto
   },
 
   async attachSubscriber (
     {
       commit,
       dispatch
-    }, { sessionDTO, args }) {
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args }, { root: true })
-    commit('api/janus/videoroom/updates/setPublisher', { handleDTO, isPublisher: false }, { root: true })
-    return handleDTO
+    }, { sessionDto, args }) {
+    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args }, { root: true })
+    commit('api/janus/videoroom/updates/setPublisher', { handleDto, isPublisher: false }, { root: true })
+    return handleDto
   },
 
   attachAttendee ({
     commit,
     dispatch
-  }, { sessionDTO, args }) {
+  }, { sessionDto, args }) {
     const self = this
     self.$Janus.debug('Attaching:attendee')
-    const handleDTO = toHandleDTO(sessionDTO, args)
-    commit('push', { sessionDTO, handleDTO })
-    return handleDTO
+    const handleDto = new HandleDto(sessionDto, args)
+    commit('push', { sessionDto, handleDto })
+    return handleDto
   },
 
   detach ({
     commit,
     dispatch
-  }, { handleDTO }) {
+  }, { handleDto }) {
     return new Promise((resolve, reject) => {
-      if (handleDTO.handle) {
-        handleDTO.handle.detach({
+      if (handleDto.handle) {
+        handleDto.handle.detach({
           success () {
+            commit('api/janus/handle/set', { handleDto, handle: null }, { root: true })
             resolve()
           },
           error (error) {
@@ -186,42 +131,41 @@ export const actions = {
 
   createOffer ({
     commit
-  }, { handleDTO, iceRestart = undefined }) {
+  }, { handleDto, iceRestart = undefined }) {
     return new Promise((resolve, reject) => {
       const media = {
         audioRecv: false,
         videoRecv: false,
-        // audioSend: handleDTO.audio,
-        audio: handleDTO.audio,
-        video: handleDTO.screen ? 'screen' : (handleDTO.video ? handleDTO.videoResolution : false),
-        data: handleDTO.data
+        audio: handleDto.audio,
+        video: handleDto.screen ? 'screen' : (handleDto.video && handleDto.video.enabled ? handleDto.video.resolution : false),
+        data: handleDto.data
       }
       let restart = false
-      if (handleDTO.audio === true && handleDTO.mediaState.audio === false) {
+      if (handleDto.audio === true && handleDto.mediaState.audio === false) {
         media.addAudio = true
         restart = true
       }
-      if (handleDTO.audio === false && handleDTO.mediaState.audio === true) {
+      if (handleDto.audio === false && handleDto.mediaState.audio === true) {
         media.removeAudio = true
         restart = true
       }
-      if ((handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === false) {
+      if ((handleDto.video === true || handleDto.screen === true) && handleDto.mediaState.video === false) {
         media.addVideo = true
         restart = true
       }
-      if ((handleDTO.video === false && handleDTO.screen === false) && handleDTO.mediaState.video === true) {
+      if ((handleDto.video === false && handleDto.screen === false) && handleDto.mediaState.video === true) {
         media.removeVideo = true
         restart = true
       }
-      if ((handleDTO.video === true || handleDTO.screen === true) && handleDTO.mediaState.video === true) {
+      if ((handleDto.video === true || handleDto.screen === true) && handleDto.mediaState.video === true) {
         media.replaceVideo = true
         restart = true
       }
-      handleDTO.handle.createOffer({
-        iceRestart: iceRestart !== undefined ? iceRestart : restart,
+      handleDto.handle.createOffer({
+        iceRestart: iceRestart !== undefined || restart !== undefined ? iceRestart : restart,
         media,
-        simulcast: handleDTO.simulcast,
-        trickle: handleDTO.trickle,
+        simulcast: handleDto.simulcast,
+        trickle: handleDto.trickle,
         success: (jsep) => {
           resolve(jsep)
         },
@@ -232,43 +176,19 @@ export const actions = {
     })
   },
 
-  iceRestartPublisher ({
-    commit
-  }, { handleDTO }) {
-    handleDTO.handle.createOffer({
-      iceRestart: true,
-      media: {
-        audioRecv: false,
-        videoRecv: false,
-        audioSend: handleDTO.audio,
-        videoSend: handleDTO.video || handleDTO.screen
-      },
-      success (jsep) {
-        const publish = { request: 'configure', refresh: true }
-        handleDTO.handle.send({ message: publish, jsep })
-      }
-    })
-  },
-
-  iceRestartSubscriber ({
-    commit
-  }, { handleDTO }) {
-    handleDTO.handle.send({ message: { request: 'configure', refresh: true } })
-  },
-
   createAnswer ({
     commit
-  }, { handleDTO, jsep }) {
+  }, { handleDto, jsep }) {
     return new Promise((resolve, reject) => {
       const media = {
         audioSend: false,
         videoSend: false,
         audioRecv: true,
         videoRecv: true,
-        data: handleDTO.data
+        data: handleDto.data.enabled
       }
       console.log(media)
-      handleDTO.handle.createAnswer({
+      handleDto.handle.createAnswer({
         jsep,
         media,
         success: (jsepObj) => {

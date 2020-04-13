@@ -1,10 +1,10 @@
 export const actions = {
   create ({
     commit
-  }, { handleDTO, payload }) {
+  }, { handleDto, payload }) {
     payload.request = 'create'
     return new Promise((resolve, reject) => {
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: payload,
         success: (data) => {
           if (data && data.error) {
@@ -22,10 +22,10 @@ export const actions = {
 
   edit ({
     commit
-  }, { handleDTO, payload }) {
+  }, { handleDto, payload }) {
     payload.request = 'edit'
     return new Promise((resolve, reject) => {
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: payload,
         success: (data) => {
           if (data && data.error) {
@@ -43,10 +43,10 @@ export const actions = {
 
   destroy ({
     commit
-  }, { handleDTO, payload }) {
+  }, { handleDto, payload }) {
     payload.request = 'destroy'
     return new Promise((resolve, reject) => {
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: payload,
         success: (data) => {
           if (data && data.error) {
@@ -64,13 +64,13 @@ export const actions = {
 
   exists ({
     commit
-  }, { handleDTO, roomid }) {
+  }, { handleDto, roomid }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'exists',
         room: parseInt(roomid)
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: (data) => {
           if (data && data.error) {
@@ -88,12 +88,12 @@ export const actions = {
 
   list ({
     commit
-  }, { handleDTO }) {
+  }, { handleDto }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'list'
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: (data) => {
           if (data && data.error) {
@@ -111,18 +111,17 @@ export const actions = {
 
   joinPublisher ({
     commit
-  }, { handleDTO }) {
+  }, { handleDto }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'join',
-        room: handleDTO.roomid,
-        // id: handleDTO.id,
+        room: handleDto.roomid,
+        // id: handleDto.id,
         ptype: 'publisher',
-        display: handleDTO.display,
-        token: handleDTO.token
+        display: handleDto.display,
+        token: handleDto.token
       }
-      console.log(`REQUEST: ${JSON.stringify(request)}`)
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: () => {
           resolve()
@@ -136,21 +135,21 @@ export const actions = {
 
   joinSubscriber ({
     commit
-  }, { handleDTO }) {
+  }, { handleDto }) {
     const Janus = this.$Janus
     return new Promise((resolve, reject) => {
       const request = {
         request: 'join',
-        room: handleDTO.roomid,
+        room: handleDto.roomid,
         ptype: 'subscriber',
-        display: handleDTO.display,
-        feed: handleDTO.id
+        display: handleDto.display,
+        feed: handleDto.id
       }
       if (Janus.webRTCAdapter.browserDetails.browser === 'safari' &&
-      (handleDTO.videoCodec === 'vp9' || (handleDTO.videoCodec === 'vp8' && !Janus.safariVp8))) {
+      (handleDto.video.codec === 'vp9' || (handleDto.video.codec === 'vp8' && !Janus.safariVp8))) {
         request.offer_video = false
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: () => {
           resolve()
@@ -164,13 +163,13 @@ export const actions = {
 
   start ({
     commit
-  }, { handleDTO, jsep }) {
+  }, { handleDto, jsep }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'start',
-        room: handleDTO.roomid
+        room: handleDto.roomid
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         jsep,
         message: request,
         success: (data) => {
@@ -189,13 +188,13 @@ export const actions = {
 
   listparticipants ({
     commit
-  }, { handleDTO }) {
+  }, { handleDto }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'listparticipants',
-        room: handleDTO.roomid
+        room: handleDto.roomid
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: (data) => {
           if (data && data.error) {
@@ -213,24 +212,24 @@ export const actions = {
 
   configure ({
     commit
-  }, { handleDTO, jsep, replace = undefined }) {
+  }, { handleDto, jsep, replace = undefined }) {
     return new Promise((resolve, reject) => {
-      const audio = handleDTO.audio
-      const screen = handleDTO.screen
-      const video = handleDTO.video
-      const data = handleDTO.data
+      const audio = handleDto.audio && handleDto.audio.enabled
+      const screen = handleDto.screen && handleDto.screen.enabled
+      const video = handleDto.video && handleDto.video.enabled
+      const data = handleDto.data && handleDto.data.enabled
       const request = {
         request: 'configure',
         audio,
         video: video || screen,
         data,
-        // bitrate: handleDTO.bitrate,
-        // keyframe: handleDTO.keyframe,
-        // record: handleDTO.record,
-        // filename: handleDTO.filename,
-        display: handleDTO.display
+        bitrate: handleDto.bitrate.limit,
+        // keyframe: handleDto.keyframe,
+        // record: handleDto.record,
+        // filename: handleDto.filename,
+        display: handleDto.display
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         jsep,
         success: (data) => {
@@ -249,21 +248,21 @@ export const actions = {
 
   publish ({
     commit
-  }, { handleDTO, jsep }) {
+  }, { handleDto, jsep }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'publish',
-        audio: handleDTO.audio,
-        video: handleDTO.video,
-        data: handleDTO.data,
-        audiocodec: handleDTO.audiocodec,
-        videocodec: handleDTO.videocodec,
-        bitrate: handleDTO.bitrate,
-        record: handleDTO.record,
-        filename: handleDTO.filename,
-        display: handleDTO.display
+        audio: handleDto.audio,
+        video: handleDto.video,
+        data: handleDto.data,
+        audiocodec: handleDto.audiocodec,
+        videocodec: handleDto.videocodec,
+        bitrate: handleDto.bitrate,
+        record: handleDto.record,
+        filename: handleDto.filename,
+        display: handleDto.display
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         jsep,
         success: (data) => {
@@ -282,12 +281,12 @@ export const actions = {
 
   unpublish ({
     commit
-  }, { handleDTO }) {
+  }, { handleDto }) {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'unpublish'
       }
-      handleDTO.handle.send({
+      handleDto.handle.send({
         message: request,
         success: (data) => {
           if (data && data.error) {

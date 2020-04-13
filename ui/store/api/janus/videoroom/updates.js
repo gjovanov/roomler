@@ -1,81 +1,97 @@
 import { displayToMedia } from '@/services/handle-mapper'
 
 export const mutations = {
-  setPublisher (state, { handleDTO, isPublisher }) {
-    handleDTO.isPublisher = isPublisher
+  setIsMuted (state, { handleDto, type, isMuted }) {
+    handleDto[`is${type}Muted`] = isMuted
   },
-  setMedia (state, { handleDTO, media }) {
+  setCurrentBitrate (state, { handleDto, currentBitrate }) {
+    handleDto.currentBitrate = currentBitrate
+  },
+  setPublisher (state, { handleDto, isPublisher }) {
+    handleDto.isPublisher = isPublisher
+  },
+  setMedia (state, { handleDto, media }) {
     const mediaPart = ['audio', 'video', 'data', 'screen'].filter(key => media[key] === true).join(',')
-    const displayPart = handleDTO.display_name
-    handleDTO.display = `${displayPart}|${mediaPart}`
+    const displayPart = handleDto.display_name
+    handleDto.display = `${displayPart}|${mediaPart}`
     if (media.data !== undefined) {
-      handleDTO.data = media.data
+      handleDto.data = media.data
     }
     if (media.audio !== undefined) {
-      handleDTO.audio = media.audio
+      handleDto.audio = media.audio
     }
     if (media.video !== undefined) {
-      handleDTO.video = media.video
+      handleDto.video = media.video
     }
     if (media.screen !== undefined) {
-      handleDTO.screen = media.screen
+      handleDto.screen = media.screen
     }
   },
-  setDisplay (state, { handleDTO, display }) {
+  setDisplay (state, { handleDto, display }) {
     if (display) {
       const media = displayToMedia(display)
-      handleDTO.display = media.display
-      handleDTO.display_name = media.display_name
-      handleDTO.data = media.data
-      handleDTO.audio = media.audio
-      handleDTO.video = media.video
-      handleDTO.screen = media.screen
-      handleDTO.display = media.display
+      handleDto.display = media.display
+      handleDto.display_name = media.display_name
+      handleDto.data = media.data
+      handleDto.audio = media.audio
+      handleDto.video = media.video
+      handleDto.screen = media.screen
+      handleDto.display = media.display
     }
   },
-  setId (state, { handleDTO, id, privateId }) {
+  setId (state, { handleDto, id, privateId }) {
     if (id) {
-      handleDTO.id = id
+      handleDto.id = id
     }
     if (privateId) {
-      handleDTO.private_id = privateId
+      handleDto.private_id = privateId
     }
   },
-  clearStream (state, { handleDTO }) {
-    handleDTO.stream = null
+  clearStream (state, { handleDto }) {
+    clearInterval(handleDto.timer)
+    handleDto.stream = null
   },
-  consentDialog (state, { handleDTO, on }) {
-    handleDTO.consentDialog = on
+  consentDialog (state, { handleDto, on }) {
+    handleDto.consentDialog = on
   },
-  webrtcState (state, { handleDTO, on, reason }) {
+  webrtcState (state, { handleDto, on, reason }) {
     console.log(`webrtcState: '${on}', ${reason}`)
-    handleDTO.webrtcState = on
-    handleDTO.webrtcStateReason = reason
+    handleDto.webrtcState = on
+    handleDto.webrtcStateReason = reason
   },
-  iceState (state, { handleDTO, on }) {
+  iceState (state, { handleDto, on }) {
     console.log(`iceState: '${on}'`)
-    handleDTO.iceState = on
+    handleDto.iceState = on
   },
-  mediaState (state, { handleDTO, type, on }) {
+  mediaState (state, { handleDto, type, on }) {
     console.log(`mediaState: '${on}', ${type}`)
-    handleDTO.mediaState[type] = on
+    handleDto.mediaState[type] = on
   },
-  slowLink (state, { handleDTO, on }) {
+  slowLink (state, { handleDto, on }) {
     console.log(`slowLink: '${on}'`)
-    handleDTO.slowLink = on
+    handleDto.slowLink = on
   },
-  onlocalstream (state, { handleDTO, stream }) {
-    handleDTO.stream = stream
-    handleDTO.isLocal = true
+  onlocalstream (state, { handleDto, stream, commit }) {
+    handleDto.stream = stream
+    handleDto.isLocal = true
   },
-  onremotestream (state, { handleDTO, stream }) {
-    handleDTO.stream = stream
-    handleDTO.isLocal = false
+  onremotestream (state, { handleDto, stream, commit }) {
+    handleDto.stream = stream
+    handleDto.isLocal = false
+
+    clearInterval(handleDto.timer)
+    handleDto.timer = setInterval(() => {
+      if (handleDto.handle && handleDto.handle.webrtcStuff) {
+        const currentBitrate = handleDto.handle.getBitrate()
+        commit('api/janus/videoroom/updates/setCurrentBitrate', { handleDto, currentBitrate }, { root: true })
+      }
+    }, handleDto.interval)
   },
-  ondataopen (state, { handleDTO }) {
-    handleDTO.mediaState.data = true
+  ondataopen (state, { handleDto }) {
+    handleDto.mediaState.data = true
   },
-  oncleanup (state, { handleDTO }) {
-    handleDTO.stream = null
+  oncleanup (state, { handleDto }) {
+    clearInterval(handleDto.timer)
+    handleDto.stream = null
   }
 }

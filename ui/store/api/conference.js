@@ -28,13 +28,13 @@ export const actions = {
     dispatch,
     state
   }) {
-    const session = await dispatch('api/janus/session/destroy', { sessionDTO: state.session }, { root: true })
+    const session = await dispatch('api/janus/session/destroy', { sessionDto: state.session }, { root: true })
     commit('set', { session, room: null })
   }
 }
 
 export const getters = {
   localHandle: (state) => {
-    return state.session && state.session.handleDTOs ? state.session.handleDTOs.find(h => h.isLocal) : null
+    return state.session && state.session.handleDtos ? state.session.handleDtos.find(h => h.isLocal) : null
   }
 }

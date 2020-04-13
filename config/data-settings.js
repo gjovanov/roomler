@@ -15,7 +15,7 @@ module.exports = {
     defaults: {
       is_open: true,
       media: {
-        publishers: 12,
+        publishers: 30,
         is_private: false,
         bitrate: 128000,
         fir_freq: 0,

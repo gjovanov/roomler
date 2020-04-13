@@ -2,118 +2,118 @@ export const actions = {
   ondata ({
     commit,
     dispatch
-  }, { handleDTO, data }) {
+  }, { handleDto, data }) {
     // TODO: Add data handling
   },
   async onmessage ({
     commit,
     dispatch
-  }, { handleDTO, msg, jsep }) {
+  }, { handleDto, msg, jsep }) {
     this.$Janus.log(`onmessage: ${msg}`)
     if (msg.videoroom === 'joined') {
       this.$Janus.log('onmessage:joined')
-      await dispatch('handleJoined', { handleDTO, msg })
+      await dispatch('handleJoined', { handleDto, msg })
     }
     if (msg.joining) {
       this.$Janus.log('onmessage:joining')
-      await dispatch('handleJoining', { handleDTO, joining: msg.joining })
+      await dispatch('handleJoining', { handleDto, joining: msg.joining })
     }
     if (msg.videoroom === 'attached') {
       this.$Janus.log('onmessage:attached')
-      await dispatch('handleAttached', { handleDTO, msg })
+      await dispatch('handleAttached', { handleDto, msg })
     }
     if (msg.publishers && msg.publishers.length) {
       this.$Janus.log('onmessage:publishers')
-      await dispatch('handlePublishers', { handleDTO, publishers: msg.publishers })
+      await dispatch('handlePublishers', { handleDto, publishers: msg.publishers })
     }
     if (msg.attendees && msg.attendees.length) {
       this.$Janus.log('onmessage:attendees')
-      await dispatch('handleAttendees', { handleDTO, attendees: msg.attendees })
+      await dispatch('handleAttendees', { handleDto, attendees: msg.attendees })
     }
     if (msg.configured === 'ok') {
       this.$Janus.log('onmessage:configured')
       this.$Janus.log(msg)
-      await dispatch('handleConfigured', { handleDTO })
+      await dispatch('handleConfigured', { handleDto })
     }
     if (msg.unpublished) {
       this.$Janus.log('onmessage:unpublished')
-      await dispatch('handleUnpublished', { handleDTO, unpublished: msg.unpublished })
+      await dispatch('handleUnpublished', { handleDto, unpublished: msg.unpublished })
     }
     if (msg.leaving) {
       this.$Janus.log('onmessage:leaving')
-      await dispatch('handleLeaving', { handleDTO, leaving: msg.leaving })
+      await dispatch('handleLeaving', { handleDto, leaving: msg.leaving })
     }
     if (jsep) {
-      await dispatch('handleJsep', { handleDTO, jsep })
+      await dispatch('handleJsep', { handleDto, jsep })
     }
     if (msg.videoroom === 'destroyed') {
       this.$Janus.log('onmessage:destroyed')
-      await dispatch('handleDestroyed', { handleDTO })
+      await dispatch('handleDestroyed', { handleDto })
     }
     if (msg.error) {
       this.$Janus.log('onmessage:error')
-      await dispatch('handleError', { handleDTO, error: msg.error })
+      await dispatch('handleError', { handleDto, error: msg.error })
     }
   },
 
   handleJoined ({
     commit,
     dispatch
-  }, { handleDTO, msg }) {
+  }, { handleDto, msg }) {
     this.$Janus.log('handleJoined')
-    commit('api/janus/videoroom/updates/setId', { handleDTO, id: msg.id, privateId: msg.private_id }, { root: true })
-    commit('api/janus/videoroom/updates/setDisplay', { handleDTO, display: msg.display }, { root: true })
-    if (handleDTO.audio || handleDTO.video || handleDTO.screen) {
-      dispatch('api/janus/handle/createOffer', { handleDTO }, { root: true })
-        .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDTO, jsep }, { root: true }))
+    commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
+    if (handleDto.audio || handleDto.video || handleDto.screen) {
+      dispatch('api/janus/handle/createOffer', { handleDto }, { root: true })
+        .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true }))
     }
   },
   handleJoining ({
     commit,
     dispatch
-  }, { handleDTO, joining }) {
+  }, { handleDto, joining }) {
     this.$Janus.log('handleJoining')
     const id = joining.id
     const display = joining.display
     const args = {
-      plugin: handleDTO.plugin,
-      roomid: handleDTO.roomid,
+      plugin: handleDto.plugin,
+      roomid: handleDto.roomid,
       display,
       ptype: 'attendee',
       id
     }
-    dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
+    dispatch('api/janus/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
   },
   handleAttached ({
     commit,
     dispatch
-  }, { handleDTO, msg }) {
+  }, { handleDto, msg }) {
     this.$Janus.log('handleAttached')
-    commit('api/janus/videoroom/updates/setId', { handleDTO, id: msg.id, privateId: msg.private_id }, { root: true })
-    commit('api/janus/videoroom/updates/setDisplay', { handleDTO, display: msg.display }, { root: true })
+    commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
   },
   handlePublishers ({
     commit,
     dispatch
-  }, { handleDTO, publishers }) {
+  }, { handleDto, publishers }) {
     for (const p in publishers) {
       const id = publishers[p].id
       const display = publishers[p].display
       const audioCodec = publishers[p].audio_codec
       const videoCodec = publishers[p].video_codec
-      const myid = handleDTO.id
+      const myid = handleDto.id
       if (myid !== id) {
         const args = {
-          plugin: handleDTO.plugin,
-          roomid: handleDTO.roomid,
+          plugin: handleDto.plugin,
+          roomid: handleDto.roomid,
           display,
           ptype: 'subscriber',
           id,
           audioCodec,
           videoCodec
         }
-        dispatch('api/janus/handle/attachSubscriber', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
-          .then(newHandleDTO => dispatch('api/janus/videoroom/api/joinSubscriber', { handleDTO: newHandleDTO }, { root: true }))
+        dispatch('api/janus/handle/attachSubscriber', { sessionDto: handleDto.sessionDto, args }, { root: true })
+          .then(newHandleDTO => dispatch('api/janus/videoroom/api/joinSubscriber', { handleDto: newHandleDTO }, { root: true }))
       }
     }
   },
@@ -121,31 +121,31 @@ export const actions = {
   handleAttendees ({
     commit,
     dispatch
-  }, { handleDTO, attendees }) {
+  }, { handleDto, attendees }) {
     for (const a in attendees) {
       const id = attendees[a].id
       const display = attendees[a].display
       const args = {
-        plugin: handleDTO.plugin,
-        roomid: handleDTO.roomid,
+        plugin: handleDto.plugin,
+        roomid: handleDto.roomid,
         display,
         ptype: 'attendee',
         id
       }
-      dispatch('api/janus/handle/attachAttendee', { sessionDTO: handleDTO.sessionDTO, args }, { root: true })
+      dispatch('api/janus/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
     }
   },
 
   async handleConfigured ({
     commit,
     dispatch
-  }, { handleDTO }) {
-    const result = await dispatch('api/janus/videoroom/api/listparticipants', { handleDTO }, { root: true })
+  }, { handleDto }) {
+    const result = await dispatch('api/janus/videoroom/api/listparticipants', { handleDto }, { root: true })
     if (result.participants) {
       result.participants.forEach((p) => {
-        const handle = handleDTO.sessionDTO.handleDTOs.find(h => h.id === p.id)
+        const handle = handleDto.sessionDto.handleDtos.find(h => h.id === p.id)
         if (handle) {
-          commit('api/janus/videoroom/updates/setDisplay', { handleDTO: handle, display: p.display }, { root: true })
+          commit('api/janus/videoroom/updates/setDisplay', { handleDto: handle, display: p.display }, { root: true })
         }
       })
     }
@@ -155,15 +155,18 @@ export const actions = {
   handleUnpublished ({
     commit,
     dispatch
-  }, { handleDTO, unpublished }) {
+  }, { handleDto, unpublished }) {
     if (unpublished === 'ok') {
-      commit('api/janus/videoroom/updates/clearStream', { handleDTO }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia', { handleDTO, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+      commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
+      commit('api/janus/videoroom/updates/setMedia', { handleDto, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
     } else {
-      const foundHandleDTO = handleDTO.sessionDTO.handleDTOs.find(h => h.id === unpublished)
+      const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === unpublished)
+      console.log(handleDto.sessionDto.handleDtos.map(h => h.display_name))
+      console.log(unpublished)
       if (foundHandleDTO) {
-        commit('api/janus/videoroom/updates/clearStream', { handleDTO: foundHandleDTO }, { root: true })
-        commit('api/janus/videoroom/updates/setMedia', { handleDTO: foundHandleDTO, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+        console.log(`UNPUB: ${foundHandleDTO.display_name}`)
+        commit('api/janus/videoroom/updates/clearStream', { handleDto: foundHandleDTO }, { root: true })
+        commit('api/janus/videoroom/updates/setMedia', { handleDto: foundHandleDTO, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
       }
     }
   },
@@ -171,15 +174,15 @@ export const actions = {
   async handleLeaving ({
     commit,
     dispatch
-  }, { handleDTO, leaving }) {
+  }, { handleDto, leaving }) {
     if (leaving === 'ok') {
-      commit('api/janus/videoroom/updates/clearStream', { handleDTO }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia', { handleDTO, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+      commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
+      commit('api/janus/videoroom/updates/setMedia', { handleDto, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
     } else {
-      const foundHandleDTO = handleDTO.sessionDTO.handleDTOs.find(h => h.id === leaving)
+      const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === leaving)
       if (foundHandleDTO) {
-        await dispatch('api/janus/handle/detach', { handleDTO: foundHandleDTO }, { root: true })
-        commit('api/janus/handle/pull', { sessionDTO: foundHandleDTO.sessionDTO, handleDTO: foundHandleDTO }, { root: true })
+        await dispatch('api/janus/handle/detach', { handleDto: foundHandleDTO }, { root: true })
+        commit('api/janus/handle/pull', { sessionDto: foundHandleDTO.sessionDto, handleDto: foundHandleDTO }, { root: true })
       }
     }
   },
@@ -187,22 +190,22 @@ export const actions = {
   handleJsep ({
     commit,
     dispatch
-  }, { handleDTO, jsep }) {
+  }, { handleDto, jsep }) {
     this.$Janus.log('handleJsep')
-    if (handleDTO.isPublisher) {
+    if (handleDto.isPublisher) {
       this.$Janus.log('handleRemoteJsep')
-      handleDTO.handle.handleRemoteJsep({ jsep })
+      handleDto.handle.handleRemoteJsep({ jsep })
     } else {
       this.$Janus.log('createAnswer jsep')
-      dispatch('api/janus/handle/createAnswer', { handleDTO, jsep }, { root: true })
-        .then(jsepObj => dispatch('api/janus/videoroom/api/start', { handleDTO, jsep: jsepObj }, { root: true }))
+      dispatch('api/janus/handle/createAnswer', { handleDto, jsep }, { root: true })
+        .then(jsepObj => dispatch('api/janus/videoroom/api/start', { handleDto, jsep: jsepObj }, { root: true }))
     }
   },
 
   handleDestroyed ({
     commit,
     dispatch
-  }, { handleDTO, jsep }) {
+  }, { handleDto, jsep }) {
     this.$Janus.log('handleDestroyed')
     // TODO: Add cleanup
   },
@@ -210,7 +213,7 @@ export const actions = {
   handleError ({
     commit,
     dispatch
-  }, { handleDTO, error }) {
+  }, { handleDto, error }) {
     this.$Janus.log(`JANUS ERROR: ${error}`)
     // TODO: Add proper housekeeping logic
   }

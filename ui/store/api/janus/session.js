@@ -1,20 +1,25 @@
-import { toSessionDTO } from '@/services/session-mapper'
+import { SessionDto } from '@/services/session-dto'
 
 export const state = () => ({
-  sessionDTOs: [
-  ]
+  sessionDtos: [],
+  audioInputDevices: [],
+  videoInputDevices: []
 })
 
 export const mutations = {
-  set (state, { sessionDTO, session }) {
-    sessionDTO.session = session
+  set (state, { sessionDto, session }) {
+    sessionDto.session = session
   },
-  push (state, sessionDTO) {
-    state.sessionDTOs.push(sessionDTO)
+  setDevices (state, devices) {
+    state.audioInputDevices = devices.filter(d => d.kind === 'audioinput')
+    state.videoInputDevices = devices.filter(d => d.kind === 'videoinput')
   },
-  pull (state, sessionDTO) {
-    sessionDTO.session = null
-    state.sessionDTOs = state.sessionDTOs.filter(s => s.id !== sessionDTO.id)
+  push (state, sessionDto) {
+    state.sessionDtos.push(sessionDto)
+  },
+  pull (state, sessionDto) {
+    sessionDto.session = null
+    state.sessionDtos = state.sessionDtos.filter(s => s.id !== sessionDto.id)
   }
 }
 
@@ -32,31 +37,42 @@ export const actions = {
     })
   },
 
+  listDevices ({
+    commit
+  }) {
+    return new Promise((resolve) => {
+      this.$Janus.listDevices((devices) => {
+        commit('setDevices', devices)
+        resolve(devices)
+      })
+    })
+  },
+
   create ({
     commit,
     rootState
   }) {
-    const sessionDTO = toSessionDTO(
+    const sessionDto = new SessionDto(
       rootState.api.config.config.janusSettings.url,
       rootState.api.config.config.janusSettings.iceServers,
       rootState.api.config.config.janusSettings.plugins
     )
-    commit('push', sessionDTO)
+    commit('push', sessionDto)
     const self = this
     const Janus = self.$Janus
     return new Promise((resolve, reject) => {
       const session = new Janus({
-        server: sessionDTO.url,
-        iceServers: sessionDTO.iceServers,
+        server: sessionDto.url,
+        iceServers: sessionDto.iceServers,
         success: () => {
-          commit('set', { sessionDTO, session })
-          resolve(sessionDTO)
+          commit('set', { sessionDto, session })
+          resolve(sessionDto)
         },
         error: (error) => {
           reject(error)
         },
         destroyed: () => {
-          commit('pull', sessionDTO)
+          commit('pull', sessionDto)
         }
       })
     })
@@ -67,10 +83,10 @@ export const actions = {
     dispatch,
     state,
     rootState
-  }, { sessionDTO }) {
-    if (sessionDTO && sessionDTO.session) {
-      await Promise.all(sessionDTO.handleDTOs.map(h => dispatch('api/janus/handle/detach', { handleDTO: h }, { root: true })))
-      sessionDTO.session.destroy()
+  }, { sessionDto }) {
+    if (sessionDto && sessionDto.session) {
+      await Promise.all(sessionDto.handleDtos.map(h => dispatch('api/janus/handle/detach', { handleDto: h }, { root: true })))
+      sessionDto.session.destroy()
       return null
     }
   }

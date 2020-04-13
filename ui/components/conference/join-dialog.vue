@@ -121,6 +121,10 @@ export default {
   },
   watch: {
     open (newVal) {
+      // if (newVal) {
+      //   await this.$store.dispatch('api/janus/session/init', true, { root: true })
+      //   await this.$store.dispatch('api/janus/session/listDevices', true, { root: true })
+      // }
       this.dialog = newVal
     },
     'media.video' (newVal) {

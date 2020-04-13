@@ -5,10 +5,10 @@ export const actions = {
     rootState
   }, payload) {
     await dispatch('api/janus/session/init', true, { root: true })
-    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: { } }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/create', { handleDTO, payload }, { root: true })
-    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
+    const sessionDto = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args: { } }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/create', { handleDto, payload }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDto }, { root: true })
     return result
   },
 
@@ -18,10 +18,10 @@ export const actions = {
     rootState
   }, payload) {
     await dispatch('api/janus/session/init', true, { root: true })
-    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/destroy', { handleDTO, payload }, { root: true })
-    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
+    const sessionDto = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args: {} }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/destroy', { handleDto, payload }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDto }, { root: true })
     return result
   },
 
@@ -31,10 +31,10 @@ export const actions = {
     rootState
   }, payload) {
     await dispatch('api/janus/session/init', true, { root: true })
-    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDTO = await dispatch('api/janus/handle/attach', { sessionDTO, args: {} }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/list', { handleDTO }, { root: true })
-    await dispatch('api/janus/session/destroy', { sessionDTO }, { root: true })
+    const sessionDto = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args: {} }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/list', { handleDto }, { root: true })
+    await dispatch('api/janus/session/destroy', { sessionDto }, { root: true })
     return result
   },
 
@@ -44,13 +44,13 @@ export const actions = {
     rootState
   }, payload) {
     await dispatch('api/janus/session/init', true, { root: true })
-    const sessionDTO = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDTO = await dispatch('api/janus/handle/attachPublisher', { sessionDTO, args: payload.janus }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/exists', { handleDTO, roomid: payload.janus.roomid }, { root: true })
+    const sessionDto = await dispatch('api/janus/session/create', null, { root: true })
+    const handleDto = await dispatch('api/janus/handle/attachPublisher', { sessionDto, args: payload.janus }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/exists', { handleDto, roomid: payload.janus.roomid }, { root: true })
     if (!result.exists) {
-      await dispatch('api/janus/videoroom/api/create', { handleDTO, payload: payload.media }, { root: true })
+      await dispatch('api/janus/videoroom/api/create', { handleDto, payload: payload.media }, { root: true })
     }
-    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDTO }, { root: true })
-    return sessionDTO
+    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDto }, { root: true })
+    return sessionDto
   }
 }

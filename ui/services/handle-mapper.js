@@ -28,7 +28,7 @@ export const displayToMedia = (display) => {
   }
   return result
 }
-export const toHandleDTO = (sessionDTO, args) => {
+export const toHandleDTO = (sessionDto, args) => {
   const media = displayToMedia(args.display)
   const result = {
     id: args.id || uuid(),
@@ -36,7 +36,7 @@ export const toHandleDTO = (sessionDTO, args) => {
     feed: null,
     display: media.display,
     display_name: media.display_name,
-    sessionDTO,
+    sessionDto,
     plugin: args.plugin || 'janus.plugin.videoroom',
     roomid: args.roomid || null,
     token: args.token || undefined,
@@ -55,12 +55,46 @@ export const toHandleDTO = (sessionDTO, args) => {
     isLocal: args.isLocal !== undefined ? args.isLocal : true,
 
     resolutions: ['lowres', 'lowres-16:9', 'stdres', 'stdres-16:9', 'hires', 'hires-16:9'],
-    videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'lowres',
+    videoResolution: args.videoResolution !== undefined ? args.videoResolution : 'hires',
+
+    media: {
+      bitrate: {
+        limit: media.bitrate !== undefined && media.bitrate.limit !== undefined ? media.bitrate.limit : 0,
+        value: media.bitrate !== undefined && media.bitrate.value !== undefined ? media.bitrate.value : 0
+      },
+      audio: {
+        enabled: media.audio !== undefined && media.audio.enabled !== undefined ? media.audio.enabled : true,
+        muted: media.audio !== undefined && media.audio.muted !== undefined ? media.audio.muted : true,
+        codec: media.audio !== undefined && media.audio.codec !== undefined ? media.audio.codec : null
+      },
+      video: {
+        enabled: media.video !== undefined && media.video.enabled !== undefined ? media.video.enabled : true,
+        muted: media.video !== undefined && media.video.muted !== undefined ? media.video.muted : true,
+        codec: media.video !== undefined && media.video.codec !== undefined ? media.video.codec : null,
+        resolution: media.video !== undefined && media.video.resolution !== undefined ? media.video.resolution : 'lowres'
+      },
+      screen: {
+        enabled: media.video !== undefined && media.video.enabled !== undefined ? media.video.enabled : true,
+        muted: media.video !== undefined && media.video.muted !== undefined ? media.video.muted : true,
+        codec: media.video !== undefined && media.video.codec !== undefined ? media.video.codec : null
+      },
+      data: {
+
+      }
+    },
 
     data: media.data !== undefined ? media.data : false,
     audio: media.audio !== undefined ? media.audio : true,
     video: media.video !== undefined ? media.video : true,
     screen: media.screen !== undefined ? media.screen : false,
+
+    isAudioMuted: false,
+    isVideoMuted: false,
+
+    timer: null,
+    interval: 1000,
+    bitrate: null, // bitrate set in Janus the limit
+    currentBitrate: null, // bitrate read from Janus
 
     audioCodec: args.audioCodec || null,
     videoCodec: args.videoCodec || null,

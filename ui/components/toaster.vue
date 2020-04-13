@@ -7,7 +7,7 @@
       v-for="(toast, index) in toasts"
       :key="toast.id"
       v-model="toast.snackbar"
-      :timeout="0"
+      :timeout="3000"
       :absolute="true"
       :bottom="true"
       :color="toast.error ? 'error' : 'success'"
@@ -28,7 +28,7 @@
 export default {
   computed: {
     toasts () {
-      return this.$store.state.toast.toasts
+      return this.$store.state.toast.toasts.map(t => Object.assign({}, t))
     }
   },
   methods: {

@@ -89,6 +89,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "portal-vue": "^2.1.7",
+    "qs": "^6.9.3",
     "randomstring": "^1.1.5",
     "recursive-diff": "^1.0.2",
     "request": "^2.88.2",

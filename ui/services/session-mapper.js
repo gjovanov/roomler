@@ -8,6 +8,6 @@ export const toSessionDTO = (url, iceServers, plugins) => {
     iceServers,
     plugins,
     session: null,
-    handleDTOs: []
+    handleDtos: []
   }
 }
