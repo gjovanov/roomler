@@ -131,38 +131,38 @@ export const actions = {
 
   createOffer ({
     commit
-  }, { handleDto, iceRestart = undefined }) {
+  }, {
+    handleDto, options = {
+      iceRestart: undefined
+    }
+  }) {
     return new Promise((resolve, reject) => {
       const media = {
         audioRecv: false,
         videoRecv: false,
-        audio: handleDto.audio,
-        video: handleDto.screen ? 'screen' : (handleDto.video && handleDto.video.enabled ? handleDto.video.resolution : false),
+        audio: handleDto.media.audio.enabled,
+        video: handleDto.media.screen.enabled ? 'screen' : (handleDto.media.video.enabled ? handleDto.media.video.resolution : false),
         data: handleDto.data
       }
-      let restart = false
-      if (handleDto.audio === true && handleDto.mediaState.audio === false) {
+      if (handleDto.media.audio.enabled === true && handleDto.mediaState.audio === false) {
         media.addAudio = true
-        restart = true
       }
-      if (handleDto.audio === false && handleDto.mediaState.audio === true) {
+      if (handleDto.media.audio.enabled === false && handleDto.mediaState.audio === true) {
         media.removeAudio = true
-        restart = true
       }
-      if ((handleDto.video === true || handleDto.screen === true) && handleDto.mediaState.video === false) {
+      if ((handleDto.media.video.enabled === true || handleDto.media.screen.enabled === true) && handleDto.mediaState.video === false) {
         media.addVideo = true
-        restart = true
       }
-      if ((handleDto.video === false && handleDto.screen === false) && handleDto.mediaState.video === true) {
+      if ((handleDto.media.video.enabled === false && handleDto.media.screen.enabled === false) && handleDto.mediaState.video === true) {
         media.removeVideo = true
-        restart = true
       }
-      if ((handleDto.video === true || handleDto.screen === true) && handleDto.mediaState.video === true) {
+      if ((handleDto.media.video.enabled === true || handleDto.media.screen.enabled === true) && handleDto.mediaState.video === true) {
         media.replaceVideo = true
-        restart = true
+      }
+      if ((handleDto.media.video.enabled === true) && handleDto.mediaState.resolution !== handleDto.media.video.resolution) {
+        media.replaceVideo = true
       }
       handleDto.handle.createOffer({
-        iceRestart: iceRestart !== undefined || restart !== undefined ? iceRestart : restart,
         media,
         simulcast: handleDto.simulcast,
         trickle: handleDto.trickle,
@@ -185,7 +185,7 @@ export const actions = {
         videoSend: false,
         audioRecv: true,
         videoRecv: true,
-        data: handleDto.data.enabled
+        data: handleDto.media.data.enabled
       }
       console.log(media)
       handleDto.handle.createAnswer({

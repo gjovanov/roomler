@@ -10,20 +10,20 @@
           outlined
           dark
           x-small
-          :color="handle.audio && !isAudioMuted(handle) ? 'green' : 'red'"
+          :color="handle.media.audio.enabled && !handle.media.audio.muted ? 'green' : 'red'"
           style="bottom: 24px"
           v-on="on"
         >
-          <v-icon v-if="handle.audio && !isAudioMuted(handle)" x-small>
+          <v-icon v-if="handle.media.audio.enabled && !handle.media.audio.muted" x-small>
             fa-microphone
           </v-icon>
-          <v-icon v-if="!(handle.audio && !isAudioMuted(handle))" x-small>
+          <v-icon v-if="!(handle.media.audio.enabled && !handle.media.audio.muted)" x-small>
             fa-microphone-slash
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="handle.audio && !isAudioMuted(handle)">Microphone is on</span>
-      <span v-if="!(handle.audio && !isAudioMuted(handle))">Microphone is off</span>
+      <span v-if="handle.media.audio.enabled && !handle.media.audio.muted">Microphone is on</span>
+      <span v-if="!(handle.media.audio.enabled && !handle.media.audio.muted)">Microphone is off</span>
     </v-tooltip>
 
     <v-tooltip v-if="handle" bottom left>
@@ -33,20 +33,20 @@
           outlined
           dark
           x-small
-          :color="handle.video && !isVideoMuted(handle) ? 'green' : 'red'"
+          :color="handle.media.video.enabled && !handle.media.video.muted ? 'green' : 'red'"
           style="bottom: 24px"
           v-on="on"
         >
-          <v-icon v-if="handle.video && !isVideoMuted(handle)" x-small>
+          <v-icon v-if="handle.media.video.enabled && !handle.media.video.muted" x-small>
             fa-video
           </v-icon>
-          <v-icon v-if="!(handle.video && !isVideoMuted(handle))" x-small>
+          <v-icon v-if="!(handle.media.video.enabled && !handle.media.video.muted)" x-small>
             fa-video-slash
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="handle.video && !isVideoMuted(handle)">Camera is on</span>
-      <span v-if="!(handle.video && !isVideoMuted(handle))">Camera is off</span>
+      <span v-if="handle.media.video.enabled && !handle.media.video.muted">Camera is on</span>
+      <span v-if="!(handle.media.video.enabled && !handle.media.video.muted)">Camera is off</span>
     </v-tooltip>
 
     <v-tooltip v-if="handle" bottom left>
@@ -56,20 +56,20 @@
           outlined
           dark
           x-small
-          :color="handle.screen ? 'green' : 'red'"
+          :color="handle.media.screen.enabled ? 'green' : 'red'"
           style="bottom: 24px"
           v-on="on"
         >
-          <v-icon v-if="handle.screen" x-small>
+          <v-icon v-if="handle.media.screen.enabled" x-small>
             screen_share
           </v-icon>
-          <v-icon v-if="!(handle.screen)" x-small>
+          <v-icon v-if="!(handle.media.screen.enabled)" x-small>
             stop_screen_share
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="handle.screen">Screenshare is on</span>
-      <span v-if="!handle.screen">Screenshare is off</span>
+      <span v-if="handle.media.screen.enabled">Screenshare is on</span>
+      <span v-if="!handle.media.screen.enabled">Screenshare is off</span>
     </v-tooltip>
     <v-tooltip v-if="handle && !handle.isLocal" bottom left>
       <template v-slot:activator="{ on }">
@@ -82,7 +82,7 @@
           style="bottom: 24px"
           v-on="on"
         >
-          {{ handle.currentBitrate }}
+          {{ handle.bitrate.value }}
         </v-btn>
       </template>
       <span>Current bitrate</span>
@@ -100,18 +100,6 @@ export default {
     conferencePosition: {
       type: String,
       default: null
-    }
-  },
-  methods: {
-    isAudioMuted (handle) {
-      const result = handle && handle.isAudioMuted
-      console.log(`MEDIA BTNS: AUDIO='${result}'`)
-      return result
-    },
-    isVideoMuted (handle) {
-      const result = handle && handle.isVideoMuted
-      console.log(`MEDIA BTNS: VIDEO='${result}'`)
-      return result
     }
   }
 }

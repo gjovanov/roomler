@@ -146,7 +146,7 @@ export const actions = {
         feed: handleDto.id
       }
       if (Janus.webRTCAdapter.browserDetails.browser === 'safari' &&
-      (handleDto.video.codec === 'vp9' || (handleDto.video.codec === 'vp8' && !Janus.safariVp8))) {
+      (handleDto.media.video.codec === 'vp9' || (handleDto.media.video.codec === 'vp8' && !Janus.safariVp8))) {
         request.offer_video = false
       }
       handleDto.handle.send({
@@ -214,10 +214,10 @@ export const actions = {
     commit
   }, { handleDto, jsep, replace = undefined }) {
     return new Promise((resolve, reject) => {
-      const audio = handleDto.audio && handleDto.audio.enabled
-      const screen = handleDto.screen && handleDto.screen.enabled
-      const video = handleDto.video && handleDto.video.enabled
-      const data = handleDto.data && handleDto.data.enabled
+      const audio = handleDto.media.audio && handleDto.media.audio.enabled
+      const screen = handleDto.media.screen && handleDto.media.screen.enabled
+      const video = handleDto.media.video && handleDto.media.video.enabled
+      const data = handleDto.media.data && handleDto.media.data.enabled
       const request = {
         request: 'configure',
         audio,
@@ -252,14 +252,14 @@ export const actions = {
     return new Promise((resolve, reject) => {
       const request = {
         request: 'publish',
-        audio: handleDto.audio,
-        video: handleDto.video,
-        data: handleDto.data,
-        audiocodec: handleDto.audiocodec,
-        videocodec: handleDto.videocodec,
-        bitrate: handleDto.bitrate,
-        record: handleDto.record,
-        filename: handleDto.filename,
+        audio: handleDto.media.audio.enabled,
+        video: handleDto.media.video.enabled || handleDto.media.screen.enabled,
+        data: handleDto.media.data,
+        audiocodec: handleDto.media.audio.codec,
+        videocodec: handleDto.media.video.codec,
+        bitrate: handleDto.bitrate.limit,
+        // record: handleDto.record,
+        // filename: handleDto.filename,
         display: handleDto.display
       }
       handleDto.handle.send({

@@ -1,10 +1,10 @@
 <template>
-  <v-layout justify-center>
-    <join-dialog :open="joinDialog" @join="join" @cancel="joinDialog = false" />
-    <publish-dialog :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
+  <v-layout justify-center dark>
+    <join-dialog :room="room" :open="joinDialog" @join="join" @cancel="joinDialog = false" />
+    <publish-dialog :room="room" :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
     <extension-dialog :open="extensionDialog" @cancel="extensionDialog = false" />
 
-    <v-tooltip v-if="!localHandle " bottom left>
+    <v-tooltip v-if="!localHandle " top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="!localHandle"
@@ -41,27 +41,27 @@
       <span>Unpublish</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle" bottom left>
+    <v-tooltip v-if="localHandle" top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle"
           tile
           small
-          :text="localHandle.screen"
+          :text="localHandle.media.screen.enabled"
           class="v-btn--active"
           v-on="on"
           @click="toggleScreen()"
         >
-          <v-icon v-if="!localHandle.screen">
+          <v-icon v-if="!localHandle.media.screen.enabled">
             screen_share
           </v-icon>
-          <v-icon v-if="localHandle.screen">
+          <v-icon v-if="localHandle.media.screen.enabled">
             stop_screen_share
           </v-icon>
         </v-btn>
       </template>
-      <span v-if="localHandle.screen">Stop sharing screen</span>
-      <span v-if="!localHandle.screen">Start sharing screen</span>
+      <span v-if="localHandle.media.screen.enabled">Stop sharing screen</span>
+      <span v-if="!localHandle.media.screen.enabled">Start sharing screen</span>
     </v-tooltip>
 
     <v-menu
@@ -77,14 +77,14 @@
               v-if="localHandle"
               tile
               small
-              :text="localHandle.video && localHandle.isVideoMuted"
+              :text="localHandle.media.video.enabled && !localHandle.media.video.muted"
               class="v-btn--active"
               v-on="{ ...tooltip, ...menu }"
             >
-              <v-icon v-if="localHandle.video && !localHandle.isVideoMuted">
+              <v-icon v-if="localHandle.media.video.enabled && !localHandle.media.video.muted">
                 fa-video
               </v-icon>
-              <v-icon v-if="!(localHandle.video && !localHandle.isVideoMuted)">
+              <v-icon v-if="!(localHandle.media.video.enabled && !localHandle.media.video.muted)">
                 fa-video-slash
               </v-icon>
             </v-btn>
@@ -92,33 +92,127 @@
           <span>Change video</span>
         </v-tooltip>
       </template>
-      <v-list>
+      <v-list dense multiple>
         <v-list-item
-          v-if="localHandle.video && !localHandle.isVideoMuted"
-          @click="toggleVideo()"
+          v-if="localHandle.media.video.enabled"
+          @click="toggleVideoMuted()"
         >
-          <v-list-item-title>
+          <v-list-item-title v-if="!localHandle.media.video.muted">
             <v-icon small>
               fa-video-slash
-            </v-icon> Mute camera
+            </v-icon> Turn camera off
           </v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          v-if="!(localHandle.video && !localHandle.isVideoMuted)"
-          @click="toggleVideo()"
-        >
-          <v-list-item-title>
+          <v-list-item-title v-if="localHandle.media.video.muted">
             <v-icon small>
               fa-video
-            </v-icon> Unmute camera
+            </v-icon> Turn camera on
           </v-list-item-title>
         </v-list-item>
         <v-divider />
-        <v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 2 * 128000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 128000"
+          @click="setBitrateLimit(128000)"
+        >
           <v-list-item-title>
+            128 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 2 * 256000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 256000"
+          @click="setBitrateLimit(256000)"
+        >
+          <v-list-item-title>
+            256 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 512000"
+          @click="setBitrateLimit(512000)"
+        >
+          <v-list-item-title>
+            512 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 2 * 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 2 * 512000"
+          @click="setBitrateLimit(2 * 512000)"
+        >
+          <v-list-item-title>
+            1 Mbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 4 * 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 4 * 512000"
+          @click="setBitrateLimit(4 * 512000)"
+        >
+          <v-list-item-title>
+            2 Mbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.bitrate.limit === 0 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 0"
+          @click="setBitrateLimit(0)"
+        >
+          <v-list-item-title>
+            No bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.media.video.resolution === 'lowres' ? 'red' : ''"
+          :inactive="localHandle.media.video.resolution === 'lowres'"
+          @click="setVideoResolution('lowres')"
+        >
+          <v-list-item-title>
+            Low resolution (320x240)
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.media.video.resolution === 'stdres' ? 'red' : ''"
+          :inactive="localHandle.media.video.resolution === 'stdres'"
+          @click="setVideoResolution('stdres')"
+        >
+          <v-list-item-title>
+            Standard resolution (640x480)
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.video.enabled"
+          :color="localHandle.media.video.resolution === 'hires' ? 'red' : ''"
+          :inactive="localHandle.media.video.resolution === 'hires'"
+          @click="setVideoResolution('hires')"
+        >
+          <v-list-item-title>
+            High resolution (1280x720)
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider />
+        <v-list-item
+          @click="toggleVideo()"
+        >
+          <v-list-item-title v-if="localHandle.media.video.enabled">
             <v-icon small>
               fa-stop
-            </v-icon> Stop camera
+            </v-icon> Disable camera
+          </v-list-item-title>
+          <v-list-item-title v-if="!localHandle.media.video.enabled">
+            <v-icon small>
+              fa-play
+            </v-icon> Enable camera
           </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -137,14 +231,14 @@
               v-if="localHandle"
               tile
               small
-              :text="localHandle.audio && localHandle.isAudioMuted"
+              :text="localHandle.media.audio.enabled && !localHandle.media.audio.muted"
               class="v-btn--active"
               v-on="{ ...tooltip, ...menu }"
             >
-              <v-icon v-if="localHandle.audio && !localHandle.isAudioMuted">
+              <v-icon v-if="localHandle.media.audio.enabled && !localHandle.media.audio.muted">
                 fa-microphone
               </v-icon>
-              <v-icon v-if="!(localHandle.audio && !localHandle.isAudioMuted)">
+              <v-icon v-if="!(localHandle.media.audio.enabled && !localHandle.media.audio.muted)">
                 fa-microphone-slash
               </v-icon>
             </v-btn>
@@ -152,39 +246,40 @@
           <span>Change audio</span>
         </v-tooltip>
       </template>
-      <v-list>
+      <v-list dense>
         <v-list-item
-          v-if="localHandle.audio && !localHandle.isAudioMuted"
-          @click="toggleAudio()"
+          v-if="localHandle.media.audio.enabled"
+          @click="toggleAudioMuted()"
         >
-          <v-list-item-title>
+          <v-list-item-title v-if="!localHandle.media.audio.muted">
             <v-icon small>
               fa-microphone-slash
             </v-icon> Mute microphone
           </v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          v-if="!(localHandle.audio && !localHandle.isAudioMuted)"
-          @click="toggleAudio()"
-        >
-          <v-list-item-title>
+          <v-list-item-title v-if="localHandle.media.audio.muted">
             <v-icon small>
               fa-microphone
             </v-icon> Unmute microphone
           </v-list-item-title>
         </v-list-item>
-        <v-divider />
-        <v-list-item>
-          <v-list-item-title>
+        <v-list-item
+          @click="toggleAudio()"
+        >
+          <v-list-item-title v-if="localHandle.media.audio.enabled">
             <v-icon small>
               fa-stop
-            </v-icon> Stop microphone
+            </v-icon> Disable microphone
+          </v-list-item-title>
+          <v-list-item-title v-if="!localHandle.media.audio.enabled">
+            <v-icon small>
+              fa-play
+            </v-icon> Enable microphone
           </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
 
-    <v-tooltip v-if="localHandle && !localHandle.stream" bottom left>
+    <v-tooltip v-if="localHandle && !localHandle.stream" top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle && !localHandle.stream"
@@ -203,7 +298,7 @@
       <span>Publish</span>
     </v-tooltip>
 
-    <v-tooltip v-if="conferenceSession" bottom left>
+    <v-tooltip v-if="conferenceSession" top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="conferenceSession"
@@ -228,6 +323,8 @@
 import JoinDialog from '@/components/conference/join-dialog'
 import PublishDialog from '@/components/conference/publish-dialog'
 import ExtensionDialog from '@/components/conference/extension-dialog'
+
+import { modelToQuery } from '@/services/handle-dto'
 
 export default {
   components: {
@@ -285,9 +382,9 @@ export default {
     join (media) {
       this.joinDialog = false
       const config = this.$store.state.api.config.config
-      const mediaPart = ['audio', 'video', 'data', 'screen'].filter(key => media[key] === true).join(',')
+      const mediaPart = modelToQuery(media)
       const displayPart = this.user && this.user.username ? this.user.username : 'Anonymous'
-      const display = `${displayPart}|${mediaPart}`
+      const display = `${displayPart}?${mediaPart}`
       const janusPayload = {
         janus: {
           roomid: this.selectedRoom.media.roomid,
@@ -306,9 +403,12 @@ export default {
       } else {
         try {
           const media = {
-            audio: this.localHandle.audio,
-            video: false,
-            screen: !this.localHandle.screen
+            video: {
+              enabled: false
+            },
+            screen: {
+              enabled: !this.localHandle.media.screen.enabled
+            }
           }
           this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
           const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
@@ -320,16 +420,31 @@ export default {
     },
     async toggleVideo () {
       try {
-        if (!this.localHandle.video) {
-          const media = {
-            audio: this.localHandle.audio,
-            video: !this.localHandle.video,
-            screen: false
+        const media = {
+          video: {
+            enabled: !this.localHandle.media.video.enabled
+          },
+          screen: {
+            enabled: false
           }
-          this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-          const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
-          this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-        } else if (this.localHandle && this.localHandle.handle && this.localHandle.handle.isVideoMuted()) {
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
+        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async toggleVideoMuted () {
+      try {
+        const media = {
+          video: {
+            muted: !this.localHandle.media.video.muted
+          }
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
+        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
+        if (this.localHandle && this.localHandle.handle && !this.localHandle.media.video.muted) {
           this.localHandle.handle.unmuteVideo()
         } else {
           this.localHandle.handle.muteVideo()
@@ -340,20 +455,54 @@ export default {
     },
     async toggleAudio () {
       try {
-        if (!this.localHandle.audio) {
-          const media = {
-            audio: !this.localHandle.audio,
-            video: this.localHandle.video,
-            screen: this.localHandle.screen
+        const media = {
+          audio: {
+            enabled: !this.localHandle.media.audio.enabled
           }
-          this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-          const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
-          this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-        } else if (this.localHandle && this.localHandle.handle && this.localHandle.handle.isAudioMuted()) {
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
+        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async toggleAudioMuted () {
+      try {
+        const media = {
+          audio: {
+            muted: !this.localHandle.media.audio.muted
+          }
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
+        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
+        if (this.localHandle && this.localHandle.handle && !this.localHandle.media.audio.muted) {
           this.localHandle.handle.unmuteAudio()
         } else {
           this.localHandle.handle.muteAudio()
         }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async setVideoResolution (resolution) {
+      try {
+        const media = {
+          video: {
+            resolution
+          }
+        }
+        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
+        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async setBitrateLimit (bitrateLimit) {
+      try {
+        this.$store.commit('api/janus/videoroom/updates/setBitrateLimit', { handleDto: this.localHandle, bitrateLimit })
+        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
       } catch (e) {
         console.log(e)
       }
@@ -365,7 +514,21 @@ export default {
       this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
     },
     async unpublish () {
-      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media: { audio: false, video: false, screen: false, data: false } })
+      const media = {
+        audio: {
+          enabled: false
+        },
+        video: {
+          enabled: false
+        },
+        screen: {
+          enabled: false
+        },
+        data: {
+          enabled: false
+        }
+      }
+      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
       await this.$store.dispatch('api/janus/videoroom/api/unpublish', { handleDto: this.localHandle })
     },
     leave () {
@@ -375,3 +538,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.theme--dark.v-list-item:not(.v-list-item--link) {
+    color: red !important;
+}
+</style>

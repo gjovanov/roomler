@@ -15,62 +15,62 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                :text="!media.video"
+                :text="!media.video.enabled"
                 outlined
                 tile
                 v-on="on"
-                @click="media.video = !media.video"
+                @click="media.video.enabled = !media.video.enabled"
               >
-                <v-icon v-if="media.video">
+                <v-icon v-if="media.video.enabled">
                   fa-video
                 </v-icon>
-                <v-icon v-if="!media.video">
+                <v-icon v-if="!media.video.enabled">
                   fa-video-slash
                 </v-icon>
               </v-btn>
             </template>
-            <span v-if="media.video">Camera video</span>
-            <span v-if="!media.video">No camera video</span>
+            <span v-if="media.video.enabled">Camera video</span>
+            <span v-if="!media.video.enabled">No camera video</span>
           </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                :text="!media.screen"
+                :text="!media.screen.enabled"
                 outlined
                 tile
                 v-on="on"
-                @click="media.screen = !media.screen"
+                @click="media.screen.enabled = !media.screen.enabled"
               >
-                <v-icon v-if="media.screen">
+                <v-icon v-if="media.screen.enabled">
                   screen_share
                 </v-icon>
-                <v-icon v-if="!media.screen">
+                <v-icon v-if="!media.screen.enabled">
                   stop_screen_share
                 </v-icon>
               </v-btn>
             </template>
-            <span v-if="media.screen">Screen share</span>
-            <span v-if="!media.screen">No screen share</span>
+            <span v-if="media.screen.enabled">Screen share</span>
+            <span v-if="!media.screen.enabled">No screen share</span>
           </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                :text="!media.audio"
+                :text="!media.audio.enabled"
                 outlined
                 tile
                 v-on="on"
-                @click="media.audio = !media.audio"
+                @click="media.audio.enabled = !media.audio.enabled"
               >
-                <v-icon v-if="media.audio">
+                <v-icon v-if="media.audio.enabled">
                   fa-microphone
                 </v-icon>
-                <v-icon v-if="!media.audio">
+                <v-icon v-if="!media.audio.enabled">
                   fa-microphone-slash
                 </v-icon>
               </v-btn>
             </template>
-            <span v-if="media.audio">Microphone audio</span>
-            <span v-if="!media.audio">No microphone audio</span>
+            <span v-if="media.audio.enabled">Microphone audio</span>
+            <span v-if="!media.audio.enabled">No microphone audio</span>
           </v-tooltip>
         </v-layout>
       </v-card-text>
@@ -104,6 +104,10 @@
 <script>
 export default {
   props: {
+    room: {
+      type: Object,
+      default: null
+    },
     open: {
       type: Boolean,
       default: false
@@ -113,28 +117,32 @@ export default {
     return {
       dialog: false,
       media: {
-        audio: true,
-        video: true,
-        screen: false
+        audio: {
+          enabled: true,
+          codec: this.room && this.room.media ? this.room.media.audiocodec : null
+        },
+        video: {
+          enabled: true,
+          codec: this.room && this.room.media ? this.room.media.videocodec : null
+        },
+        screen: {
+          enabled: false
+        }
       }
     }
   },
   watch: {
     open (newVal) {
-      // if (newVal) {
-      //   await this.$store.dispatch('api/janus/session/init', true, { root: true })
-      //   await this.$store.dispatch('api/janus/session/listDevices', true, { root: true })
-      // }
       this.dialog = newVal
     },
-    'media.video' (newVal) {
+    'media.video.enabled' (newVal) {
       if (newVal) {
-        this.media.screen = false
+        this.media.screen.enabled = false
       }
     },
-    'media.screen' (newVal) {
+    'media.screen.enabled' (newVal) {
       if (newVal) {
-        this.media.video = false
+        this.media.video.enabled = false
       }
     }
   },

@@ -14,14 +14,15 @@
           cols="12"
           class="pa-0 ma-0"
         >
-          <v-card elevation="12">
-            <v-card-text class="pa-0 ma-0">
+          <v-card elevation="12" style="height: 100%">
+            <v-card-text class="pa-0 ma-0" style="height: 100%">
               <video
                 :id="handleDto.id"
                 :srcObject.prop="handleDto.stream"
                 :poster="getPeer(handleDto.display_name).avatar_url"
                 width="100%"
                 height="100%"
+                style="height: 100%"
                 autoplay
                 controls
               />
@@ -51,8 +52,8 @@
                 width="100%"
                 height="100%"
                 style="max-height: 240px"
-                :autoplay="handleDto.audio || handleDto.video || handleDto.screen"
-                :controls="handleDto.audio || handleDto.video || handleDto.screen"
+                :autoplay="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
+                :controls="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
                 @suspend="showVideoPoster(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
@@ -106,10 +107,10 @@ export default {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     screens () {
-      return this.conferenceSession.handleDtos.filter(h => h.screen && !h.isLocal)
+      return this.conferenceSession.handleDtos.filter(h => h.media.screen.enabled && !h.isLocal)
     },
     publishers () {
-      return this.conferenceSession.handleDtos.filter(h => !(h.screen && !h.isLocal))
+      return this.conferenceSession.handleDtos.filter(h => !(h.media.screen.enabled && !h.isLocal))
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
@@ -123,7 +124,7 @@ export default {
       this.setVideoMuted(this.localHandle)
     }
     if (this.conferenceSession && this.conferenceSession.handleDtos) {
-      this.conferenceSession.handleDtos.filter(h => !(h.isLocal && h.screen)).forEach(async (h) => {
+      this.conferenceSession.handleDtos.filter(h => !(h.isLocal && h.media.screen.enabled)).forEach(async (h) => {
         if (h.stream) {
           const video = document.getElementById(h.id)
           if (video) {

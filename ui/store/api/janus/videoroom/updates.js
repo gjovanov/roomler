@@ -1,42 +1,44 @@
-import { displayToMedia } from '@/services/handle-mapper'
+import { mergeDeep, modelToQuery, queryToModel, defaultMedia } from '@/services/handle-dto'
 
 export const mutations = {
   setIsMuted (state, { handleDto, type, isMuted }) {
-    handleDto[`is${type}Muted`] = isMuted
+    handleDto.media[type].muted = isMuted
+    const mediaPart = modelToQuery(handleDto.media)
+    const displayPart = handleDto.display_name
+    handleDto.display = `${displayPart}?${mediaPart}`
   },
-  setCurrentBitrate (state, { handleDto, currentBitrate }) {
-    handleDto.currentBitrate = currentBitrate
+  setBitrateLimit (state, { handleDto, bitrateLimit }) {
+    handleDto.bitrate.limit = bitrateLimit
+  },
+  setBitrateValue (state, { handleDto, bitrateValue }) {
+    handleDto.bitrate.value = bitrateValue
   },
   setPublisher (state, { handleDto, isPublisher }) {
     handleDto.isPublisher = isPublisher
   },
   setMedia (state, { handleDto, media }) {
-    const mediaPart = ['audio', 'video', 'data', 'screen'].filter(key => media[key] === true).join(',')
+    const newMedia = mergeDeep({}, handleDto.media, media)
+    if (!newMedia.video.enabled) {
+      newMedia.video.muted = false
+    }
+    if (!newMedia.audio.enabled) {
+      newMedia.audio.muted = false
+    }
+    const mediaPart = modelToQuery(newMedia)
     const displayPart = handleDto.display_name
-    handleDto.display = `${displayPart}|${mediaPart}`
-    if (media.data !== undefined) {
-      handleDto.data = media.data
-    }
-    if (media.audio !== undefined) {
-      handleDto.audio = media.audio
-    }
-    if (media.video !== undefined) {
-      handleDto.video = media.video
-    }
-    if (media.screen !== undefined) {
-      handleDto.screen = media.screen
-    }
+    handleDto.display = `${displayPart}?${mediaPart}`
+    handleDto.media = newMedia
+    console.log(handleDto.media)
+    console.log(handleDto.display)
   },
   setDisplay (state, { handleDto, display }) {
     if (display) {
-      const media = displayToMedia(display)
-      handleDto.display = media.display
-      handleDto.display_name = media.display_name
-      handleDto.data = media.data
-      handleDto.audio = media.audio
-      handleDto.video = media.video
-      handleDto.screen = media.screen
-      handleDto.display = media.display
+      const displayParts = display.split('?')
+      const media = displayParts && displayParts.length ? mergeDeep({}, handleDto.media, queryToModel(displayParts[1])) : defaultMedia
+      handleDto.display = display
+      handleDto.display_name = displayParts[0]
+      handleDto.media = media
+      console.log(media)
     }
   },
   setId (state, { handleDto, id, privateId }) {
@@ -66,6 +68,13 @@ export const mutations = {
   mediaState (state, { handleDto, type, on }) {
     console.log(`mediaState: '${on}', ${type}`)
     handleDto.mediaState[type] = on
+    if (type === 'video') {
+      if (handleDto.media.video.enabled && on) {
+        handleDto.mediaState.resolution = handleDto.media.video.resolution
+      } else {
+        handleDto.mediaState.resolution = null
+      }
+    }
   },
   slowLink (state, { handleDto, on }) {
     console.log(`slowLink: '${on}'`)
@@ -82,8 +91,8 @@ export const mutations = {
     clearInterval(handleDto.timer)
     handleDto.timer = setInterval(() => {
       if (handleDto.handle && handleDto.handle.webrtcStuff) {
-        const currentBitrate = handleDto.handle.getBitrate()
-        commit('api/janus/videoroom/updates/setCurrentBitrate', { handleDto, currentBitrate }, { root: true })
+        const bitrateValue = handleDto.handle.getBitrate()
+        commit('api/janus/videoroom/updates/setBitrateValue', { handleDto, bitrateValue }, { root: true })
       }
     }, handleDto.interval)
   },

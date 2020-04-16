@@ -9,7 +9,8 @@ export const actions = {
     commit,
     dispatch
   }, { handleDto, msg, jsep }) {
-    this.$Janus.log(`onmessage: ${msg}`)
+    this.$Janus.log(`onmessage: ${JSON.stringify(msg)}`)
+
     if (msg.videoroom === 'joined') {
       this.$Janus.log('onmessage:joined')
       await dispatch('handleJoined', { handleDto, msg })
@@ -17,6 +18,10 @@ export const actions = {
     if (msg.joining) {
       this.$Janus.log('onmessage:joining')
       await dispatch('handleJoining', { handleDto, joining: msg.joining })
+    }
+    if (msg.videoroom === 'event') {
+      this.$Janus.log('onmessage:event')
+      await dispatch('handleEvent', { handleDto, msg })
     }
     if (msg.videoroom === 'attached') {
       this.$Janus.log('onmessage:attached')
@@ -62,8 +67,9 @@ export const actions = {
   }, { handleDto, msg }) {
     this.$Janus.log('handleJoined')
     commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
+    console.log(msg.display)
     commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
-    if (handleDto.audio || handleDto.video || handleDto.screen) {
+    if (handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled) {
       dispatch('api/janus/handle/createOffer', { handleDto }, { root: true })
         .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true }))
     }
@@ -83,6 +89,16 @@ export const actions = {
       id
     }
     dispatch('api/janus/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
+  },
+  handleEvent ({
+    commit,
+    dispatch
+  }, { handleDto, msg }) {
+    this.$Janus.log('handleEvent')
+    const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === msg.id)
+    if (foundHandleDTO) {
+      commit('api/janus/videoroom/updates/setDisplay', { handleDto: foundHandleDTO, display: msg.display }, { root: true })
+    }
   },
   handleAttached ({
     commit,
@@ -158,7 +174,24 @@ export const actions = {
   }, { handleDto, unpublished }) {
     if (unpublished === 'ok') {
       commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia', { handleDto, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+      commit('api/janus/videoroom/updates/setMedia',
+        {
+          handleDto,
+          media: {
+            audio: {
+              enabled: false
+            },
+            video: {
+              enabled: false
+            },
+            screen: {
+              enabled: false
+            },
+            data: {
+              enabled: false
+            }
+          }
+        }, { root: true })
     } else {
       const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === unpublished)
       console.log(handleDto.sessionDto.handleDtos.map(h => h.display_name))
@@ -166,7 +199,24 @@ export const actions = {
       if (foundHandleDTO) {
         console.log(`UNPUB: ${foundHandleDTO.display_name}`)
         commit('api/janus/videoroom/updates/clearStream', { handleDto: foundHandleDTO }, { root: true })
-        commit('api/janus/videoroom/updates/setMedia', { handleDto: foundHandleDTO, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+        commit('api/janus/videoroom/updates/setMedia',
+          {
+            handleDto: foundHandleDTO,
+            media: {
+              audio: {
+                enabled: false
+              },
+              video: {
+                enabled: false
+              },
+              screen: {
+                enabled: false
+              },
+              data: {
+                enabled: false
+              }
+            }
+          }, { root: true })
       }
     }
   },
@@ -177,7 +227,24 @@ export const actions = {
   }, { handleDto, leaving }) {
     if (leaving === 'ok') {
       commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia', { handleDto, media: { audio: false, video: false, screen: false, data: false } }, { root: true })
+      commit('api/janus/videoroom/updates/setMedia',
+        {
+          handleDto,
+          media: {
+            audio: {
+              enabled: false
+            },
+            video: {
+              enabled: false
+            },
+            screen: {
+              enabled: false
+            },
+            data: {
+              enabled: false
+            }
+          }
+        }, { root: true })
     } else {
       const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === leaving)
       if (foundHandleDTO) {
