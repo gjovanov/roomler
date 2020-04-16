@@ -12,7 +12,7 @@ ENV WS_SCALEOUT_ENABLED true
 
 # Install packages & git clone source code and build the application
 RUN apk add --update --no-cache --virtual .build-deps \
-  gcc g++ make git python && \
+  gcc g++ make git python3 && \
   apk add --no-cache vips vips-dev fftw-dev libc6-compat \
   --repository http://nl.alpinelinux.org/alpine/edge/testing/ \
   --repository http://nl.alpinelinux.org/alpine/edge/main && \
