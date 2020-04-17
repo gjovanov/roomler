@@ -4,6 +4,7 @@
     v-model="leftDrawer"
     :width="width"
     height="%100"
+    :mobile-break-point="720"
     app
     clipped
     class="pr-1"
@@ -247,12 +248,22 @@ export default {
   },
   data () {
     const config = this.$store.state.api.config.config
+    let width = 280
+    if (typeof window !== 'undefined' && window.innerWidth > 600 && window.innerWidth < 960) {
+      width = 320
+    }
+    if (typeof window !== 'undefined' && window.innerWidth > 960 && window.innerWidth < 1264) {
+      width = 360
+    }
+    if (typeof window !== 'undefined' && window.innerWidth > 1264) {
+      width = 420
+    }
     return {
       panel: 1,
       modelList: [],
       openList: [],
       leftDrawer: true,
-      width: 280,
+      width,
       borderSize: 4,
       mini: false,
       config,

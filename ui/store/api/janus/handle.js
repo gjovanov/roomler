@@ -187,7 +187,6 @@ export const actions = {
         videoRecv: true,
         data: handleDto.media.data.enabled
       }
-      console.log(media)
       handleDto.handle.createAnswer({
         jsep,
         media,

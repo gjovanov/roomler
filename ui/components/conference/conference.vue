@@ -132,7 +132,7 @@ export default {
             try {
               await video.play()
             } catch (e) {
-              console.log(e)
+              this.$consola.info(e)
             }
           }
         }

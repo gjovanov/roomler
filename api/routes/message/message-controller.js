@@ -25,7 +25,7 @@ class MessageController {
     reply.send(result)
   }
 
-  async createWs (wss, conn, msg) {
+  async createWs (fastify, wss, conn, msg) {
     if (conn.user) {
       const payload = msg
       try {
@@ -35,7 +35,7 @@ class MessageController {
         performanceService.performance.measure('MessageCreate', 'MessageCreate start', 'MessageCreate end')
         return messages
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }

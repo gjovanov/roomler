@@ -10,10 +10,10 @@ if (process.env.TEST === 'e2e') {
 }
 
 export default {
-  require: ['./tests/setup.js'],
+  // require: ['./tests/setup.js'],
   files,
   cache: true,
-  concurrency: 16,
+  concurrency: 8,
   failFast: true,
   failWithoutAssertions: false,
   verbose: true

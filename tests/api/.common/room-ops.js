@@ -102,7 +102,7 @@ class RoomOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'ReferenceError')
-          t.true(result.message === 'Room was not found.')
+          t.true(result.message === 'Room was not found or you don\'t have access to it.')
           t.pass()
         })
         .catch((e) => {
@@ -326,7 +326,7 @@ class RoomOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(result.name === 'ReferenceError')
-          t.true(result.message === 'Room was not found.')
+          t.true(result.message === 'Room was not found or you don\'t have access to it.')
           t.pass()
         })
         .catch((e) => {

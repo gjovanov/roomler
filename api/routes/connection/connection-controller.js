@@ -3,7 +3,7 @@ const performanceService = require('../../services/performance/performance-servi
 const connectionService = require('../../services/connection/connection-service')
 
 class ConnectionController {
-  async pushConnectionWs (wss, conn, payload) {
+  async pushConnectionWs (fastify, wss, conn, payload) {
     try {
       performanceService.performance.mark('ConnectionCreate start')
       const connection = await connectionService.create(conn.user ? conn.user._id : null, payload)
@@ -19,11 +19,11 @@ class ConnectionController {
 
       return connection
     } catch (err) {
-      console.log(err)
+      fastify.log.error(err)
     }
   }
 
-  async pullConnectionWs (wss, conn) {
+  async pullConnectionWs (fastify, wss, conn) {
     const id = conn.connection_id
     if (id) {
       try {
@@ -41,7 +41,7 @@ class ConnectionController {
 
         return connection
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }

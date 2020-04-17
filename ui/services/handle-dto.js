@@ -118,11 +118,8 @@ export class HandleDto {
     this.timer = null
     this.interval = 1000
     this.bitrate = {
-      limit: undefined,
+      limit: args.bitrateLimit || undefined,
       value: '0 KBIT/SEC'
     }
-    console.log(this.media)
-    console.log(this.display)
-    console.log(this.display_name)
   }
 }

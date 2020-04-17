@@ -47,7 +47,7 @@ export const actions = {
       try {
         await audioToPlay.play()
       } catch (e) {
-        console.log(`Cannot play sound: ${e}`)
+        this.$consola.info(`Cannot play sound: ${e}`)
       }
     }
   }

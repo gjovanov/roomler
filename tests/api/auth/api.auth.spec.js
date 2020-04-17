@@ -1,8 +1,8 @@
-const test = require('ava')
 const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const UserContext = require('../.context/user-context')
 const data = require('./data')
+const test = require('ava')
 const user = new UserContext(data.user, data.avatar)
 
 authOps.register(fastify, test, 'register the user for auth testing', user)

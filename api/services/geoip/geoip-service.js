@@ -1,5 +1,6 @@
 const config = require('../../../config')
 const performanceService = require('../../services/performance/performance-service')
+const consola = require('consola')
 const maxmind = require('maxmind')
 
 class GeoIpService {
@@ -9,7 +10,7 @@ class GeoIpService {
     const db = await maxmind.open(mmdbPath, {
       watchForUpdates: true,
       watchForUpdatesHook: () => {
-        console.log('MMDB update')
+        consola.info('MMDB update')
       }
     })
     performanceService.performance.mark('MmdbOpen end')

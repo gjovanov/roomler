@@ -12,7 +12,7 @@ class MessageReactionsController {
     reply.send(result)
   }
 
-  async pushWs (wss, conn, msg) {
+  async pushWs (fastify, wss, conn, msg) {
     if (conn.user) {
       const payload = msg
       try {
@@ -23,7 +23,7 @@ class MessageReactionsController {
         performanceService.performance.measure('ReactionPush', 'ReactionPush start', 'ReactionPush end')
         return message
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }
@@ -35,7 +35,7 @@ class MessageReactionsController {
     reply.send(result)
   }
 
-  async pullWs (wss, conn, msg) {
+  async pullWs (fastify, wss, conn, msg) {
     if (conn.user) {
       const payload = msg
       try {
@@ -45,7 +45,7 @@ class MessageReactionsController {
         performanceService.performance.measure('ReactionPull', 'ReactionPull start', 'ReactionPull end')
         return message
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }

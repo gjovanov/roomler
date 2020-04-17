@@ -67,7 +67,6 @@ export const actions = {
   }, { handleDto, msg }) {
     this.$Janus.log('handleJoined')
     commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
-    console.log(msg.display)
     commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
     if (handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled) {
       dispatch('api/janus/handle/createOffer', { handleDto }, { root: true })
@@ -194,10 +193,7 @@ export const actions = {
         }, { root: true })
     } else {
       const foundHandleDTO = handleDto.sessionDto.handleDtos.find(h => h.id === unpublished)
-      console.log(handleDto.sessionDto.handleDtos.map(h => h.display_name))
-      console.log(unpublished)
       if (foundHandleDTO) {
-        console.log(`UNPUB: ${foundHandleDTO.display_name}`)
         commit('api/janus/videoroom/updates/clearStream', { handleDto: foundHandleDTO }, { root: true })
         commit('api/janus/videoroom/updates/setMedia',
           {

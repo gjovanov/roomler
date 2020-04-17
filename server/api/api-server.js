@@ -1,3 +1,5 @@
+const consola = require('consola')
+
 class ApiServer {
   constructor () {
     this.fastify = require('../../api/api')()
@@ -7,9 +9,9 @@ class ApiServer {
     try {
       const address = await this.fastify.listen(port, host)
       this.fastify.swagger()
-      console.log(`API SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
+      consola.success(`API SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
     } catch (err) {
-      this.fastify.log.error(err)
+      consola.error(err)
       process.exit(1)
     }
     return this.fastify

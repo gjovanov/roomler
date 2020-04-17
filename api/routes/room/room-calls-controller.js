@@ -4,7 +4,7 @@ const config = require('../../../config')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
 class RoomCallsController {
-  async pushWs (wss, conn, msg) {
+  async pushWs (fastify, wss, conn, msg) {
     if (conn.user) {
       const payload = msg
       try {
@@ -21,12 +21,12 @@ class RoomCallsController {
         const room = await roomService.pushCall(userid, call._id)
         wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallOpen, [room], true)
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }
 
-  async pullWs (wss, conn, msg) {
+  async pullWs (fastify, wss, conn, msg) {
     if (conn.user) {
       const payload = msg
       try {
@@ -43,7 +43,7 @@ class RoomCallsController {
         }
         wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallClose, [room], true)
       } catch (err) {
-        console.log(err)
+        fastify.log.error(err)
       }
     }
   }

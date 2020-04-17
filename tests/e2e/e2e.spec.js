@@ -1,56 +1,58 @@
-// const test = require('ava')
-// const puppeteer = require('puppeteer')
-// // const pti = require('puppeteer-to-istanbul')
-// const saveCoverage = require('puppeteer-coverage').saveCoverage
-// const path = require('path')
-// const nyc_output_path = path.resolve('../../.nyc_output/')
+const path = require('path')
+const test = require('ava')
+const puppeteer = require('puppeteer')
+const consola = require('consola')
 
-// const host = 'localhost'
-// const port = 4000
-// const url = `http://${host}:${port}`
-// let browser = null
-// let page = null
-// let jsCoverage = null
+// const pti = require('puppeteer-to-istanbul')
+const saveCoverage = require('puppeteer-coverage').saveCoverage
+const nycOutputPath = path.resolve('../../.nyc_output/')
 
-// test.before('Start pupeteer', async (t) => {
-//   console.log('starting pupeteer')
-//   browser = await puppeteer.launch({
-//     headless: false
-//     // slowMo: 250
-//   })
-//   page = await browser.newPage()
-//   await Promise.all([
-//     page.coverage.startJSCoverage()
-//   ])
-// })
+const host = 'localhost'
+const port = 4000
+const url = `http://${host}:${port}`
+let browser = null
+let page = null
+let jsCoverage = null
 
-// test('Route / exits and render HTML', async (t) => {
-//   await page.goto(url, {
-//     waitUntil: 'load'
-//   })
-//   await page.waitForFunction(
-//     'document.querySelector("body").innerText.includes("Roomler.Live")'
-//   )
-//   const element = await page.$('title')
-//   // const text = await page.evaluate(element => element.textContent, element)
-//   // console.log(`|${text}|`)
-//   // t.true(text === 'roomer.live - roomer.live')
+test.before('Start pupeteer', async (t) => {
+  consola.info('starting pupeteer')
+  browser = await puppeteer.launch({
+    headless: false
+    // slowMo: 250
+  })
+  page = await browser.newPage()
+  await Promise.all([
+    page.coverage.startJSCoverage()
+  ])
+})
 
-//   // const jsCoverage = await page.coverage.stopJSCoverage()
-//   // saveCoverage(jsCoverage, nyc_output_path)
-//   // await page.screenshot({
-//   //   path: 'example.png'
-//   // })
+test('Route / exits and render HTML', async (t) => {
+  await page.goto(url, {
+    waitUntil: 'load'
+  })
+  await page.waitForFunction(
+    'document.querySelector("body").innerText.includes("Roomler.Live")'
+  )
+  const element = await page.$('title')
+  const text = await page.evaluate(element => element.textContent, element)
+  consola.info(`|${text}|`)
+  t.true(text === 'roomer.live - roomer.live')
 
-//   t.pass()
-// })
+  const jsCoverage = await page.coverage.stopJSCoverage()
+  saveCoverage(jsCoverage, nycOutputPath)
+  await page.screenshot({
+    path: 'example.png'
+  })
 
-// test.before('Close pupeteer', async (t) => {
-//   if (browser) {
-//     jsCoverage = await page.coverage.stopJSCoverage()
-//     saveCoverage(jsCoverage, nyc_output_path)
-//     // pti.write([...jsCoverage])
-//     console.log('closing pupeteer')
-//     await browser.close()
-//   }
-// })
+  t.pass()
+})
+
+test.before('Close pupeteer', async (t) => {
+  if (browser) {
+    jsCoverage = await page.coverage.stopJSCoverage()
+    saveCoverage(jsCoverage, nycOutputPath)
+    // pti.write([...jsCoverage])
+    consola.success('closing pupeteer')
+    await browser.close()
+  }
+})

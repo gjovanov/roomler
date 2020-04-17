@@ -78,10 +78,9 @@ function fastifyWs (fastify, opts, next) {
             subscriber.on('message', (channel, payload) => {
               const data = JSON.parse(payload)
               if (channel === opts.scaleout.channel && opts.dispatcher && data.process !== processName) {
-                console.log('SUBSCRIPTION MESSAGE')
-
-                console.log(data.process)
-                console.log(processName)
+                fastify.log.info('SUBSCRIPTION MESSAGE')
+                fastify.log.info(data.process)
+                fastify.log.info(processName)
                 opts.dispatcher.dispatch(data.op, data.messages, false)
               }
             })
@@ -107,7 +106,7 @@ function fastifyWs (fastify, opts, next) {
           op: 'HELLO',
           data: `${processName}`
         }))
-        opts.handler.onConnection(wss, conn, req)
+        opts.handler.onConnection(fastify, wss, conn, req)
 
         // on WS message:
         // 1. handle message e.g. store to the DB
@@ -115,7 +114,7 @@ function fastifyWs (fastify, opts, next) {
         // 3. scaleout to other WS servers
         conn.on('message', async (msg) => {
           const message = JSON.parse(msg)
-          let messages = await opts.handler.onMessage(wss, conn, message)
+          let messages = await opts.handler.onMessage(fastify, wss, conn, message)
           if (messages) {
             if (!Array.isArray(messages)) {
               messages = [messages]
@@ -129,7 +128,7 @@ function fastifyWs (fastify, opts, next) {
         conn.on('close', () => {
           clearInterval(interval)
 
-          opts.handler.onClose(wss, conn)
+          opts.handler.onClose(fastify, wss, conn)
         })
       }
     })
@@ -137,15 +136,11 @@ function fastifyWs (fastify, opts, next) {
   fastify.decorate('ws', wss)
 
   fastify.addHook('onClose', (fi, done) => {
-    fastify.log.info('HERE')
-    // opts.handler.onShutdown(wss)
-    fastify.log.info('HERE2')
-
-    // if (fastify.scaleout) {
-    //   fastify.scaleout.publisher.quit()
-    //   fastify.scaleout.subscriber.quit()
-    // }
-
+    opts.handler.onShutdown(fastify, wss)
+    if (fastify.scaleout) {
+      fastify.scaleout.publisher.quit()
+      fastify.scaleout.subscriber.quit()
+    }
     fastify.ws.close(done)
   })
 

@@ -213,7 +213,7 @@ export const actions = {
           await dispatch('api/message/getAll', { room: result.room }, { root: true })
         }))
           .catch((e) => {
-            console.log(e)
+            this.$console.error(e)
           })
         commit('clearPendingJoins')
       }

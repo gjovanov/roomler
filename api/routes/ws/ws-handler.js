@@ -14,15 +14,15 @@ class WsHandler {
     2. Create a Connection DB entry & push it in user.connections collection
     3. Notify all Peers based on Rooms
   */
-  async onConnection (wss, conn, req) {
+  async onConnection (fastify, wss, conn, req) {
     const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
     const geoip = await geoipService.get(ipAddress)
     conn.id = uuid()
     if (req.user) {
       conn.user = req.user
-      console.log(`WS client '${conn.user.username}' connected on '${processName}'`)
+      fastify.log.info(`WS client '${conn.user.username}' connected on '${processName}'`)
     } else {
-      console.log(`WS client 'ANONYMOUS' connected on '${processName}'`)
+      fastify.log.info(`WS client 'ANONYMOUS' connected on '${processName}'`)
     }
     storage.push(conn)
     const payload = {
@@ -33,7 +33,7 @@ class WsHandler {
     if (geoip) {
       payload.geoip = geoip
     }
-    const connection = await require('../connection/connection-controller').pushConnectionWs(wss, conn, payload)
+    const connection = await require('../connection/connection-controller').pushConnectionWs(fastify, wss, conn, payload)
     conn.connection_id = connection._id
 
     // notify USER CONNECTION OPENED
@@ -43,13 +43,13 @@ class WsHandler {
     }
   }
 
-  onMessage (wss, conn, msg) {
+  onMessage (fastify, wss, conn, msg) {
     if (msg.op === config.wsSettings.opTypes.messageCreate) {
-      return require('../message/message-controller').createWs(wss, conn, msg.payload)
+      return require('../message/message-controller').createWs(fastify, wss, conn, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPush) {
-      return require('../message/message-reactions-controller').pushWs(wss, conn, msg.payload)
+      return require('../message/message-reactions-controller').pushWs(fastify, wss, conn, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPull) {
-      return require('../message/message-reactions-controller').pullWs(wss, conn, msg.payload)
+      return require('../message/message-reactions-controller').pullWs(fastify, wss, conn, msg.payload)
     }
     return null
   }
@@ -60,15 +60,15 @@ class WsHandler {
     2. Close the Connection DB entry & pull it out of the user.connections collection
     3. Notify all Peers based on Rooms
   */
-  async onClose (wss, conn) {
+  async onClose (fastify, wss, conn) {
     if (conn.user) {
-      console.log(`WS Client '${conn.user.username}' disconnected from '${processName}'`)
+      fastify.log.info(`WS Client '${conn.user.username}' disconnected from '${processName}'`)
     } else {
-      console.log(`WS Client 'ANONYMOUS' disconnected from '${processName}'`)
+      fastify.log.info(`WS Client 'ANONYMOUS' disconnected from '${processName}'`)
     }
     storage.pull(conn)
     if (conn.connection_id) {
-      const connection = await require('../connection/connection-controller').pullConnectionWs(wss, conn)
+      const connection = await require('../connection/connection-controller').pullConnectionWs(fastify, wss, conn)
       // notify USER CONNECTION CLOSED
       if (conn.user) {
         const op = config.wsSettings.opTypes.connectionClose
@@ -77,12 +77,12 @@ class WsHandler {
     }
   }
 
-  onShutdown (wss) {
-    console.log('ON SHUT DOWN')
+  onShutdown (fastify, wss) {
+    fastify.log.info('ON SHUTDOWN')
     for (const client in storage.clients) {
       const clientConns = storage.clients[client]
       clientConns.map(async (conn) => {
-        const connection = await require('../connection/connection-controller').pullConnectionWs(wss, conn)
+        const connection = await require('../connection/connection-controller').pullConnectionWs(fastify, wss, conn)
         if (conn.user) {
           const op = config.wsSettings.opTypes.connectionClose
           wsDispatcher.dispatch(op, [connection], true)

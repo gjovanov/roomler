@@ -1,5 +1,9 @@
 const buildApi = function () {
-  const multer = require('fastify-multer') // or import multer from 'fastify-multer'
+  if (!!process.env.NODE_ENV ||
+    ['development', 'test'].includes(process.env.NODE_ENV)) {
+    require('dotenv').config()
+  }
+  const multer = require('fastify-multer')
   const fastify = require('fastify')({
     logger: process.env.NODE_ENV !== 'test'
     // http2: true,

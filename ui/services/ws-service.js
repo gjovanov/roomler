@@ -1,6 +1,7 @@
 import {
   storage
 } from '@/services/storage'
+import consola from 'consola'
 
 // readyState
 // 0 - CONNECTING - Socket has been created. The connection is not yet open.
@@ -30,15 +31,15 @@ class WsService {
 
   connect () {
     const self = this
-    console.log('Trying to open Web Socket...')
+    consola.info('Trying to open Web Socket...')
     if (this.ws) {
-      console.log('Closing existing Web Socket...')
+      consola.info('Closing existing Web Socket...')
       this.ws.close(1000)
     }
     this.ws = new WebSocket(`${this.host}`)
 
     this.ws.onopen = (event) => {
-      console.log(`WebSocket opened: ${event}`)
+      consola.info(`WebSocket opened: ${event}`)
       if (self.counter > 0 && storage.get('token')) {
         if (self.store.state.api.auth.user && self.store.state.api.auth.user._id) {
           self.store.dispatch('api/auth/me')
@@ -67,7 +68,7 @@ class WsService {
       self.counter++
     }
     this.ws.onclose = (event) => {
-      console.log(`WebSocket closed: ${JSON.stringify(event.code)}`)
+      consola.info(`WebSocket closed: ${JSON.stringify(event.code)}`)
       self.subscriptions.onclose.forEach((handler) => {
         handler(event)
       })
@@ -79,7 +80,7 @@ class WsService {
     }
 
     this.ws.onerror = (event) => {
-      console.log(`WebSocket error: ${event}`)
+      consola.info(`WebSocket error: ${event}`)
       self.subscriptions.onerror.forEach((handler) => {
         handler(event)
       })

@@ -4,7 +4,7 @@
     <publish-dialog :room="room" :open="publishDialog" @publish="publish" @cancel="publishDialog = false" />
     <extension-dialog :open="extensionDialog" @cancel="extensionDialog = false" />
 
-    <v-tooltip v-if="!localHandle " top left>
+    <v-tooltip v-if="!localHandle" top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="!localHandle"
@@ -389,7 +389,8 @@ export default {
         janus: {
           roomid: this.selectedRoom.media.roomid,
           plugin: config.janusSettings.plugins.videoroom,
-          display
+          display,
+          bitrateLimit: this.selectedRoom.media.bitrate
         },
         media: this.selectedRoom.media
       }
@@ -414,7 +415,7 @@ export default {
           const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
           this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
         } catch (e) {
-          console.log(e)
+          this.$consola.error(e)
         }
       }
     },
@@ -432,7 +433,7 @@ export default {
         const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async toggleVideoMuted () {
@@ -450,7 +451,7 @@ export default {
           this.localHandle.handle.muteVideo()
         }
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async toggleAudio () {
@@ -464,7 +465,7 @@ export default {
         const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async toggleAudioMuted () {
@@ -482,7 +483,7 @@ export default {
           this.localHandle.handle.muteAudio()
         }
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async setVideoResolution (resolution) {
@@ -496,7 +497,7 @@ export default {
         const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async setBitrateLimit (bitrateLimit) {
@@ -504,7 +505,7 @@ export default {
         this.$store.commit('api/janus/videoroom/updates/setBitrateLimit', { handleDto: this.localHandle, bitrateLimit })
         await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
       } catch (e) {
-        console.log(e)
+        this.$consola.error(e)
       }
     },
     async publish (media) {
@@ -541,6 +542,6 @@ export default {
 
 <style scoped>
 .theme--dark.v-list-item:not(.v-list-item--link) {
-    color: red !important;
+    color: orange !important;
 }
 </style>

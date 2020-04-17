@@ -17,7 +17,7 @@ module.exports = {
       media: {
         publishers: 30,
         is_private: false,
-        bitrate: 128000,
+        bitrate: 256000,
         fir_freq: 0,
         audiocodec: 'opus,pcmu',
         videocodec: 'vp8,h264',

@@ -6,6 +6,7 @@ const {
   Nuxt,
   Builder
 } = require('nuxt')
+const consola = require('consola')
 const nodeEnv = process.env.NODE_ENV || 'development'
 const runBuilder = nodeEnv === 'development' || nodeEnv === 'test'
 config.dev = nodeEnv === 'development'
@@ -29,7 +30,7 @@ class UiServer {
       }
     })
     if (runBuilder) {
-      console.log('Bundling....')
+      consola.info('Bundling....')
       config.rootDir = resolve(__dirname, '..', '..')
       this.nuxt = new Nuxt(config)
       const builder = new Builder(this.nuxt)
@@ -44,11 +45,11 @@ class UiServer {
       try {
         this.fastify.swagger()
       } catch (e) {
-        console.log('No Swagger')
+        consola.error(new Error('No Swagger'))
       }
-      console.log(`UI SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
+      consola.success(`UI SERVER '${`${require('os').hostname()}_${require('process').pid}`}' is listening at: ${address}`)
     } catch (err) {
-      this.fastify.log.error(err)
+      consola.error(err)
       process.exit(1)
     }
     return {

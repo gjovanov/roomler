@@ -28,8 +28,6 @@ export const mutations = {
     const displayPart = handleDto.display_name
     handleDto.display = `${displayPart}?${mediaPart}`
     handleDto.media = newMedia
-    console.log(handleDto.media)
-    console.log(handleDto.display)
   },
   setDisplay (state, { handleDto, display }) {
     if (display) {
@@ -38,7 +36,6 @@ export const mutations = {
       handleDto.display = display
       handleDto.display_name = displayParts[0]
       handleDto.media = media
-      console.log(media)
     }
   },
   setId (state, { handleDto, id, privateId }) {
@@ -57,16 +54,16 @@ export const mutations = {
     handleDto.consentDialog = on
   },
   webrtcState (state, { handleDto, on, reason }) {
-    console.log(`webrtcState: '${on}', ${reason}`)
+    this.$Janus.log(`webrtcState: '${on}', ${reason}`)
     handleDto.webrtcState = on
     handleDto.webrtcStateReason = reason
   },
   iceState (state, { handleDto, on }) {
-    console.log(`iceState: '${on}'`)
+    this.$Janus.log(`iceState: '${on}'`)
     handleDto.iceState = on
   },
   mediaState (state, { handleDto, type, on }) {
-    console.log(`mediaState: '${on}', ${type}`)
+    this.$Janus.log(`mediaState: '${on}', ${type}`)
     handleDto.mediaState[type] = on
     if (type === 'video') {
       if (handleDto.media.video.enabled && on) {
@@ -77,7 +74,7 @@ export const mutations = {
     }
   },
   slowLink (state, { handleDto, on }) {
-    console.log(`slowLink: '${on}'`)
+    this.$Janus.log(`slowLink: '${on}'`)
     handleDto.slowLink = on
   },
   onlocalstream (state, { handleDto, stream, commit }) {
