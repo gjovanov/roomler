@@ -14,15 +14,15 @@
           cols="12"
           class="pa-0 ma-0"
         >
-          <v-card elevation="12" style="height: 100%">
-            <v-card-text class="pa-0 ma-0" style="height: 100%">
+          <v-card elevation="12">
+            <v-card-text class="pa-0 ma-0" style="max-height: 640px">
               <video
                 :id="handleDto.id"
                 :srcObject.prop="handleDto.stream"
                 :poster="getPeer(handleDto.display_name).avatar_url"
                 width="100%"
                 height="100%"
-                style="height: 100%"
+                style="max-height: 640px"
                 autoplay
                 controls
               />
