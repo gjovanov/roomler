@@ -54,7 +54,6 @@
                 style="max-height: 240px"
                 :autoplay="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
                 :controls="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
-                @suspend="showVideoPoster(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
             </v-card-text>
