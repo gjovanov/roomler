@@ -24,7 +24,7 @@
                   @click="minimal = !minimal"
                 >
                   <v-icon small>
-                    fa-edit
+                    fa-font
                   </v-icon>
                 </v-btn>
               </template>
@@ -121,6 +121,14 @@ export default {
     gallery: {
       type: String,
       default: ''
+    },
+    content: {
+      type: String,
+      default: '<p></p>'
+    },
+    message: {
+      type: Object,
+      default: null
     }
   },
   data () {
@@ -213,7 +221,7 @@ export default {
         new Bold(),
         new Italic()
       ],
-      content: '<p></p>',
+      content: this.content,
       autoFocus: true
     })
 
@@ -230,7 +238,7 @@ export default {
   },
   methods: {
     send () {
-      this.$emit('sendMessage', this.editor.getHTML())
+      this.$emit('sendMessage', this.editor.getHTML(), this.message)
       this.editor.clearContent()
     },
     async upload (file) {

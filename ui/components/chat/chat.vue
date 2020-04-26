@@ -3,6 +3,7 @@
     <chat-messages
       :elem-id="messageListId"
       :input-id="newMessageId"
+      :user="user"
       :room="room"
       :messages="messages"
       :unreads="unreads"

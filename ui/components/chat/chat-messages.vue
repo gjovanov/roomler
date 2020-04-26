@@ -65,6 +65,21 @@
                 >
                   😄
                 </v-btn>
+                <v-btn
+                  v-if="user && message.author === user._id"
+                  fab
+                  right
+                  bottom
+                  x-small
+                  absolute
+                  color="secondary"
+                  :style="`margin-right: 36px !important;`"
+                  @click="message.edit = !message.edit"
+                >
+                  <v-icon x-small>
+                    fa-edit
+                  </v-icon>
+                </v-btn>
                 <v-card-title class="overline">
                   {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
@@ -77,7 +92,16 @@
                   </v-tooltip>
                 </v-card-title>
                 <v-card-text>
-                  <pre style="white-space: pre-wrap" v-html="message.content" />
+                  <pre v-if="!message.edit" style="white-space: pre-wrap" v-html="message.content" />
+                  <tiptap
+                    v-if="room && message && message._id && message.edit"
+                    :elem-id="`edit-message-${message._id}`"
+                    :users="roomPeers"
+                    :gallery="room.path"
+                    :content="message.content"
+                    :message="message"
+                    @sendMessage="sendMessage"
+                  />
                 </v-card-text>
               </v-card>
             </v-hover>
@@ -97,6 +121,7 @@
 <script>
 import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
+import Tiptap from '@/components/editor/tiptap'
 import AddReactionMenu from '@/components/chat/add-reaction-menu'
 import MessageReactionList from '@/components/chat/message-reaction-list'
 import * as EmojiMap from 'emojilib'
@@ -110,6 +135,7 @@ const scrollDirection = {
 }
 export default {
   components: {
+    Tiptap,
     AddReactionMenu,
     MessageReactionList
   },
@@ -121,6 +147,10 @@ export default {
     inputId: {
       type: String,
       default: ''
+    },
+    user: {
+      type: Object,
+      default: null
     },
     room: {
       type: Object,
@@ -169,6 +199,12 @@ export default {
         }
       },
       scroll: scrollDirection.bottom
+    }
+  },
+
+  computed: {
+    roomPeers () {
+      return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     }
   },
 
@@ -287,16 +323,14 @@ export default {
         }
       }
     },
-    async sendMessage (content) {
+    async sendMessage (content, message) {
       if (content) {
         const $ = cheerio.load(content)
         const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
         await this.$store
-          .dispatch('api/message/create', {
-            room: this.room,
-            message: {
-              client_id: uuid(),
-              type: 'text',
+          .dispatch('api/message/update', {
+            id: message._id,
+            update: {
               content,
               mentions
             }

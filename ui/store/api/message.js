@@ -3,6 +3,7 @@ import {
   // handleSuccess
 } from '@/services/ajax-handlers'
 import { handleMessageCreate } from './message/handlers/message-create'
+import { handleMessageUpdate } from './message/handlers/message-update'
 import { handleReactionPush } from './message/handlers/reaction-push'
 import { handleReactionPull } from './message/handlers/reaction-pull'
 import * as moment from 'moment'
@@ -58,6 +59,7 @@ export const actions = {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
       handleMessageCreate(dispatch, commit, state, rootState, router, data)
+      handleMessageUpdate(dispatch, commit, state, rootState, router, data)
       handleReactionPush(dispatch, commit, state, rootState, router, data)
       handleReactionPull(dispatch, commit, state, rootState, router, data)
     })

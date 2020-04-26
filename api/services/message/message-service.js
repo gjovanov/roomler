@@ -106,6 +106,18 @@ class MessageService {
   }
 
   async update (userid, id, update, validate = true) {
+    console.log(update)
+    const skipPull = JSON.stringify(update).includes('readby')
+    if (!skipPull) {
+      if (!update.$pull) {
+        update.$pull = {}
+      }
+      if (!update.$pull.readby) {
+        update.$pull.readby = { $ne: userid }
+      }
+    }
+    console.log(update)
+
     const options = {
       new: true
     }

@@ -47,6 +47,7 @@ class MessageController {
       $set: payload
     }
     const result = await messageService.update(request.user.user._id, id, update)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.messageUpdate, [result], true)
     reply.send(result)
   }
 

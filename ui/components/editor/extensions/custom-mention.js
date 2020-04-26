@@ -71,20 +71,20 @@ export default class CustomMention extends Mention {
   }
 
   get schema () {
+    const aClass = this.options.mentionClass
+    const imgStyle = 'height: 24px; min-width: 24px; width: 24px; border-radius: 50%; margin-right: 5px'
+    const imgClass = 'v-avatar'
     const customSchema = {
       attrs: {
         id: {},
         label: {},
         avatarUrl: {}
       },
-      // group: 'block',
-      // inline: false,
-      // atom: false,
       toDOM: (node) => {
         return [
-          'a',
+          'button',
           {
-            class: this.options.mentionClass,
+            class: aClass,
             userkey: node.attrs.id,
             'data-username': node.attrs.label,
             'data-linked-resource-type': 'userinfo',
@@ -95,8 +95,8 @@ export default class CustomMention extends Mention {
             'img',
             {
               src: node.attrs.avatarUrl || '/user.png',
-              class: 'v-avatar',
-              style: 'height: 24px; min-width: 24px; width: 24px; border-radius: 50%; margin-right: 5px'
+              class: imgClass,
+              style: imgStyle
             }
           ],
           node.attrs.label
@@ -104,7 +104,7 @@ export default class CustomMention extends Mention {
       },
       parseDOM: [
         {
-          tag: 'a[userkey]',
+          tag: 'button[userkey]',
           getAttrs: (dom) => {
             const id = dom.getAttribute('userkey')
             const avatarUrl = dom.getAttribute('data-avatar-url').replace('/user.png', '')
