@@ -73,6 +73,7 @@ import MentionTemplate from '@/components/editor/templates/mention-template'
 import CustomMention from '@/components/editor/extensions/custom-mention'
 import CustomEmoji from '@/components/editor/extensions/custom-emoji'
 import CustomImage from '@/components/editor/extensions/custom-image'
+import CustomFile from '@/components/editor/extensions/custom-file'
 import * as uuid from 'uuid/v4'
 import {
   Placeholder,
@@ -202,6 +203,7 @@ export default {
         new TodoList(),
         new Link(),
         new CustomImage(null, null, self.upload),
+        new CustomFile(null, null, self.upload),
         new Bold(),
         new Code(),
         new Italic(),

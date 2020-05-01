@@ -1,6 +1,6 @@
 <template>
   <div v-show="extension.options.query || extension.options.filteredItems.length" :id="extension.options.templateId">
-    <v-list rounded>
+    <v-list rounded dark>
       <v-list-item-group
         v-model="extension.options.navigatedIndex"
         color="primary"

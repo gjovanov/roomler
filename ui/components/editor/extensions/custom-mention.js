@@ -89,7 +89,7 @@ export default class CustomMention extends Mention {
             'data-username': node.attrs.label,
             'data-linked-resource-type': 'userinfo',
             'data-avatar-url': node.attrs.avatarUrl || '/user.png',
-            href: `/@/${node.attrs.label}`
+            onclick: `history.pushState(null, null, '/@/${node.attrs.label}')`
           },
           [
             'img',

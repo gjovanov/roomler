@@ -64,6 +64,16 @@ const schema = new Schema({
       required: 'SymbolIsRequired',
       maxlength: 2
     }
+  }],
+  files: [{
+    filename: {
+      type: String,
+      required: 'Filename is required'
+    },
+    href: {
+      type: String,
+      required: 'href is required'
+    }
   }]
 }, {
   timestamps: true

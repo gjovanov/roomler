@@ -96,9 +96,22 @@ export default {
   },
   methods: {
     async sendMessage (content) {
-      if (content) {
+      if (content && cheerio.load(content)) {
         const $ = cheerio.load(content)
+        const text = $('*').contents().map(function () {
+          return (this.type === 'text') ? $(this).text() + '' : ''
+        }).get().join('')
+        if (!text) {
+          return
+        }
+
         const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
+        const files = [...new Set($('a[filename]').toArray().map((node) => {
+          return {
+            filename: node.attribs.filename,
+            href: node.attribs.href
+          }
+        }))]
         await this.$store
           .dispatch('api/message/create', {
             room: this.room,
@@ -106,7 +119,8 @@ export default {
               client_id: uuid(),
               type: 'text',
               content,
-              mentions
+              mentions,
+              files
             }
           })
       }

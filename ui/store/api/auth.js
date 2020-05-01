@@ -50,7 +50,7 @@ export const mutations = {
           user.connections.push(connection)
         }
       } else {
-        this.$console.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
+        this.$consola.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
       }
     })
   },
@@ -60,7 +60,7 @@ export const mutations = {
       if (user) {
         user.connections = user.connections.filter(uc => uc._id !== connection._id)
       } else {
-        this.$console.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
+        this.$consola.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
       }
     })
   },

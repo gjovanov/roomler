@@ -11,41 +11,35 @@ import { nodeInputRule } from 'tiptap-commands'
  */
 const IMAGE_INPUT_REGEX = /!\[(.+|:?)\]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/
 
-export default class Image extends Node {
+export default class File extends Node {
   constructor (name, parent, uploadFunc = null) {
     super(name, parent)
     this.uploadFunc = uploadFunc
   }
 
   get name () {
-    return 'image'
+    return 'file'
   }
 
   get schema () {
     return {
       inline: true,
       attrs: {
-        src: {},
-        alt: {
-          default: null
-        },
-        title: {
-          default: null
-        }
+        href: {},
+        filename: {}
       },
       group: 'inline',
       draggable: true,
       parseDOM: [
         {
-          tag: 'img[src]',
+          tag: 'a[href]',
           getAttrs: dom => ({
-            src: dom.getAttribute('src'),
-            title: dom.getAttribute('title'),
-            alt: dom.getAttribute('alt')
+            href: dom.getAttribute('href'),
+            filename: dom.getAttribute('filename')
           })
         }
       ],
-      toDOM: node => ['img', node.attrs]
+      toDOM: node => ['a', node.attrs, node.attrs.filename]
     }
   }
 
@@ -62,9 +56,9 @@ export default class Image extends Node {
   inputRules ({ type }) {
     return [
       nodeInputRule(IMAGE_INPUT_REGEX, type, (match) => {
-        const [, alt, src, title] = match
+        const [, alt, href, title] = match
         return {
-          src,
+          href,
           alt,
           title
         }
@@ -81,31 +75,28 @@ export default class Image extends Node {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items
             // eslint-disable-next-line no-debugger
             debugger
-            if (items.length === 1) {
-              for (const item of items) {
-                if (item.kind === 'file' && item.type && item.type.startsWith('image')) {
-                  event.preventDefault()
-                  const {
-                    schema
-                  } = view.state
+            for (const item of items) {
+              if (item.kind === 'file') {
+                event.preventDefault()
+                const { schema } = view.state
 
-                  const image = item.getAsFile()
-                  // eslint-disable-next-line no-debugger
-                  debugger
+                const file = item.getAsFile()
 
-                  if (image && upload) {
-                    upload(image).then((src) => {
-                      const node = schema.nodes.image.create({
-                        src
-                      })
-                      const transaction = view.state.tr.replaceSelectionWith(node)
-                      view.dispatch(transaction)
+                // eslint-disable-next-line no-debugger
+                debugger
+
+                if (file && upload) {
+                  upload(file).then((src) => {
+                    const node = schema.nodes.file.create({
+                      href: src,
+                      filename: file.name
                     })
-                  }
+                    const transaction = view.state.tr.replaceSelectionWith(node)
+                    view.dispatch(transaction)
+                  })
                 }
               }
             }
-
             return false
           },
           handleDOMEvents: {
@@ -117,25 +108,22 @@ export default class Image extends Node {
               if (!hasFiles) {
                 return
               }
-              const images = Array
+              const files = Array
                 .from(event.dataTransfer.files)
-                .filter(file => file.type && file.type.includes('image'))
-
-              if (!(images.length === 1 && event.dataTransfer.files.length === 1)) {
-                return
-              }
+                // .filter(file => file.type && !file.type.includes('image'))
 
               event.preventDefault()
 
               const { schema } = view.state
               const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
 
-              images.forEach(async (image) => {
+              files.forEach(async (file) => {
                 if (upload) {
-                  const node = schema.nodes.image.create({
-                    src: await upload(image)
+                  const node = schema.nodes.file.create({
+                    href: await upload(file),
+                    filename: file.name
                   })
-                  const transaction = view.state.tr.insert(coordinates.pos, node)
+                  const transaction = view.state.tr.insert(coordinates ? coordinates.pos : 0, node)
                   view.dispatch(transaction)
                 }
               })

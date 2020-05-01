@@ -111,10 +111,18 @@ module.exports = [{
     if (!existsSync(roomFolder)) {
       mkdirSync(roomFolder)
     }
-    const oldPath = join(uploadsFolder, request.file.filename)
-    const newPath = join(roomFolder, request.file.filename)
-    renameSync(oldPath, newPath)
-    reply.code(200).send({ src: `/uploads/${request.body.room}/${request.file.filename}` })
+    if (request.file) {
+      const oldPath = join(uploadsFolder, request.file.filename)
+      const newPath = join(roomFolder, request.file.filename)
+      renameSync(oldPath, newPath)
+      reply.code(200).send({
+        src: `/uploads/${request.body.room}/${request.file.filename}`
+      })
+    } else {
+      reply.code(200).send({
+        src: ''
+      })
+    }
   }
 },
 {

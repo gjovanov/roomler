@@ -80,6 +80,21 @@
                     fa-edit
                   </v-icon>
                 </v-btn>
+                <v-btn
+                  v-if="user && message.author === user._id"
+                  fab
+                  right
+                  bottom
+                  x-small
+                  absolute
+                  color="secondary"
+                  :style="`margin-right: 72px !important;`"
+                  @click="messageDeleteConsent(message)"
+                >
+                  <v-icon x-small>
+                    fa-trash
+                  </v-icon>
+                </v-btn>
                 <v-card-title class="overline">
                   {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
@@ -115,6 +130,12 @@
         </v-scroll-y-reverse-transition>
       </v-timeline>
     </template>
+    <message-delete-dialog
+      :dialog="messageDeletedDialog"
+      :message="selectedMessage"
+      @messageDelete="messageDelete"
+      @messageDeleteCancel="messageDeleteCancel"
+    />
   </div>
 </template>
 
@@ -124,6 +145,7 @@ import { datetimeUtils } from '@/utils/datetime-utils'
 import Tiptap from '@/components/editor/tiptap'
 import AddReactionMenu from '@/components/chat/add-reaction-menu'
 import MessageReactionList from '@/components/chat/message-reaction-list'
+import MessageDeleteDialog from '@/components/chat/message-delete-dialog'
 import * as EmojiMap from 'emojilib'
 import * as cheerio from 'cheerio'
 import * as uuid from 'uuid/v4'
@@ -137,7 +159,8 @@ export default {
   components: {
     Tiptap,
     AddReactionMenu,
-    MessageReactionList
+    MessageReactionList,
+    MessageDeleteDialog
   },
   props: {
     elemId: {
@@ -185,6 +208,7 @@ export default {
       manualScrollTimeout: null,
       mouseoverTimeout: null,
       selectedMessage: null,
+      messageDeletedDialog: false,
       menu: {
         addReaction: {
           x: 0,
@@ -248,6 +272,19 @@ export default {
   },
 
   methods: {
+    messageDeleteConsent (message) {
+      this.selectedMessage = message
+      this.messageDeletedDialog = true
+    },
+    async messageDelete (message) {
+      await this.sendMessage('<p><em>Message was deleted by the author</em></p>', message)
+      this.selectedMessage = null
+      this.messageDeletedDialog = false
+    },
+    messageDeleteCancel (message) {
+      this.selectedMessage = null
+      this.messageDeletedDialog = false
+    },
     getUser (userid) {
       return this.$store.getters['api/auth/getUser'](userid)
     },
@@ -326,13 +363,26 @@ export default {
     async sendMessage (content, message) {
       if (content) {
         const $ = cheerio.load(content)
+        const text = $('*').contents().map(function () {
+          return (this.type === 'text') ? $(this).text() + '' : ''
+        }).get().join('')
+        if (!text) {
+          return
+        }
         const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
+        const files = [...new Set($('a[filename]').toArray().map((node) => {
+          return {
+            filename: node.attribs.filename,
+            href: node.attribs.href
+          }
+        }))]
         await this.$store
           .dispatch('api/message/update', {
             id: message._id,
             update: {
               content,
-              mentions
+              mentions,
+              files
             }
           })
       }

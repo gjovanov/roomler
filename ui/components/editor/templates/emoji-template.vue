@@ -3,6 +3,7 @@
     <template v-for="(emoji, index) in extension.options.filteredItems">
       <v-btn
         :key="emoji.id"
+        dark
         :outlined="extension.options.navigatedIndex === index"
         @click="extension.selectItem(emoji)"
       >
