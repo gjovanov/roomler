@@ -13,6 +13,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  toggleEdit (state, message) {
+    message.edit = !message.edit
+  },
   pushAll (state, { roomid, messages }) {
     if (messages && messages.length) {
       if (!state.messages[roomid]) {
@@ -22,6 +25,9 @@ export const mutations = {
       }
       const result = [...state.messages[roomid]]
       messages.forEach((message) => {
+        if (message.edit === undefined) {
+          message.edit = false
+        }
         const existingMessage = result.find(m => (m._id === message._id) || (m.client_id === message.client_id))
         if (!existingMessage) {
           result.push(message)

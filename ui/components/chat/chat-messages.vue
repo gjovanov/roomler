@@ -53,48 +53,69 @@
                 :class="message.has_mention && !message.is_read ? 'mr-4 red lighten-4' : (!message.is_read || !message._id ? 'mr-4 orange lighten-4' : 'mr-4 white')"
                 light
               >
-                <v-btn
-                  fab
-                  right
-                  bottom
-                  x-small
-                  absolute
-                  color="green"
-                  @mouseover="showMenu($event, message)"
-                  @click="showMenu($event, message)"
-                >
-                  😄
-                </v-btn>
-                <v-btn
-                  v-if="user && message.author === user._id"
-                  fab
-                  right
-                  bottom
-                  x-small
-                  absolute
-                  color="secondary"
-                  :style="`margin-right: 36px !important;`"
-                  @click="message.edit = !message.edit"
-                >
-                  <v-icon x-small>
-                    fa-edit
-                  </v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="user && message.author === user._id"
-                  fab
-                  right
-                  bottom
-                  x-small
-                  absolute
-                  color="secondary"
-                  :style="`margin-right: 72px !important;`"
-                  @click="messageDeleteConsent(message)"
-                >
-                  <v-icon x-small>
-                    fa-trash
-                  </v-icon>
-                </v-btn>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      right
+                      bottom
+                      x-small
+                      absolute
+                      color="green"
+                      v-on="on"
+                      @click="showMenu($event, message)"
+                    >
+                      😄
+                    </v-btn>
+                  </template>
+                  <span>Add reaction</span>
+                </v-tooltip>
+                <v-tooltip v-if="user && message.author === user._id" top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-if="user && message.author === user._id"
+                      fab
+                      right
+                      bottom
+                      x-small
+                      absolute
+                      color="secondary"
+                      :style="`margin-right: 36px !important;`"
+                      v-on="on"
+                      @click="toggleEdit(message)"
+                    >
+                      <v-icon v-if="!message.edit" x-small>
+                        fa-edit
+                      </v-icon>
+                      <v-icon v-if="message.edit" x-small>
+                        fa-window-close
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span v-if="!message.edit">Edit message</span>
+                  <span v-if="message.edit">Discard changes</span>
+                </v-tooltip>
+                <v-tooltip v-if="user && message.author === user._id" top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-if="user && message.author === user._id"
+                      fab
+                      right
+                      bottom
+                      x-small
+                      absolute
+                      color="secondary"
+                      :style="`margin-right: 72px !important;`"
+                      v-on="on"
+                      @click="messageDeleteConsent(message)"
+                    >
+                      <v-icon x-small>
+                        fa-trash
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Delete message</span>
+                </v-tooltip>
                 <v-card-title class="overline">
                   {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                   <v-tooltip v-if="message.has_mention" right>
@@ -191,9 +212,9 @@ export default {
         return []
       }
     },
-    panelChat: {
+    isChatPanel: {
       type: Boolean,
-      default: true
+      default: false
     }
   },
   data () {
@@ -247,7 +268,7 @@ export default {
         }, 300)
       })
     },
-    panelChat (newVal) {
+    isChatPanel (newVal) {
       if (newVal) {
         this.scrollMessages(true)
       }
@@ -272,6 +293,9 @@ export default {
   },
 
   methods: {
+    toggleEdit (message) {
+      this.$store.commit('api/message/toggleEdit', message, { root: true })
+    },
     messageDeleteConsent (message) {
       this.selectedMessage = message
       this.messageDeletedDialog = true
@@ -376,13 +400,19 @@ export default {
             href: node.attribs.href
           }
         }))]
+        const images = [...new Set($('img[src]').toArray().map((node) => {
+          return {
+            filename: node.attribs.title,
+            href: node.attribs.src
+          }
+        }))]
         await this.$store
           .dispatch('api/message/update', {
             id: message._id,
             update: {
               content,
               mentions,
-              files
+              files: files.concat(images)
             }
           })
       }

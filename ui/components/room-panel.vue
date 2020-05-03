@@ -102,6 +102,7 @@
                 :user="user"
                 :room="conferenceRoom"
                 :room-route="roomRoute"
+                :is-chat-panel="isChatPanel"
               />
               <portal-target name="conference-center" />
             </v-expansion-panel-content>
@@ -121,6 +122,7 @@
                 :user="user"
                 :room="room"
                 :room-route="roomRoute"
+                :is-chat-panel="isChatPanel"
               />
               <portal-target name="chat-center" />
             </v-expansion-panel-content>
@@ -319,6 +321,9 @@ export default {
         return 6
       }
       return 0
+    },
+    isChatPanel () {
+      return this.chatPanel && this.panels === 3
     },
     roomPeers () {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []

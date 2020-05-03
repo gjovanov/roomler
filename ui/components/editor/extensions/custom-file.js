@@ -73,8 +73,6 @@ export default class File extends Node {
         props: {
           handlePaste (view, event, slice) {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items
-            // eslint-disable-next-line no-debugger
-            debugger
             for (const item of items) {
               if (item.kind === 'file') {
                 event.preventDefault()
@@ -82,14 +80,11 @@ export default class File extends Node {
 
                 const file = item.getAsFile()
 
-                // eslint-disable-next-line no-debugger
-                debugger
-
                 if (file && upload) {
-                  upload(file).then((src) => {
+                  upload(file).then((item) => {
                     const node = schema.nodes.file.create({
-                      href: src,
-                      filename: file.name
+                      href: item.src,
+                      filename: item.filename
                     })
                     const transaction = view.state.tr.replaceSelectionWith(node)
                     view.dispatch(transaction)
@@ -119,9 +114,10 @@ export default class File extends Node {
 
               files.forEach(async (file) => {
                 if (upload) {
+                  const item = await upload(file)
                   const node = schema.nodes.file.create({
-                    href: await upload(file),
-                    filename: file.name
+                    href: item.src,
+                    filename: item.filename
                   })
                   const transaction = view.state.tr.insert(coordinates ? coordinates.pos : 0, node)
                   view.dispatch(transaction)

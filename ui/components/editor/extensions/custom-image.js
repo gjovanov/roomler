@@ -79,8 +79,6 @@ export default class Image extends Node {
         props: {
           handlePaste (view, event, slice) {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items
-            // eslint-disable-next-line no-debugger
-            debugger
             if (items.length === 1) {
               for (const item of items) {
                 if (item.kind === 'file' && item.type && item.type.startsWith('image')) {
@@ -90,13 +88,13 @@ export default class Image extends Node {
                   } = view.state
 
                   const image = item.getAsFile()
-                  // eslint-disable-next-line no-debugger
-                  debugger
 
                   if (image && upload) {
-                    upload(image).then((src) => {
+                    upload(image).then((item) => {
                       const node = schema.nodes.image.create({
-                        src
+                        src: item.src,
+                        alt: item.filename,
+                        title: item.filename
                       })
                       const transaction = view.state.tr.replaceSelectionWith(node)
                       view.dispatch(transaction)
@@ -132,8 +130,11 @@ export default class Image extends Node {
 
               images.forEach(async (image) => {
                 if (upload) {
+                  const item = await upload(image)
                   const node = schema.nodes.image.create({
-                    src: await upload(image)
+                    src: item.src,
+                    alt: item.filename,
+                    title: item.filename
                   })
                   const transaction = view.state.tr.insert(coordinates.pos, node)
                   view.dispatch(transaction)

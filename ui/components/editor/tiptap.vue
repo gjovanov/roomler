@@ -1,58 +1,43 @@
 <template>
   <div>
     <div class="editor">
-      <tiptap-menu :editor="editor" :minimal="minimal" />
-
-      <v-divider />
+      <tiptap-format-menu
+        v-if="!message || message.edit"
+        :elem-id="elemId"
+        :editor="editor"
+        :minimal="minimal"
+        @attach="attach"
+      />
 
       <editor-content
         :id="elemId"
         :editor="editor"
         class="editor__content Prose"
       />
-      <v-layout>
-        <v-row>
-          <v-col cols="12">
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  :outlined="!minimal"
-                  small
-                  tile
-                  light
-                  v-on="on"
-                  @click="minimal = !minimal"
-                >
-                  <v-icon small>
-                    fa-font
-                  </v-icon>
-                </v-btn>
-              </template>
-              <span>Format</span>
-            </v-tooltip>
+      <tiptap-main-menu
+        :elem-id="elemId"
+        :editor="editor"
+        :minimal="minimal"
+        :message="message"
+        @toggleMinimal="toggleMinimal"
+        @attach="attach"
+        @send="send"
+      />
+    </div>
 
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  small
-                  absolute
-                  right
-                  tile
-                  light
-                  style="right: 0px;"
-                  v-on="on"
-                  @click="send()"
-                >
-                  <v-icon small>
-                    send
-                  </v-icon>
-                </v-btn>
-              </template>
-              <span>Send message</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </v-layout>
+    <div>
+      <form v-show="false" method="POST" class="form-documents" enctype="multipart/form-data">
+        Upload photos
+        <input
+          :id="`${elemId}-file-upload`"
+          :ref="`${elemId}-file-upload`"
+          :name="`${elemId}-file-upload`"
+          :multiple="multiple"
+          :accept="accept"
+          type="file"
+          @change="filesChange($event.target.files)"
+        >
+      </form>
     </div>
 
     <div :ref="customMention.options.templateId">
@@ -67,13 +52,15 @@
 
 <script>
 
-import TiptapMenu from '@/components/editor/tiptap-menu'
+import TiptapFormatMenu from '@/components/editor/tiptap-format-menu'
+import TiptapMainMenu from '@/components/editor/tiptap-main-menu'
 import EmojiTemplate from '@/components/editor/templates/emoji-template'
 import MentionTemplate from '@/components/editor/templates/mention-template'
 import CustomMention from '@/components/editor/extensions/custom-mention'
 import CustomEmoji from '@/components/editor/extensions/custom-emoji'
 import CustomImage from '@/components/editor/extensions/custom-image'
 import CustomFile from '@/components/editor/extensions/custom-file'
+import { Editor, EditorContent, Extension } from 'tiptap'
 import * as uuid from 'uuid/v4'
 import {
   Placeholder,
@@ -99,12 +86,13 @@ import {
   Underline,
   History
 } from 'tiptap-extensions'
-import { Editor, EditorContent, Extension } from 'tiptap'
+
 import * as EmojiMap from 'emojilib'
 export default {
   components: {
     EditorContent,
-    TiptapMenu,
+    TiptapFormatMenu,
+    TiptapMainMenu,
     EmojiTemplate,
     MentionTemplate
   },
@@ -126,6 +114,10 @@ export default {
     content: {
       type: String,
       default: '<p></p>'
+    },
+    isChatPanel: {
+      type: Boolean,
+      default: false
     },
     message: {
       type: Object,
@@ -172,10 +164,11 @@ export default {
     })
 
     const editor = new Editor({
+      editable: !!(!this.message || this.message.edit),
       extensions: [
         new Placeholder({
           showOnlyWhenEditable: true,
-          emptyNodeText: 'Write something... Use @ to mention someone. Use : for emoji'
+          emptyNodeText: 'Write something... Drop & drop files here... Use @ to mention someone. Use : for emoji'
         }),
         new class extends Extension {
           keys () {
@@ -228,20 +221,42 @@ export default {
     })
 
     return {
+      backup: this.content,
       emojis,
       minimal: true,
+      multiple: false,
+      accept: '*',
+      allCommands: null,
+      attachType: 'image', // [image, files]
       editor,
       customMention,
       customEmoji
+    }
+  },
+  watch: {
+    'message.edit' (val, oldVal) {
+      if (!val) {
+        this.editor.setContent(this.backup)
+      }
+      this.editor.setOptions({
+        editable: val
+      })
     }
   },
   beforeDestroy () {
     this.editor.destroy()
   },
   methods: {
+    toggleMinimal () {
+      this.minimal = !this.minimal
+    },
     send () {
       this.$emit('sendMessage', this.editor.getHTML(), this.message)
-      this.editor.clearContent()
+      // in case of new message being sent, clear the content,
+      // otherwise in case of message edit, keep the content
+      if (!this.message) {
+        this.editor.clearContent()
+      }
     },
     async upload (file) {
       const formData = new FormData()
@@ -249,7 +264,28 @@ export default {
       formData.append('file', file)
       const headers = { 'Content-Type': 'multipart/form-data' }
       const response = await this.$axios.post('api/room/upload', formData, { headers })
-      return response.data.src
+      return { filename: file.name, src: response.data.src }
+    },
+    attach (commands, attachType = 'image') {
+      const self = this
+      this.allCommands = commands
+      this.attachType = attachType
+      this.accept = attachType === 'file' ? '*' : 'image/*'
+      this.multiple = attachType === 'file'
+      this.$nextTick(() => {
+        document.getElementById(`${self.elemId}-file-upload`).click()
+      })
+    },
+    async filesChange (files) {
+      if (this.allCommands) {
+        const result = await Promise.all([...files].map(f => this.upload(f)))
+        if (this.attachType === 'file') {
+          result.forEach(item => this.allCommands.file({ href: item.src, filename: item.filename }))
+        } else {
+          result.forEach(item => this.allCommands.image({ src: item.src, alt: item.filename, title: item.filename }))
+        }
+        document.getElementById(`${this.elemId}-file-upload`).value = ''
+      }
     }
   }
 }
@@ -271,7 +307,7 @@ export default {
     color: black;
     border-radius: 5px;
     padding: 10px;
-    min-height: 60px;
+    min-height: 80px;
 }
 .ProseMirror p {
   margin-bottom: 0px;

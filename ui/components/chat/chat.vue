@@ -7,7 +7,7 @@
       :room="room"
       :messages="messages"
       :unreads="unreads"
-      :panel-chat="panelChat"
+      :is-chat-panel="isChatPanel"
     />
     <tiptap
       :elem-id="newMessageId"
@@ -50,6 +50,10 @@ export default {
     roomRoute: {
       type: String,
       default: null
+    },
+    isChatPanel: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -81,9 +85,6 @@ export default {
     },
     panelRight () {
       return this.$store.state.panel.right
-    },
-    panelChat () {
-      return this.roomRoute === 'chat'
     }
   },
 
@@ -98,10 +99,8 @@ export default {
     async sendMessage (content) {
       if (content && cheerio.load(content)) {
         const $ = cheerio.load(content)
-        const text = $('*').contents().map(function () {
-          return (this.type === 'text') ? $(this).text() + '' : ''
-        }).get().join('')
-        if (!text) {
+        const isEmpty = content !== '<p></p>'
+        if (!isEmpty) {
           return
         }
 
@@ -112,6 +111,12 @@ export default {
             href: node.attribs.href
           }
         }))]
+        const images = [...new Set($('img[src]').toArray().map((node) => {
+          return {
+            filename: node.attribs.title,
+            href: node.attribs.src
+          }
+        }))]
         await this.$store
           .dispatch('api/message/create', {
             room: this.room,
@@ -120,7 +125,7 @@ export default {
               type: 'text',
               content,
               mentions,
-              files
+              files: files.concat(images)
             }
           })
       }

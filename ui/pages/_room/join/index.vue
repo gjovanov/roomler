@@ -43,6 +43,7 @@ export default {
       return this.$router.push({ path: '/@/auth/login' })
     }
     await this.$store.dispatch('api/invite/acceptPendingJoins', this.user._id)
+    await this.$store.dispatch('connectWebSocket')
     if (join) {
       return this.$router.push({ path: `/${this.room.path}/chat` })
     }

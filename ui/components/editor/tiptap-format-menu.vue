@@ -1,5 +1,5 @@
 <template>
-  <editor-menu-bar v-if="!minimal" v-slot="{ commands, isActive }" :editor="editor">
+  <editor-menu-bar v-if="!minimal" :id="`${elemId}-format-menu`" v-slot="{ commands, isActive }" :editor="editor">
     <v-container>
       <v-layout class="justify-center">
         <v-btn-toggle
@@ -256,14 +256,30 @@
                 :text="isActive.image()"
                 x-small
                 v-on="on"
-                @click="showImagePrompt(commands.image)"
+                @click="attach(commands, 'image')"
               >
                 <v-icon small>
                   fa-image
                 </v-icon>
               </v-btn>
             </template>
-            <span>Image</span>
+            <span>Insert image</span>
+          </v-tooltip>
+
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                :text="isActive.file()"
+                x-small
+                v-on="on"
+                @click="attach(commands, 'file')"
+              >
+                <v-icon small>
+                  fa-paperclip
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Attach files</span>
           </v-tooltip>
 
           <v-tooltip top>
@@ -410,6 +426,10 @@ export default {
     EditorMenuBar
   },
   props: {
+    elemId: {
+      type: String,
+      default: ''
+    },
     editor: {
       type: Object,
       default: null
@@ -426,11 +446,8 @@ export default {
     }
   },
   methods: {
-    showImagePrompt (command) {
-      const src = prompt('Enter the url of your image here')
-      if (src !== null) {
-        command({ src })
-      }
+    attach (comms, attachType) {
+      this.$emit('attach', comms, attachType)
     }
   }
 }
