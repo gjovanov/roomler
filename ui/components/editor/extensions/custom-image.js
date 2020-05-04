@@ -31,6 +31,9 @@ export default class Image extends Node {
         },
         title: {
           default: null
+        },
+        'data-upload': {
+          default: true
         }
       },
       group: 'inline',
@@ -41,7 +44,8 @@ export default class Image extends Node {
           getAttrs: dom => ({
             src: dom.getAttribute('src'),
             title: dom.getAttribute('title'),
-            alt: dom.getAttribute('alt')
+            alt: dom.getAttribute('alt'),
+            'data-upload': true
           })
         }
       ],

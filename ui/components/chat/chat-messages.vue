@@ -385,22 +385,16 @@ export default {
       }
     },
     async sendMessage (content, message) {
-      if (content) {
+      if (content && content !== '<p></p>') {
         const $ = cheerio.load(content)
-        const text = $('*').contents().map(function () {
-          return (this.type === 'text') ? $(this).text() + '' : ''
-        }).get().join('')
-        if (!text) {
-          return
-        }
         const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
-        const files = [...new Set($('a[filename]').toArray().map((node) => {
+        const files = [...new Set($('a[data-upload]').toArray().map((node) => {
           return {
             filename: node.attribs.filename,
             href: node.attribs.href
           }
         }))]
-        const images = [...new Set($('img[src]').toArray().map((node) => {
+        const images = [...new Set($('img[data-upload]').toArray().map((node) => {
           return {
             filename: node.attribs.title,
             href: node.attribs.src

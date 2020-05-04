@@ -26,7 +26,10 @@ export default class File extends Node {
       inline: true,
       attrs: {
         href: {},
-        filename: {}
+        filename: {},
+        'data-upload': {
+          default: true
+        }
       },
       group: 'inline',
       draggable: true,
@@ -35,7 +38,8 @@ export default class File extends Node {
           tag: 'a[href]',
           getAttrs: dom => ({
             href: dom.getAttribute('href'),
-            filename: dom.getAttribute('filename')
+            filename: dom.getAttribute('filename'),
+            'data-upload': true
           })
         }
       ],
