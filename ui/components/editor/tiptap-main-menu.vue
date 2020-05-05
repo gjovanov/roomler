@@ -52,6 +52,22 @@
             </template>
             <span>Attach files</span>
           </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                tile
+                small
+                light
+                v-on="on"
+                @click="openGiphyDialog(commands.iframe)"
+              >
+                <v-icon>
+                  mdi-gif
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Gifs</span>
+          </v-tooltip>
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -118,6 +134,9 @@ export default {
     },
     send () {
       this.$emit('send')
+    },
+    openGiphyDialog (command) {
+      this.$emit('openGiphyDialog', command)
     }
   }
 }

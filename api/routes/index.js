@@ -6,5 +6,6 @@ module.exports = [
   ...require('./oauth'),
   ...require('./room'),
   ...require('./invite'),
-  ...require('./message')
+  ...require('./message'),
+  ...require('./giphy')
 ]

@@ -22,6 +22,7 @@
         @toggleMinimal="toggleMinimal"
         @attach="attach"
         @send="send"
+        @openGiphyDialog="openGiphyDialog"
       />
     </div>
 
@@ -40,6 +41,10 @@
       </form>
     </div>
 
+    <div>
+      <giphy-dialog :dialog="dialog.giphy" @closeGiphyDialog="closeGiphyDialog" />
+    </div>
+
     <div :ref="customMention.options.templateId">
       <mention-template :extension="customMention" />
     </div>
@@ -52,6 +57,7 @@
 
 <script>
 
+import GiphyDialog from '@/components/editor/dialogs/giphy-dialog'
 import TiptapFormatMenu from '@/components/editor/tiptap-format-menu'
 import TiptapMainMenu from '@/components/editor/tiptap-main-menu'
 import EmojiTemplate from '@/components/editor/templates/emoji-template'
@@ -60,6 +66,7 @@ import CustomMention from '@/components/editor/extensions/custom-mention'
 import CustomEmoji from '@/components/editor/extensions/custom-emoji'
 import CustomImage from '@/components/editor/extensions/custom-image'
 import CustomFile from '@/components/editor/extensions/custom-file'
+import Iframe from '@/components/editor/extensions/iframe'
 import { Editor, EditorContent, Extension } from 'tiptap'
 import * as uuid from 'uuid/v4'
 import {
@@ -90,6 +97,7 @@ import {
 import * as EmojiMap from 'emojilib'
 export default {
   components: {
+    GiphyDialog,
     EditorContent,
     TiptapFormatMenu,
     TiptapMainMenu,
@@ -197,6 +205,7 @@ export default {
         new Link(),
         new CustomImage(null, null, self.upload),
         new CustomFile(null, null, self.upload),
+        new Iframe(),
         new Bold(),
         new Code(),
         new Italic(),
@@ -221,6 +230,10 @@ export default {
     })
 
     return {
+      dialog: {
+        giphy: false
+      },
+      iframeCommand: null,
       backup: this.content,
       emojis,
       minimal: true,
@@ -247,6 +260,13 @@ export default {
     this.editor.destroy()
   },
   methods: {
+    openGiphyDialog (command) {
+      this.dialog.giphy = true
+      this.iframeCommand = command
+    },
+    closeGiphyDialog () {
+      this.dialog.giphy = false
+    },
     toggleMinimal () {
       this.minimal = !this.minimal
     },
