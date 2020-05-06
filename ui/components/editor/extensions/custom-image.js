@@ -34,6 +34,9 @@ export default class Image extends Node {
         },
         'data-upload': {
           default: true
+        },
+        style: {
+          default: 'max-width: 100%'
         }
       },
       group: 'inline',
