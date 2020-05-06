@@ -42,7 +42,7 @@
     </div>
 
     <div>
-      <giphy-dialog :dialog="dialog.giphy" @closeGiphyDialog="closeGiphyDialog" />
+      <giphy-dialog :dialog="dialog.giphy" @closeGiphyDialog="closeGiphyDialog" @insertGif="insertGif" />
     </div>
 
     <div :ref="customMention.options.templateId">
@@ -233,7 +233,7 @@ export default {
       dialog: {
         giphy: false
       },
-      iframeCommand: null,
+      giphyCommand: null,
       backup: this.content,
       emojis,
       minimal: true,
@@ -262,9 +262,15 @@ export default {
   methods: {
     openGiphyDialog (command) {
       this.dialog.giphy = true
-      this.iframeCommand = command
+      this.giphyCommand = command
     },
     closeGiphyDialog () {
+      this.dialog.giphy = false
+    },
+    insertGif (gif) {
+      if (this.giphyCommand) {
+        this.giphyCommand({ src: gif.images.original.url, alt: gif.title, title: gif.title })
+      }
       this.dialog.giphy = false
     },
     toggleMinimal () {
@@ -410,9 +416,9 @@ li[data-done=false] {
   margin: 0 auto 1rem
 }
 
-pre img {
+/* pre img {
   width: 100%;
-}
+} */
 
 .editor__content {
   overflow-wrap: break-word;

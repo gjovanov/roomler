@@ -36,17 +36,17 @@
 
       <v-list-item v-if="canManage && peers && peers.length" @click="addPeers()">
         <v-list-item-title>
-          <v-icon>fa-users</v-icon> Add existing peers
+          <v-icon>fa-users</v-icon> Add existing
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canManage" @click="invitePeers()">
         <v-list-item-title>
-          <v-icon>fa-paper-plane</v-icon> Invite new peers
+          <v-icon>fa-paper-plane</v-icon> Invite new
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canManage" @click="linkPeers()">
         <v-list-item-title>
-          <v-icon>fa-link</v-icon> Share room link
+          <v-icon>fa-link</v-icon> Share link
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="canJoin" @click="join()">

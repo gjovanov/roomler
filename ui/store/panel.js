@@ -1,12 +1,7 @@
 
 export const state = () => ({
   left: true,
-  leftExpansion: 2,
-  right: true,
-  join: true,
-  invite: true,
-  chat: true,
-  conference: false
+  right: true
 })
 
 export const mutations = {

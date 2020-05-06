@@ -2,42 +2,42 @@ const config = require('../../../config')
 const getService = require('../../services/utils/get-service')
 
 class GiphyService {
-  async search (query, offset = 0, limit = 10) {
+  async search (endpoint = 'gifs', query, offset = 0, limit = 30) {
+    const url = `http://api.giphy.com/v1/${endpoint}/search?q=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`
+    console.log(url)
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/gifs/search?q=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
+      url,
       method: 'GET',
       json: true
     })
-    return result.data
+    return result
   }
 
-  async trending (offset = 0, limit = 10) {
+  async trending (endpoint = 'gifs', offset = 0, limit = 30) {
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/gifs/trending?api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
+      url: `http://api.giphy.com/v1/${endpoint}/trending?api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
       method: 'GET',
       json: true
     })
-    return result.data
+    return result
   }
 
-  async translate (query, offset = 0, limit = 10) {
+  async translate (endpoint = 'gifs', query, offset = 0, limit = 30) {
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/gifs/translate?s=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
+      url: `http://api.giphy.com/v1/${endpoint}/translate?s=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
       method: 'GET',
       json: true
     })
-    console.log(result.data)
-    return result.data
+    return result
   }
 
-  async random (tag = undefined) {
+  async random (endpoint = 'gifs', tag = undefined) {
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/gifs/random?tag=&api_key=${config.giphySettings.apiKey}`,
+      url: `http://api.giphy.com/v1/${endpoint}/random?tag=&api_key=${config.giphySettings.apiKey}`,
       method: 'GET',
       json: true
     })
-    console.log(result.data)
-    return result.data
+    return result
   }
 }
 

@@ -8,14 +8,14 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="!localHandle"
-          tile
-          small
+          fab
+          x-small
           class="v-btn--active"
           color="green"
           v-on="on"
           @click="joinDialog = true"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-phone-volume
           </v-icon>
         </v-btn>
@@ -27,13 +27,13 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle && localHandle.stream"
-          tile
-          small
+          fab
+          x-small
           class="v-btn--active"
           v-on="{ on }"
           @click="unpublish()"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-stop
           </v-icon>
         </v-btn>
@@ -45,8 +45,8 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle"
-          tile
-          small
+          fab
+          x-small
           :text="localHandle.media.screen.enabled"
           class="v-btn--active"
           v-on="on"
@@ -75,8 +75,8 @@
           <template v-slot:activator="{ on: tooltip }">
             <v-btn
               v-if="localHandle"
-              tile
-              small
+              fab
+              x-small
               :text="localHandle.media.video.enabled && !localHandle.media.video.muted"
               class="v-btn--active"
               v-on="{ ...tooltip, ...menu }"
@@ -98,12 +98,12 @@
           @click="toggleVideoMuted()"
         >
           <v-list-item-title v-if="!localHandle.media.video.muted">
-            <v-icon small>
+            <v-icon x-small>
               fa-video-slash
             </v-icon> Turn camera off
           </v-list-item-title>
           <v-list-item-title v-if="localHandle.media.video.muted">
-            <v-icon small>
+            <v-icon x-small>
               fa-video
             </v-icon> Turn camera on
           </v-list-item-title>
@@ -205,12 +205,12 @@
           @click="toggleVideo()"
         >
           <v-list-item-title v-if="localHandle.media.video.enabled">
-            <v-icon small>
+            <v-icon x-small>
               fa-stop
             </v-icon> Disable camera
           </v-list-item-title>
           <v-list-item-title v-if="!localHandle.media.video.enabled">
-            <v-icon small>
+            <v-icon x-small>
               fa-play
             </v-icon> Enable camera
           </v-list-item-title>
@@ -229,8 +229,8 @@
           <template v-slot:activator="{ on: tooltip }">
             <v-btn
               v-if="localHandle"
-              tile
-              small
+              fab
+              x-small
               :text="localHandle.media.audio.enabled && !localHandle.media.audio.muted"
               class="v-btn--active"
               v-on="{ ...tooltip, ...menu }"
@@ -252,12 +252,12 @@
           @click="toggleAudioMuted()"
         >
           <v-list-item-title v-if="!localHandle.media.audio.muted">
-            <v-icon small>
+            <v-icon x-small>
               fa-microphone-slash
             </v-icon> Mute microphone
           </v-list-item-title>
           <v-list-item-title v-if="localHandle.media.audio.muted">
-            <v-icon small>
+            <v-icon x-small>
               fa-microphone
             </v-icon> Unmute microphone
           </v-list-item-title>
@@ -266,12 +266,12 @@
           @click="toggleAudio()"
         >
           <v-list-item-title v-if="localHandle.media.audio.enabled">
-            <v-icon small>
+            <v-icon x-small>
               fa-stop
             </v-icon> Disable microphone
           </v-list-item-title>
           <v-list-item-title v-if="!localHandle.media.audio.enabled">
-            <v-icon small>
+            <v-icon x-small>
               fa-play
             </v-icon> Enable microphone
           </v-list-item-title>
@@ -284,13 +284,13 @@
         <v-btn
           v-if="localHandle && !localHandle.stream"
           color="green"
-          tile
-          small
+          fab
+          x-small
           class="v-btn--active"
           v-on="on"
           @click="publishDialog = true"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-bullhorn
           </v-icon>
         </v-btn>
@@ -303,13 +303,13 @@
         <v-btn
           v-if="conferenceSession"
           color="red"
-          tile
-          small
+          fab
+          x-small
           class="v-btn--active"
           v-on="on"
           @click="leave()"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-phone-slash
           </v-icon>
         </v-btn>

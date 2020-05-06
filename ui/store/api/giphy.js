@@ -3,15 +3,44 @@ import {
 } from '@/services/ajax-handlers'
 
 export const state = () => ({
-  searchResult: [],
-  trendingResult: [],
-  translateResult: [],
-  randomResult: []
+  search: {
+    data: [],
+    pagination: {
+      total_count: 0,
+      count: 0,
+      offset: 0
+    }
+  },
+  trending: {
+    data: [],
+    pagination: {
+      total_count: 0,
+      count: 0,
+      offset: 0
+    }
+  },
+  translate: {
+    data: [],
+    pagination: {
+      total_count: 0,
+      count: 0,
+      offset: 0
+    }
+  },
+  random: {
+    data: [],
+    pagination: {
+      total_count: 0,
+      count: 0,
+      offset: 0
+    }
+  }
 })
 
 export const mutations = {
-  setResult (state, { type, result }) {
-    state[`${type}Result`] = result
+  setResult (state, { type, data, pagination }) {
+    state[type].data = data
+    state[type].pagination = pagination
   }
 }
 
@@ -20,14 +49,19 @@ export const actions = {
     commit,
     state
   }, {
+    endpoint,
     query,
     offset = 0,
-    limit = 10
+    limit = 15
   }) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/giphy/search?query=${query}&offset=${offset}&limit=${limit}`)
-      commit('setResult', { type: 'search', result: response.result })
+      response.result = await this.$axios.$get(`/api/giphy/${endpoint}/search?query=${query}&offset=${offset}&limit=${limit}`)
+      commit('setResult', {
+        type: 'search',
+        data: response.result.data,
+        pagination: response.result.pagination
+      })
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
@@ -39,15 +73,17 @@ export const actions = {
     commit,
     state
   }, {
+    endpoint,
     offset = 0,
-    limit = 10
+    limit = 9
   }) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/giphy/trending?offset=${offset}&limit=${limit}`)
+      response.result = await this.$axios.$get(`/api/giphy/${endpoint}/trending?offset=${offset}&limit=${limit}`)
       commit('setResult', {
         type: 'trending',
-        result: response.result
+        data: response.result.data,
+        pagination: response.result.pagination
       })
     } catch (err) {
       handleError(err, commit)
@@ -60,16 +96,18 @@ export const actions = {
     commit,
     state
   }, {
+    endpoint,
     query,
     offset = 0,
-    limit = 10
+    limit = 9
   }) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/giphy/translate?query=${query}&offset=${offset}&limit=${limit}`)
+      response.result = await this.$axios.$get(`/api/giphy/${endpoint}/translate?query=${query}&offset=${offset}&limit=${limit}`)
       commit('setResult', {
         type: 'translate',
-        result: response.result
+        data: response.result.data,
+        pagination: response.result.pagination
       })
     } catch (err) {
       handleError(err, commit)
@@ -82,16 +120,18 @@ export const actions = {
     commit,
     state
   }, {
+    endpoint,
     tag,
     offset = 0,
-    limit = 10
+    limit = 9
   }) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/giphy/random?tag=${tag}&offset=${offset}&limit=${limit}`)
+      response.result = await this.$axios.$get(`/api/giphy/${endpoint}/random?tag=${tag}&offset=${offset}&limit=${limit}`)
       commit('setResult', {
         type: 'random',
-        result: response.result
+        data: response.result.data,
+        pagination: response.result.pagination
       })
     } catch (err) {
       handleError(err, commit)

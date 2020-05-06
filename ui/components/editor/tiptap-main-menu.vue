@@ -7,13 +7,13 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 :depressed="!minimal"
-                tile
-                small
+                fab
+                x-small
                 light
                 v-on="on"
                 @click="toggleMinimal()"
               >
-                <v-icon small>
+                <v-icon x-small>
                   fa-font
                 </v-icon>
               </v-btn>
@@ -23,13 +23,13 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                tile
-                small
+                fab
+                x-small
                 light
                 v-on="on"
                 @click="attach(commands, 'image')"
               >
-                <v-icon small>
+                <v-icon x-small>
                   fa-image
                 </v-icon>
               </v-btn>
@@ -39,13 +39,13 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                tile
-                small
+                fab
+                x-small
                 light
                 v-on="on"
                 @click="attach(commands, 'file')"
               >
-                <v-icon small>
+                <v-icon x-small>
                   fa-paperclip
                 </v-icon>
               </v-btn>
@@ -55,33 +55,33 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                tile
-                small
+                fab
+                x-small
                 light
                 v-on="on"
-                @click="openGiphyDialog(commands.iframe)"
+                @click="openGiphyDialog(commands.image)"
               >
                 <v-icon>
-                  mdi-gif
+                  mdi-sticker-emoji
                 </v-icon>
               </v-btn>
             </template>
-            <span>Gifs</span>
+            <span>Gifs & Stickers</span>
           </v-tooltip>
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                small
+                x-small
                 absolute
                 right
-                tile
+                fab
                 light
                 style="right: 0px;"
                 v-on="on"
                 @click="send()"
               >
-                <v-icon small>
+                <v-icon x-small>
                   send
                 </v-icon>
               </v-btn>

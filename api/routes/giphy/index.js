@@ -5,8 +5,9 @@ const giphySchema = require('./giphy-schema')
 module.exports = [{
   authenticate: true,
   method: 'GET',
-  url: '/api/giphy/search',
+  url: '/api/giphy/:endpoint/search',
   schema: {
+    params: giphySchema.search.params,
     querystring: giphySchema.search.querystring,
     response: {
       200: giphySchema.search.response[200],
@@ -19,8 +20,9 @@ module.exports = [{
 {
   authenticate: true,
   method: 'GET',
-  url: '/api/giphy/trending',
+  url: '/api/giphy/:endpoint/trending',
   schema: {
+    params: giphySchema.trending.params,
     querystring: giphySchema.trending.querystring,
     response: {
       200: giphySchema.trending.response[200],
@@ -33,8 +35,9 @@ module.exports = [{
 {
   authenticate: true,
   method: 'GET',
-  url: '/api/giphy/translate',
+  url: '/api/giphy/:endpoint/translate',
   schema: {
+    params: giphySchema.translate.params,
     querystring: giphySchema.translate.querystring,
     response: {
       200: giphySchema.translate.response[200],
@@ -47,8 +50,9 @@ module.exports = [{
 {
   authenticate: true,
   method: 'GET',
-  url: '/api/giphy/random',
+  url: '/api/giphy/:endpoint/random',
   schema: {
+    params: giphySchema.random.params,
     querystring: giphySchema.random.querystring,
     response: {
       200: giphySchema.random.response[200],

@@ -13,11 +13,11 @@ export const state = () => ({
       audio: null
     },
     reaction_push: {
-      file_name: '/audio/definite.mp3',
+      file_name: '/audio/disconnect.mp3',
       audio: null
     },
     reaction_pull: {
-      file_name: '/audio/served.mp3',
+      file_name: '/audio/call_connect.mp3',
       audio: null
     },
     invite_accept: {

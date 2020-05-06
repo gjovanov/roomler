@@ -1,5 +1,8 @@
 const S = require('fluent-schema')
 
+const endpointParams = S.object()
+  .prop('endpoint', S.string().required())
+
 const searchQueryString = S.object()
   .prop('query', S.string().required())
   .prop('offset', S.integer())
@@ -50,29 +53,42 @@ const giphy = S.object()
 
 const giphyList = S.array().items(giphy)
 
+const giphyPagination = S.object()
+  .prop('total_count', S.integer())
+  .prop('count', S.integer())
+  .prop('offset', S.integer())
+
+const giphyResult = S.object()
+  .prop('data', giphyList)
+  .prop('pagination', giphyPagination)
+
 module.exports = {
   search: {
+    params: endpointParams,
     querystring: searchQueryString,
     response: {
-      200: giphyList
+      200: giphyResult
     }
   },
   trending: {
+    params: endpointParams,
     querystring: trendingQueryString,
     response: {
-      200: giphyList
+      200: giphyResult
     }
   },
   translate: {
+    params: endpointParams,
     querystring: translateQueryString,
     response: {
-      200: giphyList
+      200: giphyResult
     }
   },
   random: {
+    params: endpointParams,
     querystring: randomQueryString,
     response: {
-      200: giphyList
+      200: giphyResult
     }
   }
 }

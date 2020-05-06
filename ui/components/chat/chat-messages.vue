@@ -43,7 +43,7 @@
               offset-x="8"
               offset-y="8"
             >
-              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="32">
+              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="24">
                 <img :src="getUser(message.author) && getUser(message.author).avatar_url">
               </v-avatar>
             </v-badge>
@@ -415,14 +415,17 @@ export default {
 }
 </script>
 
-<style>
-.v-timeline-item__divider {
-  min-width: 64px;
+<style scoped>
+* >>> .v-timeline-item__divider {
+  min-width: 48px;
 }
-.v-timeline--dense .v-timeline-item__body {
-  max-width: calc(100% - 64px);
+* >>> .v-timeline--dense .v-timeline-item__body {
+  max-width: calc(100% - 48px);
 }
-.v-application--is-ltr .v-timeline--dense:not(.v-timeline--reverse):before {
-    left: calc(32px - 1px)
+* >>> .v-application--is-ltr .v-timeline--dense:not(.v-timeline--reverse):before {
+    left: calc(24px - 1px);
+}
+* >>> .theme--dark.v-timeline::before {
+  background: none;
 }
 </style>
