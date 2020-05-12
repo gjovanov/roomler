@@ -50,6 +50,7 @@ const room = S.object()
   .prop('media', media)
   .prop('moderators', S.array().items(S.string()))
   .prop('members', S.array().items(S.string()))
+  .prop('calls', S.array().items(S.string()))
   .prop('createdAt', S.string())
   .prop('updatedAt', S.string())
 
@@ -84,6 +85,37 @@ const arrayOps = S.object()
 const idParams = S.object()
   .prop('id', S.string().required())
 
+const continent = S.object()
+  .prop('code', S.string())
+  .prop('name', S.string())
+
+const country = S.object()
+  .prop('code', S.string())
+  .prop('name', S.string())
+  .prop('is_eu', S.boolean())
+
+const geoip = S.object()
+  .prop('continent', continent)
+  .prop('country', country)
+  .prop('city_name', S.string())
+
+const call = S.object()
+  .prop('call_id', S.string())
+  .prop('user', S.string())
+  .prop('room', S.string())
+  .prop('status', S.string())
+  .prop('id_address', S.string())
+  .prop('process_name', S.string())
+  .prop('geoip', geoip)
+
+const roomCall = S.object()
+  .prop('room', room)
+  .prop('call', call)
+
+const roomCallList = S.array().items(roomCall)
+
+const callList = S.array().items(call)
+
 const wsRoomUsers = S.object()
   .prop('op')
   .prop('data', S.array().items(roomUsers))
@@ -102,7 +134,7 @@ const wsRoomDelete = S.object()
 
 const wsRoomCall = S.object()
   .prop('op')
-  .prop('data', roomList)
+  .prop('data', roomCallList)
 
 module.exports = {
   wsRoomUsers,
@@ -207,6 +239,13 @@ module.exports = {
       body: arrayOps,
       response: {
         200: roomUsers
+      }
+    }
+  },
+  calls: {
+    getAll: {
+      response: {
+        200: callList
       }
     }
   }

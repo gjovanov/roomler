@@ -12,12 +12,6 @@ const schema = new Schema({
     maxlength: 40,
     index: true
   },
-  process_name: {
-    type: String,
-    required: 'ProcessNameIsRequired',
-    maxlength: 50,
-    index: true
-  },
   status: {
     type: String,
     enum: statuses,
@@ -36,6 +30,11 @@ const schema = new Schema({
     type: ObjectId,
     ref: 'users',
     index: true
+  },
+  process_name: {
+    type: String,
+    required: 'ProcessNameIsRequired',
+    maxlength: 50
   },
   geoip: {
     continent: {

@@ -12,6 +12,10 @@ export const actions = {
     this.$Janus.log(`onmessage: ${JSON.stringify(msg)}`)
 
     if (msg.videoroom === 'joined') {
+      this.$Janus.log('onmessage:attached')
+      if (handleDto.isLocal) {
+        await dispatch('api/room/calls/openCall', { room: handleDto.room._id, call_id: handleDto.call_id }, { root: true })
+      }
       this.$Janus.log('onmessage:joined')
       await dispatch('handleJoined', { handleDto, msg })
     }
@@ -24,7 +28,6 @@ export const actions = {
       await dispatch('handleEvent', { handleDto, msg })
     }
     if (msg.videoroom === 'attached') {
-      this.$Janus.log('onmessage:attached')
       await dispatch('handleAttached', { handleDto, msg })
     }
     if (msg.publishers && msg.publishers.length) {
@@ -83,6 +86,7 @@ export const actions = {
     const args = {
       plugin: handleDto.plugin,
       roomid: handleDto.roomid,
+      room: handleDto.room,
       display,
       ptype: 'attendee',
       id
@@ -121,8 +125,10 @@ export const actions = {
         const args = {
           plugin: handleDto.plugin,
           roomid: handleDto.roomid,
+          room: handleDto.room,
           display,
           ptype: 'subscriber',
+          isLocal: false,
           id,
           audioCodec,
           videoCodec
@@ -143,7 +149,9 @@ export const actions = {
       const args = {
         plugin: handleDto.plugin,
         roomid: handleDto.roomid,
+        room: handleDto.room,
         display,
+        isLocal: false,
         ptype: 'attendee',
         id
       }

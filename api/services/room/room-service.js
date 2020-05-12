@@ -237,25 +237,23 @@ class RoomService {
     return result
   }
 
-  async pushCall (userid, id) {
+  async pushCall (userid, roomid, id) {
     const update = {
       $addToSet: {
         calls: id
       }
     }
-    const result = await this.update(userid, update)
+    const result = await this.update(userid, roomid, update)
     return result
   }
 
-  async pullCalls (userid, ids) {
+  async pullCall (userid, roomid, id) {
     const update = {
       $pull: {
-        calls: {
-          $in: ids
-        }
+        calls: id
       }
     }
-    const result = await this.update(userid, update)
+    const result = await this.update(userid, roomid, update)
     return result
   }
 }

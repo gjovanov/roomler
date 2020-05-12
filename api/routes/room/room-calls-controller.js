@@ -1,47 +1,79 @@
-const callService = require('../../services/call/call-service')
-const roomService = require('../../services/room/room-service')
+const os = require('os')
+const process = require('process')
 const config = require('../../../config')
+const performanceService = require('../../services/performance/performance-service')
+const roomService = require('../../services/room/room-service')
+const callService = require('../../services/call/call-service')
+const geoipService = require('../../services/geoip/geoip-service')
 const wsDispatcher = require('../ws/ws-dispatcher')
+const processName = `${os.hostname()}_${process.pid}`
 
 class RoomCallsController {
-  async pushWs (fastify, wss, conn, msg) {
-    if (conn.user) {
-      const payload = msg
-      try {
-        // if there are open calls, then a) close them, b) remove pull them from room.calls
-        // then create new call and push it to room.calls
-        const roomid = payload.roomid
-        const userid = conn.user._id
-        const openCalls = await callService.getAll(userid, roomid, conn.connection_id, 'open')
-        if (openCalls && openCalls.length) {
-          const ids = openCalls.map(c => c._id)
-          await Promise.all([callService.closeAll(ids), roomService.pullCalls(userid, ids)])
-        }
-        const call = await callService.create(userid, { room: roomid })
-        const room = await roomService.pushCall(userid, call._id)
-        wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallOpen, [room], true)
-      } catch (err) {
-        fastify.log.error(err)
+  async getAll (request, reply) {
+    const rooms = await roomService.getAll(request.user.user._id, 0, 1000)
+    const ids = rooms.map(r => r.calls).reduce((a, b) => a.concat(b), [])
+    const result = await callService.getAll({
+      ids,
+      status: 'open'
+    })
+    reply.send(result)
+  }
+
+  async pushCallWs (fastify, wss, conn, req, payload) {
+    try {
+      const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+      const geoip = await geoipService.get(ipAddress)
+      payload.process_name = processName
+      payload.ip_address = ipAddress
+      payload.geoip = geoip
+
+      performanceService.performance.mark('CallOpen start')
+      const call = await callService.create(conn.user ? conn.user._id : null, payload)
+      performanceService.performance.mark('CallOpen end')
+      performanceService.performance.measure('CallOpen', 'CallOpen start', 'CallOpen end')
+
+      performanceService.performance.mark('RoomCallPush start')
+      const room = await roomService.pushCall(conn.user._id, call.room, call._id)
+      performanceService.performance.mark('RoomCallPush end')
+      performanceService.performance.measure('RoomCallPush', 'RoomCallPush start', 'RoomCallPush end')
+
+      const result = {
+        room,
+        call
       }
+      if (conn.user) {
+        const op = config.wsSettings.opTypes.roomCallOpen
+        wsDispatcher.dispatch(op, [result], true)
+      }
+
+      return result
+    } catch (err) {
+      fastify.log.error(err)
     }
   }
 
-  async pullWs (fastify, wss, conn, msg) {
-    if (conn.user) {
-      const payload = msg
+  async pullCallWs (fastify, wss, conn, req, payload) {
+    const id = payload.id
+    if (id) {
       try {
-        const roomid = payload.roomid
-        const userid = conn.user._id
-        const openCalls = await callService.getAll(userid, roomid, conn.connection_id, 'open')
-        let room
-        if (openCalls && openCalls.length) {
-          const ids = openCalls.map(c => c._id)
-          await callService.closeAll(ids)
-          room = await roomService.pullCalls(userid, ids)
-        } else {
-          room = await roomService.get(userid, roomid)
+        performanceService.performance.mark('CallClose start')
+        const call = await callService.close(id)
+        performanceService.performance.mark('CallClose end')
+        performanceService.performance.measure('CallClose', 'CallClose start', 'CallClose end')
+
+        performanceService.performance.mark('RoomCallPull start')
+        const room = await roomService.pullCall(conn.user._id, call.room, call._id)
+        performanceService.performance.mark('RoomCallPull end')
+        performanceService.performance.measure('RoomCallPull', 'RoomCallPull start', 'RoomCallPull end')
+
+        const result = {
+          room,
+          call
         }
-        wsDispatcher.dispatch(config.wsSettings.opTypes.roomCallClose, [room], true)
+        const op = config.wsSettings.opTypes.roomCallClose
+        wsDispatcher.dispatch(op, [result], true)
+
+        return call
       } catch (err) {
         fastify.log.error(err)
       }

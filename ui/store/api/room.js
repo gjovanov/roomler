@@ -6,8 +6,8 @@ import Tree from '../../services/tree'
 import { handleRoomCreate } from './room/handlers/room-create'
 import { handleRoomUpdate } from './room/handlers/room-update'
 import { handleRoomDelete } from './room/handlers/room-delete'
-import { handlePeerAdd } from './room/handlers/peer-add'
-import { handlePeerRemove } from './room/handlers/peer-remove'
+import { handlePeerPush } from './room/handlers/peer-push'
+import { handlePeerPull } from './room/handlers/peer-pull'
 
 export const state = () => ({
   room: null,
@@ -95,8 +95,8 @@ export const actions = {
       handleRoomUpdate(dispatch, commit, state, rootState, router, data)
       handleRoomDelete(dispatch, commit, state, rootState, router, data)
 
-      handlePeerAdd(dispatch, commit, state, rootState, router, data)
-      handlePeerRemove(dispatch, commit, state, rootState, router, data)
+      handlePeerPush(dispatch, commit, state, rootState, router, data)
+      handlePeerPull(dispatch, commit, state, rootState, router, data)
     })
   },
   async create ({

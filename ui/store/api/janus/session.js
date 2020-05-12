@@ -87,6 +87,7 @@ export const actions = {
     if (sessionDto && sessionDto.session) {
       await Promise.all(sessionDto.handleDtos.map(h => dispatch('api/janus/handle/detach', { handleDto: h }, { root: true })))
       sessionDto.session.destroy()
+
       return null
     }
   }

@@ -1,4 +1,4 @@
-export const handlePeerAdd = (
+export const handlePeerPush = (
   dispatch,
   commit,
   state,

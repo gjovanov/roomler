@@ -4,7 +4,6 @@ const getService = require('../../services/utils/get-service')
 class GiphyService {
   async search (endpoint = 'gifs', query, offset = 0, limit = 30) {
     const url = `http://api.giphy.com/v1/${endpoint}/search?q=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`
-    console.log(url)
     const result = await getService.get({
       url,
       method: 'GET',
@@ -14,8 +13,9 @@ class GiphyService {
   }
 
   async trending (endpoint = 'gifs', offset = 0, limit = 30) {
+    const url = `http://api.giphy.com/v1/${endpoint}/trending?api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/${endpoint}/trending?api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
+      url,
       method: 'GET',
       json: true
     })
@@ -23,8 +23,9 @@ class GiphyService {
   }
 
   async translate (endpoint = 'gifs', query, offset = 0, limit = 30) {
+    const url = `http://api.giphy.com/v1/${endpoint}/translate?s=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/${endpoint}/translate?s=${query}&api_key=${config.giphySettings.apiKey}&offset=${offset}&limit=${limit}`,
+      url,
       method: 'GET',
       json: true
     })
@@ -32,8 +33,9 @@ class GiphyService {
   }
 
   async random (endpoint = 'gifs', tag = undefined) {
+    const url = `http://api.giphy.com/v1/${endpoint}/random?tag=&api_key=${config.giphySettings.apiKey}`
     const result = await getService.get({
-      url: `http://api.giphy.com/v1/${endpoint}/random?tag=&api_key=${config.giphySettings.apiKey}`,
+      url,
       method: 'GET',
       json: true
     })

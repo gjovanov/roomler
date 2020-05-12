@@ -2,7 +2,7 @@ import {
   handleSuccess
 } from '@/services/ajax-handlers'
 
-export const handlePeerRemove = (
+export const handlePeerPull = (
   dispatch,
   commit,
   state,

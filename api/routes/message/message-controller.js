@@ -25,12 +25,13 @@ class MessageController {
     reply.send(result)
   }
 
-  async createWs (fastify, wss, conn, msg) {
+  async createWs (fastify, wss, conn, req, msg) {
     if (conn.user) {
       const payload = msg
       try {
         performanceService.performance.mark('MessageCreate start')
         const messages = await messageService.create(conn.user._id, payload)
+        wsDispatcher.dispatch(config.wsSettings.opTypes.messageCreate, messages, true)
         performanceService.performance.mark('MessageCreate end')
         performanceService.performance.measure('MessageCreate', 'MessageCreate start', 'MessageCreate end')
         return messages
@@ -51,8 +52,24 @@ class MessageController {
     reply.send(result)
   }
 
+  async updateWs (fastify, wss, conn, req, msg) {
+    if (conn.user) {
+      try {
+        performanceService.performance.mark('MessageUpdate start')
+        const result = await messageService.update(conn.user._id, msg.id, msg.update)
+        wsDispatcher.dispatch(config.wsSettings.opTypes.messageUpdate, [result], true)
+        performanceService.performance.mark('MessageUpdate end')
+        performanceService.performance.measure('MessageUpdate', 'MessageUpdate start', 'MessageUpdate end')
+        return result
+      } catch (err) {
+        fastify.log.error(err)
+      }
+    }
+  }
+
   async delete (request, reply) {
     const result = await messageService.delete(request.user.user._id, request.params.id)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.messageDelete, [result], true)
     reply.send(result)
   }
 }

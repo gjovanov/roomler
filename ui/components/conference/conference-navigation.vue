@@ -325,6 +325,7 @@ import PublishDialog from '@/components/conference/publish-dialog'
 import ExtensionDialog from '@/components/conference/extension-dialog'
 
 import { modelToQuery } from '@/services/handle-dto'
+import * as uuid from 'uuid/v4'
 
 export default {
   components: {
@@ -388,6 +389,11 @@ export default {
       const janusPayload = {
         janus: {
           roomid: this.selectedRoom.media.roomid,
+          room: {
+            _id: this.selectedRoom._id
+          },
+          call_id: uuid(),
+          isLocal: true,
           plugin: config.janusSettings.plugins.videoroom,
           display,
           bitrateLimit: this.selectedRoom.media.bitrate

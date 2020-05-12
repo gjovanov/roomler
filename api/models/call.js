@@ -6,22 +6,20 @@ const statuses = config.dataSettings.call.statuses
 const defaults = config.dataSettings.call.defaults
 
 const schema = new Schema({
+  call_id: {
+    type: String,
+    required: 'CallIdIsRequired',
+    maxlength: 40,
+    index: true
+  },
   room: {
     type: ObjectId,
     ref: 'rooms',
-    required: 'RoomIsRequired',
     index: true
   },
   user: {
     type: ObjectId,
     ref: 'users',
-    required: 'UserIsRequired',
-    index: true
-  },
-  connection: {
-    type: ObjectId,
-    ref: 'connections',
-    required: 'ConnectionIsRequired',
     index: true
   },
   status: {
@@ -32,18 +30,55 @@ const schema = new Schema({
     maxlength: 50,
     index: true
   },
-  started: {
-    type: Date,
-    required: 'StartedIsRequired',
+  ip_address: {
+    type: String,
+    required: true,
+    maxlength: 50,
     index: true
   },
-  ended: {
-    type: Date
+  process_name: {
+    type: String,
+    required: 'ProcessNameIsRequired',
+    maxlength: 50
+  },
+  geoip: {
+    continent: {
+      code: {
+        type: String,
+        maxlength: 3
+      },
+      name: {
+        type: String,
+        maxlength: 50
+      }
+    },
+    country: {
+      code: {
+        type: String,
+        maxlength: 3,
+        index: true
+      },
+      name: {
+        type: String,
+        maxlength: 50
+      },
+      is_eu: {
+        type: Boolean
+      }
+    },
+    city_name: {
+      type: String,
+      maxlength: 50
+    }
   }
 }, {
   timestamps: true
 })
 
-schema.index({ createdAt: 1 })
-schema.index({ updatedAt: 1 })
+schema.index({
+  createdAt: 1
+})
+schema.index({
+  updatedAt: 1
+})
 module.exports = mongoose.model('calls', schema)

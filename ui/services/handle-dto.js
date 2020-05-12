@@ -88,6 +88,7 @@ export class HandleDto {
     const mediaPart = modelToQuery(this.media)
 
     this.id = args.id || uuid()
+    this.call_id = args.call_id
     this.private_id = args.private_id || uuid()
     this.feed = null
     this.display = `${displayParts[0]}?${mediaPart}`
@@ -95,6 +96,7 @@ export class HandleDto {
     this.sessionDto = sessionDto
     this.plugin = args.plugin || 'janus.plugin.videoroom'
     this.roomid = args.roomid || null
+    this.room = args.room
     this.token = args.token || undefined
 
     this.consentDialog = false

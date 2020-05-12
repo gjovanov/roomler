@@ -42,7 +42,6 @@ module.exports = {
     roomPeerRemove: 'ROOM_PEER_REMOVE',
     roomPeerJoin: 'ROOM_PEER_JOIN',
     roomPeerLeave: 'ROOM_PEER_LEAVE',
-
     roomCallOpen: 'ROOM_CALL_OPEN',
     roomCallClose: 'ROOM_CALL_CLOSE'
   },

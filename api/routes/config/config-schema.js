@@ -110,7 +110,6 @@ const wsSettings = S.object()
     .prop('roomPeerRemove', S.string())
     .prop('roomPeerJoin', S.string())
     .prop('roomPeerLeave', S.string())
-
     .prop('roomCallOpen', S.string())
     .prop('roomCallClose', S.string())
   )

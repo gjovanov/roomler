@@ -11,6 +11,7 @@ const roomController = require('./room-controller')
 const roomOwnerController = require('./room-owner-controller')
 const roomMembersController = require('./room-members-controller')
 const roomModeratorsController = require('./room-moderators-controller')
+const roomCallsController = require('./room-calls-controller')
 const roomSchema = require('./room-schema')
 const multer = require('fastify-multer')
 
@@ -259,5 +260,18 @@ module.exports = [{
     }
   },
   handler: roomModeratorsController.pull
+},
+{
+  authenticate: true,
+  method: 'GET',
+  url: '/api/room/calls/get-all',
+  schema: {
+    response: {
+      200: roomSchema.calls.getAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomCallsController.getAll
 }
 ]

@@ -114,21 +114,13 @@ function fastifyWs (fastify, opts, next) {
         // 3. scaleout to other WS servers
         conn.on('message', async (msg) => {
           const message = JSON.parse(msg)
-          let messages = await opts.handler.onMessage(fastify, wss, conn, message)
-          if (messages) {
-            if (!Array.isArray(messages)) {
-              messages = [messages]
-            }
-            if (opts.dispatcher) {
-              opts.dispatcher.dispatch(message.op, messages, true)
-            }
-          }
+          await opts.handler.onMessage(fastify, wss, conn, req, message)
         })
 
         conn.on('close', () => {
           clearInterval(interval)
 
-          opts.handler.onClose(fastify, wss, conn)
+          opts.handler.onClose(fastify, wss, conn, req)
         })
       }
     })

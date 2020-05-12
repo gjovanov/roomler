@@ -195,11 +195,11 @@ export default {
   }
 }
 </script>
-<style>
-  .v-pagination__item{
+<style scoped>
+  * >>> .v-pagination__item{
     display: none;
   }
-  .v-pagination__more{
+  * >>> .v-pagination__more{
     display: none;
   }
 </style>

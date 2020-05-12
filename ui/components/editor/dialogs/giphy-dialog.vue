@@ -44,7 +44,6 @@
                     >
                       <v-img
                         :src="item.images.original.url"
-                        :lazy-src="item.images.original.url"
                         aspect-ratio="1.4"
                         :width="150"
                       />
@@ -56,6 +55,7 @@
                 <v-pagination
                   v-model="page"
                   :length="pagesCount"
+                  :total-visible="5"
                 />
               </v-card-actions>
             </v-card>
@@ -67,7 +67,7 @@
           Cancel
         </v-btn>
         <v-spacer />
-        <v-btn href="https://support.giphy.com/hc/en-us/articles/360032872931-GIPHY-Privacy-Policy">
+        <v-btn text href="https://support.giphy.com/hc/en-us/articles/360032872931-GIPHY-Privacy-Policy">
           <v-img src="/giphy/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif" />
         </v-btn>
       </v-card-actions>
@@ -89,7 +89,7 @@ export default {
       timeDuration: 200,
       endpoint: 'gifs',
       query: '',
-      page: 0,
+      page: 1,
       offset: 0,
       limit: 15,
       timeout: null,
@@ -113,12 +113,15 @@ export default {
       return this.$store.state.api.giphy.search.pagination
     },
     pagesCount () {
-      return this.searchPagination.total_count / this.limit
+      const totalCount = this.searchPagination.total_count < 5000 ? this.searchPagination.total_count : 4999
+      const count = parseInt(totalCount / this.limit)
+      return count
     }
   },
   watch: {
     dialog (newVal) {
       if (newVal === true) {
+        this.page = 1
         this.query = 'LOL'
         this.tag = 0
         this.endpoint = 'gifs'
@@ -126,10 +129,11 @@ export default {
     },
     tab (newVal) {
       this.endpoint = newVal === 1 ? 'stickers' : 'gifs'
+      this.page = 1
       this.search(this.query)
     },
     'page' (newVal) {
-      this.offset = this.limit * newVal
+      this.offset = this.limit * (newVal - 1)
     },
     'query' (newVal) {
       this.offset = 0

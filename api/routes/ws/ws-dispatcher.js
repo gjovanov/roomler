@@ -61,6 +61,11 @@ class WsDispatcher {
       recepients = roomService.recepients(rooms, users)
       stringify = fastJson(require('../room/room-schema').wsRoomUsers.valueOf())
     }
+    if (op.startsWith('ROOM_CALL_')) {
+      const rooms = messages.map(m => m.room)
+      recepients = roomService.recepients(rooms)
+      stringify = fastJson(require('../room/room-schema').wsRoomCall.valueOf())
+    }
     // TODO: Add other ROUTES (RECEPIENTS)
     return {
       recepients,

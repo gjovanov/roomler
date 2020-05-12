@@ -1,13 +1,13 @@
 const Call = require('../../models/call')
 const CallFilter = require('./call-filter')
-const CallUserFilter = require('./call-user-filter')
 const mongoose = require('mongoose')
 
 class CallService {
   // base methods - START
   async get (filter) {
     const callFilter = new CallFilter({
-      id: filter.id
+      id: filter.id,
+      call_id: filter.call_id
     })
       .getFilter()
     const record = await Call
@@ -16,25 +16,24 @@ class CallService {
     return record
   }
 
-  async getAll (user, room, connection, status = 'open') {
-    const callUserFilter = new CallUserFilter({
-      user,
-      room,
-      connection,
-      status
+  async getAll (filter) {
+    const callFilter = new CallFilter({
+      id: filter.id,
+      call_id: filter.call_id,
+      status: filter.status
     })
       .getFilter()
     const record = await Call
-      .find(callUserFilter)
+      .find(callFilter)
       .exec()
     return record
   }
 
   async create (userid, data) {
     if (userid) {
+      data.room = mongoose.Types.ObjectId(data.room)
       data.user = mongoose.Types.ObjectId(userid)
     }
-    data.started = new Date()
     let record = new Call(data)
     record = await record.save()
     return record
@@ -66,15 +65,9 @@ class CallService {
 
   async close (id) {
     const update = {
-      status: 'closed',
-      ended: new Date()
+      status: 'closed'
     }
     const result = await this.update(id, update)
-    return result
-  }
-
-  async closeAll (ids) {
-    const result = await Promise.all(ids.map(id => this.close(id)))
     return result
   }
 }
