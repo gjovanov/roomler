@@ -30,8 +30,6 @@ export const actions = {
   }) {
     const handleDto = state.session.handleDtos.find(h => h.isLocal)
     const session = await dispatch('api/janus/session/destroy', { sessionDto: state.session }, { root: true })
-    // eslint-disable-next-line no-debugger
-    debugger
     if (handleDto && handleDto.isLocal) {
       await dispatch('api/room/calls/closeCall', {
         room: handleDto.room._id,

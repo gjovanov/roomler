@@ -22,7 +22,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
   npm i pm2 -g && \
   npm i && \
   npm run build && \
-  apk del .build-deps vips-dev fftw-dev && \
+  apk del .build-deps vips-dev fftw-dev libc6-compat && \
   rm -rf /var/cache/apk/* && \
   rm -rf /tmp/*
 

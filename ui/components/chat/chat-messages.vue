@@ -35,15 +35,24 @@
           >
             <v-badge
               slot="icon"
-              :color="isOnline(message.author) ? 'green' : 'grey'"
+              :color="isInCall(message.author) ? 'red' : isOnline(message.author) ? 'green' : 'grey'"
               bordered
               bottom
               left
-              dot
-              offset-x="8"
-              offset-y="8"
+              avatar
+              overlap
+              offset-x="9"
+              offset-y="9"
             >
-              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="24">
+              <template v-if="isInCall(message.author)" v-slot:badge>
+                <v-avatar v-if="isInCall(message.author)" size="12">
+                  <v-icon size="7" style="margin-bottom: 6px">
+                    fa fa-phone
+                  </v-icon>
+                </v-avatar>
+              </template>
+
+              <v-avatar v-if="getUser(message.author) && getUser(message.author).avatar_url" size="30">
                 <img :src="getUser(message.author) && getUser(message.author).avatar_url">
               </v-avatar>
             </v-badge>
@@ -315,6 +324,9 @@ export default {
     isOnline (userid) {
       return this.$store.getters['api/auth/isOnline'](userid)
     },
+    isInCall (userid) {
+      return this.$store.getters['api/room/calls/isUserInCall'](userid)
+    },
     getReactions (message) {
       const result = this.$store.getters['api/message/reactions'](message)
       return result
@@ -427,5 +439,13 @@ export default {
 }
 * >>> .theme--dark.v-timeline::before {
   background: none;
+}
+* >>> .v-badge__badge {
+  height: 12px;
+  min-width: 12px;
+  padding: 0px;
+}
+* >>> .v-badge--bordered .v-badge__badge::after {
+  border-width: 1px;
 }
 </style>

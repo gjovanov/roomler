@@ -187,6 +187,9 @@ export const actions = {
 }
 
 export const getters = {
+  getRoom: state => (id) => {
+    return state.rooms.find(r => r._id === id)
+  },
   roomPaths: (state) => {
     return state.rooms.map(r => r.path)
   },
@@ -212,5 +215,8 @@ export const getters = {
   },
   getParent: state => (room) => {
     return treeOps.findParent(state.rooms, room)
+  },
+  getRoomsWithCalls: (state) => {
+    return state.rooms.filter(r => r.calls && r.calls.length)
   }
 }

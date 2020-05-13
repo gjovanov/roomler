@@ -14,7 +14,7 @@
 
     <v-menu
       v-if="totalUnreads"
-      v-model="notificationsMenu"
+      v-model="messagesMenu"
       open-on-hover
       bottom
       offset-y
@@ -45,7 +45,7 @@
             :key="item.room.path"
             @click="goToRoom(item.room.path)"
           >
-            <v-list-item-avatar>
+            <v-list-item-icon>
               <v-badge
                 :color="item.mentions ? 'red' : 'orange'"
                 left
@@ -57,7 +57,7 @@
                 </template>
                 <v-icon>mdi-email</v-icon>
               </v-badge>
-            </v-list-item-avatar>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
                 <span>{{ item.room.path }}</span>
@@ -71,7 +71,65 @@
               </v-list-item-action-text>
             </v-list-item-action>
           </v-list-item>
-          <v-divider :key="`menu_divider_${index}`" />
+          <v-divider :key="`message_divider_${index}`" />
+        </template>
+      </v-list>
+    </v-menu>
+
+    <v-menu
+      v-if="Object.keys(calls).length"
+      v-model="callsMenu"
+      open-on-hover
+      bottom
+      offset-y
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          outlined
+          small
+          style="background-color: #303030"
+          v-on="on"
+        >
+          <v-badge
+            color="red"
+            left
+            bottom
+            overlap
+          >
+            <template v-slot:badge>
+              {{ Object.keys(calls).length }}
+            </template>
+            <v-icon>fa fa-phone</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+
+      <v-list>
+        <template v-for="(value, propName, index) in calls">
+          <v-list-item
+            :key="propName"
+            @click="goToRoomCalls(getRoom(propName))"
+          >
+            <v-list-item-icon>
+              <v-badge
+                color="red"
+                left
+                bottom
+                overlap
+              >
+                <template v-slot:badge>
+                  {{ value.length }}
+                </template>
+                <v-icon>fa fa-phone</v-icon>
+              </v-badge>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                <span>{{ getRoom(propName).path }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider :key="`call_divider_${index}`" />
         </template>
       </v-list>
     </v-menu>
@@ -168,7 +226,8 @@ export default {
   data () {
     return {
       profileMenu: false,
-      notificationsMenu: false
+      messagesMenu: false,
+      callsMenu: false
     }
   },
   computed: {
@@ -186,6 +245,9 @@ export default {
     },
     rooms () {
       return this.$store.state.api.room.rooms
+    },
+    calls () {
+      return this.$store.getters['api/room/calls/callsByRoom']
     },
     messageNotifications () {
       const self = this
@@ -215,11 +277,20 @@ export default {
     isOnline () {
       return this.$store.getters['api/auth/isOnline'](this.$store.state.api.auth.user._id)
     },
+    getRoom (id) {
+      return this.$store.getters['api/room/getRoom'](id)
+    },
+    getUser (id) {
+      return this.$store.getters['api/auth/getUser'](id)
+    },
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
     },
     goToRoom (room) {
       this.$router.push({ path: `/${room}` })
+    },
+    goToRoomCalls (room) {
+      this.$router.push({ path: `/${room}/calls` })
     },
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })

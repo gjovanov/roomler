@@ -9,9 +9,10 @@ export default ({
   // }
   const wss = new WsService(apiUrl.replace(/^http/, 'ws'), app.store)
   inject('wss', wss)
-  app.store.dispatch('api/message/subscribe', app.router)
   app.store.dispatch('api/auth/subscribe', app.router)
   app.store.dispatch('api/room/subscribe', app.router)
   app.store.dispatch('api/invite/subscribe', app.router)
+  app.store.dispatch('api/message/subscribe', app.router)
+  app.store.dispatch('api/room/calls/subscribe', app.router)
   app.store.dispatch('connectWebSocket', app.router)
 }

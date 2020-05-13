@@ -31,14 +31,23 @@
         >
           <v-list-item-icon>
             <v-badge
-              :color="isOnline(user._id) ? 'green' : 'grey'"
+              :color="isInCall(user._id) ? 'red' : isOnline(user._id) ? 'green' : 'grey'"
               bordered
               bottom
               left
-              dot
-              offset-x="4"
-              offset-y="4"
+              avatar
+              overlap
+              offset-x="5"
+              offset-y="5"
             >
+              <template v-if="isInCall(user._id)" v-slot:badge>
+                <v-avatar v-if="isInCall(user._id)" size="12">
+                  <v-icon size="7" style="margin-bottom: 6px">
+                    fa fa-phone
+                  </v-icon>
+                </v-avatar>
+              </template>
+
               <v-avatar
                 size="36px"
               >
@@ -102,7 +111,21 @@ export default {
   methods: {
     isOnline (userid) {
       return this.$store.getters['api/auth/isOnline'](userid)
+    },
+    isInCall (userid) {
+      return this.$store.getters['api/room/calls/isUserInCall'](userid)
     }
   }
 }
 </script>
+
+<style scoped>
+* >>> .v-badge__badge {
+  height: 12px;
+  min-width: 12px;
+  padding: 0px;
+}
+* >>> .v-badge--bordered .v-badge__badge::after {
+  border-width: 1px;
+}
+</style>

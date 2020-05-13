@@ -93,3 +93,26 @@ export const actions = {
     return response
   }
 }
+
+export const getters = {
+  getCall: state => (id) => {
+    return state.calls.find(c => c._id === id)
+  },
+  callsByRoom: (state) => {
+    const map = {}
+    state.calls.forEach((call) => {
+      const key = call.room
+      const collection = map[key]
+      if (!collection) {
+        map[key] = [call]
+      } else {
+        collection.push(call)
+      }
+    })
+    return map
+  },
+  isUserInCall: state => (userid) => {
+    const calls = state.calls.filter(c => c.user === userid)
+    return !!calls.length
+  }
+}

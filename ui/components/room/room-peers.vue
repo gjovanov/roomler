@@ -12,16 +12,25 @@
         >
           <v-list-item-icon>
             <v-badge
-              :color="isOnline(item.user._id) ? 'green' : 'grey'"
+              :color="isInCall(item.user._id) ? 'red' : isOnline(item.user._id) ? 'green' : 'grey'"
               bordered
               bottom
               left
-              dot
-              offset-x="9"
-              offset-y="9"
+              avatar
+              overlap
+              offset-x="10"
+              offset-y="10"
             >
+              <template v-if="isInCall(item.user._id)" v-slot:badge>
+                <v-avatar v-if="isInCall(item.user._id)" size="12">
+                  <v-icon size="7" style="margin-bottom: 6px">
+                    fa fa-phone
+                  </v-icon>
+                </v-avatar>
+              </template>
+
               <v-avatar
-                size="32px"
+                size="36px"
               >
                 <img v-if="item.user.avatar_url" :src="item.user.avatar_url">
                 <v-icon v-if="!item.user.avatar_url">
@@ -173,6 +182,9 @@ export default {
     isOnline (userid) {
       return this.$store.getters['api/auth/isOnline'](userid)
     },
+    isInCall (userid) {
+      return this.$store.getters['api/room/calls/isUserInCall'](userid)
+    },
     async addPeers (peers) {
       const room = peers[0].room
       const members = peers.filter(p => p.type === 'member').map(p => p.peer)
@@ -222,3 +234,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+* >>> .v-badge__badge {
+  height: 12px;
+  min-width: 12px;
+  padding: 0px;
+}
+* >>> .v-badge--bordered .v-badge__badge::after {
+  border-width: 1px;
+}
+</style>

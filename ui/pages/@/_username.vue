@@ -14,13 +14,23 @@
             class="justify-center"
           >
             <v-badge
-              :color="isOnline() ? 'green' : 'grey'"
+              :color="isInCall() ? 'red' : isOnline() ? 'green' : 'grey'"
               bordered
               bottom
               left
-              offset-x="32"
-              offset-y="32"
+              avatar
+              overlap
+              offset-x="30"
+              offset-y="30"
             >
+              <template v-if="isInCall(user._id)" v-slot:badge>
+                <v-avatar v-if="isInCall(user._id)" size="12">
+                  <v-icon size="7" style="margin-bottom: 6px">
+                    fa fa-phone
+                  </v-icon>
+                </v-avatar>
+              </template>
+
               <v-avatar
                 class="profile"
                 color="grey"
@@ -83,7 +93,21 @@ export default {
   methods: {
     isOnline () {
       return this.$store.getters['api/auth/isOnline'](this.user._id)
+    },
+    isInCall () {
+      return this.$store.getters['api/room/calls/isUserInCall'](this.user._id)
     }
   }
 }
 </script>
+
+<style scoped>
+* >>> .v-badge__badge {
+  height: 12px;
+  min-width: 12px;
+  padding: 0px;
+}
+* >>> .v-badge--bordered .v-badge__badge::after {
+  border-width: 1px;
+}
+</style>

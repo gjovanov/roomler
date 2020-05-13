@@ -100,6 +100,7 @@ const geoip = S.object()
   .prop('city_name', S.string())
 
 const call = S.object()
+  .prop('_id', S.string())
   .prop('call_id', S.string())
   .prop('user', S.string())
   .prop('room', S.string())
