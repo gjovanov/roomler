@@ -290,7 +290,7 @@ export default {
       this.$router.push({ path: `/${room}` })
     },
     goToRoomCalls (room) {
-      this.$router.push({ path: `/${room}/calls` })
+      this.$router.push({ path: `/${room.path}/calls` })
     },
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })
