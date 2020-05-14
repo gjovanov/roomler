@@ -23,22 +23,22 @@ export const actions = {
     const session = await dispatch('api/janus/videoroom/join', janusPayload, { root: true })
     commit('set', { session, room })
   },
-  async leave ({
+  leave ({
     commit,
     dispatch,
+    getters,
     state
   }) {
-    const handleDto = state.session.handleDtos.find(h => h.isLocal)
-    const session = await dispatch('api/janus/session/destroy', { sessionDto: state.session }, { root: true })
-    if (handleDto && handleDto.isLocal) {
-      await dispatch('api/room/calls/closeCall', {
-        room: handleDto.room._id,
-        id: handleDto.call_id
+    const localHandle = getters.localHandle
+    if (localHandle) {
+      dispatch('api/room/calls/closeCall', {
+        id: localHandle.call_id
       }, {
         root: true
       })
     }
-    commit('set', { session, room: null })
+    dispatch('api/janus/session/destroy', { sessionDto: state.session }, { root: true })
+    commit('set', { session: null, room: null })
   }
 }
 

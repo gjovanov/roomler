@@ -9,8 +9,8 @@ class CallFilter {
         this.filter.call_id = options.id
       }
     }
-    if (options.ids && options.ids.length) {
-      if (options.ids.filter(id => !mongoose.Types.ObjectId.isValid(id).length > 0)) {
+    if (options.ids) {
+      if (options.ids.filter(id => !mongoose.Types.ObjectId.isValid(id)).length > 0) {
         throw new TypeError('Invalid call id!')
       } else {
         this.filter._id = {

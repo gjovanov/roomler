@@ -19,6 +19,7 @@ class CallService {
   async getAll (filter) {
     const callFilter = new CallFilter({
       id: filter.id,
+      ids: filter.ids,
       call_id: filter.call_id,
       status: filter.status
     })

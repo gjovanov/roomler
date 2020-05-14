@@ -85,6 +85,8 @@ export const actions = {
           payload
         }
         this.$wss.send(JSON.stringify(message))
+      } else {
+        navigator.sendBeacon(`${rootState.api.config.config.appSettings.env.API_URL}/api/room/calls/pull/${payload.id}`)
       }
     } catch (err) {
       handleError(err, commit)

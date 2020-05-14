@@ -52,13 +52,12 @@ class WsService {
             .then(() => {
               return Promise.all([
                 self.store.dispatch('api/room/getAll'),
-                self.store.dispatch('api/auth/getPeers'),
-                self.store.dispatch('api/room/calls/getAll')
+                self.store.dispatch('api/auth/getPeers')
               ])
             })
             .then((data) => {
               if (data && data[0] && data[0].result) {
-                return Promise.all(data[0].result.map(room => self.store.dispatch('api/message/getAll', { room })))
+                return Promise.all([self.store.dispatch('api/room/calls/getAll'), ...data[0].result.map(room => self.store.dispatch('api/message/getAll', { room }))])
               }
             })
         }

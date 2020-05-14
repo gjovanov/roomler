@@ -125,7 +125,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <span>{{ getRoom(propName).path }}</span>
+                <span>{{ getRoom(propName) ? getRoom(propName).path : '' }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -290,7 +290,9 @@ export default {
       this.$router.push({ path: `/${room}` })
     },
     goToRoomCalls (room) {
-      this.$router.push({ path: `/${room.path}/calls` })
+      if (room && room.path) {
+        this.$router.push({ path: `/${room.path}/calls` })
+      }
     },
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })

@@ -78,7 +78,7 @@
                 <v-icon>
                   fa-phone
                 </v-icon> &nbsp;
-                <span>CONFERENCE - {{ room ? room.name.toUpperCase() : '' }}</span>
+                <span>CONFERENCE - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room ? room.name.toUpperCase() : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>

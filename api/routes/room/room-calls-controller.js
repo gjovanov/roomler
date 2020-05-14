@@ -52,6 +52,19 @@ class RoomCallsController {
     }
   }
 
+  async pull (request, reply) {
+    const id = request.params.id
+    const call = await callService.close(id)
+    const room = await roomService.pullCall(request.user.user._id, call.room, call._id)
+    const result = {
+      room,
+      call
+    }
+    const op = config.wsSettings.opTypes.roomCallClose
+    wsDispatcher.dispatch(op, [result], true)
+    reply.send(result)
+  }
+
   async pullCallWs (fastify, wss, conn, req, payload) {
     const id = payload.id
     if (id) {

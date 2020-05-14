@@ -48,6 +48,7 @@ export default class Image extends Node {
             src: dom.getAttribute('src'),
             title: dom.getAttribute('title'),
             alt: dom.getAttribute('alt'),
+            style: dom.getAttribute('style'),
             'data-upload': true
           })
         }

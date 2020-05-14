@@ -269,7 +269,12 @@ export default {
     },
     insertGif (gif) {
       if (this.giphyCommand) {
-        this.giphyCommand({ src: gif.images.original.url, alt: gif.title, title: gif.title })
+        this.giphyCommand({
+          src: gif.images.original.url,
+          alt: gif.title,
+          title: gif.title,
+          style: 'max-width: 100%; max-height: 200px;'
+        })
       }
       this.dialog.giphy = false
     },

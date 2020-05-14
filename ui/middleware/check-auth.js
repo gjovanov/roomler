@@ -15,12 +15,11 @@ export default async function ({
       await Promise.all([
         store.dispatch('api/room/getAll'),
         store.dispatch('api/auth/getPeers'),
-        store.dispatch('api/auth/me'),
-        store.dispatch('api/room/calls/getAll')
+        store.dispatch('api/auth/me')
       ])
         .then((data) => {
           if (data && data[0] && data[0].result) {
-            return Promise.all(data[0].result.map(room => store.dispatch('api/message/getAll', { room })))
+            return Promise.all([store.dispatch('api/room/calls/getAll'), ...data[0].result.map(room => store.dispatch('api/message/getAll', { room }))])
           }
         })
     }

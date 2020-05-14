@@ -88,7 +88,7 @@ export default {
       tab: 0,
       timeDuration: 200,
       endpoint: 'gifs',
-      query: '',
+      query: 'LOL',
       page: 1,
       offset: 0,
       limit: 15,
@@ -121,10 +121,11 @@ export default {
   watch: {
     dialog (newVal) {
       if (newVal === true) {
-        this.page = 1
-        this.query = 'LOL'
-        this.tag = 0
-        this.endpoint = 'gifs'
+        this.search(this.query)
+        // this.page = 1
+        // this.query = 'LOL'
+        // this.tag = 0
+        // this.endpoint = 'gifs'
       }
     },
     tab (newVal) {

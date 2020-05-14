@@ -101,6 +101,15 @@ export default {
     }
   },
 
+  data () {
+    const iOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform)
+    const eventName = iOS ? 'pagehide' : 'beforeunload'
+    return {
+      iOS,
+      eventName
+    }
+  },
+
   computed: {
     roomPeers () {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
@@ -139,19 +148,20 @@ export default {
     }
   },
   mounted () {
+    const self = this
     this.$nextTick(() => {
-      document.addEventListener('beforeunload', this.leave)
+      window.addEventListener(self.eventName, self.leave)
     })
   },
-  async beforeDestroy () {
-    await this.leave()
+  beforeDestroy () {
+    this.leave()
   },
   destroyed () {
-    document.removeEventListener('beforeunload', this.leave)
+    window.removeEventListener(this.eventName, this.leave)
   },
   methods: {
-    async leave () {
-      await this.$store.dispatch('api/conference/leave')
+    leave () {
+      this.$store.dispatch('api/conference/leave')
     },
     getPeer (username) {
       return this.peers.find(u => u.username === username) || { }

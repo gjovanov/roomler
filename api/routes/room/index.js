@@ -273,5 +273,19 @@ module.exports = [{
     }
   },
   handler: roomCallsController.getAll
+},
+{
+  authenticate: true,
+  method: 'POST',
+  url: '/api/room/calls/pull/:id',
+  schema: {
+    params: roomSchema.calls.params,
+    response: {
+      200: roomSchema.calls.pull.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomCallsController.pull
 }
 ]

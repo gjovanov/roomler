@@ -137,6 +137,9 @@ const wsRoomCall = S.object()
   .prop('op')
   .prop('data', roomCallList)
 
+const roomCallPullResult = S.object()
+  .prop('ok', S.boolean())
+
 module.exports = {
   wsRoomUsers,
   wsRoomCreate,
@@ -248,6 +251,13 @@ module.exports = {
       response: {
         200: callList
       }
+    },
+    pull: {
+      params: idParams,
+      response: {
+        200: roomCallPullResult
+      }
     }
+
   }
 }
