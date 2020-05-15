@@ -102,11 +102,8 @@ export default {
   },
 
   data () {
-    const iOS = ['iPad', 'iPhone', 'iPod'].includes(navigator.platform)
-    const eventName = iOS ? 'pagehide' : 'beforeunload'
     return {
-      iOS,
-      eventName
+      eventNames: ['beforeunload', 'unload', 'pagehide']
     }
   },
 
@@ -150,14 +147,26 @@ export default {
   mounted () {
     const self = this
     this.$nextTick(() => {
-      window.addEventListener(self.eventName, self.leave)
+      self.eventNames.forEach((eventName) => {
+        try {
+          window.addEventListener(eventName, self.leave)
+        } catch {
+          self.$consola.info(`'${eventName}' event doesn't exit`)
+        }
+      })
     })
   },
   beforeDestroy () {
     this.leave()
   },
   destroyed () {
-    window.removeEventListener(this.eventName, this.leave)
+    this.eventNames.forEach((eventName) => {
+      try {
+        window.removeEventListener(eventName, self.leave)
+      } catch {
+        self.$consola.info(`'${eventName}' event doesn't exit`)
+      }
+    })
   },
   methods: {
     leave () {
