@@ -17,7 +17,7 @@
           </v-card-title>
           <v-card-text class="justify-center">
             <iframe
-              src="http://www.youtube.com/embed/lzHeRwVDfPQ"
+              src="https://www.youtube.com/embed/lzHeRwVDfPQ"
               width="100%"
               height="315"
               frameborder="0"
