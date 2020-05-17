@@ -6,6 +6,9 @@ It's like Slack on Crack and Microsoft Teams on Steroids.
 All that fully free and open source. 
 
 
+[![Roomler Intro](https://img.youtube.com/vi/lzHeRwVDfPQ/0.jpg)](https://www.youtube.com/watch?v=lzHeRwVDfPQ)
+
+
 # Install packages
 ``` bash
 # install dependencies
