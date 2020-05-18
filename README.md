@@ -51,7 +51,7 @@ On localhost, the default setting for these env variables is `URL=http://localho
 ## Environment variables
 Create `.env` file in the root folder: `roomler/.env`
 
-```toml
+```
 HOST=localhost
 JANUS_URL=wss://YOUR_JANUS_URL/janus_ws
 SENDGRID_API_KEY=YOUR_SENDGRID_API_KEY
