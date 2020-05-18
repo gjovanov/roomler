@@ -8,6 +8,7 @@ module.exports = {
     public: readFileSync(`${path.join(__dirname, '..', '..', '..', 'certs', 'jwt-RS256.key.pub')}`, 'utf8')
   },
   sign: {
-    algorithm: 'RS256'
+    algorithm: 'RS256',
+    expiresIn: '14d'
   }
 }

@@ -27,6 +27,9 @@ export default class File extends Node {
       attrs: {
         href: {},
         filename: {},
+        target: {
+          default: '_black'
+        },
         'data-upload': {
           default: true
         }

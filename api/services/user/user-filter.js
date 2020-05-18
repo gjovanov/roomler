@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 class UserFilter {
   constructor (options) {
     this.filter = options.filter || {}
+    if (!!options.query && !!options.id && !!options.username && !!options.email) {
+      throw new TypeError('Invalid user id!')
+    }
     // search by either: 1. general query (_id or username or email), 2. ids, 3. specific param (_id, username, email)
     if (options.query) {
       this.filter.$or = []

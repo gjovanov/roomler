@@ -8,6 +8,18 @@ All that fully free and open source.
 
 [![Roomler Intro](https://img.youtube.com/vi/lzHeRwVDfPQ/0.jpg)](https://www.youtube.com/watch?v=lzHeRwVDfPQ)
 
+# Features
+
+## Multi party calls
+* [x] Camera
+* [x] Rich-text
+* [x] Public Rooms
+
+| MULTI PARTY CALLS       | POWERFUL CHAT           | ORGANIZED TEAMS         |
+|-------------------------|-------------------------|-------------------------|
+| <ul><li>[x] Video</li><li>[x] Audio</li><li>[x] Screen share</li><li>[x] Encrypted</li><li>[ ] Recording (soon...)</li></ul> | <ul><li>[x] Rich-text</li><li>[x] File sharing</li><li>[x] Emojis & Giphy's</li><li>[x] Mentions</li><li>[x] Reactions</li></ul> | <ul><li>[x] Public Rooms</li><li>[x] Private Rooms</li><li>[x] Hierarchy of Rooms</li><li>[x] User roles (moderator, member)</li><li>[x] Secure communication</li></ul> |
+
+
 
 # Install packages
 ``` bash
@@ -40,6 +52,29 @@ On localhost, the default setting for these env variables is `URL=http://localho
 
 
 # Development
+
+## Environment variables
+Create `.env` file in the root folter: `roomler/.env`
+
+```toml
+HOST=localhost
+JANUS_URL=wss://YOUR_JANUS_URL/janus_ws
+SENDGRID_API_KEY=YOUR_SENDGRID_API_KEY
+FACEBOOK_ID=YOUR_FACEBOOK_ID
+FACEBOOK_SECRET=YOUR_FACEBOOK_SECRET
+GOOGLE_ID=YOUR_GOOGLE_ID
+GOOGLE_SECRET=YOUR_GOOGLE_SECRET
+GITHUB_ID=YOUR_GITHUB_ID
+GITHUB_SECRET=YOUR_GITHUB_SECRET
+LINKEDIN_ID=YOUR_LINKEDIN_ID
+LINKEDIN_SECRET=YOUR_LINKED_SECRET
+TURN_URL=turn:YOUR_TURN_URL?transport=udp
+TURN_USERNAME=YOUR_TURN_USERNAME
+TURN_PASSWORD=YOUR_TURN_PASSWORD
+GIPHY_API_KEY=YOUR_GIPHY_KEY
+```
+
+
 ## Start in development mode
 
 ``` bash
@@ -81,6 +116,7 @@ docker run -d --name roomler \
     -e TURN_URL=YOUR_TURN_URL \
     -e TURN_USERNAME=YOUR_TURN_USERNAME \
     -e TURN_PASSWORD=YOUR_TURN_PASSWORD \
+    -e GIPHY_API_KEY=YOUR_GIPHY_KEY \
     gjovanov/roomler
 ```
 
@@ -93,7 +129,7 @@ docker run -d --name roomler \
 $ npm run test:api
 ```
 
-## Run E2E tests
+## Run E2E tests (TODO)
 
 ``` bash
 # makes sure MongoDB is reachable based on /config/index.js (dbSettings)

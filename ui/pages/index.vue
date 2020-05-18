@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="pa-0 ma-0"
+    class="pt-0 pr-0 pl-0 pb-8 mt-0 mr-0 ml-0 mb-8"
     fluid
   >
     <v-row
@@ -15,14 +15,33 @@
           <v-card-title>
             Get a Glimpse of Roomler
           </v-card-title>
-          <v-card-text class="justify-center">
+          <v-card-text
+            class="justify-center"
+          >
             <iframe
+              style="background: url('http://img.youtube.com/vi/lzHeRwVDfPQ/maxresdefault.jpg') no-repeat center;"
               src="https://www.youtube.com/embed/lzHeRwVDfPQ"
               width="100%"
               height="315"
               frameborder="0"
               allowfullscreen
             />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row
+      align="start"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="9"
+      >
+        <v-card>
+          <v-card-title>For best User Experience use Google Chrome (Recommended Browser):</v-card-title>
+          <v-card-text>
+            <v-img width="64" src="/chrome_small.png" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -47,7 +66,7 @@
                   <v-icon>fa fa-video</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  Camera
+                  Video
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -68,18 +87,18 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-play</v-icon>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  Recording (coming soon...)
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-avatar>
                   <v-icon>mdi-key</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   Encrypted & secure
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-avatar>
+                  <v-icon>fa fa-play</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  Recording (coming soon...)
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -162,7 +181,7 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-user-lock</v-icon>
+                  <v-icon>fa fa-door-closed</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   Private Rooms
@@ -186,10 +205,10 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-lock</v-icon>
+                  <v-icon>mdi-message-lock</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  Secure communication
+                  Secure conversations
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -208,6 +227,9 @@ export default {
   },
 
   beforeMount () {
+  },
+  mounted () {
+    console.log(this.$route)
   }
 }
 </script>
