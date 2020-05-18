@@ -20,7 +20,7 @@ RUN apk add --update --no-cache --virtual .build-deps \
   git clone https://github.com/gjovanov/roomler.git && \
   cd /roomler && \
   npm i pm2 -g && \
-  npm i && \
+  npm i --only=prod && \
   npm run build && \
   apk del .build-deps vips-dev fftw-dev libc6-compat && \
   rm -rf /var/cache/apk/* && \
