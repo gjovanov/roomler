@@ -167,7 +167,7 @@
       >
         <v-card>
           <v-card-title>
-            <v-icon>fa fa-users</v-icon> &nbsp; ORGANIZED TEAMS
+            <v-icon>fa fa-users</v-icon> &nbsp; ORGANIZED ROOMS
           </v-card-title>
           <v-card-text>
             <v-list>
@@ -200,7 +200,7 @@
                   <v-icon>fa fa-users</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  User roles (moderator, member)
+                  Moderator & member roles
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>

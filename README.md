@@ -10,7 +10,7 @@ All that fully free and open source.
 
 # Features
 
-| MULTI PARTY CALLS       | POWERFUL CHAT           | ORGANIZED TEAMS         |
+| MULTI PARTY CALLS       | POWERFUL CHAT           | ORGANIZED ROOMS         |
 |-------------------------|-------------------------|-------------------------|
 | <ul><li>[x] Video</li><li>[x] Audio</li><li>[x] Screen share</li><li>[x] Encrypted</li><li>[ ] Recording (soon...)</li></ul> | <ul><li>[x] Rich-text</li><li>[x] File sharing</li><li>[x] Emojis & Giphy's</li><li>[x] Mentions</li><li>[x] Reactions</li></ul> | <ul><li>[x] Public Rooms</li><li>[x] Private Rooms</li><li>[x] Hierarchy of Rooms</li><li>[x] User roles (moderator, member)</li><li>[x] Secure communication</li></ul> |
 
@@ -49,7 +49,7 @@ On localhost, the default setting for these env variables is `URL=http://localho
 # Development
 
 ## Environment variables
-Create `.env` file in the root folter: `roomler/.env`
+Create `.env` file in the root folder: `roomler/.env`
 
 ```toml
 HOST=localhost
