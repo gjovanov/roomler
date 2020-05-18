@@ -10,11 +10,6 @@ All that fully free and open source.
 
 # Features
 
-## Multi party calls
-* [x] Camera
-* [x] Rich-text
-* [x] Public Rooms
-
 | MULTI PARTY CALLS       | POWERFUL CHAT           | ORGANIZED TEAMS         |
 |-------------------------|-------------------------|-------------------------|
 | <ul><li>[x] Video</li><li>[x] Audio</li><li>[x] Screen share</li><li>[x] Encrypted</li><li>[ ] Recording (soon...)</li></ul> | <ul><li>[x] Rich-text</li><li>[x] File sharing</li><li>[x] Emojis & Giphy's</li><li>[x] Mentions</li><li>[x] Reactions</li></ul> | <ul><li>[x] Public Rooms</li><li>[x] Private Rooms</li><li>[x] Hierarchy of Rooms</li><li>[x] User roles (moderator, member)</li><li>[x] Secure communication</li></ul> |
