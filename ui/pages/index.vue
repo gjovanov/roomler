@@ -19,7 +19,6 @@
             class="justify-center"
           >
             <iframe
-              style="background: url('http://img.youtube.com/vi/lzHeRwVDfPQ/maxresdefault.jpg') no-repeat center;"
               src="https://www.youtube.com/embed/lzHeRwVDfPQ"
               width="100%"
               height="315"
@@ -40,8 +39,8 @@
       >
         <v-card>
           <v-card-title>For best User Experience use Google Chrome (Recommended Browser):</v-card-title>
-          <v-card-text>
-            <v-img width="64" src="/chrome_small.png" />
+          <v-card-text class="text-center justify-center" position="center">
+            <v-img class="text-center" width="64" src="/chrome_small.png" />
           </v-card-text>
         </v-card>
       </v-col>
@@ -51,8 +50,8 @@
       justify="center"
     >
       <v-col
-        sm="12"
-        md="12"
+        cols="12"
+        xs="9"
         lg="3"
       >
         <v-card>
@@ -106,8 +105,8 @@
         </v-card>
       </v-col>
       <v-col
-        sm="12"
-        md="12"
+        cols="12"
+        xs="9"
         lg="3"
       >
         <v-card>
@@ -161,8 +160,8 @@
         </v-card>
       </v-col>
       <v-col
-        sm="12"
-        md="12"
+        cols="12"
+        xs="9"
         lg="3"
       >
         <v-card>
