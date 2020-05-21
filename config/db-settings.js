@@ -9,7 +9,7 @@ module.exports = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    useUnifiedTopology: process.env.NODE_ENV !== 'test',
+    useUnifiedTopology: true, // process.env.NODE_ENV !== 'test',
     keepAlive: true,
     keepAliveInitialDelay: 300000
     // reconnectTries: 20

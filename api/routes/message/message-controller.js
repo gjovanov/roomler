@@ -68,8 +68,9 @@ class MessageController {
   }
 
   async delete (request, reply) {
+    const room = await messageService.get(request.user.user._id, request.params.id)
     const result = await messageService.delete(request.user.user._id, request.params.id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageDelete, [result], true)
+    wsDispatcher.dispatch(config.wsSettings.opTypes.messageDelete, [room], true)
     reply.send(result)
   }
 }
