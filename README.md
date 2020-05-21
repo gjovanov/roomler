@@ -17,34 +17,47 @@ All that fully free and open source.
 # Technology stack
 - [Janus Gateway](https://github.com/meetecho/janus-gateway)
 - [Fastify](https://github.com/fastify/fastify)
+- [PM2](https://github.com/Unitech/pm2)
 - [MongoDB](https://github.com/mongodb/mongo)
 - [Redis](https://github.com/antirez/redis)
 - [VueJS](https://github.com/vuejs/vue)
 - [NuxtJS](https://github.com/nuxt/nuxt.js/)    
 - [VuetifyJS](https://github.com/vuetifyjs/vuetify)
+- [Docker](https://github.com/docker)
 
 # Architecture
 ![Architecture](./ui/static/architecture.png)
 
 # Prerequisites
+
+## Docker network
+Besides the default `host` Docker network, we need to create two addition bridge networks:
+1. `docker network create frontend` (used by containers `roomler`, `nginx`, `janus`)
+2. `docker network create backend` (used by containers `roomler`, `mongo`, `redis`)
+3. on the existing `host` network `janus` and `coturn` will be attached
+
+
 ## Janus Gateway
 Video conferences are implemented using Janus's VideoRoom plugin. Hence we will use this [Janus Docker Image](https://github.com/gjovanov/docker/tree/master/janus-slim) of Janus.
 
-It's recommendad that Janus from attached directly on Docker's HOST network, to avoid issues with ICE Candidates gathering and the Docker Port mapping.
-```
+It's recommendad that Janus is attached directly to the Dockers `host` network, to avoid issues with ICE Candidates gathering and the Docker Port mapping.
+``` bash
 docker run -d \
   --name="janus" \
   --restart="always" \
   --network="host" \
   gjovanov/janus-slim
+
+# attach janus container to frontend network
+docker network connect frontend janus
 ```
 
 ## Coturn
-For enabling peers, that are behind NAT (Private LANs), to create WebRTC PeerConnections with Janus, it's recommended to setup a TURN server.
+For enabling peers, that are behind NAT (Private LANs), to create WebRTC PeerConnections with Janus, it's recommended to setup a TURN server. It's also recommended that your TURN server is running on the Docker `host` network. 
 
 Hence we will your Instrumentos docker images:
 
-```
+``` bash
 docker run -d \
   --name="coturn" \
   --restart="always" \
@@ -69,31 +82,49 @@ docker run -d \
 To test your TURN server, check [this](https://stackoverflow.com/questions/28772212/stun-turn-server-connectivity-test) post.
 
 ## MongoDB
-As a DB for storing `users`, `rooms`, `messages` etc, we will are using MongoDB.
+As a storage of `users`, `rooms`, `messages`, `calls` etc, we will be using MongoDB.
 
-Hence for we will rely on the official MongoDB Docker image:
+We will rely on the official MongoDB Docker image:
 
-```
+``` bash
 docker run -d --name mongo \
     --restart=always \
     -p 27017:27017 \
     -v mongo_data:/data/db \
     mongo
+
+# attach mongo container to backend network
+docker network connect backend mongo
 ```
+Make sure you create a db user for your mongodb e.g.
+
+```javascript
+db.createUser(
+  {
+    user: "roomler",
+    pwd: "super_secret",
+    roles: [ { role: "readWrite", db: "roomlerdb" } ]
+  }
+)
+```
+
 ## Redis
 Since Roomler app is started in a Cluster mode using `pm.js` (there will be as many Web API processes the number of CPU cores on the machine), in order for these processes to be able to communicate with each other, we will rely on Redis PUB/SUB mechanism.
 
-```
+``` bash
 docker run -d --name redis `
     -e ALLOW_EMPTY_PASSWORD=yes `
 	--restart=always `
 	-p 6379:6379 `
     bitnami/redis:latest
+
+# attach redis container to backend network
+docker network connect backend redis
 ```
 
 ## Nginx
 
-```
+``` bash
 docker run -d --name nginx \
     --hostname nginx \
     --restart always \
@@ -101,32 +132,26 @@ docker run -d --name nginx \
     -v /your_path/conf.d/:/etc/nginx/conf.d/ \
     -v /your_path/cert/:/etc/nginx/cert/ \
     -v /your_path/logs/:/etc/nginx/logs/ \
-    -p 80:80 \
-    -p 443:443 \
-    --net=bridge \
+    --net=host \
     nginx
 
-# create frontend network
-docker create network frontend
-
-# atttach nginx container to that network
+# attach nginx container to frontend network
 docker network connect frontend nginx
-
 ```
 
-You can a basic `conf` file for roomler app e.g. in `/your_path/conf.d/roomler.live.conf`:
-```
+You can a basic `conf` file for `roomler` container e.g. in `/your_path/conf.d/roomler.live.conf`:
+``` conf
 server {
        listen         80;
        listen         [::]:80;
-       server_name    your_domain;
+       server_name    roomler.live; # replace it with your roomler domain
        return         301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    server_name your_domain;
+    server_name roomler.live; # replace it with your roomler domain
     client_max_body_size 0;
 
     ssl_certificate /etc/nginx/cert/your_cert.pem;
@@ -150,9 +175,75 @@ server {
         send_timeout 1800;
     }
 }
-
 ```
 
+As well a basic `conf` file for `janus` container e.g. in `/your_path/conf.d/janus.roomler.live.conf`:
+
+``` conf
+server {
+       listen         80;
+       listen         [::]:80;
+       server_name    janus.roomler.live; # replace it with your janus domain
+       return         301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name janus.roomler.live;  # replace it with your janus domain
+    client_max_body_size 0;
+
+    ssl_certificate /etc/nginx/cert/your_cert.pem;
+    ssl_certificate_key /etc/nginx/cert/your_cert.key;
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_redirect off;
+
+        proxy_pass http://janus:8080;
+    }
+    location /janus_ws {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_redirect off;
+
+        proxy_pass http://janus:8188;
+    }
+
+    location /janus_http {
+        proxy_pass http://janus:8088/janus;
+    }
+
+    location /janus_admin {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_pass http://janus:7188;
+    }
+
+    location /janus_admin_http {
+        proxy_pass http://janus:7088/admin;
+    }
+}
+
+```
 
 ## Environment variables of Roomler
 
@@ -223,15 +314,12 @@ TURN_PASSWORD=YOUR_TURN_PASSWORD
 GIPHY_API_KEY=YOUR_GIPHY_KEY
 ```
 
-# Install packages
-``` bash
-# install dependencies
-$ npm i
-```
-
 ## Start in development mode
 
 ``` bash
+# install dependencies
+$ npm i
+
 # Start API server (localhost:3001)
 $ npm run dev:api
 
@@ -243,13 +331,16 @@ $ npm run dev:ui
 ## Start in production mode
 
 ``` bash
+# install dependencies
+$ npm i
+
 # build for production and launch server
 $ npm run build
 $ npm start
 ```
 
 ## Start using docker
-```
+``` bash
 docker run -d --name roomler \
     --hostname roomler \
     --restart always \
@@ -272,6 +363,10 @@ docker run -d --name roomler \
     -e TURN_PASSWORD=YOUR_TURN_PASSWORD \
     -e GIPHY_API_KEY=YOUR_GIPHY_KEY \
     gjovanov/roomler
+
+# attach roomler container to frontend & backend networks
+docker network connect frontend roomler
+docker network connect backend roomler
 ```
 
 
