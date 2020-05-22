@@ -34,7 +34,7 @@ All that fully free and open source.
 
 ## Docker network
 Besides the default `host` Docker network, we need to create two addition bridge networks:
-1. `docker network create frontend` (used by containers `roomler`, `nginx`, `janus`)
+1. `docker network create frontend` (used by containers `roomler`, `nginx`)
 2. `docker network create backend` (used by containers `roomler`, `mongo`, `redis`)
 3. on the existing `host` network `janus` and `coturn` will be attached
 
@@ -50,8 +50,6 @@ docker run -d \
   --network="host" \
   gjovanov/janus-slim
 
-# attach janus container to frontend network
-docker network connect frontend janus
 ```
 
 ## Coturn
