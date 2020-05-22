@@ -16,6 +16,7 @@ All that fully free and open source.
 
 # Technology stack
 - [Janus Gateway](https://github.com/meetecho/janus-gateway)
+- [Coturn](https://github.com/coturn/coturn)
 - [Fastify](https://github.com/fastify/fastify)
 - [PM2](https://github.com/Unitech/pm2)
 - [MongoDB](https://github.com/mongodb/mongo)
@@ -23,6 +24,7 @@ All that fully free and open source.
 - [VueJS](https://github.com/vuejs/vue)
 - [NuxtJS](https://github.com/nuxt/nuxt.js/)    
 - [VuetifyJS](https://github.com/vuetifyjs/vuetify)
+- [Nginx](https://github.com/nginx/nginx)
 - [Docker](https://github.com/docker)
 
 # Architecture
