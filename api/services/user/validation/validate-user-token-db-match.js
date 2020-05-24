@@ -1,9 +1,12 @@
 const ValidationError = require('../../../errors/validation-error.js')
-module.exports = (tokenUser) => {
+module.exports = (tokenUser, dbUser) => {
   const errors = []
-  if (
+  if (!dbUser ||
+    !dbUser._id ||
     !tokenUser ||
-    !tokenUser._id) {
+    !tokenUser._id ||
+    tokenUser._id.toString() !== dbUser._id.toString() ||
+    tokenUser.username !== dbUser.username) {
     errors.push({
       prop: 'token',
       message: 'Invalid authentication token.'

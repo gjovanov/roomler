@@ -55,6 +55,18 @@ module.exports = [{
   handler: authController.login
 },
 {
+  method: 'POST',
+  url: '/api/auth/logout',
+  schema: {
+    response: {
+      200: authSchema.logout.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: authController.logout
+},
+{
   method: 'PUT',
   url: '/api/auth/update/username',
   schema: {

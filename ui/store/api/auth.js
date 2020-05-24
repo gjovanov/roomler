@@ -188,11 +188,13 @@ export const actions = {
     return response
   },
 
-  logout ({
+  async logout ({
     dispatch,
     commit
   }, payload) {
+    const response = {}
     try {
+      response.result = await this.$axios.$post('/api/auth/logout')
       commit('api/room/setRooms', [], {
         root: true
       })
@@ -200,7 +202,6 @@ export const actions = {
         root: true
       })
       commit('clearUserInfo')
-      dispatch('sound/playSound', 'connection_pull', { root: true })
     } catch (err) {
       handleError(err, commit)
     }

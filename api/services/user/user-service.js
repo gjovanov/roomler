@@ -4,6 +4,7 @@ const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
 const validateUserExists = require('./validation/validate-user-exists')
 const validateUserToken = require('./validation/validate-user-token')
+const validateUserTokenDbMatch = require('./validation/validate-user-token-db-match')
 const validatePasswordIsConfirmed = require('./validation/validate-password-is-confirmed')
 const validatePasswordsMatch = require('./validation/validate-passwords-match')
 const validateActivationCode = require('./validation/validate-activation-code')
@@ -192,10 +193,11 @@ class UserService {
   }
 
   async verify (user) {
+    validateUserToken(user)
     const userFromDb = await this.get({
       username: user.username
     })
-    validateUserToken(user, userFromDb)
+    validateUserTokenDbMatch(user, userFromDb)
     return user
   }
 

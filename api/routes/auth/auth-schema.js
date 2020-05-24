@@ -98,6 +98,11 @@ module.exports = {
       200: userToken
     }
   },
+  logout: {
+    response: {
+      200: resultOk
+    }
+  },
   reset: {
     body: resetBody,
     response: {

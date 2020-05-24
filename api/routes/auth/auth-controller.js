@@ -37,6 +37,15 @@ class AuthController {
       })
   }
 
+  async logout (request, reply) {
+    if (request.user && request.user.user) {
+      await reply.clearCookie('token', { path: '/' })
+    }
+    reply.send({
+      result: 'ok'
+    })
+  }
+
   async reset (request, reply) {
     await userService.reset(request.body.email, request.body.type)
     reply.send({
