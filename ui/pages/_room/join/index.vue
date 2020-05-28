@@ -34,7 +34,7 @@ export default {
     if (!this.user || !this.user._id) {
       const toast = {
         prop: 'global',
-        message: 'Unauthorized: Please login or register before you can join any Room',
+        message: 'Please login or register before you can join any Room',
         error: true
       }
       this.$store.commit('toast/push', toast, {

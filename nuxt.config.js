@@ -36,7 +36,7 @@ const nuxtConfig = {
   css: [],
   env,
   router: {
-    middleware: 'check-auth'
+    // middleware: 'check-auth'
   },
   plugins: [
     '@/plugins/axios',

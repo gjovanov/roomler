@@ -1,13 +1,10 @@
 import {
-  storage
-} from '@/services/storage'
-
-import {
   handleError,
   handleSuccess
 } from '@/services/ajax-handlers'
 import { handleConnectionPush } from './auth/handlers/connection-push'
 import { handleConnectionPull } from './auth/handlers/connection-pull'
+import cookies from 'js-cookie'
 
 export const state = () => ({
   peers: [],
@@ -66,7 +63,7 @@ export const mutations = {
   },
 
   storeUserInfo (state, result) {
-    storage.set('token', result.token, true)
+    cookies.set('token', result.token, { expires: 14 })
     state.user = result.user
     state.token = result.token
     if (state.user && state.user._id) {
@@ -82,7 +79,7 @@ export const mutations = {
   },
 
   clearUserInfo (state) {
-    storage.clear('token')
+    cookies.remove('token')
     state.user = null
     state.token = null
     state.oauth = null
@@ -208,15 +205,13 @@ export const actions = {
   },
 
   async me ({
-    commit
+    commit,
+    state
   }) {
     const response = {}
     try {
-      const token = storage.get('token')
+      const token = state.token
       if (token) {
-        commit('storeUserInfo', {
-          token
-        })
         response.result = await this.$axios.$get('/api/auth/me')
         commit('storeUserInfo', response.result)
         commit('replace', response.result.user)

@@ -61,7 +61,7 @@
       <span>Invite new peers</span>
     </v-tooltip>
 
-    <v-tooltip v-if="canInvite" bottom left>
+    <v-tooltip v-if="room && room.is_open && canInvite" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="canInvite"

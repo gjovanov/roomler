@@ -1,6 +1,5 @@
-import {
-  storage
-} from '@/services/storage'
+
+import cookies from 'js-cookie'
 import consola from 'consola'
 
 // readyState
@@ -40,7 +39,7 @@ class WsService {
 
     this.ws.onopen = (event) => {
       consola.info(`WebSocket opened: ${event}`)
-      if (self.counter > 0 && storage.get('token')) {
+      if (self.counter > 0 && cookies.get('token')) {
         if (self.store.state.api.auth.user && self.store.state.api.auth.user._id) {
           self.store.dispatch('api/auth/me')
             .then(() => {

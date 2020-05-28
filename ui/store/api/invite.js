@@ -1,12 +1,10 @@
 import {
-  storage
-} from '@/services/storage'
-import {
   handleError
 } from '@/services/ajax-handlers'
 import { handleInviteAccept } from './invite/handlers/invite-accept'
 import { handleInviteUpdate } from './invite/handlers/invite-update'
 import { handleInviteDelete } from './invite/handlers/invite-delete'
+import cookies from 'js-cookie'
 
 export const state = () => ({
   invites: [],
@@ -22,7 +20,7 @@ export const mutations = {
     }
 
     // Merge with Cookie Pending Invites
-    let invites = storage.get('pendingInvites')
+    let invites = cookies.get('pendingInvites')
     if (invites && invites.trim()) {
       invites = JSON.parse(invites.trim())
       invites.forEach((i) => {
@@ -38,7 +36,7 @@ export const mutations = {
       }
     })
     state.pendingInvites = result
-    storage.set('pendingInvites', JSON.stringify(state.pendingInvites), true)
+    cookies.set('pendingInvites', JSON.stringify(state.pendingInvites))
   },
   storePendingJoins (state, join) {
     const result = []
@@ -47,7 +45,7 @@ export const mutations = {
     }
 
     // Merge with Cookie Pending Invites
-    let joins = storage.get('pendingJoins')
+    let joins = cookies.get('pendingJoins')
     if (joins && joins.trim()) {
       joins = JSON.parse(joins.trim())
       joins.forEach((i) => {
@@ -63,15 +61,15 @@ export const mutations = {
       }
     })
     state.pendingJoins = result
-    storage.set('pendingJoins', JSON.stringify(state.pendingJoins), true)
+    cookies.set('pendingJoins', JSON.stringify(state.pendingJoins))
   },
   clearPendingInvites (state) {
     state.pendingInvites = []
-    storage.set('pendingInvites', state.pendingInvites, true)
+    cookies.set('pendingInvites', state.pendingInvites)
   },
   clearPendingJoins (state) {
     state.pendingJoins = []
-    storage.set('pendingJoins', state.pendingJoins, true)
+    cookies.set('pendingJoins', state.pendingJoins)
   },
 
   setInvites (state, invites) {

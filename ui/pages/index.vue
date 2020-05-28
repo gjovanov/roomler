@@ -228,7 +228,6 @@ export default {
   beforeMount () {
   },
   mounted () {
-    console.log(this.$route)
   }
 }
 </script>

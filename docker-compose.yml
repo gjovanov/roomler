@@ -1,0 +1,124 @@
+version: "3.8"
+
+services:
+  redis_r:
+    image: bitnami/redis:latest
+    networks:
+      - backend
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  mongo_r:
+    image: mongo:latest
+    networks:
+      - backend
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27017:27017"
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  coturn_r:
+    image: instrumentisto/coturn:latest
+    networks:
+      - host
+    command:
+        - -n
+        - --lt-cred-mech
+        - --fingerprint
+        - --no-multicast-peers
+        - --cli-password=cli_password 
+        - --no-tlsv1 
+        - --no-tlsv1_1 
+        - --fingerprint 
+        - --lt-cred-mech 
+        - --verbose 
+        - --user=turn_user:turn_password 
+        - --server-name=roomler.live 
+        - --realm=roomler.live 
+        - --listening-ip=$$(detect-external-ip) 
+        - --min-port=10200 
+        - --max-port=49200
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  janus_r:
+    image: gjovanov/janus-slim:latest
+    networks:
+      - host
+    depends_on:
+      - coturn_r
+    deploy:
+      mode: replicated
+      replicas: 1
+
+  nginx_r:
+    image: gjovanov/nginx:latest
+    networks:
+      - bridge
+      - frontend
+    depends_on:
+      - roomler
+    volumes:
+      - ./.nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./.nginx/conf.d/:/etc/nginx/conf.d/
+      - ./.nginx/cert/:/etc/nginx/cert/
+      - ./.nginx/logs/:/etc/nginx/logs/
+    ports:
+      - "80:80"
+      - "443:443/tcp"
+      - "443:443/udp"    
+
+  roomler:
+    image: gjovanov/roomler:latest
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - mongo_r
+      - redis_r
+    volumes:
+      - uploads:/roomler/ui/static/uploads
+    environment:
+      - URL=${URL}  # your URL
+      - API_URL=${API_URL} # your API URL
+      - DB_CONN=${DB_CONN}
+      - WS_SCALEOUT_ENABLED=true
+      - WS_SCALEOUT_HOST=redis_r
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - FACEBOOK_ID=${your_facebook_id}
+      - FACEBOOK_SECRET=${FACEBOOK_SECRET}
+      - GOOGLE_ID=${GOOGLE_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
+      - GITHUB_ID=${GITHUB_ID}
+      - GITHUB_SECRET=${GITHUB_SECRET}
+      - LINKEDIN_ID=${LINKEDIN_ID}
+      - LINKEDIN_SECRET=${LINKEDIN_SECRET}
+      - TURN_URL=turn:${TURN_URL}
+      - TURN_USERNAME=${TURN_USERNAME}
+      - TURN_PASSWORD=${TURN_PASSWORD}
+      - GIPHY_API_KEY${GIPHY_API_KEY}
+    deploy:
+      mode: replicated
+      replicas: 4
+
+networks:
+  host:
+  bridge:
+  frontend:
+  backend:
+
+volumes:
+  uploads:
+  mongo_data:
