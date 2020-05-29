@@ -44,7 +44,7 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-0 ma-0">
           <v-btn
-            v-if="!tree || !tree.items || !tree.items.length"
+            v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
             to="/@/room/create"
             dark
             block
@@ -93,11 +93,19 @@
                     small
                     block
                     outlined
-                    class="justify-space-between pr-0"
+                    class="justify-start pr-0"
                     v-on="on"
                   >
+                    <v-icon v-if="item.is_open" x-small class="justify-start">
+                      fa-lock-open
+                    </v-icon>
+                    <v-icon v-if="!item.is_open" x-small class="justify-start">
+                      fa-lock
+                    </v-icon>
+                    &nbsp;
                     <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
                     <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
+                    &nbsp;
                     <v-icon v-if="mentions(item)" small color="red">
                       fa-at
                     </v-icon>

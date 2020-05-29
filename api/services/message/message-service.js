@@ -99,7 +99,8 @@ class MessageService {
           const record = await row
             .populate('room')
             .execPopulate()
-          return extendRecord(record, userid)
+          const result = extendRecord(record, userid)
+          return result
         }))
       })
     return records
