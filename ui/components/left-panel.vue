@@ -44,14 +44,14 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-0 ma-0">
           <v-btn
-            v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
+            v-if="user && user._id"
             to="/@/room/create"
             dark
             block
-            outlined
+            tile
             class="red"
           >
-            <v-icon>fa-comment</v-icon> &nbsp; Create a room
+            <v-icon>fa fa-plus</v-icon> &nbsp; Create new room
           </v-btn>
           <v-treeview
             v-if="tree && tree.items && tree.items.length"
