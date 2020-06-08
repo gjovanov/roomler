@@ -1,27 +1,31 @@
 version: "3.8"
 
 services:
-  redis_r:
+  redis:
     image: bitnami/redis:latest
-    networks:
-      - backend
+    ports:
+      - "6379:6379"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+    
 
-  mongo_r:
+  mongo:
     image: mongo:latest
-    networks:
-      - backend
+    ports:
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    
 
-  coturn_r:
+  coturn:
     image: instrumentisto/coturn:latest
-    networks:
-      - frontend
+    network_mode: host
+    # ports:
+    #   - "3479:3478"
+    #   - "49152-65535:49152-65535/udp"
     volumes:
       - ./.nginx/cert/:/cert/
     command:
@@ -29,36 +33,37 @@ services:
         - --lt-cred-mech
         - --fingerprint
         - --no-multicast-peers
-        - --cli-password=cli_password 
+        - --cli-password=${TURN_PASSWORD}
         - --no-tlsv1 
         - --no-tlsv1_1 
         - --fingerprint 
         - --lt-cred-mech 
         - --verbose 
-        - --user=turn_user:turn_password 
+        - --user=${TURN_USERNAME}:${TURN_PASSWORD} 
         - --realm=coturn.roomler.live 
 #        - --listening-ip=$$(detect-external-ip)
+        # - --relay-ip=$$(detect-external-ip)
         - --external-ip=$$(detect-external-ip)
         - --cert=/cert/roomler.live.pem
         - --pkey=/cert/roomler.live.key
-        - --min-port=10200 
-        - --max-port=49200
 
-  janus_r:
+  janus:
     image: gjovanov/janus-slim:latest
-    networks:
-      - frontend
+    ports:
+      - "7089:7088"
+      - "7189:7188"
+      - "8089:8088"
+      - "8189:8188"
     depends_on:
-      - coturn_r
+      - coturn
 
   roomler:
     image: gjovanov/roomler:latest
-    networks:
-      - frontend
-      - backend
+    ports:
+      - "3000:3000"
     depends_on:
-      - mongo_r
-      - redis_r
+      - mongo
+      - redis
     volumes:
       - uploads:/roomler/ui/static/uploads
     environment:
@@ -66,7 +71,7 @@ services:
       - API_URL=${API_URL} # your API URL
       - DB_CONN=${DB_CONN}
       - WS_SCALEOUT_ENABLED=true
-      - WS_SCALEOUT_HOST=redis_r
+      - WS_SCALEOUT_HOST=redis
       - SENDGRID_API_KEY=${SENDGRID_API_KEY}
       - FACEBOOK_ID=${FACEBOOK_ID}
       - FACEBOOK_SECRET=${FACEBOOK_SECRET}
@@ -81,28 +86,37 @@ services:
       - TURN_PASSWORD=${TURN_PASSWORD}
       - GIPHY_API_KEY${GIPHY_API_KEY}
 
-  nginx_r:
+  nginx:
     image: gjovanov/nginx:latest
-    networks:
-      - frontend
+    ports:
+      - "${IP1}:80:80"
+      - "${IP1}:443:443/tcp"
+      - "${IP1}:443:443/udp"
     depends_on:
       - roomler
-      - coturn_r
-      - janus_r
+      - coturn
+      - janus
     volumes:
       - ./.nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./.nginx/conf.d/:/etc/nginx/conf.d/
       - ./.nginx/cert/:/etc/nginx/cert/
       - ./.nginx/logs/:/etc/nginx/logs/
-    ports:
-      - "80:80"
-      - "443:443/tcp"
-      - "443:443/udp"  
 
-networks:
-  frontend:
-  backend:
-
+    nginx2:
+      image: gjovanov/nginx:latest
+      ports:
+        - "${IP2}:80:80"
+        - "${IP2}:443:443/tcp"
+        - "${IP2}:443:443/udp"
+      depends_on:
+        - roomler
+        - coturn
+        - janus
+      volumes:
+        - ./.nginx/coturn/nginx.conf:/etc/nginx/nginx.conf
+        - ./.nginx/cert/:/etc/nginx/cert/
+        - ./.nginx/logs/:/etc/nginx/logs/
+     
 volumes:
   uploads:
   mongo_data:

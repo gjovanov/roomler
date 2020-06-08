@@ -22,13 +22,13 @@
         fab fa-github
       </v-icon>
     </v-btn>
-    <v-btn x-small value="twitter" href="https://twitter.com/gjovanov" target="_blank" class="ma-0">
+    <v-btn x-small value="twitter" href="https://www.facebook.com/Roomler-101573398250025" target="_blank" class="ma-0">
       <span>Twitter</span>
       <v-icon small>
-        fab fa-twitter
+        fab fa-facebook
       </v-icon>
     </v-btn>
-    <v-btn x-small value="linkedin" href="https://www.linkedin.com/in/gjovanov" target="_blank" class="ma-0">
+    <v-btn x-small value="linkedin" href="https://www.linkedin.com/company/roomler" target="_blank" class="ma-0">
       <span>Linked in</span>
       <v-icon small>
         fab fa-linkedin

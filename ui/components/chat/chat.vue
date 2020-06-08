@@ -100,7 +100,6 @@ export default {
       if (content && content !== '<p></p>') {
         const $ = cheerio.load(content)
         const mentions = [...new Set($('button[data-username]').toArray().map(node => node.attribs.userkey))]
-        console.log(mentions)
         const files = [...new Set($('a[data-upload]').toArray().map((node) => {
           return {
             filename: node.attribs.filename,
