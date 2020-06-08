@@ -5,7 +5,7 @@ const buildApi = function () {
   }
   const multer = require('fastify-multer')
   const fastify = require('fastify')({
-    logger: process.env.NODE_ENV !== 'test'
+    logger: true// process.env.NODE_ENV !== 'test'
     // http2: true,
     // https: require('./plugins/https-options')
   })
