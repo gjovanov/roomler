@@ -111,7 +111,7 @@
                     </v-icon>
                   </v-btn>
                 </template>
-                <span>{{ item.name }}</span>
+                <span>{{ item.name.toUpperCase() }} ({{ item.is_open ? 'open: join allowed to everyone' : 'closed: invite only join' }})</span>
               </v-tooltip>
             </template>
             <template v-slot:append="{ item }">
