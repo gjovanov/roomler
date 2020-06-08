@@ -1,9 +1,10 @@
 let defaultDbUrl = 'mongodb://localhost:27017/roomdb'
-if (process.env.NODE_ENV === 'test') {
+const isTest = process.env.NODE_ENV === 'test'
+if (isTest) {
   defaultDbUrl += `_${process.env.NODE_ENV}_${process.env.TEST}`
 }
 module.exports = {
-  dbUrl: process.env.DB_CONN || defaultDbUrl,
+  dbUrl: !isTest ? (process.env.DB_CONN || defaultDbUrl) : defaultDbUrl,
   dbOptions: {
     family: 4,
     useNewUrlParser: true,
