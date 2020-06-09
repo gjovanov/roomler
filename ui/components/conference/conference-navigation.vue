@@ -325,7 +325,7 @@ import PublishDialog from '@/components/conference/publish-dialog'
 import ExtensionDialog from '@/components/conference/extension-dialog'
 
 import { modelToQuery } from '@/services/handle-dto'
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 export default {
   components: {

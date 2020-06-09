@@ -64,8 +64,9 @@
               >
                 <v-col
                   cols="12"
-                  sm="4"
-                  md="3"
+                  sm="8"
+                  md="6"
+                  lg="4"
                 >
                   <room-invite :room="room" :peers="peers" />
                 </v-col>

@@ -2,9 +2,9 @@ import {
   handleError,
   handleSuccess
 } from '@/services/ajax-handlers'
+import cookies from 'js-cookie'
 import { handleConnectionPush } from './auth/handlers/connection-push'
 import { handleConnectionPull } from './auth/handlers/connection-pull'
-import cookies from 'js-cookie'
 
 export const state = () => ({
   peers: [],

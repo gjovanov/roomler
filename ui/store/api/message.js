@@ -2,11 +2,11 @@ import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
+import * as moment from 'moment'
 import { handleMessageCreate } from './message/handlers/message-create'
 import { handleMessageUpdate } from './message/handlers/message-update'
 import { handleReactionPush } from './message/handlers/reaction-push'
 import { handleReactionPull } from './message/handlers/reaction-pull'
-import * as moment from 'moment'
 
 export const state = () => ({
   messages: {}

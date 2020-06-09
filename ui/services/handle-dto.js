@@ -1,5 +1,5 @@
 
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import qs from 'qs'
 
 export const defaultMedia = {
@@ -121,7 +121,7 @@ export class HandleDto {
     this.interval = 1000
     this.bitrate = {
       limit: args.bitrateLimit || undefined,
-      value: '0 KBIT/SEC'
+      value: '0 kb/s'
     }
   }
 }

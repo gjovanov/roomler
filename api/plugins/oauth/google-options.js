@@ -1,6 +1,6 @@
+const oauthPlugin = require('fastify-oauth2')
 const config = require('../../../config')
 const defaultState = require('./default-state')
-const oauthPlugin = require('fastify-oauth2')
 module.exports = {
   name: 'google',
   credentials: {

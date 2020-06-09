@@ -1,8 +1,8 @@
+const randomstring = require('randomstring')
 const emailService = require('../email/email-service')
 const Code = require('../../models/code')
 const config = require('../../../config')
 const CodeFilter = require('./code-filter')
-const randomstring = require('randomstring')
 
 class CodeService {
   // base methods - START

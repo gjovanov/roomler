@@ -1,6 +1,6 @@
+const sendgrid = require('@sendgrid/mail')
 const config = require('../../../config')
 const templateService = require('./template-service')
-const sendgrid = require('@sendgrid/mail')
 
 class SendgridService {
   constructor () {

@@ -1,6 +1,6 @@
+const nodemailer = require('nodemailer')
 const config = require('../../../config')
 const templateService = require('./template-service')
-const nodemailer = require('nodemailer')
 
 class SmtpService {
   constructor () {

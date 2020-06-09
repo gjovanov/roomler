@@ -62,7 +62,6 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       const data = JSON.parse(message)
       if (data.op.includes('ROOM_CREATE')) {
         t.true(data.op.includes('ROOM_CREATE'))
-        console.log('YEAaaaaaaaaaa1')
         resolve()
       }
     })
@@ -74,7 +73,6 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       const data = JSON.parse(message)
       if (data.op.includes('ROOM_CREATE')) {
         t.true(data.op.includes('ROOM_CREATE'))
-        console.log('YEAaaaaaaaaaa2')
         resolve()
       }
     })

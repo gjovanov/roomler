@@ -19,7 +19,6 @@ test.serial(`API "op='HELLO'" ${'testname'}`, async (t) => {
   await new Promise((resolve, reject) => {
     ws.on('message', (message) => {
       const data = JSON.parse(message)
-      console.log(data)
       t.true(data && data.op && data.op.includes('HELLO'))
       resolve()
     })

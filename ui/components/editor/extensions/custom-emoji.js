@@ -4,7 +4,7 @@ import { replaceText } from 'tiptap-commands'
 import Fuse from 'fuse.js'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/dist/svg-arrow.css'
-import tippy from 'tippy.js'
+import tippy, { sticky } from 'tippy.js'
 
 export default class CustomMention extends Mention {
   constructor (options) {
@@ -13,7 +13,6 @@ export default class CustomMention extends Mention {
     options.suggestionRange = null
     options.filteredItems = []
     options.navigatedIndex = 0
-    options.observer = null
     options.insertMention = null
     super(options)
   }
@@ -23,42 +22,26 @@ export default class CustomMention extends Mention {
       return
     }
     const options = {
-      content: this.options.$refs[templateId],
-      trigger: 'mouseenter',
+      getReferenceClientRect: node.getBoundingClientRect,
+      appendTo: () => document.body,
       interactive: true,
-      theme: 'dark',
-      placement: 'top',
-      inertia: true,
-      lazy: false,
-      duration: [400, 200],
+      sticky: true, // make sure position of tippy is updated when content changes
+      plugins: [sticky],
+      content: this.options.$refs[templateId],
+      trigger: 'mouseenter', // manual
       showOnCreate: true,
-      arrow: tippy.roundArrow,
-      appendTo: document.body,
-      onCreate (instance) {
-        instance.popperInstance.reference = node
-      }
+      theme: 'dark',
+      placement: 'top-start',
+      inertia: true,
+      duration: [400, 200]
     }
     this.options.popup = tippy(document.createElement('div'), options)
-    // we have to update tippy whenever the DOM is updated
-    if (MutationObserver) {
-      this.options.observer = new MutationObserver(() => {
-        this.options.popup.popperInstance.scheduleUpdate()
-      })
-      this.options.observer.observe(this.options.$refs[templateId], {
-        childList: true,
-        subtree: true,
-        characterData: true
-      })
-    }
   }
 
   destroyPopup () {
     if (this.options.popup) {
       this.options.popup.destroy()
       this.options.popup = null
-    }
-    if (this.options.observer) {
-      this.options.observer.disconnect()
     }
   }
 
@@ -179,7 +162,7 @@ export default class CustomMention extends Mention {
             threshold: 0.2,
             keys: self.options.filterKeys
           })
-          return self.options.filterLimit ? fuse.search(query).slice(0, self.options.filterLimit) : fuse.search(query)
+          return (self.options.filterLimit ? fuse.search(query).slice(0, self.options.filterLimit) : fuse.search(query)).map(r => r.item)
         },
         suggestionClass: self.options.suggestionClass
       })

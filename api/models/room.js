@@ -1,5 +1,5 @@
-const config = require('../../config')
 const mongoose = require('mongoose')
+const config = require('../../config')
 const Schema = mongoose.Schema
 require('mongoose-long')(mongoose)
 const Long = mongoose.Schema.Types.Long

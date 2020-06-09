@@ -74,11 +74,11 @@
     <v-tooltip v-if="handle && !handle.isLocal" bottom left>
       <template v-slot:activator="{ on }">
         <v-btn
-          outlined
+          tile
           left
           dark
-          small
-          color="green"
+          right
+          x-small
           style="bottom: 24px"
           v-on="on"
         >

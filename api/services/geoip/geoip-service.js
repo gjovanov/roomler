@@ -1,7 +1,7 @@
-const config = require('../../../config')
-const performanceService = require('../../services/performance/performance-service')
 const consola = require('consola')
 const maxmind = require('maxmind')
+const config = require('../../../config')
+const performanceService = require('../../services/performance/performance-service')
 
 class GeoIpService {
   async init () {

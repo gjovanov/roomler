@@ -68,7 +68,7 @@ import CustomImage from '@/components/editor/extensions/custom-image'
 import CustomFile from '@/components/editor/extensions/custom-file'
 import Iframe from '@/components/editor/extensions/iframe'
 import { Editor, EditorContent, Extension } from 'tiptap'
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import {
   Placeholder,
   HardBreak,

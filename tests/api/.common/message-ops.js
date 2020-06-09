@@ -1,4 +1,4 @@
-const uuid = require('uuid/v4')
+const { v4: uuid } = require('uuid')
 class MessageOps {
   create(fastify, test, testname, messageContext) {
     test.serial(`API "/api/message/create" ${testname}`, async(t) => {

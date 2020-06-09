@@ -178,7 +178,7 @@ import MessageReactionList from '@/components/chat/message-reaction-list'
 import MessageDeleteDialog from '@/components/chat/message-delete-dialog'
 import * as EmojiMap from 'emojilib'
 import * as cheerio from 'cheerio'
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 const scrollDirection = {
   noScroll: 'no_scroll',

@@ -1,6 +1,6 @@
+const mongoose = require('mongoose')
 const Call = require('../../models/call')
 const CallFilter = require('./call-filter')
-const mongoose = require('mongoose')
 
 class CallService {
   // base methods - START

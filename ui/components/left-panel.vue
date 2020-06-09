@@ -44,7 +44,7 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-0 ma-0">
           <v-btn
-            v-if="user && user._id"
+            v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
             to="/@/room/create"
             dark
             block
@@ -161,19 +161,28 @@
             >
               <v-list-item-icon>
                 <v-badge
-                  :color="isOnline(peer._id) ? 'green' : 'grey'"
+                  :color="isInCall(peer._id) ? 'red' : isOnline(peer._id) ? 'green' : 'grey'"
                   bordered
                   bottom
                   left
-                  dot
-                  offset-x="4"
-                  offset-y="4"
+                  avatar
+                  overlap
+                  offset-x="5"
+                  offset-y="5"
                 >
+                  <template v-if="isInCall(peer._id)" v-slot:badge>
+                    <v-avatar v-if="isInCall(peer._id)" size="12">
+                      <v-icon size="7" style="margin-bottom: 6px">
+                        fa fa-phone
+                      </v-icon>
+                    </v-avatar>
+                  </template>
+
                   <v-avatar
-                    size="36px"
+                    size="32px"
                   >
-                    <img v-if="peer.avatar_url" :src="peer.avatar_url">
-                    <v-icon v-if="!peer.avatar_url">
+                    <img v-if="user.avatar_url" :src="user.avatar_url">
+                    <v-icon v-if="!user.avatar_url">
                       fa-user
                     </v-icon>
                   </v-avatar>
@@ -318,6 +327,9 @@ export default {
     isOnline (userid) {
       return this.$store.getters['api/auth/isOnline'](userid)
     },
+    isInCall (userid) {
+      return this.$store.getters['api/room/calls/isUserInCall'](userid)
+    },
     updateOpen (newVal) {
       this.$store.commit('api/room/setOpen', newVal)
     },
@@ -428,8 +440,20 @@ export default {
 
 </script>
 <style scoped>
-* >>> .v-expansion-panel-content__wrap{
+  * >>> .v-expansion-panel-content__wrap{
     margin: 0px !important;
     padding: 0px !important;
+  }
+  * >>> .v-navigation-drawer__content {
+    overflow-y: hidden;
+    overflow-x: hidden;
+  }
+  * >>> .v-badge__badge {
+    height: 12px;
+    min-width: 12px;
+    padding: 0px;
+  }
+  * >>> .v-badge--bordered .v-badge__badge::after {
+    border-width: 1px;
   }
 </style>

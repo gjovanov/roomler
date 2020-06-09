@@ -88,7 +88,7 @@ export const mutations = {
     clearInterval(handleDto.timer)
     handleDto.timer = setInterval(() => {
       if (handleDto.handle && handleDto.handle.webrtcStuff) {
-        const bitrateValue = handleDto.handle.getBitrate()
+        const bitrateValue = handleDto.handle.getBitrate().replace('kbits/sec', 'kb/s')
         commit('api/janus/videoroom/updates/setBitrateValue', { handleDto, bitrateValue }, { root: true })
       }
     }, handleDto.interval)

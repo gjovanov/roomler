@@ -22,7 +22,7 @@
 import Tiptap from '@/components/editor/tiptap'
 import ChatMessages from '@/components/chat/chat-messages'
 import * as cheerio from 'cheerio'
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 const scrollDirection = {
   noScroll: 'no_scroll',

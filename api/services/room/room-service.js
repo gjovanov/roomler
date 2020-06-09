@@ -1,10 +1,10 @@
+const slugify = require('slugify')
 const config = require('../../../config')
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
 const RoomRenameFilter = require('./room-rename-filter')
 const RoomChildrenFilter = require('./room-children-filter')
 const RoomDeleteFilter = require('./room-delete-filter')
-const slugify = require('slugify')
 const slugOptions = {
   replacement: '-', // replace spaces with replacement
   remove: null, // regex to remove characters

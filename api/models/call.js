@@ -1,5 +1,5 @@
-const config = require('../../config')
 const mongoose = require('mongoose')
+const config = require('../../config')
 const Schema = mongoose.Schema
 const ObjectId = mongoose.Schema.Types.ObjectId
 const statuses = config.dataSettings.call.statuses

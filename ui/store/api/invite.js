@@ -1,10 +1,10 @@
 import {
   handleError
 } from '@/services/ajax-handlers'
+import cookies from 'js-cookie'
 import { handleInviteAccept } from './invite/handlers/invite-accept'
 import { handleInviteUpdate } from './invite/handlers/invite-update'
 import { handleInviteDelete } from './invite/handlers/invite-delete'
-import cookies from 'js-cookie'
 
 export const state = () => ({
   invites: [],

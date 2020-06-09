@@ -25,7 +25,7 @@
         </v-btn>
       </v-card-title>
       <v-card-text class="pr-0 pl-0 pb-0 pt-1">
-        <v-list rounded>
+        <v-list dense>
           <v-list-item-group
             v-model="group"
             color="primary"
@@ -37,7 +37,7 @@
                 :key="index"
                 dark
               >
-                <v-list-item-avatar>
+                <v-list-item-avatar size="32">
                   <v-img v-if="getUser(reaction.user).avatar_url" :src="getUser(reaction.user).avatar_url" />
                   <v-icon v-if="!getUser(reaction.user).avatar_url">
                     fa-user

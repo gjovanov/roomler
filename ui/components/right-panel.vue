@@ -6,7 +6,6 @@
       app
       clipped
       right
-      expand-on-hover
     >
       <v-list-item>
         <v-list-item-avatar>
@@ -49,7 +48,7 @@
               </template>
 
               <v-avatar
-                size="36px"
+                size="32px"
               >
                 <img v-if="user.avatar_url" :src="user.avatar_url">
                 <v-icon v-if="!user.avatar_url">
@@ -89,8 +88,8 @@ export default {
   },
   data () {
     return {
-      rightDrawer: true,
-      mini: true
+      rightDrawer: window.innerWidth > 960,
+      mini: false
     }
   },
   computed: {
@@ -107,6 +106,9 @@ export default {
         this.$store.commit('panel/toggle', 'right')
       }
     }
+  },
+  mounted () {
+    this.$store.commit('panel/set', { panel: 'right', value: window.innerWidth > 960 }, { root: true })
   },
   methods: {
     isOnline (userid) {

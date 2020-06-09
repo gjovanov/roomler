@@ -71,21 +71,16 @@
       offset-y
     >
       <template v-slot:activator="{ on: menu }">
-        <v-tooltip v-if="room" bottom left>
-          <template v-slot:activator="{ on: tooltip }">
-            <v-btn
-              v-if="room"
-              tile
-              light
-              v-on="{ ...menu, ...tooltip }"
-            >
-              <v-icon>
-                fa-ellipsis-h
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>Room options</span>
-        </v-tooltip>
+        <v-btn
+          v-if="room"
+          tile
+          light
+          v-on="{ ...menu }"
+        >
+          <v-icon>
+            mdi mdi-dots-vertical
+          </v-icon>
+        </v-btn>
       </template>
       <v-list dense multiple>
         <v-list-item :to="`/${room.path}/settings`">

@@ -148,7 +148,7 @@
 </template>
 
 <script>
-import * as uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 export default {
   props: {

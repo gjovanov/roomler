@@ -1,5 +1,5 @@
-const config = require('../../../config')
 const S = require('fluent-schema')
+const config = require('../../../config')
 const types = config.dataSettings.message.types
 
 const getQueryString = S.object()
