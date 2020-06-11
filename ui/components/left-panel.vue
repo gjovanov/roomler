@@ -181,8 +181,8 @@
                   <v-avatar
                     size="32px"
                   >
-                    <img v-if="user.avatar_url" :src="user.avatar_url">
-                    <v-icon v-if="!user.avatar_url">
+                    <img v-if="peer.avatar_url" :src="peer.avatar_url">
+                    <v-icon v-if="!peer.avatar_url">
                       fa-user
                     </v-icon>
                   </v-avatar>
