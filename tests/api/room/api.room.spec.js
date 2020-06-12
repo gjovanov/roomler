@@ -1,10 +1,11 @@
+const test = require('ava')
 const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const roomOps = require('../.common/room-ops')
 const UserContext = require('../.context/user-context')
 const RoomContext = require('../.context/room-context')
 const data = require('./data')
-const test = require('ava')
+
 const user1 = new UserContext(data.user.user1)
 const user2 = new UserContext(data.user.user2)
 const user3 = new UserContext(data.user.user3)

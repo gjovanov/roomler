@@ -70,6 +70,31 @@ const schema = new Schema({
       type: String,
       maxlength: 50
     }
+  },
+  os: {
+    name: {
+      type: String,
+      maxlength: 20,
+      index: true
+    },
+    version: {
+      type: String,
+      maxlength: 20
+    }
+  },
+  browser: {
+    name: {
+      type: String,
+      maxlength: 20,
+      index: true
+    },
+    version: {
+      type: String,
+      maxlength: 20
+    },
+    is_mobile: {
+      type: Boolean
+    }
   }
 }, {
   timestamps: true

@@ -1,6 +1,7 @@
 class OAuthContext {
   constructor(data, type, user) {
     this.me = data.me
+    this.email = data.email
     this.update = data.update
     this.type = type
     this.record = null

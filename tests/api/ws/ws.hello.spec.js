@@ -1,7 +1,8 @@
-const fastify = require('../../../api/api')()
+
 const test = require('ava')
 const consola = require('consola')
 const WebSocket = require('ws')
+const fastify = require('../../../api/api')()
 const port = 6001
 let ws
 

@@ -1,8 +1,8 @@
+const test = require('ava')
 const fastify = require('../../../api/api')()
 const authOps = require('../.common/auth-ops')
 const UserContext = require('../.context/user-context')
 const data = require('./data')
-const test = require('ava')
 const user = new UserContext(data.user, data.avatar)
 
 authOps.register(fastify, test, 'register the user for auth testing', user)
@@ -11,6 +11,8 @@ authOps.activateInvalidToken(fastify, test, 'activate with invalid token throws 
 authOps.activate(fastify, test, 'activate the user for auth testing', user)
 authOps.loginInvalidPassword(fastify, test, 'login with invalid password throws ValidationError', user, data.invalidPassword)
 authOps.login(fastify, test, 'login with the user for auth testing', user)
+authOps.logout(fastify, test, 'logout the user for auth testing', user)
+authOps.login(fastify, test, 'login with the user again for auth testing', user)
 
 authOps.reset(fastify, test, 'username reset via code/token', user, 'username_reset')
 authOps.updateUsername(fastify, test, 'update the username of the user for auth testing', user)

@@ -27,6 +27,7 @@ module.exports = {
 
     connectionOpen: 'CONNECTION_OPEN',
     connectionClose: 'CONNECTION_CLOSE',
+    connectionUpdate: 'CONNECTION_UPDATE',
 
     roomCreate: 'ROOM_CREATE',
     roomUpdate: 'ROOM_UPDATE',

@@ -3,7 +3,6 @@
     ref="leftDrawer"
     v-model="leftDrawer"
     :width="width"
-    height="%100"
     :mobile-break-point="720"
     app
     clipped
@@ -445,8 +444,10 @@ export default {
     padding: 0px !important;
   }
   * >>> .v-navigation-drawer__content {
-    overflow-y: hidden;
-    overflow-x: hidden;
+    /* overflow-y: hidden;
+    overflow-x: hidden; */
+    scrollbar-width: thin;
+    scrollbar-color: black white;
   }
   * >>> .v-badge__badge {
     height: 12px;
@@ -455,5 +456,16 @@ export default {
   }
   * >>> .v-badge--bordered .v-badge__badge::after {
     border-width: 1px;
+  }
+  * >>> ::-webkit-scrollbar {
+    width: 7px;
+  }
+  * >>> ::-webkit-scrollbar-track {
+    background: white;
+  }
+  * >>> ::-webkit-scrollbar-thumb {
+    background-color: black ;
+    border-radius: 3px;
+    border: 1px solid white;
   }
 </style>

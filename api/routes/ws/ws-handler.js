@@ -1,8 +1,9 @@
+
 const os = require('os')
 const process = require('process')
+const { v4: uuid } = require('uuid')
 const config = require('../../../config')
 const storage = require('./ws-storage')
-const { v4: uuid } = require('uuid')
 const processName = `${os.hostname()}_${process.pid}`
 
 class WsHandler {
@@ -23,7 +24,9 @@ class WsHandler {
     storage.push(conn)
 
     const connection = await require('../connection/connection-controller').pushConnectionWs(fastify, wss, conn, req)
-    conn.connection_id = connection._id
+    if (connection) {
+      conn.connection_id = connection._id
+    }
   }
 
   onMessage (fastify, wss, conn, req, msg) {

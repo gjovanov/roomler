@@ -1,5 +1,8 @@
 const nock = require('nock')
 const facebookOptions = require('../../../api/plugins/oauth/facebook-options')
+const googleOptions = require('../../../api/plugins/oauth/google-options')
+const githubOptions = require('../../../api/plugins/oauth/github-options')
+const linkedinOptions = require('../../../api/plugins/oauth/linkedin-options')
 
 const TOKEN_RESPONSE = {
   access_token: 'my-access-token',
@@ -16,6 +19,12 @@ const TOKEN_RESPONSE_REFRESHED = {
 const getOptions = (type) => {
   if (type === 'facebook') {
     return facebookOptions
+  } else if (type === 'google') {
+    return googleOptions
+  } else if (type === 'github') {
+    return githubOptions
+  } else {
+    return linkedinOptions
   }
 }
 const setMocks = (nock, oauthContext) => {
@@ -31,17 +40,77 @@ const setMocks = (nock, oauthContext) => {
     .reply(200, TOKEN_RESPONSE)
     .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring)
     .reply(200, TOKEN_RESPONSE_REFRESHED)
-  const meMock = nock(options.credentials.auth.tokenHost, {
+
+  if (oauthContext.type === 'facebook') {
+    nock(options.credentials.auth.tokenHost, {
       reqheaders: {
         Authorization: 'Bearer my-access-token'
       }
     })
     .persist()
-    .get('/v4.0/me')
+    .get('/v6.0/me')
     .query({
       fields: 'email,name,picture.type(large)'
     })
     .reply(200, oauthContext.me)
+  } else if (oauthContext.type === 'google') {
+    nock(options.credentials.auth.tokenHost, {
+      reqheaders: {
+        Authorization: 'Bearer my-access-token'
+      }
+    })
+    .persist()
+    .get('/userinfo/v2/me')
+    .reply(200, oauthContext.me)
+  } else if (oauthContext.type === 'github') {
+    console.log('GGGGGGGG')
+    nock('https://api.github.com', {
+      reqheaders: {
+        Authorization: 'token my-access-token',
+        'User-Agent': 'Roomler APP'
+      }
+    })
+    .persist()
+    .get('/user')
+    .reply(200, oauthContext.me)
+
+    nock('https://api.github.com', {
+      reqheaders: {
+        Authorization: 'token my-access-token',
+        'User-Agent': 'Roomler APP'
+      }
+    })
+    .persist()
+    .get('/emails')
+    .reply(200, oauthContext.email)
+  } else {
+    nock('https://api.linkedin.com', {
+      reqheaders: {
+        Authorization: 'Bearer my-access-token'
+      }
+    })
+    .persist()
+    .get('/v2/me')
+    .query({
+      projection: '(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'
+    })
+    .reply(200, oauthContext.me)
+
+    nock('https://api.linkedin.com', {
+      reqheaders: {
+        Authorization: 'Bearer my-access-token'
+      }
+    })
+    .persist()
+    .get('/v2/emailAddress')
+    .query({
+      q: 'members',
+      projection: '(elements*(handle~))'
+    })
+    .reply(200, oauthContext.email)
+  }
+  
+    
   return state
 }
 
@@ -150,6 +219,9 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(Array.isArray(result))
+          console.log(result.length)
+          console.log(expectedOAuths)
+
           expectedOAuths.forEach(expectedOAuth => {
             const oauth = result.find(m => m._id.toString() === expectedOAuth._id.toString())
             t.true(!!oauth._id)

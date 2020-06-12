@@ -203,6 +203,33 @@ class AuthOps {
     })
   }
 
+  logout(fastify, test, testname, userContext) {
+    test.serial(`API "/api/auth/logout" ${testname}`, async(t) => {
+      const payload = {
+      }
+      await fastify
+        .inject({
+          method: 'POST',
+          url: `/api/auth/logout`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(result.result === 'ok')
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   reset(fastify, test, testname, userContext, type = passwordResetType) {
     test.serial(`API "/api/auth/reset" ${testname}`, async(t) => {
       const payload = {
@@ -395,8 +422,6 @@ class AuthOps {
           if (userContext.avatar) {
             t.true(result.user.avatar_url === userContext.avatar.payload.avatar_url)
           }
-
-
           t.pass()
         })
         .catch((e) => {

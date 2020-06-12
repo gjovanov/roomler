@@ -8,7 +8,7 @@ class OAuthDataGetter {
       avatar_url: null
     }
     const data = await getService.get({
-      url: 'https://graph.facebook.com/v4.0/me?fields=email,name,picture.type(large)',
+      url: 'https://graph.facebook.com/v6.0/me?fields=email,name,picture.type(large)',
       method: 'GET',
       headers: {
         Authorization: `Bearer ${access.access_token}`
@@ -139,7 +139,7 @@ class OAuthDataGetter {
       json: true
     })
     result.email = data2.elements[0]['handle~'].emailAddress
-
+    console.log(result)
     return result
   }
 }

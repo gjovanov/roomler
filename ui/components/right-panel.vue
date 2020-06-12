@@ -9,14 +9,28 @@
     >
       <v-list-item>
         <v-list-item-avatar>
-          <v-icon>fa-users</v-icon>
+          <v-btn
+            icon
+            @click.stop="mini = !mini"
+          >
+            <v-icon>
+              mdi-chevron-left
+            </v-icon>
+          </v-btn>
         </v-list-item-avatar>
-        <v-list-item-title>ROOM PEERS</v-list-item-title>
+        <v-list-item-title>
+          <v-icon small>
+            fa-users
+          </v-icon>
+          ROOM PEERS
+        </v-list-item-title>
         <v-btn
           icon
           @click.stop="mini = !mini"
         >
-          <v-icon>mdi-chevron-left</v-icon>
+          <v-icon>
+            mdi-chevron-right
+          </v-icon>
         </v-btn>
       </v-list-item>
 
@@ -89,7 +103,7 @@ export default {
   data () {
     return {
       rightDrawer: window.innerWidth > 960,
-      mini: false
+      mini: true
     }
   },
   computed: {
@@ -130,4 +144,29 @@ export default {
 * >>> .v-badge--bordered .v-badge__badge::after {
   border-width: 1px;
 }
+* >>> .v-navigation-drawer__content {
+    /* overflow-y: hidden;
+    overflow-x: hidden; */
+    scrollbar-width: thin;
+    scrollbar-color: black white;
+  }
+  * >>> .v-badge__badge {
+    height: 12px;
+    min-width: 12px;
+    padding: 0px;
+  }
+  * >>> .v-badge--bordered .v-badge__badge::after {
+    border-width: 1px;
+  }
+  * >>> ::-webkit-scrollbar {
+    width: 7px;
+  }
+  * >>> ::-webkit-scrollbar-track {
+    background: white;
+  }
+  * >>> ::-webkit-scrollbar-thumb {
+    background-color: black ;
+    border-radius: 3px;
+    border: 1px solid white;
+  }
 </style>
