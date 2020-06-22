@@ -24,14 +24,15 @@ test.serial(`API "op='HELLO'" ${'testname'}`, async (t) => {
       resolve()
     })
   })
-  //   client.once('data', (chunk) => {
-  //     t.true(chunk === 'hello')
-  //     client.end()
-  //     t.pass()
-  //   })
 })
 
 test.after('Shutdown API server', async (t) => {
   ws.close()
-  await fastify.close()
+  const p = new Promise((resolve, reject) => {
+    setTimeout(async () => {
+      await fastify.close()
+      resolve()
+    }, 1000)
+  })
+  await p
 })

@@ -397,6 +397,34 @@ class AuthOps {
     })
   }
 
+  get(fastify, test, testname, userContext) {
+    test.serial(`API "/api/auth/get" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'GET',
+          url: `/api/auth/get/${userContext.record.username}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          }
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(!!result)
+          t.true(!!result._id)
+          t.true(result.username === userContext.payload.username)
+          t.true(result.email === userContext.payload.email)
+          t.true(!result.password)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   me(fastify, test, testname, userContext) {
     test.serial(`API "/api/auth/me" ${testname}`, async(t) => {
       await fastify

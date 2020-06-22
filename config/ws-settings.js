@@ -16,7 +16,10 @@ const scaleout = {
   }
 }
 
+const pingInterval = process.env.NODE_ENV === 'test' ? 100 : process.env.WS_PING_INTERVAL || 30000
+
 module.exports = {
+  pingInterval,
   opTypes: {
     messageCreate: 'MESSAGE_CREATE',
     messageUpdate: 'MESSAGE_UPDATE',

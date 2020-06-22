@@ -6,6 +6,7 @@ const data = require('./data')
 const user = new UserContext(data.user, data.avatar)
 
 authOps.register(fastify, test, 'register the user for auth testing', user)
+authOps.get(fastify, test, 'get user information for the logged in user', user)
 authOps.activateInvalidUsername(fastify, test, 'activate with invalid username throws ValidationError', data.invalidUsername)
 authOps.activateInvalidToken(fastify, test, 'activate with invalid token throws ValidationError', user, data.invalidToken)
 authOps.activate(fastify, test, 'activate the user for auth testing', user)

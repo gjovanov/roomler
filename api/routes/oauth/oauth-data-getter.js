@@ -139,7 +139,6 @@ class OAuthDataGetter {
       json: true
     })
     result.email = data2.elements[0]['handle~'].emailAddress
-    console.log(result)
     return result
   }
 }

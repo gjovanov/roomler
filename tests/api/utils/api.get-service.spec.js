@@ -21,7 +21,6 @@ test.serial('API "get-service success"', async (t) => {
     json: true
   })
   t.true(data.result === 'pong')
-  console.log(data)
   t.pass()
 })
 
@@ -35,7 +34,6 @@ test.serial('API "get-service error"', async (t) => {
     t.fail('Reached unxpected reply')
   } catch (e) {
     t.true(!!e)
-    console.log(e)
     t.pass()
   }
 })

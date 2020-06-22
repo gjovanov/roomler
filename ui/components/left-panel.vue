@@ -3,7 +3,7 @@
     ref="leftDrawer"
     v-model="leftDrawer"
     :width="width"
-    :mobile-break-point="720"
+    :mobile-breakpoint="720"
     app
     clipped
     class="pr-1"

@@ -35,7 +35,6 @@ class OAuthImageDownloader {
 
       // check for request errors
       sendReq.on('error', (err) => {
-        console.log(dest)
         fs.unlink(dest)
         reject(err)
         return cb(err.message)

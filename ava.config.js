@@ -13,7 +13,7 @@ export default {
   // require: ['./tests/setup.js'],
   files,
   cache: true,
-  concurrency: 8,
+  concurrency: 32,
   failFast: true,
   failWithoutAssertions: false,
   verbose: true

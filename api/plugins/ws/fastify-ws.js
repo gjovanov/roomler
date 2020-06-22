@@ -32,7 +32,7 @@ const verify = (fastify, opts) => (info, cb) => {
   }
 }
 
-const startHeartbeats = (wss, conn) => {
+const startHeartbeats = (wss, conn, opts) => {
   const noop = () => {}
   const handlePong = function () {
     this.isAlive = true
@@ -48,7 +48,7 @@ const startHeartbeats = (wss, conn) => {
       ws.isAlive = false
       ws.ping(noop)
     })
-  }, 30000)
+  }, parseInt(opts.pingInterval))
   return interval
 }
 
@@ -99,7 +99,7 @@ function fastifyWs (fastify, opts, next) {
   wss
     .on('connection', (conn, req) => {
       // start the connection Hearbeats with PING/PONG messages
-      const interval = startHeartbeats(wss, conn)
+      const interval = startHeartbeats(wss, conn, opts)
 
       if (opts.handler) {
         conn.send(JSON.stringify({

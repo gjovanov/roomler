@@ -17,15 +17,6 @@ module.exports = {
     return defaultState
   },
   checkStateFunction: (state, callback) => {
-    if (process.env.NODE_ENV === 'development' ||
-      process.env.NODE_ENV === 'test') {
-      callback()
-    } else {
-      if (state === defaultState) {
-        callback()
-        return
-      }
-      callback(new Error('Invalid state'))
-    }
+    require('./default-check-state')(defaultState, state, callback)
   }
 }

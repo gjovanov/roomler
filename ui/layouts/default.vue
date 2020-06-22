@@ -34,7 +34,7 @@
       <auth-panel />
     </v-app-bar>
 
-    <v-content class="pt-9 ma-0">
+    <v-main class="pt-9 ma-0">
       <v-container
         :fill-height="fillHeight"
         class="pa-0 ma-0"
@@ -72,7 +72,7 @@
         <bottom-panel />
       </v-container>
       <toaster />
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 

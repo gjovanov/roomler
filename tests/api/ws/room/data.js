@@ -22,6 +22,9 @@ module.exports = {
     payload: {
       name: 'Parent',
       tags: ['super', 'dooper']
+    },
+    update: {
+      name: 'Parent1'
     }
   },
   room2: {

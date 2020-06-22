@@ -24,9 +24,7 @@ class WsHandler {
     storage.push(conn)
 
     const connection = await require('../connection/connection-controller').pushConnectionWs(fastify, wss, conn, req)
-    if (connection) {
-      conn.connection_id = connection._id
-    }
+    conn.connection_id = connection._id
   }
 
   onMessage (fastify, wss, conn, req, msg) {
@@ -57,9 +55,7 @@ class WsHandler {
       fastify.log.info(`WS Client 'ANONYMOUS' disconnected from '${processName}'`)
     }
     storage.pull(conn)
-    if (conn.connection_id) {
-      await require('../connection/connection-controller').pullConnectionWs(fastify, wss, conn, req)
-    }
+    await require('../connection/connection-controller').pullConnectionWs(fastify, wss, conn, req)
   }
 
   async onShutdown (fastify, wss) {

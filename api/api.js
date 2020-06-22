@@ -19,7 +19,8 @@ const buildApi = function () {
     .register(require('./plugins/mongoose/fastify-mongoose'), require('./plugins/mongoose/mongoose-options'))
     .register(require('./plugins/ws/fastify-ws'), {
       jwt: jwtOptions,
-      scaleout: require('./plugins/ws/scaleout-options'),
+      pingInterval: require('./plugins/ws/scaleout-options').pingInterval,
+      scaleout: require('./plugins/ws/scaleout-options').scaleout,
       handler: require('./routes/ws/ws-handler'),
       dispatcher: require('./routes/ws/ws-dispatcher')
     })

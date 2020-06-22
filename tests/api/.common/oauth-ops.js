@@ -63,7 +63,6 @@ const setMocks = (nock, oauthContext) => {
     .get('/userinfo/v2/me')
     .reply(200, oauthContext.me)
   } else if (oauthContext.type === 'github') {
-    console.log('GGGGGGGG')
     nock('https://api.github.com', {
       reqheaders: {
         Authorization: 'token my-access-token',
@@ -219,8 +218,6 @@ class OAuthOps {
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(Array.isArray(result))
-          console.log(result.length)
-          console.log(expectedOAuths)
 
           expectedOAuths.forEach(expectedOAuth => {
             const oauth = result.find(m => m._id.toString() === expectedOAuth._id.toString())
