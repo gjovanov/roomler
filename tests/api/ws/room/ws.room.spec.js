@@ -32,9 +32,10 @@ authOps.activate(fastify, test, 'activate the second WS user account for room cr
 // 2. User1 creates room1
 // 3. User1 adds user2 in room1.moderators
 // 4. User2 creates room2
-// 5. User2 updates room1
-// 6. User1 deletes room1
-// 7. User2 deletes room2
+// 5. User2 adds user1 in room2.moderators
+// 6. User2 updates room1
+// 7. User1 deletes room1
+// 8. User2 deletes room2
 
 test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
   const cookie1 = { headers: { cookie: `token=${user1.token}` } }
@@ -47,9 +48,12 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       if (
         ops1.filter(op => op.includes('ROOM_CREATE')).length === 2 &&
         ops1.filter(op => op.includes('ROOM_UPDATE')).length === 1 &&
-        ops2.filter(op => op.includes('ROOM_DELETE')).length === 1) {
-        ws1.terminate()
-        resolve()
+        ops1.filter(op => op.includes('ROOM_DELETE')).length === 1) {
+        // WAIT A BIT...
+        setTimeout(() => {
+          ws1.terminate()
+          resolve()
+        }, 1000)
       }
     })
   })
@@ -63,9 +67,13 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       if (
         ops2.filter(op => op.includes('ROOM_CREATE')).length === 1 &&
         ops2.filter(op => op.includes('ROOM_UPDATE')).length === 1 &&
-        ops2.filter(op => op.includes('ROOM_DELETE')).length === 2) {
-        ws2.terminate()
-        resolve()
+        ops2.filter(op => op.includes('ROOM_DELETE')).length === 1 &&
+        ops2.filter(op => op.includes('CONNECTION_CLOSE')).length === 1) {
+        // WAIT A BIT...
+        setTimeout(() => {
+          ws2.terminate()
+          resolve()
+        }, 1000)
       }
     })
   })
@@ -111,6 +119,18 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       const result = JSON.parse(response.payload)
       room2.record = result
     })
+  await fastify
+    .inject({
+      method: 'PUT',
+      url: `/api/room/moderators/push/${room2.record._id}`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user2.token}`
+      },
+      payload: {
+        user: user1.record._id
+      }
+    })
 
   await fastify
     .inject({
@@ -134,16 +154,16 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
       payload: {}
     })
 
-  await fastify
-    .inject({
-      method: 'DELETE',
-      url: `/api/room/delete/${room1.record._id}`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user1.token}`
-      },
-      payload: {}
-    })
+  // await fastify
+  //   .inject({
+  //     method: 'DELETE',
+  //     url: `/api/room/delete/${room1.record._id}`,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${user1.token}`
+  //     },
+  //     payload: {}
+  //   })
 
   await Promise.all([p1, p2])
   t.pass()

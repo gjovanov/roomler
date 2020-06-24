@@ -5,8 +5,8 @@ module.exports = {
   name: 'linkedin',
   credentials: {
     client: {
-      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.LINKEDIN_ID || null),
-      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.LINKEDIN_SECRET || null)
+      id: process.env.LINKEDIN_ID,
+      secret: process.env.LINKEDIN_SECRET
     },
     auth: oauthPlugin.LINKEDIN_CONFIGURATION
   },

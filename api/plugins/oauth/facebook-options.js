@@ -5,8 +5,8 @@ module.exports = {
   name: 'facebook',
   credentials: {
     client: {
-      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.FACEBOOK_ID || null),
-      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.FACEBOOK_SECRET || null)
+      id: process.env.FACEBOOK_ID,
+      secret: process.env.FACEBOOK_SECRET
     },
     auth: oauthPlugin.FACEBOOK_CONFIGURATION
   },

@@ -24,6 +24,7 @@ class WsHandler {
     storage.push(conn)
 
     const connection = await require('../connection/connection-controller').pushConnectionWs(fastify, wss, conn, req)
+    fastify.log.info(`WS connection_id: '${connection._id}'`)
     conn.connection_id = connection._id
   }
 

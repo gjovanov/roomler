@@ -5,8 +5,8 @@ module.exports = {
   name: 'google',
   credentials: {
     client: {
-      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.GOOGLE_ID || null),
-      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.GOOGLE_SECRET || null)
+      id: process.env.GOOGLE_ID,
+      secret: process.env.GOOGLE_SECRET
     },
     auth: oauthPlugin.GOOGLE_CONFIGURATION
   },

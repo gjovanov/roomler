@@ -5,8 +5,8 @@ module.exports = {
   name: 'github',
   credentials: {
     client: {
-      id: process.env.NODE_ENV === 'test' ? 'client_id' : (process.env.GITHUB_ID || null),
-      secret: process.env.NODE_ENV === 'test' ? 'client_secret' : (process.env.GITHUB_SECRET || null)
+      id: process.env.GITHUB_ID,
+      secret: process.env.GITHUB_SECRET
     },
     auth: oauthPlugin.GITHUB_CONFIGURATION
   },
