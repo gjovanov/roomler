@@ -1,5 +1,41 @@
 const { v4: uuid } = require('uuid')
 class MessageOps {
+
+  createWs(ws, op, payload) {
+    const msg = JSON.stringify({
+      op,
+      payload
+    })
+    ws.send(msg)
+  }
+  async createApi(fastify, token, payload) {
+    const result = await fastify
+      .inject({
+        method: 'POST',
+        url: `/api/message/create`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        payload
+      })
+    return result
+  }
+
+  async updateApi(fastify, token, roomid, payload) {
+    const result = await fastify
+      .inject({
+        method: 'PUT',
+        url: `/api/message/update/${roomid}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        payload
+      })
+    return result
+  }
+
   create(fastify, test, testname, messageContext) {
     test.serial(`API "/api/message/create" ${testname}`, async(t) => {
       const payload = {
@@ -17,16 +53,7 @@ class MessageOps {
           payload.message.mentions = messageContext.getMentionIds(payload.message)
         }
       }
-      await fastify
-        .inject({
-          method: 'POST',
-          url: `/api/message/create`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
-          },
-          payload
-        })
+      await this.createApi(fastify, messageContext.token, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -200,16 +227,7 @@ class MessageOps {
     test.serial(`API "/api/message/update/:id" ${testname}`, async(t) => {
       const payload = messageContext.update
       payload.mentions = messageContext.getMentionIds(payload)
-      await fastify
-        .inject({
-          method: 'PUT',
-          url: `/api/message/update/${messageContext.records[0]._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${messageContext.token}`
-          },
-          payload
-        })
+      await this.updateApi(fastify, messageContext.token, messageContext.records[0]._id, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')

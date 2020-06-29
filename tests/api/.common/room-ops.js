@@ -1,16 +1,76 @@
 class RoomOps {
-  create(fastify, test, testname, context) {
-    test.serial(`API "/api/room/create" ${testname}`, async(t) => {
-      await fastify
+  async createApi(fastify, token, payload) {
+    const result = await fastify
         .inject({
           method: 'POST',
           url: `/api/room/create`,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${context.token}`
+            Authorization: `Bearer ${token}`
           },
-          payload: context.payload
+          payload
         })
+    return result
+  }
+
+  async updateApi(fastify, token, roomid, payload) {
+    const result = await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/update/${roomid}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          payload
+        })
+    return result
+  }
+
+  async pushApi(fastify, token, roomid, type, payload) {
+    const result = await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/${type}s/push/${roomid}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          payload
+        })
+      return result
+  }
+
+  async pullApi(fastify, token, roomid, type, payload) {
+    const result = await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/room/${type}s/pull/${roomid}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          payload
+        })
+    return result
+  }
+
+  async deleteApi(fastify, token, roomid) {
+    const result = await fastify
+        .inject({
+          method: 'DELETE',
+          url: `/api/room/delete/${roomid}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          }
+        })
+    return result
+  }
+
+  create(fastify, test, testname, context) {
+    test.serial(`API "/api/room/create" ${testname}`, async(t) => {
+      await this.createApi(fastify, context.token, context.payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -173,16 +233,7 @@ class RoomOps {
   update(fastify, test, testname, roomContext) {
     test.serial(`API "/api/room/update/:id" ${testname}`, async(t) => {
       const payload = roomContext.update
-      await fastify
-        .inject({
-          method: 'PUT',
-          url: `/api/room/update/${roomContext.record._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${roomContext.token}`
-          },
-          payload
-        })
+      await this.updateApi(fastify, roomContext.token, roomContext.record._id, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -259,15 +310,7 @@ class RoomOps {
 
   delete(fastify, test, testname, context, userContext) {
     test.serial(`API "/api/room/delete/:id" ${testname}`, async(t) => {
-      await fastify
-        .inject({
-          method: 'DELETE',
-          url: `/api/room/delete/${context.record._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userContext.token}`
-          }
-        })
+      await this.deleteApi(fastify, userContext.token, context.record._id)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -420,16 +463,7 @@ class RoomOps {
       } else {
         payload.user = userContexts && userContexts.record && userContexts.record._id ? userContexts.record._id : null
       }
-      await fastify
-        .inject({
-          method: 'PUT',
-          url: `/api/room/${arrayType}s/push/${roomContext.record._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${roomContext.token}`
-          },
-          payload
-        })
+      await this.pushApi(fastify, roomContext.token, roomContext.record._id, arrayType, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -462,16 +496,7 @@ class RoomOps {
       } else {
         payload.user = userContexts && userContexts.record && userContexts.record._id ? userContexts.record._id : null
       }
-      await fastify
-        .inject({
-          method: 'PUT',
-          url: `/api/room/${arrayType}s/pull/${roomContext.record._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${roomContext.token}`
-          },
-          payload
-        })
+      await this.pullApi(fastify, roomContext.token, roomContext.record._id, arrayType, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')

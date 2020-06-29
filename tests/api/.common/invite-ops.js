@@ -1,20 +1,40 @@
 class InviteOps {
+
+  async createApi(fastify, token, payload) {
+    const result = await fastify
+      .inject({
+        method: 'POST',
+        url: `/api/invite/create`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        payload
+      })
+    return result
+  }
+
+  async acceptApi(fastify, token, inviteid) {
+    const result = await fastify
+      .inject({
+        method: 'PUT',
+        url: `/api/invite/accept/${inviteid}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        payload: {}
+      })
+    return result
+  }
+
   create(fastify, test, testname, inviteContext) {
     test.serial(`API "/api/invite/create" ${testname}`, async(t) => {
       const payload = inviteContext.payload
       payload.forEach((invite) => {
         invite.room = inviteContext.roomContext.record._id
       })
-      await fastify
-        .inject({
-          method: 'POST',
-          url: `/api/invite/create`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${inviteContext.token}`
-          },
-          payload
-        })
+      await this.createApi(fastify, inviteContext.token, payload)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
@@ -323,16 +343,7 @@ class InviteOps {
   accept(fastify, test, testname, userContext, inviteContext, recordIndex) {
     test.serial(`API "/api/invite/accept/:id" ${testname}`, async(t) => {
       const invite = inviteContext.records[recordIndex]
-      await fastify
-        .inject({
-          method: 'PUT',
-          url: `/api/invite/accept/${invite._id}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${userContext.token}`
-          },
-          payload: {}
-        })
+      await this.acceptApi(fastify, userContext.token, invite._id)
         .then((response) => {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')

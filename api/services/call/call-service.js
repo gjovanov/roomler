@@ -4,18 +4,6 @@ const CallFilter = require('./call-filter')
 
 class CallService {
   // base methods - START
-  async get (filter) {
-    const callFilter = new CallFilter({
-      id: filter.id,
-      call_id: filter.call_id
-    })
-      .getFilter()
-    const record = await Call
-      .findOne(callFilter)
-      .exec()
-    return record
-  }
-
   async getAll (filter) {
     const callFilter = new CallFilter({
       id: filter.id,

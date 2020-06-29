@@ -1,5 +1,5 @@
-const config = require('./config')
 const colors = require('vuetify/es5/util/colors').default
+const config = require('./config')
 const env = config.appSettings.env
 
 const nuxtConfig = {

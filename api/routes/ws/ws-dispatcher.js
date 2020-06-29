@@ -1,10 +1,11 @@
+
 const os = require('os')
 const process = require('process')
+const fastJson = require('fast-json-stringify')
 const messageService = require('../../services/message/message-service')
 const roomService = require('../../services/room/room-service')
 const channel = require('../../../config').wsSettings.scaleout.channel
 const storage = require('./ws-storage')
-const fastJson = require('fast-json-stringify')
 const processName = `${os.hostname()}_${process.pid}`
 
 class WsDispatcher {

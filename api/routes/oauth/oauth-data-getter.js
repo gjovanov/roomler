@@ -22,28 +22,6 @@ class OAuthDataGetter {
     return result
   }
 
-  async getTwitterData (access) {
-    const result = {
-      email: null,
-      id: null,
-      name: null,
-      avatar_url: null
-    }
-    const data = await getService.get({
-      url: 'https://api.twitter.com/1.1/account/verify_credentials.json',
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${access.access_token}`
-      },
-      json: true
-    })
-    result.id = data.id
-    result.name = data.name
-    result.email = data.email
-    result.avatar_url = data.picture && data.picture.data ? data.picture.data.url : undefined
-    return result
-  }
-
   async getGoogleData (access) {
     const result = {
       email: null,
@@ -123,9 +101,13 @@ class OAuthDataGetter {
 
     result.id = data.id
     result.name = `${data.firstName.localized.en_US} ${data.lastName.localized.en_US}`
-    let image = data.profilePicture['displayImage~'].elements.find(e => e.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].displaySize.width === 200)
-    if (!image && data.profilePicture['displayImage~'].elements.length) {
+    let image = null
+    if (data.profilePicture['displayImage~'].elements.length) {
       image = data.profilePicture['displayImage~'].elements[0]
+    }
+    const image200 = data.profilePicture['displayImage~'].elements.find(e => e.data['com.linkedin.digitalmedia.mediaartifact.StillImage'].displaySize.width === 200)
+    if (image200) {
+      image = image200
     }
     if (image && image.identifiers[0]) {
       result.avatar_url = image.identifiers[0].identifier

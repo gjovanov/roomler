@@ -63,6 +63,8 @@ const setMocks = (nock, oauthContext) => {
     .get('/userinfo/v2/me')
     .reply(200, oauthContext.me)
   } else if (oauthContext.type === 'github') {
+    const me2 = Object.assign({}, oauthContext.me)
+    delete me2.email
     nock('https://api.github.com', {
       reqheaders: {
         Authorization: 'token my-access-token',
@@ -71,7 +73,7 @@ const setMocks = (nock, oauthContext) => {
     })
     .persist()
     .get('/user')
-    .reply(200, oauthContext.me)
+    .reply(200, me2)
 
     nock('https://api.github.com', {
       reqheaders: {
@@ -80,7 +82,7 @@ const setMocks = (nock, oauthContext) => {
       }
     })
     .persist()
-    .get('/emails')
+    .get('/user/emails')
     .reply(200, oauthContext.email)
   } else {
     nock('https://api.linkedin.com', {

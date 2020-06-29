@@ -32,26 +32,6 @@ const verify = (fastify, opts) => (info, cb) => {
   }
 }
 
-const startHeartbeats = (wss, conn, opts) => {
-  const noop = () => {}
-  const handlePong = function () {
-    this.isAlive = true
-  }
-  conn.isAlive = true
-  conn.on('pong', handlePong)
-  const interval = setInterval(() => {
-    wss.clients.forEach((ws) => {
-      if (!ws.isAlive) {
-        return ws.terminate()
-      }
-
-      ws.isAlive = false
-      ws.ping(noop)
-    })
-  }, parseInt(opts.pingInterval))
-  return interval
-}
-
 function fastifyWs (fastify, opts, next) {
   if (opts.scaleout && opts.scaleout.enabled) {
     if (!fastify.scaleout) {
@@ -98,9 +78,6 @@ function fastifyWs (fastify, opts, next) {
   })
   wss
     .on('connection', (conn, req) => {
-      // start the connection Hearbeats with PING/PONG messages
-      const interval = startHeartbeats(wss, conn, opts)
-
       if (opts.handler) {
         conn.send(JSON.stringify({
           op: 'HELLO',
@@ -118,8 +95,6 @@ function fastifyWs (fastify, opts, next) {
         })
 
         conn.on('close', () => {
-          clearInterval(interval)
-
           opts.handler.onClose(fastify, wss, conn, req)
         })
       }
