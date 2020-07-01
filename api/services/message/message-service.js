@@ -22,19 +22,6 @@ class MessageService {
     return record
   }
 
-  route (messages, userid) {
-    const useridString = JSON.stringify(userid)
-    return messages
-      .filter((message) => {
-        return JSON.stringify(message.room.owner) === useridString ||
-          message.room.moderators.map(u => JSON.stringify(u)).includes(useridString) ||
-          message.room.members.map(u => JSON.stringify(u)).includes(useridString)
-      })
-      .map((message) => {
-        return extendRecord(message, userid, false)
-      })
-  }
-
   // base methods - START
   async get (userid, id) {
     const messageFilter = new MessageFilter({

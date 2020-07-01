@@ -5,6 +5,26 @@ const WebSocket = require('ws')
 const Redis = require('ioredis')
 const processName = `${os.hostname()}_${process.pid}`
 
+const startHeartbeats = (wss, conn, opts) => {
+  const noop = () => {}
+  const handlePong = function () {
+    this.isAlive = true
+  }
+  conn.isAlive = true
+  conn.on('pong', handlePong)
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (!ws.isAlive) {
+        return ws.terminate()
+      }
+
+      ws.isAlive = false
+      ws.ping(noop)
+    })
+  }, parseInt(opts.pingInterval))
+  return interval
+}
+
 const verify = (fastify, opts) => (info, cb) => {
   const cookie = info.req.headers.cookie
   let callCallback = true
@@ -78,6 +98,8 @@ function fastifyWs (fastify, opts, next) {
   })
   wss
     .on('connection', (conn, req) => {
+      // start the connection Hearbeats with PING/PONG messages
+      const interval = startHeartbeats(wss, conn, opts)
       if (opts.handler) {
         conn.send(JSON.stringify({
           op: 'HELLO',
@@ -95,6 +117,9 @@ function fastifyWs (fastify, opts, next) {
         })
 
         conn.on('close', () => {
+          // clear the ping/pong interval
+          clearInterval(interval)
+
           opts.handler.onClose(fastify, wss, conn, req)
         })
       }

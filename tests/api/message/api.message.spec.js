@@ -35,6 +35,7 @@ messageOps.update(fastify, test, 'room moderators updates a single message', mod
 messageOps.getAll(fastify, test, 'members sees all messages written by owner and moderator after message update', [ownerMessages, moderatorMessages])
 messageOps.read(fastify, test, 'room moderator reads owners message', ownerMessages, moderator)
 messageOps.unread(fastify, test, 'room moderator unreads owners message', ownerMessages, moderator)
+messageOps.readAll(fastify, test, 'room moderator reads all owners messages', ownerMessages, moderator)
 messageOps.react(fastify, test, 'room moderator likes owners message', ownerMessages, moderator, data.reaction.like)
 messageOps.unreact(fastify, test, 'room moderator unlikes owners message', ownerMessages, moderator)
 messageOps.deleteInvalidId(fastify, test, 'delete with invalid id throws a TypeError', owner, data.invalidMessageId)

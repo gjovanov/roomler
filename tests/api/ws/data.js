@@ -78,6 +78,13 @@ module.exports = {
       },
       message2: {
         type: 'text',
+        content: '<p>Hello br</p>',
+        mentions: [],
+        reactions: [],
+        files: []
+      },
+      message2Update: {
+        type: 'text',
         content: '<p>Hello bro</p>',
         mentions: [],
         reactions: [],

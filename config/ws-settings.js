@@ -16,7 +16,7 @@ const scaleout = {
   }
 }
 
-const pingInterval = process.env.NODE_ENV === 'test' ? 500 : (process.env.WS_PING_INTERVAL || 30000)
+const pingInterval = process.env.NODE_ENV === 'test' ? 5000 : (process.env.WS_PING_INTERVAL || 30000)
 
 module.exports = {
   pingInterval,

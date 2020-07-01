@@ -258,6 +258,5 @@ module.exports = {
         200: roomCallPullResult
       }
     }
-
   }
 }

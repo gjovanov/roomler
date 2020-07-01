@@ -4,6 +4,7 @@ const CallFilter = require('./call-filter')
 
 class CallService {
   // base methods - START
+
   async getAll (filter) {
     const callFilter = new CallFilter({
       id: filter.id,
@@ -19,8 +20,8 @@ class CallService {
   }
 
   async create (userid, data) {
+    data.room = mongoose.Types.ObjectId(data.room)
     if (userid) {
-      data.room = mongoose.Types.ObjectId(data.room)
       data.user = mongoose.Types.ObjectId(userid)
     }
     let record = new Call(data)
@@ -39,17 +40,6 @@ class CallService {
     const record = await Call
       .findOneAndUpdate(callFilter, update, options)
     return record
-  }
-
-  async delete (id) {
-    const callFilter = new CallFilter({
-      id
-    })
-      .getFilter()
-    const result = await Call
-      .deleteOne(callFilter)
-      .exec()
-    return result
   }
 
   async close (id) {

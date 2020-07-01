@@ -411,6 +411,35 @@ class MessageOps {
     })
   }
 
+  readAll(fastify, test, testname, messageContext, userContext) {
+    const ids = messageContext.records.map(r => r._id)
+    console.log(ids)
+    test.serial(`API "/api/message/readby/pushAll" ${testname}`, async(t) => {
+      await fastify
+        .inject({
+          method: 'PUT',
+          url: `/api/message/readby/pushAll`,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${userContext.token}`
+          },
+          payload: ids
+        })
+        .then((response) => {
+          t.is(response.statusCode, 200)
+          t.is(response.headers['content-type'], 'application/json; charset=utf-8')
+          const result = JSON.parse(response.payload)
+          t.true(Array.isArray(result))
+          t.true(result.length === ids.length)
+          t.true(result.filter(m => !m.is_read).length === 0)
+          t.pass()
+        })
+        .catch((e) => {
+          t.fail(e)
+        })
+    })
+  }
+
   unread(fastify, test, testname, messageContext, userContext) {
     test.serial(`API "/api/message/readby/pull/:id" ${testname}`, async(t) => {
       await fastify

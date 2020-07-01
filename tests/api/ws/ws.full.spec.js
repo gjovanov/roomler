@@ -50,12 +50,24 @@ authOps.activate(fastify, test, 'activate the third WS user account for room cre
 authOps.register(fastify, test, 'create the fourth WS user account for room creation', user4)
 authOps.activate(fastify, test, 'activate the fourth WS user account for room creation', user4)
 
+// ####################### WEB SOCKET FULL SCENARIO #######################
+// In this full scenario, first we create all 4x users, then create 2x rooms and add moderators/members,
+// then each user expects a certain number of WS socket events (messages) to receive
+//
+// room1 { name: 'Parent',  owner: user1, moderators: [user2], members: [user3]}
+// room1 messages: [message1, message2]
+// room2 { name: 'Parent.Child', owner: user2, moderators: [user1], members: [user4]}
+// room2 messages: [message3(reaction=👍)]
+// ########################################################################
 test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
   const cookie1 = { headers: { cookie: `token=${user1.token}` } }
   ws1 = new WebSocket(`ws://localhost:${port}`, cookie1)
   await waitABit()
   const p1 = new Promise((resolve) => {
     const ops = []
+    ws1.on('ping', () => {
+      console.log('PING1')
+    })
     ws1.on('message', (message) => {
       const msg = JSON.parse(message)
       ops.push(msg.op)
@@ -64,10 +76,13 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
         { op: 'ROOM_UPDATE', count: 1 },
         { op: 'ROOM_DELETE', count: 1 },
         { op: 'MESSAGE_CREATE', count: 1 },
+        { op: 'MESSAGE_UPDATE', count: 1 },
         { op: 'MESSAGE_REACTION_PUSH', count: 1 },
         { op: 'MESSAGE_REACTION_PULL', count: 1 }
       ]
       const missingOps = expectedOps.filter(item => item.count > ops.filter(op => op.includes(item.op)).length)
+      console.log(`WS1: ${ops}`)
+      console.log(`WS1 missing: ${JSON.stringify(missingOps)}`)
       if (missingOps.length === 0) {
         // WAIT A BIT...
         setTimeout(() => {
@@ -82,6 +97,9 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
   await waitABit()
   const p2 = new Promise((resolve) => {
     const ops = []
+    ws2.on('ping', () => {
+      console.log('PING2')
+    })
     ws2.on('message', (message) => {
       const msg = JSON.parse(message)
       ops.push(msg.op)
@@ -94,9 +112,11 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
         { op: 'MESSAGE_CREATE', count: 2 },
         { op: 'ROOM_CALL_OPEN', count: 1 },
         { op: 'ROOM_CALL_CLOSE', count: 1 },
-        { op: 'CONNECTION_CLOSE', count: 2 }
+        { op: 'CONNECTION_CLOSE', count: 1 }
       ]
       const missingOps = expectedOps.filter(item => item.count > ops.filter(op => item.op === op).length)
+      console.log(`WS2: ${ops}`)
+      console.log(`WS2 missing: ${JSON.stringify(missingOps)}`)
       if (missingOps.length === 0) {
         // WAIT A BIT...
         setTimeout(() => {
@@ -111,6 +131,9 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
   await waitABit()
   const p3 = new Promise((resolve) => {
     const ops = []
+    ws3.on('ping', () => {
+      console.log('PING3')
+    })
     ws3.on('message', async (message) => {
       const msg = JSON.parse(message)
       if (msg.op.includes('MESSAGE_CREATE') &&
@@ -126,17 +149,26 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
         })
         await waitABit()
       }
+      if (msg.op.includes('MESSAGE_REACTION_PULL') &&
+      ops.filter(op => op.includes('MESSAGE_REACTION_PULL')).length === 0) {
+        messageOps.createWs(ws1, 'MESSAGE_UPDATE', {
+          id: msg.data[0]._id,
+          update: { content: data.room2.messages.message2Update.content }
+        })
+      }
       ops.push(msg.op)
       const expectedOps = [
         { op: 'ROOM_PEER_ADD', count: 1 },
         { op: 'ROOM_CREATE', count: 1 },
         { op: 'ROOM_UPDATE', count: 1 },
         { op: 'MESSAGE_CREATE', count: 1 },
+        { op: 'MESSAGE_UPDATE', count: 1 },
         { op: 'MESSAGE_REACTION_PUSH', count: 1 },
-        { op: 'MESSAGE_REACTION_PULL', count: 1 },
-        { op: 'CONNECTION_CLOSE', count: 1 }
+        { op: 'MESSAGE_REACTION_PULL', count: 1 }
       ]
       const missingOps = expectedOps.filter(item => item.count > ops.filter(op => op.includes(item.op)).length)
+      console.log(`WS3: ${ops}`)
+      console.log(`WS3 missing: ${JSON.stringify(missingOps)}`)
       if (missingOps.length === 0) {
         // WAIT A BIT...
         setTimeout(() => {
@@ -152,6 +184,9 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
   await waitABit()
   const p4 = new Promise((resolve) => {
     const ops = []
+    ws4.on('ping', () => {
+      console.log('PING4')
+    })
     ws4.on('message', (message) => {
       const msg = JSON.parse(message)
       ops.push(msg.op)
@@ -164,6 +199,8 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
         { op: 'ROOM_DELETE', count: 1 }
       ]
       const missingOps = expectedOps.filter(item => item.count > ops.filter(op => op.includes(item.op)).length)
+      console.log(`WS4: ${ops}`)
+      console.log(`WS4 missing: ${JSON.stringify(missingOps)}`)
       if (missingOps.length === 0) {
         // WAIT A BIT...
         setTimeout(() => {
@@ -207,7 +244,7 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
     })
   await waitABit()
   await inviteOps.acceptApi(fastify, user4.token, invites[0]._id)
-  await waitABit()
+  await waitABit(50)
   await roomOps.updateApi(fastify, user2.token, room1.record._id, room1.update)
   await waitABit()
   data.room1.messages.message1.client_id = uuid()
@@ -216,10 +253,10 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
     message: [data.room1.messages.message1]
   })
   await waitABit()
-  data.room2.messages.message1.client_id = uuid()
+  data.room2.messages.message2.client_id = uuid()
   messageOps.createWs(ws2, 'MESSAGE_CREATE', {
     room: room2.record._id,
-    message: [data.room2.messages.message1]
+    message: [data.room2.messages.message2]
   })
   await waitABit()
   data.room2.messages.message2.client_id = uuid()
@@ -239,7 +276,7 @@ test.serial('API "op=\'ROOM_CREATE\'" ', async (t) => {
     room: room2.record._id,
     call_id: callId2
   })
-  await waitABit()
+  await waitABit(50)
   await callOps.getAllApi(fastify, user4.token)
     .then((response) => {
       const result = JSON.parse(response.payload)

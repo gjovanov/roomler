@@ -4,18 +4,6 @@ const ConnectionFilter = require('./connection-filter')
 
 class ConnectionService {
   // base methods - START
-  async get (filter) {
-    const connectionFilter = new ConnectionFilter({
-      id: filter.id,
-      conn_id: filter.conn_id
-    })
-      .getFilter()
-    const record = await Connection
-      .findOne(connectionFilter)
-      .exec()
-    return record
-  }
-
   async create (userid, data) {
     if (userid) {
       data.user = mongoose.Types.ObjectId(userid)

@@ -31,6 +31,8 @@ class WsHandler {
   onMessage (fastify, wss, conn, req, msg) {
     if (msg.op === config.wsSettings.opTypes.messageCreate) {
       return require('../message/message-controller').createWs(fastify, wss, conn, req, msg.payload)
+    } else if (msg.op === config.wsSettings.opTypes.messageUpdate) {
+      return require('../message/message-controller').updateWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPush) {
       return require('../message/message-reactions-controller').pushWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPull) {

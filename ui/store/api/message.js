@@ -124,12 +124,21 @@ export const actions = {
 
   async update ({
     commit,
-    state
+    state,
+    rootState
   }, payload) {
     const response = {}
     try {
-      response.result = await this.$axios.$put(`/api/message/update/${payload.id}`, payload.update)
-      commit('pushAll', { roomid: response.result.room._id, messages: [response.result] })
+      if (this.$wss.ws.readyState) {
+        const message = {
+          op: rootState.api.config.config.wsSettings.opTypes.messageUpdate,
+          payload
+        }
+        this.$wss.send(JSON.stringify(message))
+      } else {
+        response.result = await this.$axios.$put(`/api/message/update/${payload.id}`, payload.update)
+        commit('pushAll', { roomid: response.result.room._id, message: response.result })
+      }
     } catch (err) {
       handleError(err, commit)
       response.hasError = true
