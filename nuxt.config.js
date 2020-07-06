@@ -48,17 +48,25 @@ const nuxtConfig = {
     '@/plugins/ws.client'
   ],
   modules: [
-    '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
-    '@nuxtjs/pwa',
     'portal-vue/nuxt'
   ],
   buildModules: [
-    '@nuxtjs/moment'
+    '@nuxtjs/google-analytics',
+    '@nuxtjs/moment',
+    '@nuxtjs/pwa',
+    '@nuxtjs/vuetify'
   ],
   axios: {
     // credentials: true
+  },
+  googleAnalytics: {
+    id: process.env.GOOGLE_ANALYTICS_ID,
+    debug: {
+      enabled: true,
+      sendHitTask: true
+    }
   },
   vuetify: {
     treeShake: true,
@@ -92,6 +100,7 @@ const nuxtConfig = {
     }
   }
 }
+
 nuxtConfig.axios.baseURL = env.API_URL
 if (env.NODE_ENV === 'development') {
   nuxtConfig.modules.push('@nuxtjs/eslint-module')

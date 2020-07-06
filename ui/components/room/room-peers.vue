@@ -185,10 +185,10 @@ export default {
     isInCall (userid) {
       return this.$store.getters['api/room/calls/isUserInCall'](userid)
     },
-    async addPeers (peers) {
-      const room = peers[0].room
-      const members = peers.filter(p => p.type === 'member').map(p => p.peer)
-      const moderators = peers.filter(p => p.type === 'moderator').map(p => p.peer)
+    async addPeers (newPeers) {
+      const room = newPeers[0].room
+      const members = newPeers.filter(p => p.type === 'member').map(p => p.peer)
+      const moderators = newPeers.filter(p => p.type === 'moderator').map(p => p.peer)
       await Promise.all(
         [
           !members.length || this.$store.dispatch('api/room/members/push', { room, users: members }),

@@ -70,6 +70,7 @@ class RoomController {
     const result = await roomService.delete(room)
     const response = {
       room,
+      parents,
       children,
       result
     }

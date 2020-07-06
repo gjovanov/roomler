@@ -207,6 +207,17 @@ export default {
         !this.room.moderators.includes(p._id))
     }
   },
+  watch: {
+    room (newRoom) {
+      if (newRoom && newRoom._id) {
+        this.defaultPeer.room = newRoom._id
+        this.newPeer.room = newRoom._id
+        this.newPeers.forEach((p) => {
+          p.room = newRoom._id
+        })
+      }
+    }
+  },
   methods: {
     getUser (userid) {
       return this.$store.getters['api/auth/getUser'](userid)

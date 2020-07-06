@@ -13,13 +13,31 @@
       >
         <v-card>
           <v-card-title>
+            <span class="text-h3" style="display: inline;">Community & Team Collaboration</span>
+          </v-card-title>
+          <v-card-text>
+            <h4>powered by Video-Conferencing & Rich-Text Chat</h4>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row
+      align="start"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="9"
+      >
+        <v-card>
+          <v-card-title>
             Get a Glimpse of Roomler
           </v-card-title>
           <v-card-text
             class="justify-center"
           >
             <iframe
-              src="https://www.youtube.com/embed/lzHeRwVDfPQ"
+              :src="youtubeLink"
               width="100%"
               height="315"
               frameborder="0"
@@ -225,9 +243,22 @@ export default {
   components: {
   },
 
+  data () {
+    const config = this.$store.state.api.config.config
+    return {
+      youtubeLink: `https://www.youtube.com/embed/lzHeRwVDfPQ?origin=${config.appSettings.env.URL}`
+    }
+  },
+
   beforeMount () {
   },
   mounted () {
   }
 }
 </script>
+
+<style scoped>
+  * >>> .v-card__text, .v-card__title {
+  word-break: normal; /* maybe !important  */
+}
+</style>
