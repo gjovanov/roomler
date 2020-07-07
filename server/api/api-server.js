@@ -2,10 +2,12 @@ const consola = require('consola')
 
 class ApiServer {
   constructor () {
-    this.fastify = require('../../api/api')()
+    this.fastifyBuilder = require('../../api/api')
+    this.fastify = null
   }
 
   async up (port = process.env.PORT || 3001, host = process.env.HOST || 'localhost') {
+    this.fastify = await this.fastifyBuilder()
     try {
       const address = await this.fastify.listen(port, host)
       this.fastify.swagger()

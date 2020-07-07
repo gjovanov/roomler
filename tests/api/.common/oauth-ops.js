@@ -32,13 +32,23 @@ const setMocks = (nock, oauthContext) => {
   nock.cleanAll()
   const options = getOptions(oauthContext.type)
   const state = options.generateStateFunction()
-  const tokenQuerystring = `code=my-code&redirect_uri=${encodeURIComponent(options.callbackUri)}&grant_type=authorization_code&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
-  const tokenRefreshQuerystring = `grant_type=refresh_token&refresh_token=my-refresh-token&client_id=${options.credentials.client.id}&client_secret=${options.credentials.client.secret}`
+  const tokenQuerystring = `grant_type=authorization_code&code=my-code&redirect_uri=${encodeURIComponent(options.callbackUri)}`
+  const tokenRefreshQuerystring = `grant_type=refresh_token&refresh_token=my-refresh-token`
+
+
   const tokenMock = nock(options.credentials.auth.tokenHost)
     .persist()
-    .post(options.credentials.auth.tokenPath, tokenQuerystring)
+    .post(options.credentials.auth.tokenPath, tokenQuerystring, {
+      reqheaders: {
+        authorization: 'Basic bXktY2xpZW50LWlkOm15LXNlY3JldA=='
+      }
+    })
     .reply(200, TOKEN_RESPONSE)
-    .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring)
+    .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring, {
+      reqheaders: {
+        authorization: 'Basic bXktY2xpZW50LWlkOm15LXNlY3JldA=='
+      }
+    })
     .reply(200, TOKEN_RESPONSE_REFRESHED)
 
   if (oauthContext.type === 'facebook') {

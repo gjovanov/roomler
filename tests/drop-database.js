@@ -2,7 +2,7 @@
   try {
     const consola = require('consola')
     consola.info('Starting Fastify server for DB cleanup...')
-    const fastify = require('fastify')({
+    const fastify = await require('fastify')({
       logger: false
     })
       .register(

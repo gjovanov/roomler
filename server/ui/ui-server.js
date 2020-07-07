@@ -13,11 +13,13 @@ config.dev = nodeEnv === 'development'
 
 class UiServer {
   constructor () {
-    this.fastify = require('../../api/api')()
+    this.fastifyBuilder = require('../../api/api')
+    this.fastify = null
     this.nuxt = null
   }
 
   async up (port = process.env.PORT || 3000, host = process.env.HOST || 'localhost') {
+    this.fastify = await this.fastifyBuilder()
     this.fastify.use((req, res, next) => {
       // let fastify handle api requests
       if (req.url.startsWith('/api') ||

@@ -1,9 +1,15 @@
 const test = require('ava')
-const fastify = require('../../../api/api')()
+let fastify = null
 const pingOps = require('../.common/ping-ops')
 
-pingOps.ping(fastify, test, 'ping returns { result: pong }')
+const run = async () => {
+  fastify = await require('../../../api/api')()
 
-test.after('Shutdown API server', async (t) => {
-  await fastify.close()
-})
+  pingOps.ping(fastify, test, 'ping returns { result: pong }')
+
+  test.after('Shutdown API server', async (t) => {
+    await fastify.close()
+  })
+}
+
+run()
