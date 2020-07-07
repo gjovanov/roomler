@@ -2,12 +2,14 @@ set -ex
 # SET THE FOLLOWING VARIABLES
 USERNAME=gjovanov
 IMAGE=roomler
+BUMP=patch
 
 # ensure we're up to date
 git pull
 
 # bump version
-docker run --rm -v "$PWD":/app treeder/bump patch
+npm version $BUMP
+docker run --rm -v "$PWD":/app treeder/bump $BUMP
 version=`cat VERSION`
 echo "version: $version"
 
