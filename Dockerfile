@@ -26,7 +26,7 @@ RUN rm -rf /var/lib/apt/lists/* \
   && git clone https://github.com/gjovanov/roomler.git \
   && cd /roomler \
   && npm i pm2 -g \
-  && npm i --only=prod \
+  && npm i \
   && npm run build \
 # Cleanup
   && cd / \
