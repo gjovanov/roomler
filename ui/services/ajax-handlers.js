@@ -13,12 +13,12 @@ export const handleError = (err, commit) => {
       })
     }
   } else {
-    const prop = data && data.name ? data.name : 'unexpected'
-    const message = data && data.message ? data.message : data
+    let prop = data && data.name ? data.name : 'unexpected'
+    let message = data && data.message ? data.message : data
     if (message.includes('E11000 duplicate key error collection')) {
       const index = message.indexOf('{')
-      data.name = 'global'
-      data.message = `${message.substring(index)} is taken`
+      prop = 'global'
+      message = `${message.substring(index)} is taken`
     }
     commit('toast/push', {
       prop,

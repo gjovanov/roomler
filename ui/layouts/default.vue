@@ -35,6 +35,8 @@
     </v-app-bar>
 
     <v-main class="pt-9 ma-0">
+      <toaster />
+
       <v-container
         :fill-height="fillHeight"
         class="pa-0 ma-0"
@@ -71,7 +73,6 @@
         </v-row>
         <bottom-panel />
       </v-container>
-      <toaster />
     </v-main>
   </v-app>
 </template>

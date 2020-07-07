@@ -4,6 +4,12 @@
     absolute
     style="background-color: #363636;"
   >
+    <v-btn x-small value="terms" to="/tos/terms" class="ma-0">
+      <span>Terms</span>
+      <v-icon small>
+        fa fa-list-alt
+      </v-icon>
+    </v-btn>
     <v-btn x-small value="privacy" to="/tos/privacy" class="ma-0">
       <span>Privacy</span>
       <v-icon small>

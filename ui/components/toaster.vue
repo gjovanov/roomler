@@ -9,7 +9,7 @@
       v-model="toast.snackbar"
       :timeout="3000"
       :absolute="true"
-      :bottom="true"
+      :top="true"
       :color="toast.error ? 'error' : 'success'"
     >
       <strong v-if="toast.prop !== 'global'"> {{ toast.prop }} </strong> &nbsp; <span>{{ toast.message }}</span>
