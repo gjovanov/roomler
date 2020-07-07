@@ -8,7 +8,7 @@ BUMP=patch
 git pull
 
 # bump version
-npm version $BUMP
+# npm version $BUMP
 docker run --rm -v "$PWD":/app treeder/bump $BUMP
 version=`cat VERSION`
 echo "version: $version"
