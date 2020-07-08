@@ -64,11 +64,7 @@ const nuxtConfig = {
     // credentials: true
   },
   googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS_ID,
-    debug: process.env.NODE_ENV === 'development' ? {
-      enabled: true,
-      sendHitTask: true
-    } : undefined
+    id: process.env.GOOGLE_ANALYTICS_ID
   },
   vuetify: {
     treeShake: true,
@@ -105,6 +101,10 @@ const nuxtConfig = {
 
 nuxtConfig.axios.baseURL = env.API_URL
 if (env.NODE_ENV === 'development') {
+  nuxtConfig.googleAnalytics.debug = {
+    enabled: true,
+    sendHitTask: true
+  }
   nuxtConfig.modules.push('@nuxtjs/eslint-module')
 }
 
