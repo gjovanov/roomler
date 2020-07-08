@@ -33,35 +33,49 @@
                 hint="At least 8 characters"
                 @click:append="showPassword = !showPassword"
               />
+              <v-spacer />
+              <h4>
+                By logging in, you Agree with Roomler's
+                <nuxt-link to="/tos/terms">
+                  Terms of Service
+                </nuxt-link>
+              </h4>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              :disabled="!valid"
-              color="primary"
-              class="mb-8"
-              @click="login()"
-            >
-              Login
-            </v-btn>
-            <v-spacer />
-            <v-btn
-              right
-              x-small
-              class="mb-8"
-              to="/@/auth/forgot/password"
-            >
-              Forgot password
-            </v-btn>
-            <v-btn
-              right
-              x-small
-              class="mb-8"
-              to="/@/auth/forgot/username"
-            >
-              Forgot username
-            </v-btn>
-            <v-spacer />
+            <v-container class="ma-0 pt-0 pb-0">
+              <v-row>
+                <v-col cols="12" sm="12">
+                  <v-btn
+                    x-small
+                    class="mb-8"
+                    to="/@/auth/forgot/password"
+                  >
+                    Forgot password
+                  </v-btn>
+                  <v-btn
+                    x-small
+                    class="mb-8"
+                    to="/@/auth/forgot/username"
+                  >
+                    Forgot username
+                  </v-btn>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="12">
+                  <v-btn
+                    :disabled="!valid"
+                    color="primary"
+                    class="mb-8"
+                    @click="login()"
+                  >
+                    Login
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+
             <oauth-buttons />
           </v-card-actions>
         </v-card>

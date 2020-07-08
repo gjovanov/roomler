@@ -6,13 +6,17 @@ const {
   Builder
 } = require('nuxt')
 const consola = require('consola')
-const config = require('../../nuxt.config')
-const nodeEnv = process.env.NODE_ENV || 'development'
-const runBuilder = nodeEnv === 'development' || nodeEnv === 'test'
-config.dev = nodeEnv === 'development'
 
 class UiServer {
   constructor () {
+    if (!!process.env.NODE_ENV ||
+      ['development', 'test'].includes(process.env.NODE_ENV)) {
+      require('dotenv').config()
+    }
+    this.config = require('../../nuxt.config')
+    this.nodeEnv = process.env.NODE_ENV || 'development'
+    this.runBuilder = this.nodeEnv === 'development' || this.nodeEnv === 'test'
+    this.config.dev = this.nodeEnv === 'development'
     this.fastifyBuilder = require('../../api/api')
     this.fastify = null
     this.nuxt = null
@@ -31,14 +35,14 @@ class UiServer {
         return this.nuxt.render(req, res)
       }
     })
-    if (runBuilder) {
+    if (this.runBuilder) {
       consola.info('Bundling....')
-      config.rootDir = resolve(__dirname, '..', '..')
-      this.nuxt = new Nuxt(config)
+      this.config.rootDir = resolve(__dirname, '..', '..')
+      this.nuxt = new Nuxt(this.config)
       const builder = new Builder(this.nuxt)
       await builder.build()
     } else {
-      this.nuxt = new Nuxt(config)
+      this.nuxt = new Nuxt(this.config)
       await this.nuxt.ready()
     }
 

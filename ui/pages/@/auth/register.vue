@@ -53,18 +53,29 @@
                 hint="At least 8 characters"
                 @click:append="showPasswordConfirm = !showPasswordConfirm"
               />
+              <h4>
+                By registering, you Agree with Roomler's
+                <nuxt-link to="/tos/terms">
+                  Terms of Service
+                </nuxt-link>
+              </h4>
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              :disabled="!valid"
-              color="primary"
-              class="mb-8"
-              @click="register()"
-            >
-              Register
-            </v-btn>
-            <v-spacer />
+            <v-container class="ma-0 pt-0 pb-0">
+              <v-row>
+                <v-col cols="12" sm="12">
+                  <v-btn
+                    :disabled="!valid"
+                    color="primary"
+                    class="mb-6"
+                    @click="register()"
+                  >
+                    Register
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
             <oauth-buttons />
           </v-card-actions>
         </v-card>

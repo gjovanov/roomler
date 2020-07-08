@@ -55,12 +55,14 @@ export default {
   },
   methods: {
     async reset () {
-      await this.$store.dispatch('api/auth/reset', {
-        email: this.email,
-        type: 'password_reset'
-      })
-      handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
-      this.$router.push({ path: '/' })
+      if (this.$refs.form.validate()) {
+        await this.$store.dispatch('api/auth/reset', {
+          email: this.email,
+          type: 'password_reset'
+        })
+        handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
+        this.$router.push({ path: '/' })
+      }
     }
   }
 }

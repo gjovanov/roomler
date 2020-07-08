@@ -39,7 +39,7 @@
 
       <v-container
         :fill-height="fillHeight"
-        class="pa-0 ma-0"
+        :class="areRoomRoutes ? 'pa-0 ma-0' : 'pl-0 pr-0 pt-0 pb-16 ma-0'"
         fluid
       >
         <v-row

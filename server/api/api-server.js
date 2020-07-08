@@ -2,6 +2,10 @@ const consola = require('consola')
 
 class ApiServer {
   constructor () {
+    if (!!process.env.NODE_ENV ||
+      ['development', 'test'].includes(process.env.NODE_ENV)) {
+      require('dotenv').config()
+    }
     this.fastifyBuilder = require('../../api/api')
     this.fastify = null
   }

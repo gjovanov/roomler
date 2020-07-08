@@ -2,6 +2,8 @@ const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
 const env = config.appSettings.env
 
+console.log(`GOOGLE ANAL: ${process.env.GOOGLE_ANALYTICS_ID}`)
+
 const nuxtConfig = {
   srcDir: 'ui',
   mode: 'universal',
@@ -63,10 +65,10 @@ const nuxtConfig = {
   },
   googleAnalytics: {
     id: process.env.GOOGLE_ANALYTICS_ID,
-    debug: {
+    debug: process.env.NODE_ENV === 'development' ? {
       enabled: true,
       sendHitTask: true
-    }
+    } : undefined
   },
   vuetify: {
     treeShake: true,

@@ -5,7 +5,7 @@ const buildApi = async function () {
   }
   const multer = require('fastify-multer')
   const fastify = require('fastify')({
-    logger: true // process.env.NODE_ENV !== 'test'
+    logger: process.env.NODE_ENV !== 'test'
   })
   const jwtOptions = require('./plugins/jwt/jwt-options')
   const oauthOptions = require('./plugins/oauth/options')
