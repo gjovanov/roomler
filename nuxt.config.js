@@ -3,6 +3,7 @@ const config = require('./config')
 const env = config.appSettings.env
 
 console.log(`GOOGLE ANAL: ${process.env.GOOGLE_ANALYTICS_ID}`)
+const isProd = env.NODE_ENV === 'production'
 
 const nuxtConfig = {
   srcDir: 'ui',
@@ -64,7 +65,11 @@ const nuxtConfig = {
     // credentials: true
   },
   googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS_ID
+    id: process.env.GOOGLE_ANALYTICS_ID,
+    debug: {
+      enabled: !isProd,
+      sendHitTask: isProd
+    }
   },
   vuetify: {
     treeShake: true,
@@ -101,10 +106,6 @@ const nuxtConfig = {
 
 nuxtConfig.axios.baseURL = env.API_URL
 if (env.NODE_ENV === 'development') {
-  nuxtConfig.googleAnalytics.debug = {
-    enabled: true,
-    sendHitTask: true
-  }
   nuxtConfig.modules.push('@nuxtjs/eslint-module')
 }
 
