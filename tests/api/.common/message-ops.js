@@ -413,7 +413,6 @@ class MessageOps {
 
   readAll(fastify, test, testname, messageContext, userContext) {
     const ids = messageContext.records.map(r => r._id)
-    console.log(ids)
     test.serial(`API "/api/message/readby/pushAll" ${testname}`, async(t) => {
       await fastify
         .inject({

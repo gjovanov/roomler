@@ -32,23 +32,41 @@ const setMocks = (nock, oauthContext) => {
   nock.cleanAll()
   const options = getOptions(oauthContext.type)
   const state = options.generateStateFunction()
-  const tokenQuerystring = `grant_type=authorization_code&code=my-code&redirect_uri=${encodeURIComponent(options.callbackUri)}`
-  const tokenRefreshQuerystring = `grant_type=refresh_token&refresh_token=my-refresh-token`
+  const tokenBody = {
+    code: 'my-code',
+    redirect_uri: options.callbackUri,
+    grant_type: 'authorization_code'
+  }  
+  const tokenRefreshBody = {
+    refresh_token: 'my-refresh-token',
+    grant_type: 'refresh_token'
+  }
+  if (oauthContext.type === 'linkedin') {
+    tokenBody.client_id = options.credentials.client.id || ''
+    tokenBody.client_secret = options.credentials.client.secret || ''
+
+    tokenRefreshBody.client_id = options.credentials.client.id || ''
+    tokenRefreshBody.client_secret = options.credentials.client.secret || ''
+  }
+
+
+  const headers = oauthContext.type === 'linkedin' ? {
+    reqheaders: {
+      accept: 'application/json',
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  } : {
+    reqheaders: {
+      authorization: 'Basic bXktY2xpZW50LWlkOm15LXNlY3JldA=='
+    }
+  }
 
 
   const tokenMock = nock(options.credentials.auth.tokenHost)
     .persist()
-    .post(options.credentials.auth.tokenPath, tokenQuerystring, {
-      reqheaders: {
-        authorization: 'Basic bXktY2xpZW50LWlkOm15LXNlY3JldA=='
-      }
-    })
+    .post(options.credentials.auth.tokenPath, tokenBody, headers)
     .reply(200, TOKEN_RESPONSE)
-    .post(options.credentials.auth.tokenPath, tokenRefreshQuerystring, {
-      reqheaders: {
-        authorization: 'Basic bXktY2xpZW50LWlkOm15LXNlY3JldA=='
-      }
-    })
+    .post(options.credentials.auth.tokenPath, tokenRefreshBody, headers)
     .reply(200, TOKEN_RESPONSE_REFRESHED)
 
   if (oauthContext.type === 'facebook') {

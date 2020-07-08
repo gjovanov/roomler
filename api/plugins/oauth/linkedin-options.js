@@ -8,7 +8,11 @@ module.exports = {
       id: process.env.LINKEDIN_ID,
       secret: process.env.LINKEDIN_SECRET
     },
-    auth: oauthPlugin.LINKEDIN_CONFIGURATION
+    auth: oauthPlugin.LINKEDIN_CONFIGURATION,
+    options: {
+      bodyFormat: 'form',
+      authorizationMethod: 'body'
+    }
   },
   startRedirectPath: '/oauth/login/linkedin',
   callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/linkedin`,
