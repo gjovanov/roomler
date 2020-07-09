@@ -1,19 +1,24 @@
-FROM node:13.14.0-buster-slim
+FROM node:14.5.0-buster-slim as base
 
 LABEL maintainer="Goran Jovanov <goran.jovanov@gmail.com>"
 LABEL description="Roomler - Video Conferencing & Team Collaboration Tool"
 
-# Version
-ADD VERSION .
+ARG NODE_ENV=production
+ARG HOST=0.0.0.0
+ARG PORT=3000
+ARG WS_SCALEOUT_ENABLED=true
+ARG GOOGLE_ANALYTICS_ID=
 
 # Environment variables
-ENV NODE_ENV production
-ENV HOST 0.0.0.0
-ENV PORT 3000
-ENV WS_SCALEOUT_ENABLED true
+ENV NODE_ENV=${NODE_ENV}
+ENV HOST=${HOST}
+ENV PORT=${PORT}
+ENV WS_SCALEOUT_ENABLED=${WS_SCALEOUT_ENABLED}
+ENV GOOGLE_ANALYTICS_ID=${GOOGLE_ANALYTICS_ID}
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+FROM base as build
 # Install packages & git clone source code and build the application
 RUN rm -rf /var/lib/apt/lists/* \
   && apt-get -y update \
@@ -25,7 +30,6 @@ RUN rm -rf /var/lib/apt/lists/* \
   && cd / \
   && git clone https://github.com/gjovanov/roomler.git \
   && cd /roomler \
-  && npm i pm2 -g \
   && npm i \
   && npm run build \
 # Cleanup
@@ -34,17 +38,16 @@ RUN rm -rf /var/lib/apt/lists/* \
   && apt-get purge -y \
   build-essential \
   python \
-  git \
-  && apt-get autoremove -y \
-  && apt-get clean \
-  && apt-get autoremove --purge shared-mime-info -y \
-  && rm -rf /var/lib/apt/*
+  git
 
-# Volumes
+FROM base as release
+COPY --from=build /roomler /roomler
+
+RUN npm i -g pm2
+ADD VERSION .
 VOLUME /roomler/ui/static/uploads
 WORKDIR /roomler
-
-EXPOSE 3000
+EXPOSE ${PORT}
 
 # Define the Run command
 CMD ["npm", "run", "start"]
