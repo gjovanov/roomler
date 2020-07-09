@@ -55,6 +55,45 @@
         cols="12"
         sm="9"
       >
+        <v-btn :to="`/explore/rooms`" dark outlined block class="blue">
+          <v-icon>fa-search</v-icon> &nbsp; Explore rooms
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="9"
+      >
+        <h3 class="text-center">
+          ... or ...
+        </h3>
+      </v-col>
+    </v-row>
+    <v-row
+      align="start"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="9"
+      >
+        <v-btn :to="`/@/room/create`" dark outlined block class="red">
+          <v-icon>fa-pluse</v-icon> &nbsp; Create new room
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row
+      align="start"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="9"
+      >
         <v-card>
           <v-card-title>For best User Experience use Google Chrome (Recommended Browser):</v-card-title>
           <v-card-text class="text-center justify-center" position="center">

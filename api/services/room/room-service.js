@@ -66,6 +66,32 @@ class RoomService {
     return result
   }
 
+  async explore (page = 0, size = 10, sort = {
+    path: 'asc'
+  }) {
+    const pageInt = parseInt(page)
+    const sizeInt = parseInt(size)
+    const records = await Room
+      .aggregate([
+        { $match: { path: { $regex: /^((?!\.).)*$/ } } },
+        {
+          $facet: {
+            data: [
+              { $skip: pageInt * sizeInt },
+              { $limit: sizeInt }
+            ],
+            count: [
+              { $group: { _id: null, count: { $sum: 1 } } }
+            ]
+          }
+        }
+      ])
+    return records.map((r) => {
+      r.count = r.count[0].count
+      return r
+    })[0]
+  }
+
   async getParent (room) {
     const parts = room.path.split('.')
     if (parts && parts.length) {

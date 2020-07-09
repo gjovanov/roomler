@@ -189,6 +189,11 @@
             <v-icon>fa-plus</v-icon> Create new room
           </v-list-item-title>
         </v-list-item>
+        <v-list-item @click="goToExplore">
+          <v-list-item-title>
+            <v-icon>fa-search</v-icon> Explore public rooms
+          </v-list-item-title>
+        </v-list-item>
         <v-divider />
         <v-list-item @click="resetUsername">
           <v-list-item-title>
@@ -296,6 +301,9 @@ export default {
     },
     goToCreateRoom () {
       this.$router.push({ path: '/@/room/create' })
+    },
+    goToExplore () {
+      this.$router.push({ path: '/explore/rooms' })
     },
     async resetAccount () {
       await this.$store.dispatch('api/auth/reset', {

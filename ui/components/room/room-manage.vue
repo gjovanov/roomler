@@ -62,6 +62,7 @@
           <v-combobox
             v-model="draftRoom.tags"
             :items="draftRoom.tags"
+            :rules="tagRules"
             label="Tags"
             placeholder="Type in Tag and press Enter"
             multiple
@@ -84,6 +85,7 @@
             v-model="draftRoom.description"
             label="Description"
             name="description"
+            placeholder="Drop few words about the topic of this Room, Team or Community"
             autocomplete="on"
             dense
             outlined
@@ -258,6 +260,10 @@ export default {
       slugOptions,
 
       newTag: null,
+      tagRules: [
+        v => v.length >= 3 || 'Please select at least 3 tags',
+        v => v.length <= this.maxTagsLength || `Exceeding the max number of tags is: ${this.maxTagsLength}`
+      ],
 
       nameRules: [
         v => !!v || 'Room name is required',

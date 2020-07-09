@@ -56,6 +56,10 @@ const room = S.object()
 
 const roomList = S.array().items(room)
 
+const pagedRoomList = S.object()
+  .prop('data', roomList)
+  .prop('count', S.integer())
+
 const roomUsers = S.object()
   .prop('room', room)
   .prop('users', userList)
@@ -156,6 +160,12 @@ module.exports = {
     querystring: getAllQueryString,
     response: {
       200: roomList
+    }
+  },
+  explore: {
+    querystring: getAllQueryString,
+    response: {
+      200: pagedRoomList
     }
   },
   create: {

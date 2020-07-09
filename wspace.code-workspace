@@ -33,6 +33,7 @@
     "eslint.alwaysShowStatus": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
-    }
+    },
+    "editor.tabSize": 2
   }
 }

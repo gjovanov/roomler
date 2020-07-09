@@ -145,6 +145,20 @@ export const actions = {
     return response
   },
 
+  async explore ({
+    commit,
+    state
+  }, payload = { page: 0, size: 10 }) {
+    const response = {}
+    try {
+      response.result = await this.$axios.$get(`/api/room/explore?page=${payload.page}&size=${payload.size}`)
+    } catch (err) {
+      // handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
   async update ({
     commit,
     state

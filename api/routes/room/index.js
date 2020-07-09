@@ -60,6 +60,19 @@ module.exports = [{
   handler: roomController.getAll
 },
 {
+  method: 'GET',
+  url: '/api/room/explore',
+  schema: {
+    querystring: roomSchema.explore.querystring,
+    response: {
+      200: roomSchema.explore.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomController.explore
+},
+{
   authenticate: true,
   method: 'POST',
   url: '/api/room/create',

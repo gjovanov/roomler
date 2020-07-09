@@ -14,6 +14,11 @@ class RoomController {
     reply.send(result)
   }
 
+  async explore (request, reply) {
+    const result = await roomService.explore(request.query.page, request.query.size)
+    reply.send(result)
+  }
+
   async create (request, reply) {
     const payload = request.body
     let parentRoom = null

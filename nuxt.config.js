@@ -2,7 +2,7 @@ const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
 const env = config.appSettings.env
 
-console.log(`GOOGLE ANAL: ${process.env.GOOGLE_ANALYTICS_ID}`)
+console.log(`GOOGLE ANALYTICS: ${process.env.GOOGLE_ANALYTICS_ID}`)
 const isProd = env.NODE_ENV === 'production'
 
 const nuxtConfig = {
