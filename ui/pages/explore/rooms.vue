@@ -82,7 +82,6 @@ export default {
   async asyncData ({ store, query }) {
     const page = query.page || 1
     const size = query.size || 6
-    console.log(`Async data: page=${page} and size=${size}`)
     const response = await store.dispatch('api/room/explore', { page: page - 1, size })
     return { rooms: response.result.data, count: Math.ceil(parseFloat(response.result.count) / size) }
   },
@@ -101,8 +100,6 @@ export default {
   },
   watch: {
     page (newVal) {
-      console.log(this.$route.query)
-      console.log(`New page: ${newVal}`)
       this.$router.push({ path: this.$route.path, query: { page: newVal } })
     },
     size (newVal) {
@@ -120,7 +117,12 @@ export default {
     async join (room) {
       if (this.user && this.user._id) {
         await this.$store.dispatch('api/room/members/push', { room: room._id, user: this.user._id })
-        await this.$store.dispatch('api/message/getAll', { room })
+        await Promise.all([
+          this.$store.dispatch('api/room/getAll'),
+          this.$store.dispatch('api/auth/getPeers'),
+          this.$store.dispatch('api/message/getAll', { room })
+        ])
+        this.$store.commit('api/room/open', room, { root: true })
         this.$router.push({ path: `/${room.path}` })
       } else {
         this.$router.push({ path: '/@/auth/login' })

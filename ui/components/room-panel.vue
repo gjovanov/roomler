@@ -341,7 +341,11 @@ export default {
   methods: {
     async join () {
       await this.$store.dispatch('api/room/members/push', { room: this.room._id, user: this.user._id })
-      await this.$store.dispatch('api/message/getAll', { room: this.room })
+      await Promise.all([
+        this.$store.dispatch('api/auth/getPeers'),
+        this.$store.dispatch('api/message/getAll', { room: this.room })
+      ])
+      this.$store.commit('api/room/open', this.room, { root: true })
     }
   }
 }

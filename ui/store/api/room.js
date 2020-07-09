@@ -208,7 +208,7 @@ export const getters = {
     return state.rooms.map(r => r.path)
   },
   selectedRoom: state => (room) => {
-    return room ? state.rooms.find(r => r && room && ((r.name && r.name.toLowerCase() === room.toLowerCase()) || r._id === room)) : null
+    return room ? state.rooms.find(r => r && room && ((r.name && r.name.toLowerCase() === room.toLowerCase()) || (r.path && r.path.toLowerCase() === room.toLowerCase()) || r._id === room)) : null
   },
   getUserRole: state => (roomid, userid) => {
     const room = state.rooms.find(r => r._id === roomid)
