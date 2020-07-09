@@ -384,6 +384,26 @@ $ npm start
 ```
 
 ## Start using docker
+### Docker Build ARGS (google analytics needed during docker build)
+create a `.arg` file in the root folder
+```
+GOOGLE_ANALYTICS_ID=YOUR_GOOGLE_ANALYTICS_ID
+```
+
+### Docker build
+`docker build -t gjovanov/roomler:latest $(for i in `cat .arg`; do out+="--build-arg $i " ; done; echo $out;out="") .`
+
+this will inject all ARGs stored in `.arg`. Needed if you want to use `google-analytics`.
+
+Another way to build is via the bash script:
+`./build.sh`
+
+### Docker release
+`./release.sh`
+
+
+### Docker run
+
 ``` bash
 docker run -d --name roomler \
     --hostname roomler \
@@ -406,6 +426,8 @@ docker run -d --name roomler \
     -e TURN_USERNAME=YOUR_TURN_USERNAME \
     -e TURN_PASSWORD=YOUR_TURN_PASSWORD \
     -e GIPHY_API_KEY=YOUR_GIPHY_KEY \
+    -e GOOGLE_ANALYTICS_ID=YOUR_GOOGLE_ANALYTICS_ID \
+    -e NUXT_TELEMETRY_DISABLED=1 \
     gjovanov/roomler
 
 # attach roomler container to frontend & backend networks
