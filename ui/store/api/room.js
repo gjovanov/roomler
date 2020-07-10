@@ -148,10 +148,10 @@ export const actions = {
   async explore ({
     commit,
     state
-  }, payload = { page: 0, size: 10 }) {
+  }, payload = { search: '', page: 0, size: 10 }) {
     const response = {}
     try {
-      response.result = await this.$axios.$get(`/api/room/explore?page=${payload.page}&size=${payload.size}`)
+      response.result = await this.$axios.$get(`/api/room/explore?search=${payload.search}&page=${payload.page}&size=${payload.size}`)
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true

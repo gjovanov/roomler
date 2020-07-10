@@ -2,7 +2,16 @@
   <v-container fluid>
     <v-row>
       <v-col cols="12" sm="12">
-        <h3>Explore public rooms</h3>
+        <v-text-field
+          v-model="search"
+          label="Search public room..."
+          name="search-room"
+          autocomplete="on"
+          class="pt-0 mt-0"
+          full-width
+          required
+          clearable
+        />
       </v-col>
     </v-row>
     <v-row>
@@ -21,6 +30,8 @@
         >
           <v-card-title>{{ room.name }}</v-card-title>
           <v-card-text>
+            <em>{{ room.description|| 'Description N/A' }}</em>
+
             <v-chip-group
               v-model="room.selection"
               mandatory
@@ -31,35 +42,32 @@
               >
                 <v-chip
                   :key="`tag-${tag}-${index2}`"
+                  :to="`/explore/rooms?search=${tag}`"
+                  outlined
+                  small
                   color="primary"
                 >
                   {{ tag }}
                 </v-chip>
               </template>
             </v-chip-group>
-            <h4>{{ room.description|| 'Description N/A' }}</h4>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="d-flex flex-row justify-space-between">
+            <v-chip
+              outlined
+              class="grey"
+            >
+              <v-icon>fa-users</v-icon> &nbsp; {{ room.members.length + room.moderators.length + 1 }}
+            </v-chip>
             <v-btn
               v-if="!isRoomPeer(room)"
-              absolute
-              bottom
-              left
+              tile
               outlined
+              small
               class="red"
               @click="join(room)"
             >
               <v-icon>fa-sign-in-alt</v-icon> &nbsp; Join
-            </v-btn>
-            <v-btn
-              absolute
-              bottom
-              right
-              outlined
-              disabled
-              class="grey"
-            >
-              <v-icon>fa-users</v-icon> &nbsp; {{ room.members.length + room.moderators.length + 1 }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -80,14 +88,19 @@
 <script>
 export default {
   async asyncData ({ store, query }) {
+    const search = query.search || ''
     const page = query.page || 1
     const size = query.size || 6
-    const response = await store.dispatch('api/room/explore', { page: page - 1, size })
+    const response = await store.dispatch('api/room/explore', { search, page: page - 1, size })
     return { rooms: response.result.data, count: Math.ceil(parseFloat(response.result.count) / size) }
   },
   data () {
+    const page = this.$route.query.page !== undefined ? parseInt(this.$route.query.page) : 1
     return {
-      page: this.$route.query.page || 1,
+      search: this.$route.query.search || '',
+      timeDuration: 200,
+      timeout: null,
+      page,
       size: 6,
       count: 0,
       rooms: []
@@ -99,31 +112,43 @@ export default {
     }
   },
   watch: {
+    search (newVal) {
+      if (this.timeout) {
+        clearTimeout(this.timeout)
+      }
+      this.timeout = setTimeout(() => {
+        this.$router.push({ path: this.$route.path, query: { search: newVal, page: 1 } })
+      }, this.timeDuration)
+    },
     page (newVal) {
-      this.$router.push({ path: this.$route.path, query: { page: newVal } })
+      this.$router.push({ path: this.$route.path, query: { search: this.search, page: newVal } })
     },
     size (newVal) {
       this.$route.query.size = newVal
     }
   },
-  watchQuery: ['page', 'size'],
+  watchQuery: ['search', 'page', 'size'],
   methods: {
     isRoomPeer (room) {
       return this.$store.getters['api/room/isRoomPeer'](room)
     },
     getRoomTags (room) {
-      return room.tags.length ? room.tags : ['One', 'Two', 'Three']
+      return room.tags.length ? room.tags : []
     },
     async join (room) {
       if (this.user && this.user._id) {
-        await this.$store.dispatch('api/room/members/push', { room: room._id, user: this.user._id })
-        await Promise.all([
-          this.$store.dispatch('api/room/getAll'),
-          this.$store.dispatch('api/auth/getPeers'),
-          this.$store.dispatch('api/message/getAll', { room })
-        ])
-        this.$store.commit('api/room/open', room, { root: true })
-        this.$router.push({ path: `/${room.path}` })
+        try {
+          await this.$store.dispatch('api/room/members/push', { room: room._id, user: this.user._id })
+          await Promise.all([
+            this.$store.dispatch('api/room/getAll'),
+            this.$store.dispatch('api/auth/getPeers'),
+            this.$store.dispatch('api/message/getAll', { room })
+          ])
+          this.$store.commit('api/room/open', room, { root: true })
+          this.$router.push({ path: `/${room.path}` })
+        } catch (e) {
+          // will be handled by the individal AJAX, so we want to only stay on the same page (not navigate away)
+        }
       } else {
         this.$router.push({ path: '/@/auth/login' })
       }

@@ -103,4 +103,6 @@ const schema = new Schema({
 })
 schema.index({ createdAt: 1 })
 schema.index({ updatedAt: 1 })
+// db.rooms.createIndex({ name: 'text', description: 'text', tags: 'text' })
+schema.index({ name: 'text', description: 'text', tags: 'text' })
 module.exports = mongoose.model('rooms', schema)

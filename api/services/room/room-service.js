@@ -2,6 +2,7 @@ const slugify = require('slugify')
 const config = require('../../../config')
 const Room = require('../../models/room')
 const RoomFilter = require('./room-filter')
+const RoomExploreFilter = require('./room-explore-filter')
 const RoomRenameFilter = require('./room-rename-filter')
 const RoomChildrenFilter = require('./room-children-filter')
 const RoomDeleteFilter = require('./room-delete-filter')
@@ -66,28 +67,14 @@ class RoomService {
     return result
   }
 
-  async explore (page = 0, size = 10, sort = {
-    path: 'asc'
-  }) {
-    const pageInt = parseInt(page)
-    const sizeInt = parseInt(size)
+  async explore (search = null, page = 0, size = 10) {
+    const roomExploreFilter = new RoomExploreFilter(search, page, size)
+      .getFilter()
     const records = await Room
-      .aggregate([
-        { $match: { path: { $regex: /^((?!\.).)*$/ } } },
-        {
-          $facet: {
-            data: [
-              { $skip: pageInt * sizeInt },
-              { $limit: sizeInt }
-            ],
-            count: [
-              { $group: { _id: null, count: { $sum: 1 } } }
-            ]
-          }
-        }
-      ])
+      .aggregate(roomExploreFilter)
+      .collation({ locale: 'en', strength: 2 })
     return records.map((r) => {
-      r.count = r.count[0].count
+      r.count = r.count && r.count.length ? r.count[0].count : 0
       return r
     })[0]
   }

@@ -15,7 +15,7 @@ class RoomController {
   }
 
   async explore (request, reply) {
-    const result = await roomService.explore(request.query.page, request.query.size)
+    const result = await roomService.explore(request.query.search, request.query.page, request.query.size)
     reply.send(result)
   }
 

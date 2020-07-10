@@ -7,6 +7,7 @@ const getQueryString = S.object()
 const getAllQueryString = S.object()
   .prop('page', S.integer())
   .prop('size', S.integer())
+  .prop('search', S.string())
 
 const deleteResult = S.object()
   .prop('n', S.number().required())
