@@ -116,7 +116,7 @@ export default {
       return query
     },
     fillHeight () {
-      return !this.areRoomRoutes && this.$route.name !== 'index'
+      return !this.areRoomRoutes && ['index'].includes(this.$route.name) && !['explore-rooms'].includes(this.$route.name)
     },
     isAuthenticated () {
       return this.$store.getters['api/auth/isAuthenticated']

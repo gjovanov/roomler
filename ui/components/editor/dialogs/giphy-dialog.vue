@@ -63,7 +63,12 @@
         </v-tabs-items>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="grey" outlined @click="closeGiphyDialog()">
+        <v-btn
+          color="grey"
+          tile
+          outlined
+          @click="closeGiphyDialog()"
+        >
           Cancel
         </v-btn>
         <v-spacer />

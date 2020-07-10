@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid style="height: 100%">
     <v-row>
       <v-col cols="12" sm="12">
         <v-text-field
@@ -24,6 +24,7 @@
         lg="4"
       >
         <v-card
+          color="grey darken-3"
           class="ma-1"
           elevation="12"
           height="200px"
@@ -55,9 +56,12 @@
           <v-card-actions class="d-flex flex-row justify-space-between">
             <v-chip
               outlined
+              small
               class="grey"
             >
-              <v-icon>fa-users</v-icon> &nbsp; {{ room.members.length + room.moderators.length + 1 }}
+              <v-icon small>
+                fa-users
+              </v-icon> &nbsp; {{ room.members.length + room.moderators.length + 1 }}
             </v-chip>
             <v-btn
               v-if="!isRoomPeer(room)"
