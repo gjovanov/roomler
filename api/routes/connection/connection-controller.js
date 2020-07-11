@@ -44,6 +44,20 @@ class ConnectionController {
     }
   }
 
+  async updateConnectionWs (fastify, wss, conn, req, update) {
+    const id = conn.connection_id
+    if (id) {
+      try {
+        performanceService.performance.mark('ConnectionUpdate start')
+        await connectionService.update(id, update)
+        performanceService.performance.mark('ConnectionUpdate end')
+        performanceService.performance.measure('ConnectionUpdate', 'ConnectionUpdate start', 'ConnectionUpdate end')
+      } catch (err) {
+        fastify.log.error(err)
+      }
+    }
+  }
+
   async pullConnectionWs (fastify, wss, conn, req) {
     const id = conn.connection_id
     if (id) {

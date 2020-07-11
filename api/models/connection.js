@@ -22,7 +22,6 @@ const schema = new Schema({
   },
   ip_address: {
     type: String,
-    required: true,
     maxlength: 50,
     index: true
   },
@@ -65,6 +64,11 @@ const schema = new Schema({
       type: String,
       maxlength: 50
     }
+  },
+  device_id: {
+    type: String,
+    maxlength: 40,
+    index: true
   },
   os: {
     name: {

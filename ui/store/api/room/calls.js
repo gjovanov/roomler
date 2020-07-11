@@ -2,7 +2,6 @@ import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
-
 import { handleCallPush } from './handlers/call-push'
 import { handleCallPull } from './handlers/call-pull'
 
@@ -59,6 +58,15 @@ export const actions = {
     const response = {}
     try {
       if (this.$wss.ws.readyState) {
+        payload.device_id = this.$wss.deviceId
+        payload.os = {
+          name: this.$wss.os.name,
+          version: this.$wss.os.version
+        }
+        payload.browser = {
+          name: this.$wss.browser.name,
+          version: this.$wss.browser.version
+        }
         const message = {
           op: rootState.api.config.config.wsSettings.opTypes.roomCallOpen,
           payload
