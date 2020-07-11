@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 
-class Detector {
+class DeviceDetector {
   constructor () {
     this.isMobileDevice = !!(/Android|webOS|iPhone|iPad|iPod|BB10|BlackBerry|IEMobile|Opera Mini|Mobile|mobile/i.test(navigator.userAgent || ''))
     this.isEdge = navigator.userAgent.includes('Edge') && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)
@@ -117,7 +117,7 @@ class Detector {
     const nVer = navigator.appVersion
     const nAgt = navigator.userAgent
 
-    let os = unknown
+    let name = unknown
     const clientStrings = [{
       s: 'Chrome OS',
       r: /CrOS/
@@ -203,44 +203,44 @@ class Detector {
     for (let i = 0; i < clientStrings.length; i++) {
       const cs = clientStrings[i]
       if (cs.r.test(nAgt)) {
-        os = cs.s
+        name = cs.s
         break
       }
     }
 
-    let osVersion = unknown
+    let version = unknown
 
-    if (/Windows/.test(os)) {
-      if (/Windows (.*)/.test(os)) {
-        osVersion = /Windows (.*)/.exec(os)[1]
+    if (/Windows/.test(name)) {
+      if (/Windows (.*)/.test(name)) {
+        version = /Windows (.*)/.exec(name)[1]
       }
-      os = 'Windows'
+      name = 'Windows'
     }
 
-    switch (os) {
+    switch (name) {
       case 'Mac OS X':
         if (/Mac OS X (10[\.\_\d]+)/.test(nAgt)) {
-          osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1]
+          version = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1]
         }
         break
       case 'Android':
         if (/Android ([\.\_\d]+)/.test(nAgt)) {
-          osVersion = /Android ([\.\_\d]+)/.exec(nAgt)[1]
+          version = /Android ([\.\_\d]+)/.exec(nAgt)[1]
         }
         break
       case 'iOS':
         if (/OS (\d+)_(\d+)_?(\d+)?/.test(nAgt)) {
-          osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer)
-          osVersion = osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0)
+          version = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer)
+          version = version[1] + '.' + version[2] + '.' + (version[3] | 0)
         }
         break
     }
 
     return {
-      osName: os,
-      osVersion
+      name,
+      version
     }
   }
 }
 
-export const detector = new Detector()
+export default DeviceDetector

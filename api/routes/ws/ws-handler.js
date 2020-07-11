@@ -37,6 +37,8 @@ class WsHandler {
       return require('../message/message-reactions-controller').pushWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.messageReactionPull) {
       return require('../message/message-reactions-controller').pullWs(fastify, wss, conn, req, msg.payload)
+    } else if (msg.op === config.wsSettings.opTypes.connectionUpdate) {
+      return require('../connection/connection-controller').updateConnectionWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.roomCallOpen) {
       return require('../room/room-calls-controller').pushCallWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.roomCallClose) {

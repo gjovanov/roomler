@@ -82,6 +82,11 @@ const schema = new Schema({
       maxlength: 20
     }
   },
+  device_id: {
+    type: String,
+    maxlength: 40,
+    index: true
+  },
   browser: {
     name: {
       type: String,
