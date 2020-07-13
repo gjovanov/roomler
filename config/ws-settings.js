@@ -31,7 +31,9 @@ module.exports = {
     connectionOpen: 'CONNECTION_OPEN',
     connectionClose: 'CONNECTION_CLOSE',
     connectionUpdate: 'CONNECTION_UPDATE',
-    connectionEventPush: 'CONNECTION_EVENT_PUSH',
+
+    visitOpen: 'VISIT_OPEN',
+    visitClose: 'VISIT_CLOSE',
 
     roomCreate: 'ROOM_CREATE',
     roomUpdate: 'ROOM_UPDATE',

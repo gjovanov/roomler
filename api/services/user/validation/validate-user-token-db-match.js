@@ -1,4 +1,4 @@
-const ValidationError = require('../../../errors/validation-error.js')
+const UnauthorizedError = require('../../../errors/unauthorized-error.js')
 module.exports = (tokenUser, dbUser) => {
   const errors = []
   if (!dbUser ||
@@ -14,6 +14,6 @@ module.exports = (tokenUser, dbUser) => {
   }
 
   if (errors.length) {
-    throw new ValidationError(errors)
+    throw new UnauthorizedError(errors)
   }
 }

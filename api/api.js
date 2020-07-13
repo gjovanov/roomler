@@ -50,15 +50,23 @@ const buildApi = async function () {
       const userService = require('./services/user/user-service')
       await userService.verify(request.user.user)
     })
+    .decorate('admin', async (request, reply) => {
+      const userService = require('./services/user/user-service')
+      await userService.isAdmin(request.user.user)
+    })
     .after(() => {
       // register routes
       const routes = require('./routes')
       routes.forEach((route) => {
+        route.preValidation = []
         if (route.authenticate) {
           route.preValidation = [
             fastify.authenticate,
             fastify.verifyToken
           ]
+        }
+        if (route.admin) {
+          route.preValidation.push(fastify.admin)
         }
         fastify.route(route)
       })

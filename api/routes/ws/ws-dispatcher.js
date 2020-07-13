@@ -2,6 +2,7 @@
 const os = require('os')
 const process = require('process')
 const fastJson = require('fast-json-stringify')
+const userService = require('../../services/user/user-service')
 const messageService = require('../../services/message/message-service')
 const roomService = require('../../services/room/room-service')
 const channel = require('../../../config').wsSettings.scaleout.channel
@@ -67,6 +68,11 @@ class WsDispatcher {
       const rooms = messages.map(m => m.room)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../room/room-schema').wsRoomCall.valueOf())
+    }
+    if (op.startsWith('VISIT_')) {
+      const users = await userService.getAdmins()
+      recepients = users.map(u => u._id)
+      stringify = fastJson(require('../visit/visit-schema').wsVisit.valueOf())
     }
     // TODO: Add other ROUTES (RECEPIENTS)
     return {

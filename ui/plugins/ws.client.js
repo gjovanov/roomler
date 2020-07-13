@@ -14,5 +14,6 @@ export default ({
   app.store.dispatch('api/invite/subscribe', app.router)
   app.store.dispatch('api/message/subscribe', app.router)
   app.store.dispatch('api/room/calls/subscribe', app.router)
+  app.store.dispatch('api/visit/subscribe', app.router)
   app.store.dispatch('connectWebSocket', app.router)
 }

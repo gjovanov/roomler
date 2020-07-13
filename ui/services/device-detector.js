@@ -3,7 +3,7 @@
 class DeviceDetector {
   constructor () {
     this.isMobileDevice = !!(/Android|webOS|iPhone|iPad|iPod|BB10|BlackBerry|IEMobile|Opera Mini|Mobile|mobile/i.test(navigator.userAgent || ''))
-    this.isEdge = navigator.userAgent.includes('Edge') && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)
+    this.isEdge = navigator.userAgent.includes('Edg')// && (!!navigator.msSaveOrOpenBlob || !!navigator.msSaveBlob)
     this.isOpera = !!window.opera || navigator.userAgent.includes(' OPR/')
     this.isFirefox = navigator.userAgent.toLowerCase().includes('firefox') && ('netscape' in window) && / rv:/.test(navigator.userAgent)
     this.isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
@@ -87,7 +87,8 @@ class DeviceDetector {
 
     if (this.isEdge) {
       browserName = 'Edge'
-      fullVersion = navigator.userAgent.split('Edge/')[1]
+      const delimiter = navigator.userAgent.includes('Edge/') ? 'Edge/' : 'Edg/'
+      fullVersion = navigator.userAgent.split(delimiter)[1]
       // fullVersion = parseInt(navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)[2], 10).toString();
     }
 

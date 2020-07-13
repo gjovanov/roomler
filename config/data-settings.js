@@ -1,11 +1,17 @@
 module.exports = {
+  connection: {
+    statuses: ['open', 'closed', 'stale'],
+    defaults: {
+      status: 'open'
+    }
+  },
   call: {
     statuses: ['open', 'closed', 'stale'],
     defaults: {
       status: 'open'
     }
   },
-  connection: {
+  visit: {
     statuses: ['open', 'closed', 'stale'],
     defaults: {
       status: 'open'

@@ -1,12 +1,11 @@
 const UnauthorizedError = require('../../../errors/unauthorized-error.js')
 module.exports = (tokenUser) => {
   const errors = []
-  if (
-    !tokenUser ||
-    !tokenUser._id) {
+  if (!tokenUser ||
+    !tokenUser.is_admin) {
     errors.push({
-      prop: 'token',
-      message: 'Invalid authentication token.'
+      prop: 'user',
+      message: 'Unauthorized operation.'
     })
   }
 

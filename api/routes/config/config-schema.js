@@ -94,7 +94,11 @@ const wsSettings = S.object()
     .prop('messageReactionPull', S.string())
 
     .prop('connectionOpen', S.string())
+    .prop('connectionUpdate', S.string())
     .prop('connectionClose', S.string())
+
+    .prop('visitOpen', S.string())
+    .prop('visitClose', S.string())
 
     .prop('roomCreate', S.string())
     .prop('roomUpdate', S.string())

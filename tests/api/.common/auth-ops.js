@@ -496,7 +496,7 @@ class AuthOps {
           }
         })
         .then((response) => {
-          t.is(response.statusCode, 409)
+          t.is(response.statusCode, 401)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
           t.true(Array.isArray(result.errors))

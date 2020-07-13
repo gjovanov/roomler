@@ -43,6 +43,8 @@ class WsHandler {
       return require('../room/room-calls-controller').pushCallWs(fastify, wss, conn, req, msg.payload)
     } else if (msg.op === config.wsSettings.opTypes.roomCallClose) {
       return require('../room/room-calls-controller').pullCallWs(fastify, wss, conn, req, msg.payload)
+    } else if (msg.op === config.wsSettings.opTypes.visitOpen) {
+      return require('../visit/visit-controller').openVisitWs(fastify, wss, conn, req, msg.payload)
     }
     return null
   }

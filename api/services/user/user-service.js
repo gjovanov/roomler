@@ -1,9 +1,11 @@
+const config = require('../../../config')
 const User = require('../../models/user')
 const Room = require('../../models/room')
 const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
 const validateUserExists = require('./validation/validate-user-exists')
 const validateUserToken = require('./validation/validate-user-token')
+const validateUserAdmin = require('./validation/validate-user-admin')
 const validateUserTokenDbMatch = require('./validation/validate-user-token-db-match')
 const validatePasswordIsConfirmed = require('./validation/validate-password-is-confirmed')
 const validatePasswordsMatch = require('./validation/validate-passwords-match')
@@ -36,6 +38,11 @@ class UserService {
     const records = await User
       .find(userFilter)
       .exec()
+    return records
+  }
+
+  async getAdmins () {
+    const records = await User.find({ email: { $in: config.authSettings.superAdminEmails } })
     return records
   }
 
@@ -198,6 +205,11 @@ class UserService {
       username: user.username
     })
     validateUserTokenDbMatch(user, userFromDb)
+    return user
+  }
+
+  isAdmin (user) {
+    validateUserAdmin(user)
     return user
   }
 

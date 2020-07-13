@@ -99,6 +99,6 @@ const schema = new Schema({
   timestamps: true
 })
 
-schema.index({ createdAt: 1 })
-schema.index({ updatedAt: 1 })
+schema.index({ createdAt: 1 }) // connection start
+schema.index({ updatedAt: 1 }) // connection end (if status = closed)
 module.exports = mongoose.model('connections', schema)
