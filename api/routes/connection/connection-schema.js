@@ -20,7 +20,6 @@ const connection = S.object()
   .prop('status', S.string().required())
   .prop('ip_address', S.string().required())
   .prop('user', S.string())
-  .prop('process_name', S.string().required())
   .prop('geoip', geoip)
 
 const connectionList = S.array().items(connection)

@@ -17,23 +17,16 @@ const schema = new Schema({
     enum: statuses,
     default: defaults.status,
     required: 'StatusIsRequired',
-    maxlength: 50,
-    index: true
+    maxlength: 50
   },
   ip_address: {
     type: String,
-    maxlength: 50,
-    index: true
+    maxlength: 50
   },
   user: {
     type: ObjectId,
     ref: 'users',
     index: true
-  },
-  process_name: {
-    type: String,
-    required: 'ProcessNameIsRequired',
-    maxlength: 50
   },
   geoip: {
     continent: {
@@ -50,7 +43,8 @@ const schema = new Schema({
       code: {
         type: String,
         maxlength: 3,
-        index: true
+        index: true,
+        sparse: true
       },
       name: {
         type: String,
@@ -68,13 +62,15 @@ const schema = new Schema({
   device_id: {
     type: String,
     maxlength: 40,
-    index: true
+    index: true,
+    sparse: true
   },
   os: {
     name: {
       type: String,
       maxlength: 20,
-      index: true
+      index: true,
+      sparse: true
     },
     version: {
       type: String,
@@ -85,7 +81,8 @@ const schema = new Schema({
     name: {
       type: String,
       maxlength: 20,
-      index: true
+      index: true,
+      sparse: true
     },
     version: {
       type: String,
@@ -101,4 +98,5 @@ const schema = new Schema({
 
 schema.index({ createdAt: 1 }) // connection start
 schema.index({ updatedAt: 1 }) // connection end (if status = closed)
+schema.index({ status: 1 }, { partialFilterExpression: { status: 'open' } })
 module.exports = mongoose.model('connections', schema)

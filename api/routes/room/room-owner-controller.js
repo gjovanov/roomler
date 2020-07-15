@@ -10,7 +10,7 @@ class RoomOwnerController {
     const result = await roomService.transfer(request.user.user._id, id, payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }])
     reply.send({ room: result, users })
   }
 }

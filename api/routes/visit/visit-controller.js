@@ -29,7 +29,7 @@ class VisitController {
         performanceService.performance.mark('VisitOpen end')
         performanceService.performance.measure('VisitOpen', 'VisitOpen start', 'VisitOpen end')
 
-        wsDispatcher.dispatch(config.wsSettings.opTypes.visitOpen, [opened], true)
+        wsDispatcher.publish(config.wsSettings.opTypes.visitOpen, [opened], true)
       } catch (err) {
         fastify.log.error(err)
       }

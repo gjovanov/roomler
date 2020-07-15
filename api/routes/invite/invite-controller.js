@@ -29,7 +29,7 @@ class InviteController {
       $set: payload
     }
     const result = await inviteService.update(request.user.user._id, id, update)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomInviteUpdate, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomInviteUpdate, [result])
     reply.send(result)
   }
 
@@ -40,13 +40,13 @@ class InviteController {
 
   async accept (request, reply) {
     const result = await inviteService.accept(request.user.user._id, request.params.id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomInviteAccept, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomInviteAccept, [result])
     reply.send(result)
   }
 
   async reject (request, reply) {
     const result = await inviteService.reject(request.user.user._id, request.params.id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomInviteReject, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomInviteReject, [result])
     reply.send(result)
   }
 }

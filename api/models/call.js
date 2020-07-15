@@ -27,18 +27,11 @@ const schema = new Schema({
     enum: statuses,
     default: defaults.status,
     required: 'StatusIsRequired',
-    maxlength: 50,
-    index: true
+    maxlength: 50
   },
   ip_address: {
     type: String,
     required: true,
-    maxlength: 50,
-    index: true
-  },
-  process_name: {
-    type: String,
-    required: 'ProcessNameIsRequired',
     maxlength: 50
   },
   geoip: {
@@ -56,7 +49,8 @@ const schema = new Schema({
       code: {
         type: String,
         maxlength: 3,
-        index: true
+        index: true,
+        sparse: true
       },
       name: {
         type: String,
@@ -71,27 +65,30 @@ const schema = new Schema({
       maxlength: 50
     }
   },
+  device_id: {
+    type: String,
+    maxlength: 40,
+    index: true,
+    sparse: true
+  },
   os: {
     name: {
       type: String,
       maxlength: 20,
-      index: true
+      index: true,
+      sparse: true
     },
     version: {
       type: String,
       maxlength: 20
     }
   },
-  device_id: {
-    type: String,
-    maxlength: 40,
-    index: true
-  },
   browser: {
     name: {
       type: String,
       maxlength: 20,
-      index: true
+      index: true,
+      sparse: true
     },
     version: {
       type: String,
@@ -107,4 +104,5 @@ const schema = new Schema({
 
 schema.index({ createdAt: 1 })
 schema.index({ updatedAt: 1 })
+schema.index({ status: 1 }, { partialFilterExpression: { status: 'open' } })
 module.exports = mongoose.model('calls', schema)

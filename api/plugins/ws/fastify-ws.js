@@ -77,11 +77,11 @@ function fastifyWs (fastify, opts, next) {
           .then(() => {
             subscriber.on('message', (channel, payload) => {
               const data = JSON.parse(payload)
-              if (channel === opts.scaleout.channel && opts.dispatcher && data.process !== processName) {
-                fastify.log.info('SUBSCRIPTION MESSAGE')
+              if (channel === opts.scaleout.channel && opts.dispatcher) { // && data.process !== processName
+                fastify.log.info(`SUBSCRIPTION MESSAGE: ${data.op}`)
                 fastify.log.info(data.process)
                 fastify.log.info(processName)
-                opts.dispatcher.dispatch(data.op, data.messages, false)
+                opts.dispatcher.dispatch(data.op, data.messages)
               }
             })
           })
@@ -107,9 +107,9 @@ function fastifyWs (fastify, opts, next) {
         }))
         opts.handler.onConnection(fastify, wss, conn, req)
 
-        // on WS message:
-        // 1. handle message e.g. store to the DB
-        // 2. dispatch to proper recepients
+        // on WS message (command):
+        // 1. handle command message e.g. store to the DB
+        // 2. dispatch events to proper recepients
         // 3. scaleout to other WS servers
         conn.on('message', async (msg) => {
           const message = JSON.parse(msg)

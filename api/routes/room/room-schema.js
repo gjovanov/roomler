@@ -111,7 +111,6 @@ const call = S.object()
   .prop('room', S.string())
   .prop('status', S.string())
   .prop('id_address', S.string())
-  .prop('process_name', S.string())
   .prop('geoip', geoip)
 
 const roomCall = S.object()

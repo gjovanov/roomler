@@ -30,7 +30,7 @@ class RoomController {
     roomService.slugify(payload, parentRoom)
     const result = await roomService.create(request.user.user._id, payload)
     const parents = result.is_open ? await roomService.getParents(result) : []
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomCreate, [result, ...parents], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomCreate, [result, ...parents])
     reply.send(result)
   }
 
@@ -57,7 +57,7 @@ class RoomController {
     }
     const response = { room: result, children }
     const parents = result.is_open ? await roomService.getParents(result) : []
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomUpdate, [response, ...parents], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomUpdate, [response, ...parents])
     reply.send(response)
   }
 
@@ -79,7 +79,7 @@ class RoomController {
       children,
       result
     }
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomDelete, [response], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomDelete, [response])
     reply.send(response)
   }
 }

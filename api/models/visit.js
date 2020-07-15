@@ -26,8 +26,7 @@ const schema = new Schema({
     enum: statuses,
     default: defaults.status,
     required: 'StatusIsRequired',
-    maxlength: 50,
-    index: true
+    maxlength: 50
   }
 }, {
   timestamps: true
@@ -35,4 +34,5 @@ const schema = new Schema({
 
 schema.index({ createdAt: 1 }) // visit start
 schema.index({ updatedAt: 1 }) // visit end
+schema.index({ status: 1 }, { partialFilterExpression: { status: 'open' } })
 module.exports = mongoose.model('visits', schema)

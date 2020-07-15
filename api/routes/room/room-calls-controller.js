@@ -1,12 +1,9 @@
-const os = require('os')
-const process = require('process')
 const config = require('../../../config')
 const performanceService = require('../../services/performance/performance-service')
 const roomService = require('../../services/room/room-service')
 const callService = require('../../services/call/call-service')
 const geoipService = require('../../services/geoip/geoip-service')
 const wsDispatcher = require('../ws/ws-dispatcher')
-const processName = `${os.hostname()}_${process.pid}`
 
 class RoomCallsController {
   async getAll (request, reply) {
@@ -23,7 +20,6 @@ class RoomCallsController {
     try {
       const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
       const geoip = await geoipService.get(ipAddress)
-      payload.process_name = processName
       payload.ip_address = ipAddress
       payload.geoip = geoip
 
@@ -43,7 +39,7 @@ class RoomCallsController {
       }
       if (conn.user) {
         const op = config.wsSettings.opTypes.roomCallOpen
-        wsDispatcher.dispatch(op, [result], true)
+        wsDispatcher.publish(op, [result])
       }
 
       return result
@@ -61,7 +57,7 @@ class RoomCallsController {
       call
     }
     const op = config.wsSettings.opTypes.roomCallClose
-    wsDispatcher.dispatch(op, [result], true)
+    wsDispatcher.publish(op, [result])
     reply.send(result)
   }
 
@@ -84,7 +80,7 @@ class RoomCallsController {
           call
         }
         const op = config.wsSettings.opTypes.roomCallClose
-        wsDispatcher.dispatch(op, [result], true)
+        wsDispatcher.publish(op, [result])
 
         return call
       } catch (err) {

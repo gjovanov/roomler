@@ -55,6 +55,26 @@ export const actions = {
     })
   },
 
+  openVisit ({
+    commit,
+    state,
+    rootState
+  }, payload) {
+    const response = {}
+    try {
+      if (this.$wss.ws.readyState) {
+        const message = {
+          op: rootState.api.config.config.wsSettings.opTypes.visitOpen,
+          payload
+        }
+        this.$wss.send(JSON.stringify(message))
+      }
+    } catch (err) {
+      response.hasError = true
+    }
+    return response
+  },
+
   async getAll ({
     commit,
     state,

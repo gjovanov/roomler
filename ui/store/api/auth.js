@@ -99,6 +99,27 @@ export const actions = {
       handleConnectionPull(dispatch, commit, state, rootState, router, data)
     })
   },
+
+  connectionUpdate ({
+    commit,
+    state,
+    rootState
+  }, payload) {
+    const response = {}
+    try {
+      if (this.$wss.ws.readyState) {
+        const message = {
+          op: rootState.api.config.config.wsSettings.opTypes.connectionUpdate,
+          payload
+        }
+        this.$wss.send(JSON.stringify(message))
+      }
+    } catch (err) {
+      response.hasError = true
+    }
+    return response
+  },
+
   async register ({
     commit
   }, payload) {

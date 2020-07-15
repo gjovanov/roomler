@@ -1,10 +1,7 @@
 
-import { v4 as uuid } from 'uuid'
 import cookies from 'js-cookie'
 import consola from 'consola'
-
-import DeviceDetector from './device-detector'
-import HistoryPatch from './history-patch'
+import TrackingService from './tracking-service'
 
 // readyState
 // 0 - CONNECTING - Socket has been created. The connection is not yet open.
@@ -13,16 +10,7 @@ import HistoryPatch from './history-patch'
 // 3 - CLOSED - The connection is closed or couldn't be opened.
 class WsService {
   constructor (host, store) {
-    const self = this
-    this.detector = new DeviceDetector()
-    this.historyPatch = new HistoryPatch() // https://stackoverflow.com/questions/6390341/how-to-detect-if-url-has-changed-after-hash-in-javascript
-    this.os = this.detector.getOs()
-    this.browser = this.detector.getBrowser()
-    this.deviceId = cookies.get('device_id')
-    if (!this.deviceId) {
-      this.deviceId = uuid()
-      cookies.set('device_id', this.deviceId, { expires: 365 * 18 })
-    }
+    this.trackingService = new TrackingService(store)
     this.counter = 0 // used as reconnect counter
     this.host = host
     this.store = store
@@ -34,9 +22,9 @@ class WsService {
     }
     this.visits = []
     this.messages = []
-    window.addEventListener('locationchange', () => {
-      self.sendVisit()
-    })
+
+    this.closedCode = 3000
+    this.reconnectInterval = 3000
   }
 
   subscribe (name, handler) {
@@ -52,13 +40,16 @@ class WsService {
     consola.info('Trying to open Web Socket...')
     if (this.ws) {
       consola.info('Closing existing Web Socket...')
-      this.ws.close(3000)
+      this.ws.close(self.closedCode)
     }
     this.ws = new WebSocket(`${this.host}`)
 
     this.ws.onopen = (event) => {
       consola.info(`WebSocket opened: ${event}`)
-      self.sendDeviceInfo()
+
+      // update device information
+      self.trackingService.connectionUpdate()
+
       while (self.messages.length > 0) {
         self.ws.send(self.messages.pop())
       }
@@ -95,10 +86,10 @@ class WsService {
       self.subscriptions.onclose.forEach((handler) => {
         handler(event)
       })
-      if (event.code !== 1000) {
+      if (event.code !== self.closedCode) {
         setTimeout(() => {
           self.connect(self.host)
-        }, 2000)
+        }, self.reconnectInterval)
       }
     }
 
@@ -122,40 +113,6 @@ class WsService {
     } else {
       this.ws.send(msg)
     }
-  }
-
-  sendDeviceInfo () {
-    const self = this
-    self.send(JSON.stringify({
-      op: 'CONNECTION_UPDATE',
-      payload: {
-        device_id: this.deviceId,
-        os: {
-          name: this.os.name,
-          version: this.os.version
-        },
-        browser: {
-          name: this.browser.name,
-          version: this.browser.version,
-          is_mobile: this.browser.isMobileDevice
-        }
-      }
-    }))
-  }
-
-  sendVisit () {
-    const self = this
-    self.visits.push({
-      url: window.location.href,
-      referrer: document.referrer
-    })
-    self.send(JSON.stringify({
-      op: 'VISIT_OPEN',
-      payload: {
-        url: window.location.href,
-        referrer: document.referrer
-      }
-    }))
   }
 }
 export default WsService

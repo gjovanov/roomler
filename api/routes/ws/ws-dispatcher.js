@@ -9,6 +9,9 @@ const channel = require('../../../config').wsSettings.scaleout.channel
 const storage = require('./ws-storage')
 const processName = `${os.hostname()}_${process.pid}`
 
+/*
+WS Event Dispatcher
+*/
 class WsDispatcher {
   constructor () {
     storage.clients = {}
@@ -82,7 +85,7 @@ class WsDispatcher {
     }
   }
 
-  sendRecepients (op, recepients, stringify, extension, messages) {
+  send (op, recepients, stringify, extension, messages) {
     recepients.forEach((r) => {
       const recepient = JSON.stringify(r)
       if (storage.clients[recepient]) {
@@ -106,20 +109,21 @@ class WsDispatcher {
     })
   }
 
-  scaleoutMessages (op, messages, scaleout) {
-    if (scaleout && this.publisher && this.publisher.status === 'ready') {
+  publish (op, messages) {
+    if (this.publisher && this.publisher.status === 'ready') {
       this.publisher.publish(channel, JSON.stringify({
         process: processName,
         op,
         messages
       }))
+    } else {
+      this.dispatch(op, messages)
     }
   }
 
-  async dispatch (op, messages, scaleout = true) {
+  async dispatch (op, messages) {
     const { recepients, stringify, extension } = await this.getRecepients(op, messages)
-    this.sendRecepients(op, recepients, stringify, extension, messages)
-    this.scaleoutMessages(op, messages, scaleout)
+    this.send(op, recepients, stringify, extension, messages)
   }
 }
 

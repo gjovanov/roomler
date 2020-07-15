@@ -8,7 +8,7 @@ class MessageReactionsController {
     const payload = request.body
     const id = request.params.id
     const result = await messageService.pushReaction(request.user.user._id, id, payload)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPush, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.messageReactionPush, [result])
     reply.send(result)
   }
 
@@ -19,7 +19,7 @@ class MessageReactionsController {
         performanceService.performance.mark('ReactionPush start')
         await messageService.pullReaction(conn.user._id, payload.id)
         const message = await messageService.pushReaction(conn.user._id, payload.id, payload.data)
-        wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPush, [message], true)
+        wsDispatcher.publish(config.wsSettings.opTypes.messageReactionPush, [message])
         performanceService.performance.mark('ReactionPush end')
         performanceService.performance.measure('ReactionPush', 'ReactionPush start', 'ReactionPush end')
         return message
@@ -32,7 +32,7 @@ class MessageReactionsController {
   async pull (request, reply) {
     const id = request.params.id
     const result = await messageService.pullReaction(request.user.user._id, id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPull, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.messageReactionPull, [result])
     reply.send(result)
   }
 
@@ -42,7 +42,7 @@ class MessageReactionsController {
       try {
         performanceService.performance.mark('ReactionPull start')
         const message = await messageService.pullReaction(conn.user._id, payload.id)
-        wsDispatcher.dispatch(config.wsSettings.opTypes.messageReactionPull, [message], true)
+        wsDispatcher.publish(config.wsSettings.opTypes.messageReactionPull, [message])
         performanceService.performance.mark('ReactionPull end')
         performanceService.performance.measure('ReactionPull', 'ReactionPull start', 'ReactionPull end')
         return message

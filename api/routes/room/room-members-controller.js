@@ -19,7 +19,7 @@ class RoomMembersController {
       users: userids
     })
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerAdd, [{ room: result, users }], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomPeerAdd, [{ room: result, users }])
     reply.send({ room: result, users })
   }
 
@@ -29,7 +29,7 @@ class RoomMembersController {
     const result = await roomService.updateList(request.user.user._id, id, 'members', payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }])
     reply.send({ room: result, users })
   }
 
@@ -39,7 +39,7 @@ class RoomMembersController {
     const result = await roomService.pull(request.user.user._id, id, 'members', payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRemove, [{ room: result, users }], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomPeerRemove, [{ room: result, users }])
     reply.send({ room: result, users })
   }
 
@@ -49,7 +49,7 @@ class RoomMembersController {
     const result = await roomService.switch(request.user.user._id, id, 'members', payload)
     const userids = Array.isArray(payload.users) ? payload.users : (payload.user ? [payload.user] : [])
     const users = await userService.getAll({ ids: userids })
-    wsDispatcher.dispatch(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.roomPeerRoleUpdate, [{ room: result, users }])
     reply.send({ room: result, users })
   }
 }

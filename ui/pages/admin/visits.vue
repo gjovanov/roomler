@@ -24,7 +24,7 @@ export default {
           text: 'Country',
           align: 'start',
           sortable: false,
-          value: 'connection.geoip.countery.name'
+          value: 'connection.geoip.country.name'
         },
         { text: 'Browser', value: 'connection.browser.name' },
         { text: 'Os', value: 'connection.os.name' },

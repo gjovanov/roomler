@@ -6,6 +6,9 @@ const config = require('../../../config')
 const storage = require('./ws-storage')
 const processName = `${os.hostname()}_${process.pid}`
 
+/*
+WS Message (Command) handler
+*/
 class WsHandler {
   /*
     On Connection:

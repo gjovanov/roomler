@@ -2,7 +2,6 @@ const config = require('../../../config')
 const userService = require('../../services/user/user-service')
 const performanceService = require('../../services/performance/performance-service')
 const connectionService = require('../../services/connection/connection-service')
-const visitService = require('../../services/visit/visit-service')
 const geoipService = require('../../services/geoip/geoip-service')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
@@ -59,8 +58,6 @@ class ConnectionController {
     const id = conn.connection_id
     if (id) {
       try {
-        visitService.close(id)
-
         performanceService.performance.mark('ConnectionClose start')
         const connection = await connectionService.close(id)
         performanceService.performance.mark('ConnectionClose end')
@@ -77,14 +74,6 @@ class ConnectionController {
           const op = config.wsSettings.opTypes.connectionClose
           wsDispatcher.publish(op, [connection])
         }
-        const visit = {
-          status: 'closed',
-          connection: {
-            _id: id,
-            status: 'closed'
-          }
-        }
-        wsDispatcher.publish(config.wsSettings.opTypes.visitClose, [visit])
 
         return connection
       } catch (err) {

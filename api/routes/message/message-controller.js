@@ -21,7 +21,7 @@ class MessageController {
   async create (request, reply) {
     const payload = request.body
     const result = await messageService.create(request.user.user._id, payload)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageCreate, result, true)
+    wsDispatcher.publish(config.wsSettings.opTypes.messageCreate, result)
     reply.send(result)
   }
 
@@ -31,7 +31,7 @@ class MessageController {
       try {
         performanceService.performance.mark('MessageCreate start')
         const messages = await messageService.create(conn.user._id, payload)
-        wsDispatcher.dispatch(config.wsSettings.opTypes.messageCreate, messages, true)
+        wsDispatcher.publish(config.wsSettings.opTypes.messageCreate, messages)
         performanceService.performance.mark('MessageCreate end')
         performanceService.performance.measure('MessageCreate', 'MessageCreate start', 'MessageCreate end')
         return messages
@@ -48,7 +48,7 @@ class MessageController {
       $set: payload
     }
     const result = await messageService.update(request.user.user._id, id, update)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageUpdate, [result], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.messageUpdate, [result])
     reply.send(result)
   }
 
@@ -57,7 +57,7 @@ class MessageController {
       try {
         performanceService.performance.mark('MessageUpdate start')
         const result = await messageService.update(conn.user._id, msg.id, msg.update)
-        wsDispatcher.dispatch(config.wsSettings.opTypes.messageUpdate, [result], true)
+        wsDispatcher.publish(config.wsSettings.opTypes.messageUpdate, [result])
         performanceService.performance.mark('MessageUpdate end')
         performanceService.performance.measure('MessageUpdate', 'MessageUpdate start', 'MessageUpdate end')
         return result
@@ -70,7 +70,7 @@ class MessageController {
   async delete (request, reply) {
     const room = await messageService.get(request.user.user._id, request.params.id)
     const result = await messageService.delete(request.user.user._id, request.params.id)
-    wsDispatcher.dispatch(config.wsSettings.opTypes.messageDelete, [room], true)
+    wsDispatcher.publish(config.wsSettings.opTypes.messageDelete, [room])
     reply.send(result)
   }
 }
