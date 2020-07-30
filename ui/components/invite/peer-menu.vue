@@ -9,13 +9,15 @@
       <v-btn
         v-if="isTransferVisible || isToMemberVisible || isToModeratorVisible || isRemoveVisible"
         :disabled="!isTransferVisible && !isToMemberVisible && !isToModeratorVisible && !isRemoveVisible"
+        x-small
         fab
-        small
-        text
-        dark
+        :dark="!isDark"
+        :light="isDark"
         v-on="on"
       >
-        <v-icon>fa-edit</v-icon>
+        <v-icon x-small>
+          fa-edit
+        </v-icon>
       </v-btn>
     </template>
     <v-list v-if="isTransferVisible || isToMemberVisible || isToModeratorVisible || isRemoveVisible">
@@ -115,6 +117,9 @@ export default {
         this.user &&
         this.currentUser._id !== this.user._id &&
         (this.currentRole === 'owner' || (this.currentRole === 'moderator' && this.role === 'member'))
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

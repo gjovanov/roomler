@@ -2,7 +2,6 @@
   <v-bottom-navigation
     v-model="bottomNav"
     absolute
-    style="background-color: #363636;"
   >
     <v-btn x-small value="terms" to="/tos/terms" class="ma-0">
       <span>Terms</span>

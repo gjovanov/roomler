@@ -23,16 +23,22 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <v-card-actions>
-        <v-spacer />
-        <v-btn color="grey" outlined @click="close()">
+        <v-btn
+          color="grey"
+          outlined
+          class="ma-3"
+          @click="close()"
+        >
           Close
         </v-btn>
-        &nbsp;
+        <v-spacer />
+
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
               color="primary"
               outlined
+              class="ma-3"
               @click="copyToClipboard()"
               v-on="on"
             >

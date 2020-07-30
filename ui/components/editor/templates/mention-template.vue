@@ -1,6 +1,6 @@
 <template>
   <div v-show="extension.options.query || extension.options.filteredItems.length" :id="extension.options.templateId">
-    <v-list rounded dark>
+    <v-list rounded>
       <v-list-item-group
         v-model="extension.options.navigatedIndex"
         color="primary"
@@ -10,7 +10,6 @@
         >
           <v-list-item
             :key="index"
-            dark
             @click="extension.selectItem(user)"
           >
             <v-list-item-avatar>

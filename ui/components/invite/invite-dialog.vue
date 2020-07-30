@@ -130,14 +130,20 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <v-card-actions>
-        <v-spacer />
-        <v-btn color="grey" outlined @click="cancelInvites()">
+        <v-btn
+          color="grey"
+          outlined
+          class="ma-3"
+          @click="cancelInvites()"
+        >
           Cancel
         </v-btn>
+        <v-spacer />
         <v-btn
           :disabled="!areValidInvites || !invites.length"
           color="primary"
           outlined
+          class="ma-3"
           @click="sendInvites()"
         >
           Send invites

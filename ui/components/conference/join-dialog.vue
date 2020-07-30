@@ -18,6 +18,7 @@
                 :text="!media.video.enabled"
                 outlined
                 tile
+                small
                 v-on="on"
                 @click="media.video.enabled = !media.video.enabled"
               >
@@ -38,6 +39,7 @@
                 :text="!media.screen.enabled"
                 outlined
                 tile
+                small
                 v-on="on"
                 @click="media.screen.enabled = !media.screen.enabled"
               >
@@ -58,6 +60,7 @@
                 :text="!media.audio.enabled"
                 outlined
                 tile
+                small
                 v-on="on"
                 @click="media.audio.enabled = !media.audio.enabled"
               >
@@ -77,21 +80,17 @@
       <v-spacer />
 
       <v-card-actions>
-        <v-spacer />
-
         <v-btn
-          color="green darken-1"
+          color="grey"
           outlined
-          tile
           @click="cancel()"
         >
           Cancel
         </v-btn>
-
+        <v-spacer />
         <v-btn
-          color="green darken-1"
+          color="primary"
           outlined
-          tile
           @click="join()"
         >
           Join

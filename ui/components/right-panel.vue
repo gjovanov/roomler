@@ -7,7 +7,7 @@
       clipped
       right
     >
-      <v-list-item>
+      <v-list-item style="height: 32px;">
         <v-list-item-avatar>
           <v-btn
             icon
@@ -109,6 +109,12 @@ export default {
   computed: {
     roomPeers () {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
+    },
+    theme () {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
   },
   watch: {

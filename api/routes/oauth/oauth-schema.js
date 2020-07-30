@@ -40,6 +40,7 @@ const oauthUserToken = S.object()
   .prop('oauth', oauth)
   .prop('user', user)
   .prop('token', S.string())
+  .prop('is_admin', S.boolean())
 
 const delete200 = S.object()
   .prop('n', S.number().required())

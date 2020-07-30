@@ -5,10 +5,10 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
-              outlined
               tile
               small
-
+              :dark="!isDark"
+              :light="isDark"
               v-on="on"
               @click="commands.undo"
             >
@@ -23,10 +23,10 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
-              outlined
               tile
               small
-
+              :dark="!isDark"
+              :light="isDark"
               v-on="on"
               @click="commands.redo"
             >
@@ -42,10 +42,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.bold()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.bold()"
+              :light="isDark && !isActive.bold()"
               v-on="on"
               @click="commands.bold"
             >
@@ -61,10 +61,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.italic()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.italic()"
+              :light="isDark && !isActive.italic()"
               v-on="on"
               @click="commands.italic"
             >
@@ -80,10 +80,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.strike()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.strike()"
+              :light="isDark && !isActive.strike()"
               v-on="on"
               @click="commands.strike"
             >
@@ -99,10 +99,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.underline()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.underline()"
+              :light="isDark && !isActive.underline()"
               v-on="on"
               @click="commands.underline"
             >
@@ -118,10 +118,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.paragraph()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.paragraph()"
+              :light="isDark && !isActive.paragraph()"
               v-on="on"
               @click="commands.paragraph"
             >
@@ -137,10 +137,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 1 })"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.heading({ level: 1 })"
+              :light="isDark && !isActive.heading({ level: 1 })"
               v-on="on"
               @click="commands.heading({ level: 1 })"
             >
@@ -154,10 +154,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 2 })"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.heading({ level: 2 })"
+              :light="isDark && !isActive.heading({ level: 2 })"
               v-on="on"
               @click="commands.heading({ level: 2 })"
             >
@@ -171,10 +171,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 3 })"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.heading({ level: 3 })"
+              :light="isDark && !isActive.heading({ level: 3 })"
               v-on="on"
               @click="commands.heading({ level: 3 })"
             >
@@ -188,10 +188,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.bullet_list()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.bullet_list()"
+              :light="isDark && !isActive.bullet_list()"
               v-on="on"
               @click="commands.bullet_list"
             >
@@ -207,10 +207,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.ordered_list()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.ordered_list()"
+              :light="isDark && !isActive.ordered_list()"
               v-on="on"
               @click="commands.ordered_list"
             >
@@ -226,10 +226,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.todo_list()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.todo_list()"
+              :light="isDark && !isActive.todo_list()"
               v-on="on"
               @click="commands.todo_list"
             >
@@ -245,10 +245,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.blockquote()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.blockquote()"
+              :light="isDark && !isActive.blockquote()"
               v-on="on"
               @click="commands.blockquote"
             >
@@ -264,10 +264,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.code_block()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.code_block()"
+              :light="isDark && !isActive.code_block()"
               v-on="on"
               @click="commands.code_block"
             >
@@ -283,10 +283,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.image()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.image()"
+              :light="isDark && !isActive.image()"
               v-on="on"
               @click="attach(commands, 'image')"
             >
@@ -302,10 +302,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.file()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.file()"
+              :light="isDark && !isActive.file()"
               v-on="on"
               @click="attach(commands, 'file')"
             >
@@ -321,10 +321,10 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :text="isActive.table()"
-              outlined
               tile
               small
-
+              :dark="!isDark && !isActive.table()"
+              :light="isDark && !isActive.table()"
               v-on="on"
               @click="commands.createTable({rowsCount: 3, colsCount: 3, withHeaderRow: false })"
             >
@@ -342,9 +342,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.deleteTable"
               >
@@ -359,9 +359,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.addColumnBefore"
               >
@@ -374,9 +374,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.addColumnAfter"
               >
@@ -389,9 +389,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.deleteColumn"
               >
@@ -404,9 +404,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.addRowBefore"
               >
@@ -419,9 +419,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.addRowAfter"
               >
@@ -434,9 +434,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.deleteRow"
               >
@@ -449,9 +449,9 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                outlined
                 small
-
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="commands.toggleCellMerge"
               >
@@ -493,6 +493,11 @@ export default {
     return {
       menu: true,
       sub_menu: true
+    }
+  },
+  computed: {
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

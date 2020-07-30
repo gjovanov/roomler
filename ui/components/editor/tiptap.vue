@@ -327,7 +327,7 @@ export default {
 .editor *.is-empty:nth-child(2)::before {
   content: attr(data-empty-text);
   float: left;
-  color: #aaa;
+  color: #aaaaaa;
   pointer-events: none;
   height: 0;
   font-style: italic;
@@ -335,10 +335,12 @@ export default {
 
 .ProseMirror {
   background-color: white;
-    color: black;
-    border-radius: 5px;
-    padding: 10px;
-    min-height: 80px;
+  color: black;
+  border-radius: 5px;
+  padding: 10px;
+  min-height: 80px;
+  outline: none;
+  border: 1px solid black;
 }
 .ProseMirror p {
   margin-bottom: 0px;

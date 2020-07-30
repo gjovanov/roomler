@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app id="inspire" :style="{background: $vuetify.theme.themes[theme].background}">
     <left-panel
       v-if="isAuthenticated"
       :drawer="panelLeft"
@@ -21,8 +21,10 @@
       app
       clipped-left
       clipped-right
-      color="red"
+      color="primary"
       dense
+      :dark="!isDark"
+      :light="isDark"
     >
       <v-app-bar-nav-icon v-if="isAuthenticated" @click.stop="toggle('left')" />
       <logo />
@@ -86,6 +88,7 @@ import RightPanel from '@/components/right-panel'
 import RoomPanel from '@/components/room-panel'
 import BottomPanel from '@/components/bottom-panel'
 import Toaster from '@/components/toaster'
+import { storage } from '@/services/storage'
 
 export default {
   middleware: 'default-routes',
@@ -116,7 +119,8 @@ export default {
       return query
     },
     fillHeight () {
-      return !this.areRoomRoutes && ['index'].includes(this.$route.name) && !['explore-rooms'].includes(this.$route.name)
+      return this.$route.name.startsWith('@')
+      // return !this.areRoomRoutes && ['index'].includes(this.$route.name) && !['explore-rooms'].includes(this.$route.name)
     },
     isAuthenticated () {
       return this.$store.getters['api/auth/isAuthenticated']
@@ -154,10 +158,17 @@ export default {
     },
     panelRight () {
       return this.$store.state.panel.right
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
+    },
+    theme () {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
   },
   created () {
-    this.$vuetify.theme.dark = true
+    const theme = storage.getLocal('theme')
+    this.$vuetify.theme.dark = theme === 'dark'
   },
   methods: {
     toggle (panel) {

@@ -75,14 +75,16 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="peers && peers.length && canInvite"
-          color="red"
           right
+          :dark="!isDark"
+          :light="isDark"
           class="ma-4"
-          small
+          x-small
+          fab
           @click="peerDialog = true"
           v-on="on"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-plus
           </v-icon>
         </v-btn>
@@ -169,6 +171,9 @@ export default {
         .sort((a, b) => {
           return a.user.username.localeCompare(b.user.username)
         })
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   watch: {

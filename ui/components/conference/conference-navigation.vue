@@ -10,8 +10,9 @@
           v-if="!localHandle"
           fab
           x-small
-          class="v-btn--active"
           color="green"
+          :dark="!isDark"
+          :light="isDark"
           v-on="on"
           @click="joinDialog = true"
         >
@@ -29,8 +30,9 @@
           v-if="localHandle && localHandle.stream"
           fab
           x-small
-          class="v-btn--active"
-          v-on="{ on }"
+          :dark="!isDark"
+          :light="isDark"
+          v-on="on"
           @click="unpublish()"
         >
           <v-icon x-small>
@@ -47,8 +49,8 @@
           v-if="localHandle"
           fab
           x-small
-          :text="localHandle.media.screen.enabled"
-          class="v-btn--active"
+          :dark="!isDark"
+          :light="isDark"
           v-on="on"
           @click="toggleScreen()"
         >
@@ -77,8 +79,8 @@
               v-if="localHandle"
               fab
               x-small
-              :text="localHandle.media.video.enabled && !localHandle.media.video.muted"
-              class="v-btn--active"
+              :dark="!isDark"
+              :light="isDark"
               v-on="{ ...tooltip, ...menu }"
             >
               <v-icon v-if="localHandle.media.video.enabled && !localHandle.media.video.muted">
@@ -231,8 +233,8 @@
               v-if="localHandle"
               fab
               x-small
-              :text="localHandle.media.audio.enabled && !localHandle.media.audio.muted"
-              class="v-btn--active"
+              :dark="!isDark"
+              :light="isDark"
               v-on="{ ...tooltip, ...menu }"
             >
               <v-icon v-if="localHandle.media.audio.enabled && !localHandle.media.audio.muted">
@@ -286,7 +288,8 @@
           color="green"
           fab
           x-small
-          class="v-btn--active"
+          :dark="!isDark"
+          :light="isDark"
           v-on="on"
           @click="publishDialog = true"
         >
@@ -305,7 +308,8 @@
           color="red"
           fab
           x-small
-          class="v-btn--active"
+          :dark="!isDark"
+          :light="isDark"
           v-on="on"
           @click="leave()"
         >
@@ -377,6 +381,9 @@ export default {
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

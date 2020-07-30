@@ -9,7 +9,8 @@
                 :depressed="!minimal"
                 fab
                 x-small
-                light
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="toggleMinimal()"
               >
@@ -25,7 +26,8 @@
               <v-btn
                 fab
                 x-small
-                light
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="attach(commands, 'image')"
               >
@@ -41,7 +43,8 @@
               <v-btn
                 fab
                 x-small
-                light
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="attach(commands, 'file')"
               >
@@ -57,7 +60,8 @@
               <v-btn
                 fab
                 x-small
-                light
+                :dark="!isDark"
+                :light="isDark"
                 v-on="on"
                 @click="openGiphyDialog(commands.image)"
               >
@@ -76,7 +80,8 @@
                 absolute
                 right
                 fab
-                light
+                :dark="!isDark"
+                :light="isDark"
                 style="right: 0px;"
                 v-on="on"
                 @click="send()"
@@ -123,6 +128,11 @@ export default {
     return {
       menu: true,
       sub_menu: true
+    }
+  },
+  computed: {
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

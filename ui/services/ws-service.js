@@ -49,6 +49,9 @@ class WsService {
 
       // update device information
       self.trackingService.connectionUpdate()
+      setTimeout(() => {
+        self.trackingService.openVisit()
+      }, 200)
 
       while (self.messages.length > 0) {
         self.ws.send(self.messages.pop())

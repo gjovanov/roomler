@@ -70,27 +70,34 @@ const nuxtConfig = {
     }
   },
   vuetify: {
+    customVariables: ['~/assets/variables.scss'],
     treeShake: true,
     theme: {
-      light: {
-        background: '#cccccc',
-        primary: colors.blue.darken2,
-        accent: colors.grey.darken3,
-        secondary: colors.amber.darken3,
-        info: colors.teal.lighten1,
-        warning: colors.amber.base,
-        error: colors.deepOrange.accent4,
-        success: colors.green.accent3
+      options: {
+        customProperties: true
       },
-      dark: {
-        background: '#555555',
-        primary: colors.blue.darken2,
-        accent: colors.grey.darken3,
-        secondary: colors.amber.darken3,
-        info: colors.teal.lighten1,
-        warning: colors.amber.base,
-        error: colors.deepOrange.accent4,
-        success: colors.green.accent3
+      dark: false,
+      themes: {
+        light: {
+          background: colors.grey.lighten3,
+          primary: colors.teal.base,
+          accent: colors.grey.darken3,
+          secondary: colors.orange.darken4,
+          info: colors.teal.lighten1,
+          warning: colors.amber.base,
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3
+        },
+        dark: {
+          background: '#555555',
+          primary: colors.teal.lighten4,
+          accent: colors.grey.darken3,
+          secondary: colors.orange.darken4,
+          info: colors.teal.lighten1,
+          warning: colors.amber.base,
+          error: colors.deepOrange.accent4,
+          success: colors.green.accent3
+        }
       }
     }
   },

@@ -21,6 +21,7 @@
       <v-timeline
         :key="propertyName"
         dense
+        align-top
       >
         <v-scroll-y-reverse-transition
           group
@@ -56,100 +57,104 @@
                 <img :src="getUser(message.author) && getUser(message.author).avatar_url">
               </v-avatar>
             </v-badge>
-            <v-hover v-slot:default="{ hover }">
-              <v-card
-                :elevation="hover ? 16 : 2"
-                :class="message.has_mention && !message.is_read ? 'mr-4 red lighten-4' : (!message.is_read || !message._id ? 'mr-4 orange lighten-4' : 'mr-4 white')"
-                light
-              >
-                <v-tooltip top>
+            <v-card
+              :class="message.has_mention && !message.is_read ? 'mr-4 red lighten-4' : (!message.is_read || !message._id ? 'mr-4 orange lighten-4' : 'mr-4 white')"
+              :dark="!isDark"
+              :light="isDark"
+              color="teal lighten-5"
+              style="color: black"
+              outlined
+            >
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    right
+                    bottom
+                    x-small
+                    absolute
+                    :dark="!isDark"
+                    :light="isDark"
+                    v-on="on"
+                    @click="showMenu($event, message)"
+                  >
+                    😄
+                  </v-btn>
+                </template>
+                <span>Add reaction</span>
+              </v-tooltip>
+              <v-tooltip v-if="user && message.author === user._id" top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-if="user && message.author === user._id"
+                    fab
+                    right
+                    bottom
+                    x-small
+                    absolute
+                    :dark="!isDark"
+                    :light="isDark"
+                    :style="`margin-right: 36px !important;`"
+                    v-on="on"
+                    @click="toggleEdit(message)"
+                  >
+                    <v-icon v-if="!message.edit" x-small>
+                      fa-edit
+                    </v-icon>
+                    <v-icon v-if="message.edit" x-small>
+                      fa-window-close
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span v-if="!message.edit">Edit message</span>
+                <span v-if="message.edit">Discard changes</span>
+              </v-tooltip>
+              <v-tooltip v-if="user && message.author === user._id" top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-if="user && message.author === user._id"
+                    fab
+                    right
+                    bottom
+                    x-small
+                    absolute
+                    :dark="!isDark"
+                    :light="isDark"
+                    :style="`margin-right: 72px !important;`"
+                    v-on="on"
+                    @click="messageDeleteConsent(message)"
+                  >
+                    <v-icon x-small>
+                      fa-trash
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete message</span>
+              </v-tooltip>
+              <v-card-title class="overline pa-0 pl-4">
+                {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
+                <v-tooltip v-if="message.has_mention" right>
                   <template v-slot:activator="{ on }">
-                    <v-btn
-                      fab
-                      right
-                      bottom
-                      x-small
-                      absolute
-                      color="green"
-                      v-on="on"
-                      @click="showMenu($event, message)"
-                    >
-                      😄
-                    </v-btn>
+                    <v-icon small color="red" v-on="on">
+                      fa-at
+                    </v-icon>
                   </template>
-                  <span>Add reaction</span>
+                  <span>You are mentioned in this messsage!</span>
                 </v-tooltip>
-                <v-tooltip v-if="user && message.author === user._id" top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      v-if="user && message.author === user._id"
-                      fab
-                      right
-                      bottom
-                      x-small
-                      absolute
-                      color="secondary"
-                      :style="`margin-right: 36px !important;`"
-                      v-on="on"
-                      @click="toggleEdit(message)"
-                    >
-                      <v-icon v-if="!message.edit" x-small>
-                        fa-edit
-                      </v-icon>
-                      <v-icon v-if="message.edit" x-small>
-                        fa-window-close
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <span v-if="!message.edit">Edit message</span>
-                  <span v-if="message.edit">Discard changes</span>
-                </v-tooltip>
-                <v-tooltip v-if="user && message.author === user._id" top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      v-if="user && message.author === user._id"
-                      fab
-                      right
-                      bottom
-                      x-small
-                      absolute
-                      color="secondary"
-                      :style="`margin-right: 72px !important;`"
-                      v-on="on"
-                      @click="messageDeleteConsent(message)"
-                    >
-                      <v-icon x-small>
-                        fa-trash
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Delete message</span>
-                </v-tooltip>
-                <v-card-title class="overline">
-                  {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
-                  <v-tooltip v-if="message.has_mention" right>
-                    <template v-slot:activator="{ on }">
-                      <v-icon small color="red" v-on="on">
-                        fa-at
-                      </v-icon>
-                    </template>
-                    <span>You are mentioned in this messsage!</span>
-                  </v-tooltip>
-                </v-card-title>
-                <v-card-text>
-                  <pre v-if="!message.edit" style="white-space: pre-wrap" v-html="message.content" />
-                  <tiptap
-                    v-if="room && message && message._id && message.edit"
-                    :elem-id="`edit-message-${message._id}`"
-                    :users="roomPeers"
-                    :gallery="room.path"
-                    :content="message.content"
-                    :message="message"
-                    @sendMessage="sendMessage"
-                  />
-                </v-card-text>
-              </v-card>
-            </v-hover>
+              </v-card-title>
+              <v-card-text style="color: black">
+                <pre v-if="!message.edit" style="white-space: pre-wrap" v-html="message.content" />
+                <tiptap
+                  v-if="room && message && message._id && message.edit"
+                  :elem-id="`edit-message-${message._id}`"
+                  :users="roomPeers"
+                  :gallery="room.path"
+                  :content="message.content"
+                  :message="message"
+                  @sendMessage="sendMessage"
+                />
+              </v-card-text>
+            </v-card>
             <v-spacer />
             <message-reaction-list
               :message="message"
@@ -259,6 +264,9 @@ export default {
   computed: {
     roomPeers () {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
 
@@ -428,6 +436,10 @@ export default {
 </script>
 
 <style scoped>
+* >>> .v-timeline:before {
+  width: 0px;
+}
+
 * >>> .v-timeline-item__divider {
   min-width: 48px;
 }

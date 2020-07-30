@@ -1,15 +1,13 @@
 <template>
   <v-container fluid style="height: 100%">
-    <v-row>
-      <v-col cols="12">
-        <v-data-table
-          :headers="headers"
-          :items="visits"
-          item-key="connection._id"
-          class="elevation-1"
-        />
-      </v-col>
-    </v-row>
+    <no-ssr>
+      <v-data-table
+        :headers="headers"
+        :items="visits"
+        item-key="connection._id"
+        class="elevation-1"
+      />
+    </no-ssr>
   </v-container>
 </template>
 
@@ -23,7 +21,6 @@ export default {
         {
           text: 'Country',
           align: 'start',
-          sortable: false,
           value: 'connection.geoip.country.name'
         },
         { text: 'Browser', value: 'connection.browser.name' },
@@ -38,10 +35,13 @@ export default {
   computed: {
     visits () {
       return this.$store.state.api.visit.visits
+    },
+    visitsCount () {
+      return this.$store.state.api.visit.visitsCount
     }
   },
-  mounted () {
-    this.$store.dispatch('api/visit/getAll', this.$route.query)
+  async mounted () {
+    await this.$store.dispatch('api/visit/getAll', this.$route.query)
   }
 }
 </script>

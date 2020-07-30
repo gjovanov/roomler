@@ -46,14 +46,16 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="canInvite"
-          color="primary"
           right
-          small
+          x-small
+          :dark="!isDark"
+          :light="isDark"
+          fab
           class="mt-4 ml-4 mr-4 mb-12"
           @click="inviteDialog = true"
           v-on="on"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-paper-plane
           </v-icon>
         </v-btn>
@@ -65,14 +67,16 @@
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="canInvite"
-          color="orange"
           right
-          small
+          x-small
+          :dark="!isDark"
+          :light="isDark"
+          fab
           class="mt-4 ml-4 mr-4 mb-12"
           @click="linkDialog = true"
           v-on="on"
         >
-          <v-icon small>
+          <v-icon x-small>
             fa-link
           </v-icon>
         </v-btn>
@@ -138,6 +142,9 @@ export default {
     },
     currentRole () {
       return this.room && this.user ? this.$store.getters['api/room/getUserRole'](this.room._id, this.user._id) : ''
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   watch: {

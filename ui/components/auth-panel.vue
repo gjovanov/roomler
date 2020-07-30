@@ -1,12 +1,20 @@
 <template>
   <v-toolbar-items>
-    <v-btn v-if="!isAuthenticated" text to="/@/auth/register">
+    <v-btn
+      v-if="!isAuthenticated"
+      text
+      to="/@/auth/register"
+    >
       Register
     </v-btn>
 
     <v-divider vertical />
 
-    <v-btn v-if="!isAuthenticated" text to="/@/auth/login">
+    <v-btn
+      v-if="!isAuthenticated"
+      text
+      to="/@/auth/login"
+    >
       Login
     </v-btn>
 
@@ -23,6 +31,7 @@
         <v-btn
           outlined
           small
+          dark
           style="background-color: #303030"
           v-on="on"
         >
@@ -87,6 +96,7 @@
         <v-btn
           outlined
           small
+          dark
           style="background-color: #303030"
           v-on="on"
         >
@@ -145,7 +155,6 @@
       <template v-slot:activator="{ on }">
         <v-btn
           text
-          dark
           v-on="on"
         >
           <v-icon>mdi-dots-vertical</v-icon>
@@ -183,6 +192,11 @@
             <v-icon>fa-user</v-icon> Profile
           </v-list-item-title>
         </v-list-item>
+        <v-list-item @click="toggleTheme">
+          <v-list-item-title>
+            <v-switch v-model="toggle" label="Toggle Dark Mode" />
+          </v-list-item-title>
+        </v-list-item>
         <v-divider />
         <v-list-item @click="goToCreateRoom">
           <v-list-item-title>
@@ -206,6 +220,16 @@
           </v-list-item-title>
         </v-list-item>
         <v-divider />
+        <v-list-item v-if="isAdmin" @click="goToVisits">
+          <v-list-item-title>
+            <v-icon>fa-eye</v-icon> Visits
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="isAdmin" @click="goToReports">
+          <v-list-item-title>
+            <v-icon>fa-chart-line</v-icon> Reports
+          </v-list-item-title>
+        </v-list-item>
         <v-list-item @click="logout">
           <v-list-item-title>
             <v-icon>fa-power-off</v-icon> Log out
@@ -226,10 +250,13 @@
 import {
   handleSuccess
 } from '@/services/ajax-handlers'
+// import { colorUtils } from '@/utils/color-utils'
+import { storage } from '@/services/storage'
 
 export default {
   data () {
     return {
+      toggle: true,
       profileMenu: false,
       messagesMenu: false,
       callsMenu: false
@@ -248,11 +275,20 @@ export default {
     user () {
       return this.$store.state.api.auth.user
     },
+    isAdmin () {
+      return this.$store.state.api.auth.isAdmin
+    },
     rooms () {
       return this.$store.state.api.room.rooms
     },
     calls () {
       return this.$store.getters['api/room/calls/callsByRoom']
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
+    },
+    theme () {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
     messageNotifications () {
       const self = this
@@ -291,6 +327,10 @@ export default {
     goToProfile () {
       this.$router.push({ path: `/@/${this.user.username}` })
     },
+    toggleTheme () {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      storage.setLocal('theme', this.theme)
+    },
     goToRoom (room) {
       this.$router.push({ path: `/${room}` })
     },
@@ -325,6 +365,12 @@ export default {
         type: 'password_reset'
       })
       handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
+    },
+    async goToVisits () {
+      await this.$router.push({ path: '/admin/visits' })
+    },
+    async goToReports () {
+      await this.$router.push({ path: '/admin/reports' })
     },
     async logout () {
       await this.$router.push({ path: '/' })

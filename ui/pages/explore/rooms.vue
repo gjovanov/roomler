@@ -24,7 +24,6 @@
         lg="4"
       >
         <v-card
-          color="grey darken-3"
           class="ma-1"
           elevation="12"
           height="200px"
@@ -66,12 +65,26 @@
             <v-btn
               v-if="!isRoomPeer(room)"
               tile
-              outlined
               small
-              class="red"
+              :dark="!isDark"
+              :light="isDark"
               @click="join(room)"
             >
-              <v-icon>fa-sign-in-alt</v-icon> &nbsp; Join
+              <v-icon small>
+                fa-sign-in-alt
+              </v-icon> &nbsp; Join
+            </v-btn>
+            <v-btn
+              v-if="isRoomPeer(room)"
+              tile
+              small
+              :dark="!isDark"
+              :light="isDark"
+              :to="`/${room.path}`"
+            >
+              <v-icon small>
+                fa-eye
+              </v-icon> &nbsp; Visit
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -113,6 +126,9 @@ export default {
   computed: {
     user () {
       return this.$store.state.api.auth.user
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   watch: {

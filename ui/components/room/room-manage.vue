@@ -163,27 +163,32 @@
       </v-expansion-panel>
     </v-expansion-panels>
     <v-spacer />
-    <v-btn
-      v-if="!hasUpdate"
-      :disabled="!draftRoom.valid"
-      color="primary"
-      class="ma-2"
-      tile
-      @click="create()"
-    >
-      <v-icon>fa-plus</v-icon> &nbsp; Create
-    </v-btn>
-    <v-spacer />
-    <v-btn
-      v-if="hasUpdate"
-      :disabled="!draftRoom.valid"
-      color="primary"
-      class="mt-4 mb-4 ml-4"
-      tile
-      @click="update()"
-    >
-      <v-icon>fa-edit</v-icon> &nbsp; Update
-    </v-btn>
+    <v-row>
+      <v-spacer v-if="!hasUpdate" />
+      <v-btn
+        v-if="!hasUpdate"
+        :disabled="!draftRoom.valid"
+        right
+        color="primary"
+        class="mt-4 mb-4 ml-4 mr-3"
+        outlined
+        @click="create()"
+      >
+        <v-icon>fa-plus</v-icon> &nbsp; Create
+      </v-btn>
+      <v-spacer v-if="hasUpdate" />
+      <v-btn
+        v-if="hasUpdate"
+        :disabled="!draftRoom.valid"
+        right
+        color="primary"
+        class="mt-4 mb-4 ml-4 mr-3"
+        outlined
+        @click="update()"
+      >
+        <v-icon>fa-edit</v-icon> &nbsp; Update
+      </v-btn>
+    </v-row>
   </v-form>
 </template>
 <script>

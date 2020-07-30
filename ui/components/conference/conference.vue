@@ -12,9 +12,9 @@
           :key="handleDto.id"
           sm="12"
           cols="12"
-          class="pa-0 ma-0"
+          class="pa-1 ma-0"
         >
-          <v-card elevation="12">
+          <v-card elevation="12" color="teal lighten-5">
             <v-card-text class="pa-0 ma-0" style="max-height: 640px">
               <video
                 :id="handleDto.id"
@@ -41,9 +41,9 @@
           md="4"
           lg="3"
           cols="12"
-          class="pa-0 ma-0"
+          class="pa-1 ma-0"
         >
-          <v-card elevation="12">
+          <v-card elevation="12" color="teal lighten-5">
             <v-card-text class="pa-0 ma-0" style="max-height: 240px">
               <video
                 :id="handleDto.id"

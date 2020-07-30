@@ -79,8 +79,6 @@ function fastifyWs (fastify, opts, next) {
               const data = JSON.parse(payload)
               if (channel === opts.scaleout.channel && opts.dispatcher) { // && data.process !== processName
                 fastify.log.info(`SUBSCRIPTION MESSAGE: ${data.op}`)
-                fastify.log.info(data.process)
-                fastify.log.info(processName)
                 opts.dispatcher.dispatch(data.op, data.messages)
               }
             })

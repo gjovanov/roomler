@@ -1,64 +1,35 @@
 const mongoose = require('mongoose')
 const Visit = require('../../models/visit')
+const VisitFilter = require('./visit-filter')
 
 class VisitService {
   // base methods - START
 
-  async getAll (filter, page = 0, size = 100) {
-    const $match = { $and: [] }
-    if (filter.from) {
-      $match.$and.push({ $gte: { createdAt: new Date(filter.from) } })
-    }
-    if (filter.to) {
-      $match.$and.push({ $gte: { createdAt: new Date(filter.to) } })
-    }
-    if (filter.status) {
-      $match.$and.push({ status: filter.status })
-    }
-    if (filter.user) {
-      $match.$and.push({ 'connection.user._id': mongoose.Types.ObjectId(filter.user) })
-    }
-    if (filter.os) {
-      $match.$and.push({ 'connection.os.name': filter.os })
-    }
-    if (filter.browser) {
-      $match.$and.push({ 'connection.browser.name': filter.browser })
-    }
-    if (filter.country) {
-      $match.$and.push({ 'connection.geoip.code': filter.country })
-    }
-    const records = await Visit
-      .aggregate([
-        {
-          $lookup: {
-            from: 'connections',
-            let: { connectionId: '$connection' },
-            pipeline: [
-              { $match: { $expr: { $eq: ['$_id', '$$connectionId'] } } },
-              {
-                $lookup: {
-                  from: 'users',
-                  let: { userId: '$user' },
-                  pipeline: [
-                    { $match: { $expr: { $eq: ['$_id', '$$userId'] } } }
-                  ],
-                  as: 'user'
-                }
-              },
-              { $unwind: '$user' }
-            ],
-            as: 'connection'
-          }
-        },
-        { $unwind: '$connection' },
-        { $match },
-        { $skip: page * size },
-        { $limit: size },
-        { $sort: { createdAt: -1 } }
-      ])
+  async getAll (filter) {
+    const aggregate = new VisitFilter(filter).getAggregate()
+    let records = await Visit
+      .aggregate(aggregate)
+      .collation({ locale: 'en', strength: 2 })
       .allowDiskUse(true)
       .exec()
+    records = records.map((r) => {
+      r.count = r.count && r.count.length ? r.count[0].count : 0
+      return r
+    })[0]
+    return records
+  }
 
+  async getAggregates (filter, group) {
+    const aggregate = new VisitFilter(filter).getAggregate()
+    let records = await Visit
+      .aggregate(aggregate)
+      .collation({ locale: 'en', strength: 2 })
+      .allowDiskUse(true)
+      .exec()
+    records = records.map((r) => {
+      r.count = r.count && r.count.length ? r.count[0].count : 0
+      return r
+    })[0]
     return records
   }
 

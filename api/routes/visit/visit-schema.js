@@ -8,8 +8,12 @@ const getAllQueryString = S.object()
   .prop('os', S.string())
   .prop('browser', S.string())
   .prop('country', S.string())
+  .prop('url', S.string())
+  .prop('referrer', S.string())
   .prop('page', S.integer())
   .prop('size', S.integer())
+  .prop('sortBy', S.string())
+  .prop('sortDesc', S.string())
 
 const continent = S.object()
   .prop('code', S.string())
@@ -57,11 +61,35 @@ const visit = S.object()
   .prop('_id', S.string())
   .prop('connection', connection)
   .prop('url', S.string())
+  .prop('page', S.string())
   .prop('referrer', S.string())
   .prop('status', S.string())
+  .prop('duration', S.integer())
   .prop('createdAt', S.string())
 
+const aggregateId = S.object()
+  .prop('year', S.integer())
+  .prop('month', S.integer())
+  .prop('week', S.integer())
+  .prop('day', S.integer())
+  .prop('key', S.string())
+
+const aggregate = S.object()
+  .prop('_id', aggregateId)
+  .prop('count', S.integer())
+  .prop('sum', S.integer())
+const aggregateList = S.array().items(aggregate)
+
 const visitList = S.array().items(visit)
+const pagedVisitList = S.object()
+  .prop('data', visitList)
+  .prop('count', S.integer())
+  .prop('countires', aggregateList)
+  .prop('users', aggregateList)
+  .prop('os', aggregateList)
+  .prop('browsers', aggregateList)
+  .prop('pages', aggregateList)
+  .prop('referrers', aggregateList)
 
 const wsVisit = S.object()
   .prop('op')
@@ -73,7 +101,7 @@ module.exports = {
   getAll: {
     querystring: getAllQueryString,
     response: {
-      200: visitList
+      200: pagedVisitList
     }
   }
 }

@@ -21,7 +21,7 @@
       {{ reactionGroup.symbol }}
       <v-avatar
         right
-        class="green darken-4"
+        class="accent"
       >
         {{ reactionGroup.list.length }}
       </v-avatar>

@@ -3,7 +3,6 @@
     v-if="room && roomRoute"
     tile
     dense
-    style="background-color: #363636; height: 56px;"
   >
     <v-toolbar-title>
       {{ room && room.name ? room.name.toUpperCase() : '' }}
@@ -16,7 +15,8 @@
         <v-btn
           v-if="room"
           tile
-          light
+          :dark="!isDark"
+          :light="isDark"
           :to="`/${room.path}/chat`"
           v-on="on"
         >
@@ -33,7 +33,8 @@
         <v-btn
           v-if="room"
           tile
-          light
+          :dark="!isDark"
+          :light="isDark"
           :to="`/${room.path}/calls`"
           v-on="on"
         >
@@ -50,7 +51,8 @@
         <v-btn
           v-if="room"
           tile
-          light
+          :dark="!isDark"
+          :light="isDark"
           :to="`/${room.path}/peers`"
           v-on="on"
         >
@@ -74,7 +76,8 @@
         <v-btn
           v-if="room"
           tile
-          light
+          :dark="!isDark"
+          :light="isDark"
           v-on="{ ...menu }"
         >
           <v-icon>
@@ -131,6 +134,9 @@ export default {
   computed: {
     panelRight () {
       return this.$store.state.panel.right
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

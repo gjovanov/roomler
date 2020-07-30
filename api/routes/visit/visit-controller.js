@@ -9,11 +9,15 @@ class VisitController {
       from: request.query.from,
       to: request.query.to,
       status: request.query.status,
+      url: request.query.url,
+      referrer: request.query.referrer,
       user: request.query.user,
       os: request.query.os,
       browser: request.query.browser,
-      country: request.query.country
-    }, request.query.page || 0, request.query.size || 100)
+      country: request.query.country,
+      page: request.query.page || 0,
+      size: request.query.size || 100
+    })
     reply.send(result)
   }
 

@@ -55,7 +55,7 @@
         cols="12"
         sm="9"
       >
-        <v-btn :to="`/explore/rooms`" dark outlined block class="blue">
+        <v-btn :to="`/explore/rooms`" dark outlined block class="teal">
           <v-icon>fa-search</v-icon> &nbsp; Explore rooms
         </v-btn>
       </v-col>

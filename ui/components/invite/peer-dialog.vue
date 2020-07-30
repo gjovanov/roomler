@@ -135,14 +135,20 @@
         </v-expansion-panel>
       </v-expansion-panels>
       <v-card-actions>
-        <v-spacer />
-        <v-btn color="grey" outlined @click="cancelPeers()">
+        <v-btn
+          color="grey"
+          outlined
+          class="ma-3"
+          @click="cancelPeers()"
+        >
           Cancel
         </v-btn>
+        <v-spacer />
         <v-btn
           :disabled="!areValidPeers || !newPeers.length"
           color="primary"
           outlined
+          class="ma-3"
           @click="addPeers()"
         >
           Add peers

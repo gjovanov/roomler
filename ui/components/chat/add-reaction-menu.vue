@@ -12,7 +12,7 @@
       style="width: 384px;"
       @mouseleave="menu = false"
     >
-      <v-card-title class="overline red">
+      <v-card-title class="overline primary">
         <v-btn
           light
           small

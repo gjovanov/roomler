@@ -4,7 +4,13 @@ import { handleVisitPush } from './visit/handlers/visit-push'
 import { handleVisitPull } from './visit/handlers/visit-pull'
 
 export const state = () => ({
-  visits: []
+  visitsLoading: true,
+  visits: [],
+  visitsCount: 0,
+
+  reportsLoading: true,
+  reports: [],
+  reportsCount: 0
 })
 
 const simplifyUrl = (visit, url) => {
@@ -17,12 +23,24 @@ const simplifyUrl = (visit, url) => {
 }
 
 export const mutations = {
+  setLoading (state, { type, value }) {
+    state[`${type}Loading`] = value
+  },
   setVisits (state, visits) {
     const url = this.state.api.config.config.appSettings.env.URL
-    visits.forEach((visit) => {
+    visits.data.forEach((visit) => {
       simplifyUrl(visit, url)
     })
-    state.visits = visits
+    state.visits = visits.data
+    state.visitsCount = visits.count
+  },
+  setReports (state, reports) {
+    const url = this.state.api.config.config.appSettings.env.URL
+    reports.data.forEach((report) => {
+      simplifyUrl(report, url)
+    })
+    state.reports = reports.data
+    state.reportsCount = reports.count
   },
   push (state, visit) {
     const url = this.state.api.config.config.appSettings.env.URL
@@ -85,20 +103,30 @@ export const actions = {
       if (!params.from && !params.to && !params.status) {
         params.status = 'open'
       }
+      commit('setLoading', { type: 'visits', value: true })
       const query = qs.stringify(params, { encode: false })
       response.result = await this.$axios.$get(`/api/visit/get-all?${query}`)
-      const url = rootState.api.config.config.appSettings.env.URL
-      if (response.result && response.result.length) {
-        response.result.forEach((visit) => {
-          if (visit.url) {
-            visit.url = visit.url.replace(url, '')
-          }
-          if (visit.referrer) {
-            visit.referrer = visit.referrer.replace(url, '')
-          }
-        })
-      }
       commit('setVisits', response.result ? response.result : [])
+      commit('setLoading', { type: 'visits', value: false })
+    } catch (err) {
+      // handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
+  async getReports ({
+    commit,
+    state,
+    rootState
+  }, params) {
+    const response = {}
+    try {
+      const query = qs.stringify(params, { encode: false })
+      commit('setLoading', { type: 'reports', value: true })
+      response.result = await this.$axios.$get(`/api/visit/get-all?${query}`)
+      commit('setReports', response.result ? response.result : [])
+      commit('setLoading', { type: 'reports', value: false })
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true

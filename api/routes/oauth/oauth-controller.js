@@ -47,12 +47,18 @@ const getOrCreateOAuth = async (data, type) => {
 
 const getToken = async (oauth, reply) => {
   let token = null
+  let isAdmin = false
   if (oauth.user && oauth.user._id) {
+    const tokenizedUser = tokenizeUser(oauth.user)
     token = await reply.jwtSign({
-      user: tokenizeUser(oauth.user)
+      user: tokenizedUser
     })
+    isAdmin = tokenizedUser.is_admin
   }
-  return token
+  return {
+    token,
+    isAdmin
+  }
 }
 
 class OAuthController {
@@ -66,11 +72,12 @@ class OAuthController {
     const data = await getData(access, type)
     if (data && data.email) {
       const oauth = await getOrCreateOAuth(data, type)
-      const token = await getToken(oauth, reply)
+      const { token, isAdmin } = await getToken(oauth, reply)
       reply.send({
         oauth,
         token,
-        user: oauth.user
+        user: oauth.user,
+        is_admin: isAdmin
       })
     } else {
       throw new ReferenceError(`Email address is missing with '${type}' login. Try another option.`)

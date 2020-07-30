@@ -10,7 +10,8 @@ export const state = () => ({
   peers: [],
   user: null,
   token: null,
-  oauth: null
+  oauth: null,
+  isAdmin: false
 })
 
 export const mutations = {
@@ -66,6 +67,7 @@ export const mutations = {
     cookies.set('token', result.token, { expires: 14 })
     state.user = result.user
     state.token = result.token
+    state.isAdmin = result.is_admin
     if (state.user && state.user._id) {
       const peer = state.peers.find(p => p._id === state.user._id)
       if (!peer) {

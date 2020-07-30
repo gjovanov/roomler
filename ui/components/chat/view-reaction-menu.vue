@@ -12,9 +12,8 @@
       style="width: 384px;"
       @mouseleave="menu = false"
     >
-      <v-card-title class="overline red">
+      <v-card-title class="overline primary">
         <v-btn
-          light
           small
           text
           right
@@ -35,7 +34,6 @@
             >
               <v-list-item
                 :key="index"
-                dark
               >
                 <v-list-item-avatar size="32">
                   <v-img v-if="getUser(reaction.user).avatar_url" :src="getUser(reaction.user).avatar_url" />

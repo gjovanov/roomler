@@ -5,35 +5,41 @@ class AuthController {
   async register (request, reply) {
     const payload = request.body
     const user = await userService.register(payload)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       token,
-      user
+      user,
+      is_admin: userTokenized.is_admin
     })
   }
 
   async activate (request, reply) {
     const user = await userService.activate(request.body.username, request.body.token)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       token,
-      user
+      user,
+      is_admin: userTokenized.is_admin
     })
   }
 
   async login (request, reply) {
     const user = await userService.login(request.body.username, request.body.password)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply
       .send({
         token,
-        user
+        user,
+        is_admin: userTokenized.is_admin
       })
   }
 
@@ -55,36 +61,42 @@ class AuthController {
   async updateUsername (request, reply) {
     const payload = request.body
     const user = await userService.updateUsername(payload.email, payload.token, payload.username)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       token,
-      user
+      user,
+      is_admin: userTokenized.is_admin
     })
   }
 
   async updatePassword (request, reply) {
     const payload = request.body
     const user = await userService.updatePassword(payload.email, payload.token, payload.password, payload.passwordConfirm)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       token,
-      user
+      user,
+      is_admin: userTokenized.is_admin
     })
   }
 
   async updateAvatar (request, reply) {
     const avatarUrl = request.body.avatar_url
     const user = await userService.updateAvatar(request.user.user._id, avatarUrl)
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       token,
-      user
+      user,
+      is_admin: userTokenized.is_admin
     })
   }
 
@@ -92,12 +104,14 @@ class AuthController {
     const user = await userService.get({
       id: request.user.user._id
     })
+    const userTokenized = tokenizeUser(user)
     const token = await reply.jwtSign({
-      user: tokenizeUser(user)
+      user: userTokenized
     })
     reply.send({
       user,
-      token
+      token,
+      is_admin: userTokenized.is_admin
     })
   }
 

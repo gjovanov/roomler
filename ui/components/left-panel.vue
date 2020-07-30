@@ -7,7 +7,7 @@
     app
     clipped
     class="pr-1"
-    style="background-color: #121212"
+    :style="{background: $vuetify.theme.themes[theme].background}"
     mini
   >
     <nuxt-link v-show="conferenceRoom && roomRoute !== 'calls'" :to="conferenceRoom ? `/${conferenceRoom.path}/calls` : ''">
@@ -19,7 +19,7 @@
       tile
       class="pa-0 ma-0"
     >
-      <v-expansion-panel v-show="conferenceRoom && roomRoute === 'calls'" style="background-color: #363636;">
+      <v-expansion-panel v-show="conferenceRoom && roomRoute === 'calls'">
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -32,7 +32,7 @@
           <portal-target name="chat-left" class="ml-1 mr-1" />
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel style="background-color: #363636;">
+      <v-expansion-panel>
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -44,11 +44,23 @@
         <v-expansion-panel-content class="pa-0 ma-0">
           <v-btn
             v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
+            to="/explore/rooms"
+            dark
+            block
+            tile
+            color="teal"
+            class="ma-2"
+          >
+            <v-icon>fa fa-search</v-icon> &nbsp; Explore rooms
+          </v-btn>
+          <v-btn
+            v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
             to="/@/room/create"
             dark
             block
             tile
-            class="red"
+            color="red"
+            class="ma-2 pr-2"
           >
             <v-icon>fa fa-plus</v-icon> &nbsp; Create new room
           </v-btn>
@@ -128,7 +140,7 @@
           </v-treeview>
         </v-expansion-panel-content>
       </v-expansion-panel>
-      <v-expansion-panel style="background-color: #363636;">
+      <v-expansion-panel>
         <v-expansion-panel-header>
           <div>
             <v-icon>
@@ -280,7 +292,7 @@ export default {
       openList: [],
       leftDrawer: true,
       width,
-      borderSize: 4,
+      borderSize: 3,
       mini: false,
       config,
       dialog: {
@@ -299,6 +311,12 @@ export default {
         conferenceRoom: this.conferenceRoom,
         roomRoute: this.roomRoute
       }
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
+    },
+    theme () {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
   },
   watch: {
@@ -341,7 +359,7 @@ export default {
       )
       i.style.width = this.borderSize + 'px'
       i.style.cursor = 'ew-resize'
-      i.style.backgroundColor = 'black'
+      i.style.backgroundColor = 'grey'
     },
     setEvents () {
       const minSize = this.borderSize
@@ -447,7 +465,7 @@ export default {
     /* overflow-y: hidden;
     overflow-x: hidden; */
     scrollbar-width: thin;
-    scrollbar-color: black white;
+    scrollbar-color: grey white;
   }
   * >>> .v-badge__badge {
     height: 12px;
