@@ -62,6 +62,7 @@ import TiptapFormatMenu from '@/components/editor/tiptap-format-menu'
 import TiptapMainMenu from '@/components/editor/tiptap-main-menu'
 import EmojiTemplate from '@/components/editor/templates/emoji-template'
 import MentionTemplate from '@/components/editor/templates/mention-template'
+import CustomLink from '@/components/editor/extensions/custom-link'
 import CustomMention from '@/components/editor/extensions/custom-mention'
 import CustomEmoji from '@/components/editor/extensions/custom-emoji'
 import CustomImage from '@/components/editor/extensions/custom-image'
@@ -84,7 +85,6 @@ import {
   ListItem,
   TodoItem,
   TodoList,
-  Link,
   Table,
   TableHeader,
   TableCell,
@@ -202,7 +202,7 @@ export default {
           nested: true
         }),
         new TodoList(),
-        new Link(),
+        new CustomLink(),
         new CustomImage(null, null, self.upload),
         new CustomFile(null, null, self.upload),
         new Iframe(),
@@ -225,8 +225,8 @@ export default {
         new Bold(),
         new Italic()
       ],
-      content: this.content,
-      autoFocus: true
+      content: this.content
+      // autoFocus: true
     })
 
     return {

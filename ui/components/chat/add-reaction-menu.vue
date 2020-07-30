@@ -14,7 +14,6 @@
     >
       <v-card-title class="overline primary">
         <v-btn
-          light
           small
           text
           right
@@ -70,7 +69,7 @@
             <template v-for="(emoji) in filteredEmojis">
               <v-btn
                 :key="emoji.id"
-                outlined
+                tile
                 @click="pushReaction(emoji)"
               >
                 {{ emoji.char }}
@@ -140,9 +139,12 @@ export default {
           threshold: 0.2,
           keys: ['name', 'keywords']
         })
-        const result = fuse.search(this.filter).slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
+        const result = fuse.search(this.filter).map(i => i.item).slice((this.page - 1) * this.pageSize, this.page * this.pageSize)
         return result
       }
+    },
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   watch: {
@@ -181,6 +183,7 @@ export default {
       this.$emit('hideMenu')
     },
     async pushReaction (emoji) {
+      console.log(emoji)
       this.$emit('noScroll')
       await this.$store
         .dispatch('api/message/reaction/push', {
