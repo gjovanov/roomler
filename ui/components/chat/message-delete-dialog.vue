@@ -6,11 +6,21 @@
       </v-card-title>
       <v-card-text>Are you sure you want to delete this message?</v-card-text>
       <v-card-actions>
-        <v-spacer />
-        <v-btn color="grey" outlined @click="no()">
+        <v-btn
+          color="grey"
+          outlined
+          class="ma-3"
+          @click="no()"
+        >
           No
         </v-btn>
-        <v-btn color="primary" outlined @click="yes()">
+        <v-spacer />
+        <v-btn
+          color="primary"
+          outlined
+          class="ma-3"
+          @click="yes()"
+        >
           Yes
         </v-btn>
       </v-card-actions>

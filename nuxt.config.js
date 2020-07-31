@@ -2,6 +2,7 @@ const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
 const env = config.appSettings.env
 const isProd = env.NODE_ENV === 'production'
+const isDev = env.NODE_ENV === 'development'
 
 const nuxtConfig = {
   srcDir: 'ui',
@@ -102,9 +103,10 @@ const nuxtConfig = {
     }
   },
   build: {
+    extractCSS: true,
     extend (config, ctx) {
       config.resolve.alias.vue = 'vue/dist/vue.common'
-      config.devtool = '#source-map' // ctx.isClient ? '#source-map' : '#inline-source-map'
+      config.devtool = isDev ? '#source-map' : ''
     }
   }
 }

@@ -183,7 +183,6 @@ export default {
       this.$emit('hideMenu')
     },
     async pushReaction (emoji) {
-      console.log(emoji)
       this.$emit('noScroll')
       await this.$store
         .dispatch('api/message/reaction/push', {

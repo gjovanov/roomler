@@ -122,7 +122,6 @@ class VisitFilter {
       ]
     }
     this.aggregate.push({ $facet })
-    console.log(JSON.stringify(this.aggregate))
   }
 
   getGroupId (interval, key) {

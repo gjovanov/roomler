@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire" :style="{background: $vuetify.theme.themes[theme].background}">
+  <v-app id="inspire" :style="{background: $vuetify.theme.themes[theme].background}" class="pa-0 ma-0">
     <left-panel
       v-if="isAuthenticated"
       :drawer="panelLeft"
@@ -21,7 +21,7 @@
       app
       clipped-left
       clipped-right
-      color="primary"
+      :color="$vuetify.theme.themes[theme].primary"
       dense
       :dark="!isDark"
       :light="isDark"
@@ -169,6 +169,11 @@ export default {
   created () {
     const theme = storage.getLocal('theme')
     this.$vuetify.theme.dark = theme === 'dark'
+
+    if (typeof window !== 'undefined') {
+      // eslint-disable-next-line nuxt/no-globals-in-created
+      window.parent.document.body.style.zoom = 1.0
+    }
   },
   methods: {
     toggle (panel) {
@@ -177,3 +182,17 @@ export default {
   }
 }
 </script>
+
+<style>
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: white;
+}
+::-webkit-scrollbar-thumb {
+  background-color: black ;
+  border-radius: 3px;
+  border: 1px solid white;
+}
+</style>

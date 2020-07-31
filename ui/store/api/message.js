@@ -2,7 +2,8 @@ import {
   handleError
   // handleSuccess
 } from '@/services/ajax-handlers'
-import * as moment from 'moment'
+import moment from 'moment/moment'
+import 'moment/locale/en-gb'
 import { handleMessageCreate } from './message/handlers/message-create'
 import { handleMessageUpdate } from './message/handlers/message-update'
 import { handleReactionPush } from './message/handlers/reaction-push'

@@ -216,7 +216,6 @@ export default {
     },
     reportsCount () {
       const count = Math.ceil(parseFloat(this.$store.state.api.visit.reportsCount) / this.filter.size)
-      console.log(count)
       return count
     }
   },

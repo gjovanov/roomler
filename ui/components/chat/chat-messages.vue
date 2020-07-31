@@ -3,7 +3,7 @@
     :id="elemId"
     :ref="elemId"
     v-scroll:[`#${elemId}`]="onMessagesScroll"
-    style="height: calc(100vh - 380px); overflow-y: auto; overflow-x: hidden"
+    style="height: calc(100vh - 410px); overflow-y: auto; overflow-x: hidden"
   >
     <add-reaction-menu
       :open="menu.addReaction.open"
@@ -367,24 +367,26 @@ export default {
       this.scroll = scrollDirection.noScroll
     },
     onMessagesScroll (e) {
+      const self = this
       if (this.manualScrollTimeout) {
         clearTimeout(this.manualScrollTimeout)
       }
       this.manualScrollTimeout = setTimeout(async () => {
-        await this.readUnreads()
+        await self.readUnreads()
         if (e.target.scrollTop === 0) {
-          this.scroll = scrollDirection.top
-          await this.loadPreviousMessages()
+          self.scroll = scrollDirection.top
+          await self.loadPreviousMessages()
         }
       }, 100)
     },
     async loadPreviousMessages () {
-      const payload = { room: this.room }
-      const messageKeys = Object.keys(this.messages).sort().reverse()
-      if (this.messages && messageKeys.length) {
-        payload.before = this.messages[messageKeys[0]][0].createdAt
+      const self = this
+      const payload = { room: self.room }
+      const messageKeys = Object.keys(self.messages).sort()
+      if (self.messages && messageKeys.length) {
+        payload.before = self.messages[messageKeys[0]][0].createdAt
       }
-      await this.$store.dispatch('api/message/getAll', payload)
+      await self.$store.dispatch('api/message/getAll', payload)
     },
     async readUnreads () {
       const self = this

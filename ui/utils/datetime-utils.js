@@ -1,4 +1,5 @@
-import * as moment from 'moment'
+import moment from 'moment/moment'
+import 'moment/locale/en-gb'
 class DatetimeUtils {
   toHoursFormat (date) {
     return moment(date).format('HH:mm')

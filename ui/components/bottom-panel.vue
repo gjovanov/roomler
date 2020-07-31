@@ -2,17 +2,12 @@
   <v-bottom-navigation
     v-model="bottomNav"
     absolute
+    height="42"
   >
     <v-btn x-small value="terms" to="/tos/terms" class="ma-0">
       <span>Terms</span>
       <v-icon small>
         fa fa-list-alt
-      </v-icon>
-    </v-btn>
-    <v-btn x-small value="privacy" to="/tos/privacy" class="ma-0">
-      <span>Privacy</span>
-      <v-icon small>
-        fa fa-user-shield
       </v-icon>
     </v-btn>
     <v-btn x-small value="reach-out" href="https://roomler.live/gjovanov/join" target="_blank" class="ma-0">
