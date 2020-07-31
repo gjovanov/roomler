@@ -132,6 +132,7 @@
     "puppeteer": "^5.0.0",
     "puppeteer-coverage": "0.0.10",
     "puppeteer-to-istanbul": "^1.4.0",
+    "request": "^2.88.2",
     "require-extension-hooks": "^0.3.3",
     "require-extension-hooks-babel": "^1.0.0",
     "require-extension-hooks-vue": "^3.0.0",
