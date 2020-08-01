@@ -78,7 +78,11 @@ class WsService {
                 self.store.commit('api/room/setRoom', self.store.getters['api/room/selectedRoom'](self.router.currentRoute.params.room), { root: true })
               }
               if (data && data[0] && data[0].result) {
-                return Promise.all([self.store.dispatch('api/room/calls/getAll'), ...data[0].result.map(room => self.store.dispatch('api/message/getAll', { room }))])
+                let reqs = [self.store.dispatch('api/room/calls/getAll')]
+                if (this.counter > 0) {
+                  reqs = [...reqs, ...data[0].result.map(room => self.store.dispatch('api/message/getAll', { room }))]
+                }
+                return Promise.all(reqs)
               }
             })
         }
