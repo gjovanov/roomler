@@ -136,8 +136,13 @@ export const actions = {
     const response = {}
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
-      commit('setRooms', response.result ? response.result : [])
-      commit('setOpen', response.result.map(room => room._id))
+      const rooms = response.result && response.result.rooms ? response.result.rooms : []
+      const messages = response.result && response.result.messages ? response.result.messages : []
+      const calls = response.result && response.result.calls ? response.result.calls : []
+      commit('setRooms', rooms)
+      commit('setOpen', rooms.map(room => room._id))
+      messages.forEach(m => commit('api/message/pushAll', m, { root: true }))
+      commit('api/room/calls/setCalls', calls, { root: true })
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true

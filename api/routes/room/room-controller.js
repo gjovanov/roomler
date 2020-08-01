@@ -1,4 +1,6 @@
 const roomService = require('../../services/room/room-service')
+const callService = require('../../services/call/call-service')
+const messageService = require('../../services/message/message-service')
 const config = require('../../../config')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
@@ -10,7 +12,26 @@ class RoomController {
   }
 
   async getAll (request, reply) {
-    const result = await roomService.getAll(request.user.user._id, request.query.page, request.query.size)
+    const userid = request.user.user._id
+    const rooms = await roomService.getAll(userid, request.query.page, request.query.size)
+    const calls = rooms.map(r => r.calls).reduce((a, b) => a.concat(b), [])
+    const messages = []
+
+    const lists = await Promise.all([
+      callService.getAll({ ids: calls, status: 'open' }),
+      ...rooms.map(r => messageService.getAll(userid, 0, 25, { room: r._id })
+      )])
+    for (let i = 0; i < rooms.length; i++) {
+      messages.push({
+        roomid: rooms[i]._id,
+        messages: lists[i + 1] // 0th position are calls, then come the room messages
+      })
+    }
+    const result = {
+      rooms,
+      messages,
+      calls: lists[0]
+    }
     reply.send(result)
   }
 

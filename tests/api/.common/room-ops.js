@@ -188,9 +188,10 @@ class RoomOps {
           t.is(response.statusCode, 200)
           t.is(response.headers['content-type'], 'application/json; charset=utf-8')
           const result = JSON.parse(response.payload)
-          t.true(Array.isArray(result))
+          t.true(Array.isArray(result.rooms))
+          t.true(Array.isArray(result.messages))
           expectedRooms.forEach(expectedRoom => {
-            const room = result.find(r => r._id.toString() === expectedRoom._id.toString())
+            const room = result.rooms.find(r => r._id.toString() === expectedRoom._id.toString())
             t.true(!!room)
             t.true(expectedRoom._id.toString() === room._id.toString())
             t.true(expectedRoom.name === room.name)

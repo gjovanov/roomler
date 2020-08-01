@@ -101,11 +101,11 @@ export const actions = {
     commit,
     dispatch,
     state
-  }, { room, before }) {
+  }, { room, before, page = 0, size = 25 }) {
     const response = {}
     try {
       const roomPeers = room ? [room.owner, ...room.members, ...room.moderators] : []
-      response.result = await this.$axios.$get(`/api/message/get-all?room=${room._id}&before=${before}`)
+      response.result = await this.$axios.$get(`/api/message/get-all?room=${room._id}&page=${page}&size=${size}&before=${before}`)
 
       // if messages contain info about ex peers (removed from the room)
       // then download user info for those ex peers
