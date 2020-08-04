@@ -22,7 +22,7 @@
           <v-icon small>
             fa-users
           </v-icon>
-          ROOM PEERS
+          <span style="font-weight: right">ROOM PEERS</span>
         </v-list-item-title>
         <v-btn
           icon

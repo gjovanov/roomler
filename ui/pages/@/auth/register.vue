@@ -71,7 +71,7 @@
                     class="mb-6"
                     @click="register()"
                   >
-                    Register
+                    Signup, it's free!
                   </v-btn>
                 </v-col>
               </v-row>

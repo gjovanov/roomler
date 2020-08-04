@@ -6,11 +6,10 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                :depressed="!minimal"
                 fab
                 x-small
-                :dark="!isDark"
-                :light="isDark"
+                :dark="!isDark && minimal"
+                :light="isDark && minimal"
                 v-on="on"
                 @click="toggleMinimal()"
               >
@@ -76,7 +75,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                x-small
+                small
                 absolute
                 right
                 fab
@@ -86,7 +85,7 @@
                 v-on="on"
                 @click="send()"
               >
-                <v-icon x-small>
+                <v-icon small>
                   send
                 </v-icon>
               </v-btn>

@@ -5,7 +5,7 @@
       text
       to="/@/auth/register"
     >
-      Register
+      Signup, it's free
     </v-btn>
 
     <v-divider vertical />

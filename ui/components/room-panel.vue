@@ -25,7 +25,7 @@
                 <v-icon>
                   fa-sign-in-alt
                 </v-icon> &nbsp;
-                <span>JOIN THIS ROOM - {{ room && room.name ? room.name.toUpperCase() : '' }}</span>
+                <span style="font-weight: 500">JOIN THIS ROOM - {{ room && room.name ? room.name.toUpperCase() : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -52,7 +52,7 @@
                 <v-icon>
                   fa-paper-plane
                 </v-icon> &nbsp;
-                <span>INVITE</span>
+                <span style="font-weight: 500">INVITE</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -79,7 +79,7 @@
                 <v-icon>
                   fa-phone
                 </v-icon> &nbsp;
-                <span>CONFERENCE - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room ? room.name.toUpperCase() : '' }}</span>
+                <span style="font-weight: 500">CONFERENCE - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room ? room.name.toUpperCase() : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -114,7 +114,7 @@
                 <v-icon>
                   fa-comments
                 </v-icon> &nbsp;
-                <span>CHAT - {{ room ? room.name.toUpperCase() : '' }}</span>
+                <span style="font-weight: 500">CHAT - {{ room ? room.name.toUpperCase() : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -134,7 +134,7 @@
                 <v-icon>
                   fa-users
                 </v-icon> &nbsp;
-                <span>PEERS</span>
+                <span style="font-weight: 500">PEERS</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
@@ -153,7 +153,7 @@
                 <v-icon>
                   fa-users
                 </v-icon> &nbsp;
-                <span>INVITES</span>
+                <span style="font-weight: 500">INVITES</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
@@ -172,7 +172,7 @@
                 <v-icon>
                   fa-info
                 </v-icon> &nbsp;
-                <span>BASIC INFO</span>
+                <span style="font-weight: 500">BASIC INFO</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -187,7 +187,7 @@
                 <v-icon>
                   fa-sliders-h
                 </v-icon> &nbsp;
-                <span>MEDIA</span>
+                <span style="font-weight: 500">MEDIA</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>

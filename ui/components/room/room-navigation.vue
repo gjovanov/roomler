@@ -4,8 +4,8 @@
     tile
     dense
   >
-    <v-toolbar-title>
-      {{ room && room.name ? room.name.toUpperCase() : '' }}
+    <v-toolbar-title class="ml-4">
+      <span style="font-weight: 500">{{ room && room.name ? room.name.toUpperCase() : '' }}</span>
     </v-toolbar-title>
 
     <v-spacer />
@@ -61,7 +61,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Manage peers</span>
+      <span>Peers</span>
     </v-tooltip>
 
     <v-spacer />

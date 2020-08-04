@@ -25,7 +25,7 @@
             <v-icon>
               fa-comments
             </v-icon> &nbsp;
-            <span>CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
+            <span style="font-weight: bold">CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -38,7 +38,7 @@
             <v-icon>
               account_tree
             </v-icon> &nbsp;
-            <span>ROOMS</span>
+            <span style="font-weight: bold">ROOMS</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-0 ma-0">
@@ -146,7 +146,7 @@
             <v-icon>
               fa-users
             </v-icon> &nbsp;
-            <span>PEERS</span>
+            <span style="font-weight: bold">PEERS</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>

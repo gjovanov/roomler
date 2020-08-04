@@ -117,7 +117,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col>
+          <v-col cols="12">
             <v-pagination
               v-model="filter.page"
               :length="reportsCount"
@@ -137,13 +137,24 @@
             />
           </v-col>
         </v-row>
+        <!-- <v-row cols="12">
+          <v-col>
+            <h1>bar</h1>
+            <bar />
+          </v-col>
+        </v-row> -->
       </v-form>
     </no-ssr>
   </v-container>
 </template>
 
 <script>
+// import Bar from '@/components/chart/bar'
+
 export default {
+  // components: {
+  //   Bar
+  // },
   watchQuery: ['from', 'to', 'country', 'user', 'os', 'browser', 'url', 'referrer', 'page', 'size', 'sortBy', 'sortDesc', 'interval'],
   async asyncData ({ store, query }) {
     if (!query.from && !query.to) {

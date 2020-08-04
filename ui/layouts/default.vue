@@ -29,7 +29,16 @@
       <v-app-bar-nav-icon v-if="isAuthenticated" @click.stop="toggle('left')" />
       <logo />
       <v-toolbar-title class="mr-12 align-center">
-        <span class="title">{{ title }}</span>
+        <v-btn
+          small
+          to="/"
+          text
+          tile
+          depressed
+          class="pa-0"
+        >
+          <span class="title">{{ title }}</span>
+        </v-btn>
       </v-toolbar-title>
       <div class="flex-grow-1" />
 
