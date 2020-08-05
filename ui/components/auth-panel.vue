@@ -2,13 +2,15 @@
   <v-toolbar-items>
     <v-btn
       v-if="!isAuthenticated"
-      text
+      color="secondary"
+      rounded
       to="/@/auth/register"
+      style="border-radius: 28px;"
     >
-      Signup, it's free
+      Sign up, it's free
     </v-btn>
 
-    <v-divider vertical />
+    <v-divider v-if="!isAuthenticated" vertical />
 
     <v-btn
       v-if="!isAuthenticated"
@@ -144,7 +146,6 @@
       </v-list>
     </v-menu>
 
-    <v-divider vertical />
     <v-menu
       v-if="isAuthenticated"
       v-model="profileMenu"
@@ -155,6 +156,9 @@
       <template v-slot:activator="{ on }">
         <v-btn
           text
+          right
+          depressed
+          style="min-width: 255px"
           v-on="on"
         >
           <v-icon>mdi-dots-vertical</v-icon>
@@ -238,7 +242,7 @@
       </v-list>
     </v-menu>
 
-    <v-divider vertical />
+    <v-divider v-if="user && isAuthenticated && !isActivated" vertical />
 
     <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
       Activate

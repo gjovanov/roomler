@@ -3,7 +3,7 @@
     :id="elemId"
     :ref="elemId"
     v-scroll:[`#${elemId}`]="onMessagesScroll"
-    style="height: calc(100vh - 410px); overflow-y: auto; overflow-x: hidden"
+    style="height: calc(100vh - 380px); overflow-y: auto; overflow-x: hidden"
   >
     <add-reaction-menu
       :open="menu.addReaction.open"

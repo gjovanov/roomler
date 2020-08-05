@@ -75,17 +75,18 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                small
+                x-small
                 absolute
                 right
                 fab
+                :color="$vuetify.theme.themes[theme].primary"
                 :dark="!isDark"
                 :light="isDark"
                 style="right: 0px;"
                 v-on="on"
                 @click="send()"
               >
-                <v-icon small>
+                <v-icon x-small>
                   send
                 </v-icon>
               </v-btn>
@@ -130,6 +131,9 @@ export default {
     }
   },
   computed: {
+    theme () {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
     isDark () {
       return this.$vuetify.theme.dark
     }

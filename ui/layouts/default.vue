@@ -204,4 +204,7 @@ export default {
   border-radius: 3px;
   border: 1px solid white;
 }
+.v-toolbar__content {
+      padding-right: 0px !important;
+}
 </style>

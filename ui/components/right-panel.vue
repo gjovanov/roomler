@@ -8,7 +8,7 @@
       right
     >
       <v-list-item style="height: 32px;">
-        <v-list-item-avatar>
+        <v-list-item-avatar class="mr-0">
           <v-btn
             icon
             @click.stop="mini = !mini"
@@ -22,7 +22,7 @@
           <v-icon small>
             fa-users
           </v-icon>
-          <span style="font-weight: right">ROOM PEERS</span>
+          <span style="font-weight: 500; font-size: 0.9375rem">&nbsp; ROOM PEERS</span>
         </v-list-item-title>
         <v-btn
           icon

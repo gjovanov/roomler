@@ -39,7 +39,13 @@
                   sm="6"
                   md="4"
                 >
-                  <v-btn dark block outlined class="red" @click="join()">
+                  <v-btn
+                    dark
+                    block
+                    outlined
+                    class="secondary"
+                    @click="join()"
+                  >
                     <v-icon>fa-users</v-icon> &nbsp; Join
                   </v-btn>
                 </v-col>
@@ -147,7 +153,7 @@
               />
             </v-expansion-panel-content>
           </v-expansion-panel>
-          <v-expansion-panel v-show="peersPanel">
+          <v-expansion-panel v-show="invitesVisible">
             <v-expansion-panel-header>
               <div>
                 <v-icon>
@@ -294,6 +300,11 @@ export default {
     },
     peersPanel () {
       return this.room && this.roomRoute === 'peers'
+    },
+    invitesVisible () {
+      const userRole = this.$store.getters['api/room/getUserRole'](this.room ? this.room._id : null, this.user ? this.user._id : null)
+      return this.peersPanel &&
+        ['owner', 'moderator'].includes(userRole)
     },
     invitesPanel () {
       return this.peersPanel && (

@@ -25,7 +25,7 @@
             <v-icon>
               fa-comments
             </v-icon> &nbsp;
-            <span style="font-weight: bold">CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
+            <span style="font-weight: 500">CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -38,16 +38,15 @@
             <v-icon>
               account_tree
             </v-icon> &nbsp;
-            <span style="font-weight: bold">ROOMS</span>
+            <span style="font-weight: 500">ROOMS</span>
           </div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content class="pa-0 ma-0">
+        <v-expansion-panel-content :class="user && user._id && (!tree || !tree.items || !tree.items.length) ? 'pa-0 ma-0 mr-4' : 'pa-0 ma-0'">
           <v-btn
             v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
             to="/explore/rooms"
             dark
             block
-            tile
             color="teal"
             class="ma-2"
           >
@@ -58,8 +57,7 @@
             to="/@/room/create"
             dark
             block
-            tile
-            color="red"
+            color="secondary"
             class="ma-2 pr-2"
           >
             <v-icon>fa fa-plus</v-icon> &nbsp; Create new room
@@ -105,6 +103,7 @@
                     block
                     outlined
                     class="justify-start pr-0"
+                    style="font-weight: 100;"
                     v-on="on"
                   >
                     <v-icon v-if="item.is_open" x-small class="justify-start">
@@ -146,7 +145,7 @@
             <v-icon>
               fa-users
             </v-icon> &nbsp;
-            <span style="font-weight: bold">PEERS</span>
+            <span style="font-weight: 500">PEERS</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>

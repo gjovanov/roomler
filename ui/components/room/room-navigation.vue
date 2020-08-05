@@ -71,6 +71,7 @@
       v-model="menus.settings"
       bottom
       offset-y
+      open-on-hover
     >
       <template v-slot:activator="{ on: menu }">
         <v-btn
@@ -78,6 +79,7 @@
           tile
           :dark="!isDark"
           :light="isDark"
+          class="mr-9"
           v-on="{ ...menu }"
         >
           <v-icon>

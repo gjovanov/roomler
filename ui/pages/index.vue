@@ -4,7 +4,7 @@
     fluid
   >
     <v-row
-      align="start"
+      align="center"
       justify="center"
     >
       <v-col
@@ -12,11 +12,13 @@
         sm="9"
       >
         <v-card>
-          <v-card-title>
-            <span class="text-h3" style="display: inline;">Community & Team Collaboration</span>
+          <v-card-title class="justify-center">
+            <span class="text-h3" style="display: inline;">Multi-party Video Conferencing</span>
           </v-card-title>
           <v-card-text>
-            <h4>powered by Video-Conferencing & Rich-Text Chat</h4>
+            <h4 class="text-center">
+              Powerful & Effective Remote Team Collaboration
+            </h4>
           </v-card-text>
         </v-card>
       </v-col>
@@ -81,7 +83,7 @@
         cols="12"
         sm="9"
       >
-        <v-btn :to="`/@/room/create`" dark outlined block class="red">
+        <v-btn :to="`/@/room/create`" dark outlined block class="secondary">
           <v-icon>fa-pluse</v-icon> &nbsp; Create new room
         </v-btn>
       </v-col>
@@ -112,10 +114,10 @@
         lg="3"
       >
         <v-card>
-          <v-card-title>
+          <v-card-title class="pr-0">
             <v-icon>fa fa-phone</v-icon> &nbsp; MULTI PARTY CALLS
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0">
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
@@ -151,10 +153,10 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-play</v-icon>
+                  <v-icon>fa fa-users</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  Recording (coming soon...)
+                  Up to 50 participants
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -167,10 +169,10 @@
         lg="3"
       >
         <v-card>
-          <v-card-title>
+          <v-card-title class="pr-0">
             <v-icon>fa fa-comments</v-icon> &nbsp; POWERFUL CHAT
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0">
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
@@ -222,14 +224,14 @@
         lg="3"
       >
         <v-card>
-          <v-card-title>
+          <v-card-title class="pr-0">
             <v-icon>fa fa-users</v-icon> &nbsp; ORGANIZED ROOMS
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pa-0">
             <v-list>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-door-open</v-icon>
+                  <v-icon>fa fa-lock-open</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   Public Rooms
@@ -237,7 +239,7 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-door-closed</v-icon>
+                  <v-icon>fa fa-lock</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   Private Rooms
@@ -253,7 +255,7 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-avatar>
-                  <v-icon>fa fa-users</v-icon>
+                  <v-icon>fa fa-user-shield</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   Moderator & member roles

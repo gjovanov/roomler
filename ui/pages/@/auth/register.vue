@@ -54,7 +54,7 @@
                 @click:append="showPasswordConfirm = !showPasswordConfirm"
               />
               <h4>
-                By registering, you Agree with Roomler's
+                By signing up, you Agree with Roomler's
                 <nuxt-link to="/tos/terms">
                   Terms of Service
                 </nuxt-link>
@@ -71,7 +71,7 @@
                     class="mb-6"
                     @click="register()"
                   >
-                    Signup, it's free!
+                    Sign up
                   </v-btn>
                 </v-col>
               </v-row>
