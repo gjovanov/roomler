@@ -28,7 +28,7 @@
         >
           <v-timeline-item
             v-for="message in messages[propertyName]"
-            :id="'message_item_' + getMessageId(message)"
+            :id="`${elemId}_item_${getMessageId(message)}`"
             :key="getMessageId(message)"
             :icon="!getUser(message.author) || !getUser(message.author).avatar_url ? 'fa-user' : undefined"
             data-type="message_item"
@@ -390,19 +390,22 @@ export default {
     },
     async readUnreads () {
       const self = this
-      if (this.unreads && document.hasFocus()) {
+
+      if (self.unreads && document.hasFocus()) {
         const messagesInView = []
-        this.unreads.forEach((message) => {
+        self.unreads.forEach((message) => {
+          // eslint-disable-next-line no-debugger
+          debugger
           const messageList = document.getElementById(self.elemId)
-          const messageItem = document.getElementById(`message_item_${self.getMessageId(message)}`)
+          const messageItem = document.getElementById(`${self.elemId}_item_${self.getMessageId(message)}`)
           const inView = domUtils.isScrolledIntoView(messageItem)
           if (messageList && messageItem && inView) {
             messagesInView.push(message._id)
           }
         })
         if (messagesInView && messagesInView.length) {
-          this.scroll = scrollDirection.noScroll
-          await this.$store.dispatch('api/message/readby/pushAll', messagesInView)
+          self.scroll = scrollDirection.noScroll
+          await self.$store.dispatch('api/message/readby/pushAll', messagesInView)
         }
       }
     },
