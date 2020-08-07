@@ -394,8 +394,6 @@ export default {
       if (self.unreads && document.hasFocus()) {
         const messagesInView = []
         self.unreads.forEach((message) => {
-          // eslint-disable-next-line no-debugger
-          debugger
           const messageList = document.getElementById(self.elemId)
           const messageItem = document.getElementById(`${self.elemId}_item_${self.getMessageId(message)}`)
           const inView = domUtils.isScrolledIntoView(messageItem)
