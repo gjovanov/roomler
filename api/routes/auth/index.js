@@ -146,6 +146,19 @@ module.exports = [{
   handler: authController.get
 },
 {
+  method: 'POST',
+  url: '/api/auth/getAll',
+  schema: {
+    body: authSchema.getAll.body,
+    response: {
+      200: authSchema.getAll.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: authController.getAll
+},
+{
   authenticate: true,
   method: 'DELETE',
   url: '/api/auth/delete',

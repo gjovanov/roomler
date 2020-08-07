@@ -5,6 +5,9 @@ const codeTypes = config.dataSettings.code.types
 const usernameParam = S.object()
   .prop('query', S.string().required())
 
+const ids = S.object()
+  .prop('ids', S.array().items(S.string()))
+
 const user = S.object()
   .prop('_id', S.string().required())
   .prop('username', S.string().required())
@@ -138,6 +141,12 @@ module.exports = {
     params: usernameParam,
     response: {
       200: user
+    }
+  },
+  getAll: {
+    body: ids,
+    response: {
+      200: userList
     }
   },
   getPeers: {

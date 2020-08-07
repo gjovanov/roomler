@@ -69,8 +69,7 @@ class WsService {
             })
             .then(() => {
               return Promise.all([
-                self.store.dispatch('api/room/getAll'),
-                self.store.dispatch('api/auth/getPeers')
+                self.store.dispatch('api/room/getAll')
               ])
             })
             .then(() => {

@@ -100,21 +100,23 @@ export const actions = {
   async getAll ({
     commit,
     dispatch,
-    state
+    rootState
   }, { room, before, page = 0, size = 25 }) {
     const response = {}
     try {
-      const roomPeers = room ? [room.owner, ...room.members, ...room.moderators] : []
       response.result = await this.$axios.$get(`/api/message/get-all?room=${room._id}&page=${page}&size=${size}&before=${before}`)
 
       // if messages contain info about ex peers (removed from the room)
       // then download user info for those ex peers
+      const roomPeers = [...new Set(rootState.api.auth.peers.map(p => p._id))]
       const messagePeers = [...new Set(
         response.result
           .map(message => [message.author, ...message.mentions, ...message.reactions.map(r => r.user)])
           .reduce((a, b) => [...a, ...b], []))]
       const exPeers = messagePeers.filter(p => !roomPeers.includes(p))
-      await Promise.all(exPeers.map(p => dispatch('api/auth/get', p, { root: true })))
+      if (exPeers.length) {
+        await dispatch('api/auth/getAll', exPeers, { root: true })
+      }
       commit('pushAll', { roomid: room._id, messages: response.result })
     } catch (err) {
       handleError(err, commit)

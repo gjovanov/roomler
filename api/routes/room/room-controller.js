@@ -1,3 +1,4 @@
+const userService = require('../../services/user/user-service')
 const roomService = require('../../services/room/room-service')
 const callService = require('../../services/call/call-service')
 const messageService = require('../../services/message/message-service')
@@ -13,6 +14,7 @@ class RoomController {
 
   async getAll (request, reply) {
     const userid = request.user.user._id
+    const peers = await userService.getPeers(userid)
     const rooms = await roomService.getAll(userid, request.query.page, request.query.size)
     const calls = rooms.map(r => r.calls).reduce((a, b) => a.concat(b), [])
     const messages = []
@@ -27,7 +29,26 @@ class RoomController {
         messages: lists[i + 1] // 0th position are calls, then come the room messages
       })
     }
+    // if messages contain info about ex peers (removed from the room)
+    // then download user info for those ex peers
+    const roomPeers = peers.map(u => u._id.toString())
+    const messagePeers = [...new Set(
+      messages
+        .map(m => m.messages)
+        .reduce((a, b) => [...a, ...b], [])
+        .map(message => [message.author.toString(), ...message.mentions.map(u => u.toString()), ...message.reactions.map(r => r.user.toString())])
+        .reduce((a, b) => [...a, ...b], []))]
+
+    const exPeers = messagePeers.filter(p => !roomPeers.includes(p))
+    if (exPeers.length) {
+      const users = await userService.getAll({ ids: exPeers })
+      users.forEach((u) => {
+        peers.push(u)
+      })
+    }
+
     const result = {
+      peers,
       rooms,
       messages,
       calls: lists[0]

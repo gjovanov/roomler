@@ -131,16 +131,35 @@ export const actions = {
 
   async getAll ({
     commit,
-    state
+    dispatch,
+    rootState
   }) {
     const response = {}
     try {
       response.result = await this.$axios.$get('/api/room/get-all')
+      const peers = response.result && response.result.peers ? response.result.peers : []
       const rooms = response.result && response.result.rooms ? response.result.rooms : []
       const messages = response.result && response.result.messages ? response.result.messages : []
       const calls = response.result && response.result.calls ? response.result.calls : []
+      commit('api/auth/setPeers', peers, { root: true })
       commit('setRooms', rooms)
       commit('setOpen', rooms.map(room => room._id))
+
+      // if messages contain info about ex peers (removed from the room)
+      // then download user info for those ex peers
+      const roomPeers = [...new Set(rootState.api.auth.peers.map(p => p._id))]
+      const messagePeers = [...new Set(
+        messages
+          .map(m => m.messages)
+          .reduce((a, b) => [...a, ...b], [])
+          .map(message => [message.author, ...message.mentions, ...message.reactions.map(r => r.user)])
+          .reduce((a, b) => [...a, ...b], []))]
+
+      const exPeers = messagePeers.filter(p => !roomPeers.includes(p))
+      if (exPeers.length) {
+        await dispatch('api/auth/getAll', exPeers, { root: true })
+      }
+
       messages.forEach(m => commit('api/message/pushAll', m, { root: true }))
       commit('api/room/calls/setCalls', calls, { root: true })
     } catch (err) {

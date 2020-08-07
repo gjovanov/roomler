@@ -90,6 +90,7 @@ const roomMessage = S.object()
 
 const messages = S.array().items(roomMessage)
 const getAllResponse = S.object()
+  .prop('peers', userList)
   .prop('rooms', roomList)
   .prop('messages', messages)
   .prop('calls', callList)

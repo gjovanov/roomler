@@ -122,6 +122,13 @@ class AuthController {
     reply.send(user)
   }
 
+  async getAll (request, reply) {
+    const user = await userService.getAll({
+      ids: request.body.ids
+    })
+    reply.send(user)
+  }
+
   async getPeers (request, reply) {
     const users = await userService.getPeers(request.user.user._id)
     reply.send(users)
