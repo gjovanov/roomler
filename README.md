@@ -12,7 +12,7 @@ All that fully free and open source.
 
 | MULTI PARTY CALLS       | POWERFUL CHAT           | ORGANIZED ROOMS         |
 |-------------------------|-------------------------|-------------------------|
-| <ul><li>[x] Video</li><li>[x] Audio</li><li>[x] Screen share</li><li>[x] Encrypted</li><li>[ ] Recording (soon...)</li></ul> | <ul><li>[x] Rich-text</li><li>[x] File sharing</li><li>[x] Emojis & Giphy's</li><li>[x] Mentions</li><li>[x] Reactions</li></ul> | <ul><li>[x] Public Rooms</li><li>[x] Private Rooms</li><li>[x] Hierarchy of Rooms</li><li>[x] User roles (moderator, member)</li><li>[x] Secure communication</li></ul> |
+| <ul><li>[x] Video</li><li>[x] Audio</li><li>[x] Screen share</li><li>[x] Encrypted</li><li>[ ] up to 50 call participants</li></ul> | <ul><li>[x] Rich-text</li><li>[x] File sharing</li><li>[x] Emojis & Giphy's</li><li>[x] Mentions</li><li>[x] Reactions</li></ul> | <ul><li>[x] Public Rooms</li><li>[x] Private Rooms</li><li>[x] Hierarchy of Rooms</li><li>[x] User roles (moderator, member)</li><li>[x] Secure communication</li></ul> |
 
 # Technology stack
 - [Janus Gateway](https://github.com/meetecho/janus-gateway)
@@ -132,7 +132,7 @@ docker run -d --name nginx \
     -v /your_path/conf.d/:/etc/nginx/conf.d/ \
     -v /your_path/cert/:/etc/nginx/cert/ \
     -v /your_path/logs/:/etc/nginx/logs/ \
-    --net=host \
+    --net=bridge \
     gjovanov/nginx
 
 # attach nginx container to frontend network
@@ -311,7 +311,23 @@ GOOGLE_ANALYTICS_ID=YOUR_GOOGLE_ANALYTICS_ID
 SUPER_ADMIN_EMAILS='["your_super_admin_email@gmail.com"]'
 NUXT_TELEMETRY_DISABLED=1
 ```
+### Requred Environment variables
+- URL - e.g. mydomain.com
+- API_URL - e.g. mydomain.com or api.mydomain.com
+- DB_CONN - e.g. mongodb://username:passowrd@mongo/roomlerdb
+- JANUS_URL e.g. wss://janus.mydomain/janus
+- TURN_URL & TURN_USERNAME & TURN_PASSWORD e.g. turns:coturn.mydomain.com:443?transport=udp, username & password
+- (WS_SCALEOUT_ENABLED=1 & WS_SCALEOUT_HOST=redis) or WS_SCALEOUT_ENABLED=0
+- (SENDGRID_API_KEY) or (GMAIL_USER & GMAIL_PASSWORD) or (SMTP_HOST & SMTP_PORT & SMTP_SECURE & SMTP_USER & SMTP_PASSWORD)
+- SUPER_ADMIN_EMAILS - '["email_of_super_admin_user@gmail.com"]' is used to view routes `/admin/visits` and `/admin/reports`
 
+**IMPORTANT**: If you don't provide OAUTH (Facebook, Google, LinkedIn, Github) ID/SECRET envs, you will still be able to have local registration (username/email/password), but OAUTH button in the `/@/auth/login` or `/@/auth/register` routes will throw an error. Also if you don't provide Giphy API KEY, adding giphys will throw an error.
+
+GOOGLE_ANALYTICS_ID is actually needed during the `nuxt build` (app compilation), hence you can create a `.arg` file, similar to `.env` with the following content:
+```
+GOOGLE_ANALYTICS_ID=YOUR_GOOGLE_ANALYICS
+```
+and then use the `build.sh` script
 
 ### Email setting
 You have the following options to configure your app to send emails e.g. Activation link, Welcome email, Password change email etc.
