@@ -43,9 +43,9 @@ export const mutations = {
     connections.forEach((connection) => {
       const user = state.peers.find(u => u._id === connection.user)
       if (user) {
-        const uconn = user.connections.find(uc => uc._id === connection._id)
+        const uconn = user.connections.find(uc => uc === connection._id)
         if (!uconn) {
-          user.connections.push(connection)
+          user.connections.push(connection._id)
         }
       } else {
         this.$consola.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
@@ -56,7 +56,7 @@ export const mutations = {
     connections.forEach((connection) => {
       const user = state.peers.find(u => u._id === connection.user)
       if (user) {
-        user.connections = user.connections.filter(uc => uc._id !== connection._id)
+        user.connections = user.connections.filter(uc => uc !== connection._id)
       } else {
         this.$consola.info(`user ${connection.user} not found in ${JSON.stringify(state.peers)}`)
       }

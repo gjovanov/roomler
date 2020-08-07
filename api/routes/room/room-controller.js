@@ -14,14 +14,17 @@ class RoomController {
 
   async getAll (request, reply) {
     const userid = request.user.user._id
-    const peers = await userService.getPeers(userid)
     const rooms = await roomService.getAll(userid, request.query.page, request.query.size)
+    const ids = rooms
+      .map(r => [r.owner, ...r.members, ...r.moderators])
+      .reduce((a, b) => [...a, ...b], [])
+    const peers = await userService.getAll({ ids })
     const calls = rooms.map(r => r.calls).reduce((a, b) => a.concat(b), [])
     const messages = []
 
     const lists = await Promise.all([
       callService.getAll({ ids: calls, status: 'open' }),
-      ...rooms.map(r => messageService.getAll(userid, 0, 25, { room: r._id })
+      ...rooms.map(r => messageService.getAll(userid, 0, 10, { room: r._id })
       )])
     for (let i = 0; i < rooms.length; i++) {
       messages.push({

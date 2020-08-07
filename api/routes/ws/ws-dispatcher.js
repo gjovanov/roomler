@@ -69,6 +69,7 @@ class WsDispatcher {
     }
     if (op.startsWith('ROOM_CALL_')) {
       const rooms = messages.map(m => m.room)
+      // TODO: notify peers not members of these rooms???
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../room/room-schema').wsRoomCall.valueOf())
     }
