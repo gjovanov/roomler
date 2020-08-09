@@ -117,7 +117,7 @@ export default class Iframe extends Node {
         /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/g,
         type,
         (url) => {
-          return { src: `https://www.youtube.com/embed/${url[1]}` }
+          return { src: `https://youtube.com/embed/${url[1]}` }
         }
       ),
       self.nodePasteRule(

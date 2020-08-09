@@ -213,10 +213,4 @@ export default {
   height: 15rem;
   border: 0;
 }
-iframe {
-  max-width: 100%;
-  width: 30rem;
-  height: 15rem;
-  border: 0;
-}
 </style>

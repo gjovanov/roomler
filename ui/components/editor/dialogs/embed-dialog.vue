@@ -3,7 +3,12 @@
     <v-card>
       <v-card-title>Embed URL</v-card-title>
       <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <v-form
+          ref="formEmbed"
+          v-model="isValidEmbed"
+          lazy-validation
+          @submit.prevent
+        >
           <v-text-field
             v-model="url"
             :rules="urlRules"
@@ -11,9 +16,10 @@
             name="url"
             autocomplete="on"
             required
+            @keydown.enter.prevent="insert()"
           />
           <v-spacer />
-          <iframe :src="convertedUrl" />
+          <iframe :src="convertedUrl" class="iframe_embed" />
         </v-form>
       </v-card-text>
       <v-card-actions>
@@ -27,7 +33,8 @@
         </v-btn>
         <v-spacer />
         <v-btn
-          :disabled="!valid"
+          :disabled="!isValidEmbed"
+          type="submit"
           color="primary"
           outlined
           class="ma-3"
@@ -51,7 +58,7 @@ export default {
   data () {
     return {
       url: null,
-      valid: false,
+      isValidEmbed: false,
       urlRules: [
         v => !!v || 'URL is required',
         v => /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.?[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g.test(v)
@@ -65,7 +72,7 @@ export default {
       if (youtubeExpression.test(self.url)) {
         const parts = youtubeExpression.exec(self.url)
         if (parts && parts.length > 0) {
-          return `https://www.youtube.com/embed/${parts[1]}`
+          return `https://youtube.com/embed/${parts[1]}`
         }
       }
       const vimeoExpression = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/i
@@ -81,7 +88,9 @@ export default {
 
   methods: {
     insert () {
-      if (this.$refs.form.validate()) {
+      // eslint-disable-next-line no-debugger
+      debugger
+      if (this.$refs.formEmbed.validate()) {
         this.$emit('insertEmbed', this.convertedUrl)
         this.url = null
       }
