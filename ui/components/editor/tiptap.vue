@@ -23,6 +23,7 @@
         @attach="attach"
         @send="send"
         @openGiphyDialog="openGiphyDialog"
+        @openEmbedDialog="openEmbedDialog"
       />
     </div>
 
@@ -44,6 +45,9 @@
     <div>
       <giphy-dialog :dialog="dialog.giphy" @closeGiphyDialog="closeGiphyDialog" @insertGif="insertGif" />
     </div>
+    <div>
+      <embed-dialog :dialog="dialog.embed" @closeEmbedDialog="closeEmbedDialog" @insertEmbed="insertEmbed" />
+    </div>
 
     <div :ref="customMention.options.templateId">
       <mention-template :extension="customMention" />
@@ -58,6 +62,7 @@
 <script>
 
 import GiphyDialog from '@/components/editor/dialogs/giphy-dialog'
+import EmbedDialog from '@/components/editor/dialogs/embed-dialog'
 import TiptapFormatMenu from '@/components/editor/tiptap-format-menu'
 import TiptapMainMenu from '@/components/editor/tiptap-main-menu'
 import EmojiTemplate from '@/components/editor/templates/emoji-template'
@@ -98,6 +103,7 @@ import * as EmojiMap from 'emojilib'
 export default {
   components: {
     GiphyDialog,
+    EmbedDialog,
     EditorContent,
     TiptapFormatMenu,
     TiptapMainMenu,
@@ -202,10 +208,10 @@ export default {
           nested: true
         }),
         new TodoList(),
+        new Iframe(),
         new CustomLink(),
         new CustomImage(null, null, self.upload),
         new CustomFile(null, null, self.upload),
-        new Iframe(),
         new Bold(),
         new Code(),
         new Italic(),
@@ -231,9 +237,11 @@ export default {
 
     return {
       dialog: {
-        giphy: false
+        giphy: false,
+        embed: false
       },
       giphyCommand: null,
+      insertCommand: null,
       backup: this.content,
       emojis,
       minimal: true,
@@ -264,19 +272,41 @@ export default {
       this.dialog.giphy = true
       this.giphyCommand = command
     },
+    openEmbedDialog (command) {
+      this.dialog.embed = true
+      this.embedCommand = command
+    },
     closeGiphyDialog () {
       this.dialog.giphy = false
     },
+    closeEmbedDialog () {
+      this.dialog.embed = false
+    },
     insertGif (gif) {
       if (this.giphyCommand) {
+        const url = gif.images.fixed_height ? gif.images.fixed_height.url : gif.images.original.url
         this.giphyCommand({
-          src: gif.images.original.url,
+          src: url,
           alt: gif.title,
           title: gif.title,
           style: 'max-width: 100%; max-height: 200px;'
         })
+        this.$nextTick(() => {
+          this.editor.view.dom.focus()
+        })
       }
       this.dialog.giphy = false
+    },
+    insertEmbed (url) {
+      if (this.embedCommand) {
+        this.embedCommand({
+          src: url
+        })
+        this.$nextTick(() => {
+          this.editor.view.dom.focus()
+        })
+      }
+      this.dialog.embed = false
     },
     toggleMinimal () {
       this.minimal = !this.minimal
@@ -591,5 +621,11 @@ table {
   border-collapse: separate;
   border-spacing: 2px;
   border-color: #fff;
+}
+
+.iframe_embed {
+  width: 100%;
+  height: 15rem;
+  border: 0;
 }
 </style>

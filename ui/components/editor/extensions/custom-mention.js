@@ -65,14 +65,14 @@ export default class CustomMention extends Mention {
       },
       toDOM: (node) => {
         return [
-          'button',
+          'a',
           {
             class: aClass,
             userkey: node.attrs.id,
             'data-username': node.attrs.label,
             'data-linked-resource-type': 'userinfo',
             'data-avatar-url': node.attrs.avatarUrl || '/user.png',
-            onclick: `history.pushState(null, null, '/@/${node.attrs.label}')`
+            href: `/@/${node.attrs.label}`
           },
           [
             'img',
@@ -87,7 +87,7 @@ export default class CustomMention extends Mention {
       },
       parseDOM: [
         {
-          tag: 'button[userkey]',
+          tag: 'a[userkey]',
           getAttrs: (dom) => {
             const id = dom.getAttribute('userkey')
             const avatarUrl = dom.getAttribute('data-avatar-url').replace('/user.png', '')

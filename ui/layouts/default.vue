@@ -59,7 +59,7 @@
           align="stretch"
           align-content="start"
         >
-          <v-col>
+          <v-col class="pb-0">
             <room-panel
               :rooms="rooms"
               :room="room"
@@ -78,7 +78,7 @@
           align="stretch"
           align-content="start"
         >
-          <v-col>
+          <v-col class="pb-0">
             <nuxt />
           </v-col>
         </v-row>
@@ -206,5 +206,17 @@ export default {
 }
 .v-toolbar__content {
       padding-right: 0px !important;
+}
+.iframe_embed {
+  max-width: 100%;
+  width: 30rem;
+  height: 15rem;
+  border: 0;
+}
+iframe {
+  max-width: 100%;
+  width: 30rem;
+  height: 15rem;
+  border: 0;
 }
 </style>

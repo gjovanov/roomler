@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="1000">
+  <v-dialog v-model="dialog" persistent max-width="800">
     <v-card>
       <v-card-text>
         <v-tabs v-model="tab" centered>
@@ -43,9 +43,9 @@
                       @click="insertGif(item)"
                     >
                       <v-img
-                        :src="item.images.original.url"
+                        :src="getUrl(item.images)"
                         aspect-ratio="1.4"
-                        :width="150"
+                        :width="100"
                       />
                     </v-card>
                   </v-hover>
@@ -65,14 +65,18 @@
       <v-card-actions>
         <v-btn
           color="grey"
-          tile
           outlined
+          class="ma-3"
           @click="closeGiphyDialog()"
         >
           Cancel
         </v-btn>
         <v-spacer />
-        <v-btn text href="https://support.giphy.com/hc/en-us/articles/360032872931-GIPHY-Privacy-Policy">
+        <v-btn
+          text
+          class="ma-3"
+          href="https://support.giphy.com/hc/en-us/articles/360032872931-GIPHY-Privacy-Policy"
+        >
           <v-img src="/giphy/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif" />
         </v-btn>
       </v-card-actions>
@@ -96,7 +100,7 @@ export default {
       query: 'LOL',
       page: 1,
       offset: 0,
-      limit: 15,
+      limit: 18,
       timeout: null,
       tabs: [
         {
@@ -166,6 +170,15 @@ export default {
             })
         }, self.timeDuration)
       })
+    },
+    getUrl (image) {
+      if (image.fixed_height_small) {
+        return image.fixed_height_small.url
+      }
+      if (image.fixed_height) {
+        return image.fixed_height.url
+      }
+      return image.original.url
     },
     closeGiphyDialog () {
       this.$emit('closeGiphyDialog')

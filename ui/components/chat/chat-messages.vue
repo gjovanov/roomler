@@ -282,7 +282,7 @@ export default {
             self.scrollMessages(self.scroll === scrollDirection.bottom)
           }
           self.scroll = scrollDirection.bottom
-        }, 300)
+        }, 500)
       })
     },
     isChatPanel (newVal) {
@@ -301,7 +301,10 @@ export default {
   },
 
   async mounted () {
-    this.scrollMessages(true)
+    const self = this
+    this.$nextTick(() => {
+      self.scrollMessages(true, 300)
+    })
     await this.readUnreads()
   },
 
@@ -355,13 +358,16 @@ export default {
     getMessageId (message) {
       return message._id || message.client_id
     },
-    scrollMessages (bottom = true) {
-      const messagesList = this.$refs[this.elemId]
-      if (messagesList) {
-        const newScrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
-        messagesList.scrollTop = newScrollTop
-        this.$vuetify.goTo(`#${this.inputId}`)
-      }
+    scrollMessages (bottom = true, wait = 100) {
+      const self = this
+      setTimeout(() => {
+        const messagesList = self.$refs[self.elemId]
+        if (messagesList) {
+          const newScrollTop = bottom ? messagesList.scrollHeight : messagesList.scrollTop + 10
+          messagesList.scrollTop = newScrollTop
+          self.$vuetify.goTo(`#${self.inputId}`)
+        }
+      }, wait)
     },
     noScroll () {
       this.scroll = scrollDirection.noScroll
@@ -410,7 +416,7 @@ export default {
     async sendMessage (content, message) {
       if (content && content !== '<p></p>') {
         const $ = cheerio.load(content)
-        const mentions = [...new Set($('button[data-username]').toArray().map(node => node.attribs.userkey))]
+        const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
         const files = [...new Set($('a[data-upload]').toArray().map((node) => {
           return {
             filename: node.attribs.filename,

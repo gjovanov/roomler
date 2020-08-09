@@ -62,6 +62,23 @@
                 :dark="!isDark"
                 :light="isDark"
                 v-on="on"
+                @click="openEmbedDialog(commands.iframe)"
+              >
+                <v-icon x-small>
+                  fa fa-link
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Embed URL</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                x-small
+                :dark="!isDark"
+                :light="isDark"
+                v-on="on"
                 @click="openGiphyDialog(commands.image)"
               >
                 <v-icon>
@@ -150,6 +167,9 @@ export default {
     },
     openGiphyDialog (command) {
       this.$emit('openGiphyDialog', command)
+    },
+    openEmbedDialog (command) {
+      this.$emit('openEmbedDialog', command)
     }
   }
 }

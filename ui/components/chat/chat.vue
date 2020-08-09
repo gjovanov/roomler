@@ -99,7 +99,7 @@ export default {
     async sendMessage (content) {
       if (content && content !== '<p></p>') {
         const $ = cheerio.load(content)
-        const mentions = [...new Set($('button[data-username]').toArray().map(node => node.attribs.userkey))]
+        const mentions = [...new Set($('a[data-username]').toArray().map(node => node.attribs.userkey))]
         const files = [...new Set($('a[data-upload]').toArray().map((node) => {
           return {
             filename: node.attribs.filename,
