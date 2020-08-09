@@ -72,7 +72,7 @@ export default {
       if (youtubeExpression.test(self.url)) {
         const parts = youtubeExpression.exec(self.url)
         if (parts && parts.length > 0) {
-          return `https://youtube.com/embed/${parts[1]}`
+          return `https://www.youtube-nocookie.com/embed/${parts[1]}`
         }
       }
       const vimeoExpression = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/i

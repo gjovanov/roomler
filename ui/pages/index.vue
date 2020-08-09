@@ -287,7 +287,7 @@ export default {
   data () {
     const config = this.$store.state.api.config.config
     return {
-      youtubeLink: `https://youtube.com/embed/lzHeRwVDfPQ?origin=${config.appSettings.env.URL}`
+      youtubeLink: `https://www.youtube-nocookie.com/embed/lzHeRwVDfPQ?origin=${config.appSettings.env.URL}`
     }
   },
 
