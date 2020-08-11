@@ -25,16 +25,28 @@ const buildApi = async function () {
       handler: require('./routes/ws/ws-handler'),
       dispatcher: require('./routes/ws/ws-dispatcher')
     })
-  if (oauthOptions.facebook) {
+  if (oauthOptions.facebook &&
+    oauthOptions.facebook.credentials &&
+    oauthOptions.facebook.credentials.client &&
+    oauthOptions.facebook.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.facebook)
   }
-  if (oauthOptions.google) {
+  if (oauthOptions.google &&
+    oauthOptions.google.credentials &&
+    oauthOptions.google.credentials.client &&
+    oauthOptions.google.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.google)
   }
-  if (oauthOptions.github) {
+  if (oauthOptions.github &&
+    oauthOptions.github.credentials &&
+    oauthOptions.github.credentials.client &&
+    oauthOptions.github.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.github)
   }
-  if (oauthOptions.linkedin) {
+  if (oauthOptions.linkedin &&
+    oauthOptions.linkedin.credentials &&
+    oauthOptions.linkedin.credentials.client &&
+    oauthOptions.linkedin.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.linkedin)
   }
   await fastify
