@@ -1,161 +1,235 @@
 <template>
-  <v-container fluid style="height: 100%">
-    <no-ssr>
-      <v-form ref="form">
-        <v-row>
-          <v-col cols="12" sm="12" md="6">
-            <v-menu
-              ref="menu1"
-              v-model="menu1"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="filter.from"
-                  label="Date"
-                  hint="YYYY-MM-DD format"
-                  dense
-                  persistent-hint
-                  v-bind="attrs"
-                  v-on="on"
+  <v-container fluid style="height: 100%" class="pa-0">
+    <client-only>
+      <v-expansion-panels
+        v-model="filter.panel"
+        accordion
+        style="height: 100%"
+      >
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <div>
+              <v-icon>
+                fa-search
+              </v-icon> &nbsp;
+              <span style="font-weight: 500">Filters</span>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-form ref="form">
+              <v-row>
+                <v-col cols="12" sm="12" md="6">
+                  <v-menu
+                    ref="menu1"
+                    v-model="menu1"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="filter.from"
+                        label="Date"
+                        hint="YYYY-MM-DD format"
+                        dense
+                        persistent-hint
+                        v-bind="attrs"
+                        v-on="on"
+                      />
+                    </template>
+                    <v-date-picker v-model="filter.from" no-title @input="menu1 = false" />
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" sm="12" md="6">
+                  <v-menu
+                    v-model="menu2"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="filter.to"
+                        label="Date (read only text field)"
+                        hint="YYYY-MM-DD format"
+                        dense
+                        persistent-hint
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                      />
+                    </template>
+                    <v-date-picker v-model="filter.to" no-title @input="menu2 = false" />
+                  </v-menu>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.country"
+                    label="Country code"
+                    name="Country"
+                    autocomplete="on"
+                    dense
+                    clearable
+                  />
+                </v-col>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.user"
+                    label="User"
+                    name="User"
+                    autocomplete="on"
+                    clearable
+                    dense
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.os"
+                    label="OS"
+                    name="OS"
+                    autocomplete="on"
+                    clearable
+                    dense
+                  />
+                </v-col>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.browser"
+                    label="Browser"
+                    name="Browser"
+                    autocomplete="on"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.url"
+                    label="URL"
+                    name="URL"
+                    autocomplete="on"
+                    clearable
+                    dense
+                  />
+                </v-col>
+                <v-col cols="12" sm="12" md="6">
+                  <v-text-field
+                    v-model="filter.referrer"
+                    label="Referrer"
+                    name="Referrer"
+                    autocomplete="on"
+                    clearable
+                    dense
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <div>
+              <v-icon>
+                fa-sign-in-alt
+              </v-icon> &nbsp;
+              <span style="font-weight: 500">Results</span>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row>
+              <v-col cols="12">
+                <v-pagination
+                  v-model="filter.page"
+                  :length="reportsCount"
+                  :total-visible="5"
                 />
-              </template>
-              <v-date-picker v-model="filter.from" no-title @input="menu1 = false" />
-            </v-menu>
-          </v-col>
-          <v-col cols="12" sm="12" md="6">
-            <v-menu
-              v-model="menu2"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="filter.to"
-                  label="Date (read only text field)"
-                  hint="YYYY-MM-DD format"
-                  dense
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
+                <v-data-table
+                  :headers="headers"
+                  :items="reports"
+                  :page.sync="filter.page"
+                  :items-per-page="filter.size"
+                  :options.sync="options"
+                  :server-items-length="reportsCount"
+                  :loading="loading"
+                  item-key="_id"
+                  hide-default-footer
+                  class="elevation-1"
                 />
-              </template>
-              <v-date-picker v-model="filter.to" no-title @input="menu2 = false" />
-            </v-menu>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.country"
-              label="Country code"
-              name="Country"
-              autocomplete="on"
-              dense
-              clearable
-            />
-          </v-col>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.user"
-              label="User"
-              name="User"
-              autocomplete="on"
-              clearable
-              dense
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.os"
-              label="OS"
-              name="OS"
-              autocomplete="on"
-              clearable
-              dense
-            />
-          </v-col>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.browser"
-              label="Browser"
-              name="Browser"
-              autocomplete="on"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.url"
-              label="URL"
-              name="URL"
-              autocomplete="on"
-              clearable
-              dense
-            />
-          </v-col>
-          <v-col cols="12" sm="12" md="6">
-            <v-text-field
-              v-model="filter.referrer"
-              label="Referrer"
-              name="Referrer"
-              autocomplete="on"
-              clearable
-              dense
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
-            <v-pagination
-              v-model="filter.page"
-              :length="reportsCount"
-              :total-visible="5"
-            />
-            <v-data-table
-              :headers="headers"
-              :items="reports"
-              :page.sync="filter.page"
-              :items-per-page="filter.size"
-              :options.sync="options"
-              :server-items-length="reportsCount"
-              :loading="loading"
-              item-key="_id"
-              hide-default-footer
-              class="elevation-1"
-            />
-          </v-col>
-        </v-row>
-        <!-- <v-row cols="12">
-          <v-col>
-            <h1>bar</h1>
-            <bar />
-          </v-col>
-        </v-row> -->
-      </v-form>
-    </no-ssr>
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <div>
+              <v-icon>
+                fa-chart-line
+              </v-icon> &nbsp;
+              <span style="font-weight: 500">Charts</span>
+            </div>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-row>
+              <v-col cols="12" style="height: 400px;">
+                <os-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.countries" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" style="height: 400px;">
+                <os-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.os" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" style="height: 400px;">
+                <browser-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.browsers" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" style="height: 400px;">
+                <user-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.users" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" style="height: 400px;">
+                <ref-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.refs" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" style="height: 600px;">
+                <page-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.pages" />
+              </v-col>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </client-only>
   </v-container>
 </template>
 
 <script>
-// import Bar from '@/components/chart/bar'
+import OsChart from '@/components/chart/os-chart'
+import BrowserChart from '@/components/chart/browser-chart'
+import UserChart from '@/components/chart/user-chart'
+import RefChart from '@/components/chart/ref-chart'
+import PageChart from '@/components/chart/page-chart'
 
 export default {
-  // components: {
-  //   Bar
-  // },
-  watchQuery: ['from', 'to', 'country', 'user', 'os', 'browser', 'url', 'referrer', 'page', 'size', 'sortBy', 'sortDesc', 'interval'],
+  components: {
+    OsChart,
+    BrowserChart,
+    UserChart,
+    RefChart,
+    PageChart
+  },
+  watchQuery: ['from', 'to', 'country', 'user', 'os', 'browser', 'url', 'referrer', 'page', 'size', 'sortBy', 'sortDesc', 'interval', 'panel'],
   async asyncData ({ store, query }) {
     if (!query.from && !query.to) {
       const from = new Date()
@@ -188,6 +262,8 @@ export default {
       referrer: this.$route.query.referrer || undefined,
       page: this.$route.query.page ? parseInt(this.$route.query.page) : 1,
       size: this.$route.query.size ? parseInt(this.$route.query.size) : 10,
+      panel: this.$route.query.panel !== undefined ? (this.$route.query.panel !== null
+        ? parseInt(this.$route.query.panel) : 0) : null,
 
       sortBy: 'createdAt',
       sortDesc: true,
@@ -196,6 +272,7 @@ export default {
 
     }
     return {
+      panels: 0,
       menu1: false,
       menu2: false,
       timeout: null,
@@ -213,7 +290,7 @@ export default {
         { text: 'Os', value: 'connection.os.name' },
         { text: 'User', value: 'connection.user.username' },
         { text: 'Url', value: 'url' },
-        { text: 'Referrer', value: 'referrer' },
+        { text: 'Referrer', value: 'ref' },
         { text: 'Created', value: 'createdAt' }
       ]
     }
@@ -256,3 +333,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+* >>> .echarts {
+  width: 100%;
+  height: 100%;
+}
+</style>

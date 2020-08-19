@@ -1,13 +1,13 @@
 <template>
   <v-container fluid style="height: 100%">
-    <no-ssr>
+    <client-only>
       <v-data-table
         :headers="headers"
         :items="visits"
         item-key="connection._id"
         class="elevation-1"
       />
-    </no-ssr>
+    </client-only>
   </v-container>
 </template>
 

@@ -624,6 +624,7 @@ table {
 }
 
 .iframe_embed {
+  max-width: 100%;
   width: 100%;
   height: 15rem;
   border: 0;

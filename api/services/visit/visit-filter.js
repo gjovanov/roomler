@@ -90,6 +90,17 @@ class VisitFilter {
           },
           0
         ]
+      },
+      ref: {
+        $arrayElemAt: [
+          {
+            $split: [
+              '$referrer',
+              '?'
+            ]
+          },
+          0
+        ]
       }
     }
     this.aggregate.push({ $addFields })
@@ -117,8 +128,8 @@ class VisitFilter {
       pages: [
         { $group: { _id: this.getGroupId(interval, '$page'), count: { $sum: 1 } } }
       ],
-      referrers: [
-        { $group: { _id: this.getGroupId(interval, '$referrer'), count: { $sum: 1 } } }
+      refs: [
+        { $group: { _id: this.getGroupId(interval, '$ref'), count: { $sum: 1 } } }
       ]
     }
     this.aggregate.push({ $facet })

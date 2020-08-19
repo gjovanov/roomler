@@ -15,6 +15,9 @@ export default class Iframe extends Node {
       attrs: {
         src: {
           default: null
+        },
+        class: {
+          default: 'iframe_embed'
         }
       },
       group: 'block',
@@ -22,11 +25,13 @@ export default class Iframe extends Node {
       parseDOM: [{
         tag: 'iframe',
         getAttrs: dom => ({
-          src: dom.getAttribute('src')
+          src: dom.getAttribute('src'),
+          class: dom.getAttribute('class')
         })
       }],
       toDOM: node => ['iframe', {
         src: node.attrs.src,
+        class: node.attrs.class,
         frameborder: 0,
         allowfullscreen: 'true'
       }]
@@ -56,10 +61,20 @@ export default class Iframe extends Node {
               src
             })
           }
+        },
+        class: {
+          get () {
+            return this.node.attrs.class
+          },
+          set (cl) {
+            this.updateAttrs({
+              class: cl
+            })
+          }
         }
       },
       template: `
-          <iframe class="iframe_embed" :src="src" allowfullscreen></iframe>
+          <iframe class="iframe_embed" :src="src" allowfullscreen style="max-width: 100%;"></iframe>
       `
     }
   }
