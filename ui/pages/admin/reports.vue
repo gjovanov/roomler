@@ -179,7 +179,7 @@
           <v-expansion-panel-content>
             <v-row>
               <v-col cols="12" style="height: 400px;">
-                <os-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.countries" />
+                <country-chart :from="filter.from" :to="filter.to" :items="$store.state.api.visit.countries" />
               </v-col>
             </v-row>
             <v-row>
@@ -215,6 +215,7 @@
 </template>
 
 <script>
+import CountryChart from '@/components/chart/country-chart'
 import OsChart from '@/components/chart/os-chart'
 import BrowserChart from '@/components/chart/browser-chart'
 import UserChart from '@/components/chart/user-chart'
@@ -223,6 +224,7 @@ import PageChart from '@/components/chart/page-chart'
 
 export default {
   components: {
+    CountryChart,
     OsChart,
     BrowserChart,
     UserChart,

@@ -1,14 +1,14 @@
 <template>
-  <line-chart :options="options" />
+  <base-chart :options="options" />
 </template>
 
 <script>
 import echarts from 'echarts/lib/echarts'
-import LineChart from '@/components/chart/line-chart'
+import BaseChart from '@/components/chart/base-chart'
 
 export default {
   components: {
-    LineChart
+    BaseChart
   },
   props: {
     from: {
@@ -37,21 +37,44 @@ export default {
           text: 'Browsers'
         },
         legend: {
+          type: 'scroll',
+          layout: 'horizontal',
+          align: 'right',
+          selector: [
+            {
+              type: 'all',
+              // can be any title you like
+              title: 'All'
+            },
+            {
+              type: 'inverse',
+              title: 'Inv'
+            }
+          ],
+          verticalAlign: 'bottom',
+          backgroundColor: '#fff',
+          borderColor: '#ccc',
+          borderWidth: 0.5,
+          padding: [20, 30],
+          y: 30,
+          x: 30,
+          // width: '100%',
+          itemWidth: 135,
+          itemStyle: {
+            fontWeight: 'bold'
+          },
+          itemHiddenStyle: {
+            fontWeight: 'bold'
+          },
           data: []
         },
         toolbox: {
           show: true,
           feature: {
             mark: { show: true },
-            magicType: {
-              show: true,
-              type: ['line', 'bar'],
-              title: {
-                line: 'Line',
-                bar: 'Bar'
-              }
-            },
             restore: { show: true, title: 'Reset' },
+            dataZoom: { show: true, title: { zoom: 'Zoom', back: 'Back' } },
+            dataView: { show: true, title: 'View data', lang: ['Data view', 'Turn off', 'Refresh'] },
             saveAsImage: { show: true, title: 'Save as Image' }
           }
         },
@@ -59,6 +82,7 @@ export default {
           left: '3%',
           right: '4%',
           bottom: '3%',
+          top: 100,
           containLabel: true
         },
         tooltip: {
@@ -98,7 +122,8 @@ export default {
 
         options.series.push({
           name: key,
-          type: 'line',
+          type: 'bar',
+          stack: 'total',
           // smooth: true,
           itemStyle: { normal: { areaStyle: { type: 'default' } } },
           data: sortedData,
