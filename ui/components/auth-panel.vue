@@ -371,10 +371,10 @@ export default {
       handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
     },
     async goToVisits () {
-      await this.$router.push({ path: '/admin/visits' })
+      await this.$router.push({ path: '/admin/reports?status=open&panel=3' })
     },
     async goToReports () {
-      await this.$router.push({ path: '/admin/reports' })
+      await this.$router.push({ path: '/admin/reports?panel=3' })
     },
     async logout () {
       await this.$router.push({ path: '/' })

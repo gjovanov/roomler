@@ -9,7 +9,6 @@ export const state = () => ({
   visitsCount: 0,
 
   reportsLoading: true,
-
   reports: [],
   reportsCount: 0,
 

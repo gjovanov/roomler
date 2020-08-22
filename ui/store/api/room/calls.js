@@ -1,3 +1,4 @@
+import qs from 'qs'
 import {
   handleError
   // handleSuccess
@@ -6,7 +7,17 @@ import { handleCallPush } from './handlers/call-push'
 import { handleCallPull } from './handlers/call-pull'
 
 export const state = () => ({
-  calls: []
+  calls: [],
+
+  reportsLoading: true,
+  reports: [],
+  reportsCount: 0,
+
+  rooms: [],
+  countries: [],
+  os: [],
+  browsers: [],
+  users: []
 })
 
 export const mutations = {
@@ -18,6 +29,19 @@ export const mutations = {
   },
   pullCall (state, call) {
     state.calls = state.calls.filter(c => c._id !== call._id)
+  },
+  setLoading (state, { type, value }) {
+    state[`${type}Loading`] = value
+  },
+  setReports (state, reports) {
+    state.reports = reports.data
+    state.reportsCount = reports.count
+
+    state.rooms = reports.rooms
+    state.countries = reports.countries
+    state.os = reports.os
+    state.browsers = reports.browsers
+    state.users = reports.users
   }
 }
 
@@ -45,6 +69,28 @@ export const actions = {
       commit('setCalls', response.result ? response.result : [])
     } catch (err) {
       handleError(err, commit)
+      response.hasError = true
+    }
+    return response
+  },
+
+  async getReports ({
+    commit,
+    state,
+    rootState
+  }, params) {
+    const response = {}
+    try {
+      if (!params.from && !params.to && !params.status) {
+        params.status = 'open'
+      }
+      commit('setLoading', { type: 'reports', value: true })
+      const query = qs.stringify(params, { encode: false })
+      response.result = await this.$axios.$get(`/api/room/calls/get-reports?${query}`)
+      commit('setReports', response.result ? response.result : [])
+      commit('setLoading', { type: 'reports', value: false })
+    } catch (err) {
+      // handleError(err, commit)
       response.hasError = true
     }
     return response

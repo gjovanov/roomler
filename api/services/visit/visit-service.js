@@ -19,20 +19,6 @@ class VisitService {
     return records
   }
 
-  async getAggregates (filter, group) {
-    const aggregate = new VisitFilter(filter).getAggregate()
-    let records = await Visit
-      .aggregate(aggregate)
-      .collation({ locale: 'en', strength: 2 })
-      .allowDiskUse(true)
-      .exec()
-    records = records.map((r) => {
-      r.count = r.count && r.count.length ? r.count[0].count : 0
-      return r
-    })[0]
-    return records
-  }
-
   async open (id, data) {
     data.status = 'open'
     data.connection = mongoose.Types.ObjectId(id)

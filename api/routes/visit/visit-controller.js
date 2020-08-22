@@ -9,12 +9,14 @@ class VisitController {
       from: request.query.from,
       to: request.query.to,
       status: request.query.status,
+      room: request.query.room,
       url: request.query.url,
       referrer: request.query.referrer,
       user: request.query.user,
       os: request.query.os,
       browser: request.query.browser,
       country: request.query.country,
+      device: request.query.device,
       page: request.query.page || 0,
       size: request.query.size || 100
     })

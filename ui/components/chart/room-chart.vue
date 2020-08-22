@@ -43,7 +43,7 @@ export default {
           renderer: 'svg'
         },
         title: {
-          text: 'Countries'
+          text: 'Rooms'
         },
         legend: {
           type: 'scroll',

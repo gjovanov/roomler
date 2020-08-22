@@ -289,6 +289,20 @@ module.exports = [{
 },
 {
   authenticate: true,
+  admin: true,
+  method: 'GET',
+  url: '/api/room/calls/get-reports',
+  schema: {
+    response: {
+      200: roomSchema.calls.getReports.response[200],
+      409: errorSchema.response[409],
+      500: errorSchema.response[500]
+    }
+  },
+  handler: roomCallsController.getReports
+},
+{
+  authenticate: true,
   method: 'POST',
   url: '/api/room/calls/pull/:id',
   schema: {

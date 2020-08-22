@@ -10,6 +10,21 @@ const getAllQueryString = S.object()
   .prop('size', S.integer())
   .prop('search', S.string())
 
+const getReportsQueryString = S.object()
+  .prop('from', S.string())
+  .prop('to', S.string())
+  .prop('status', S.string())
+  .prop('room', S.string())
+  .prop('user', S.string())
+  .prop('os', S.string())
+  .prop('browser', S.string())
+  .prop('country', S.string())
+  .prop('device', S.string())
+  .prop('page', S.integer())
+  .prop('size', S.integer())
+  .prop('sortBy', S.string())
+  .prop('sortDesc', S.string())
+
 const deleteResult = S.object()
   .prop('n', S.number().required())
   .prop('ok', S.number().required())
@@ -69,6 +84,15 @@ const geoip = S.object()
   .prop('continent', continent)
   .prop('country', country)
   .prop('city_name', S.string())
+const os = S.object()
+  .prop('name', S.string())
+  .prop('version', S.string())
+
+const browser = S.object()
+  .prop('name', S.string())
+  .prop('version', S.string())
+  .prop('is_mobile', S.boolean())
+
 const call = S.object()
   .prop('_id', S.string())
   .prop('call_id', S.string())
@@ -77,11 +101,52 @@ const call = S.object()
   .prop('status', S.string())
   .prop('id_address', S.string())
   .prop('geoip', geoip)
+
+const callFull = S.object()
+  .prop('_id', S.string())
+  .prop('call_id', S.string())
+  .prop('user', S.string())
+  .prop('room', S.string())
+  .prop('status', S.string())
+  .prop('id_address', S.string())
+  .prop('geoip', geoip)
+  .prop('user', user)
+  .prop('device_id', S.string())
+  .prop('os', os)
+  .prop('browser', browser)
+  .prop('duration', S.integer())
+  .prop('createdAt', S.string())
+const callFullList = S.array().items(callFull)
+
 const roomCall = S.object()
   .prop('room', room)
   .prop('call', call)
 const roomCallList = S.array().items(roomCall)
 const callList = S.array().items(call)
+
+const aggregateId = S.object()
+  .prop('year', S.integer())
+  .prop('month', S.integer())
+  .prop('week', S.integer())
+  .prop('day', S.integer())
+  .prop('key', S.string())
+
+const aggregate = S.object()
+  .prop('_id', aggregateId)
+  .prop('count', S.integer())
+  .prop('duration', S.integer())
+const aggregateList = S.array().items(aggregate)
+
+const pagedRoomCallList = S.object()
+  .prop('data', callFullList)
+  .prop('count', S.integer())
+  .prop('rooms', aggregateList)
+  .prop('countries', aggregateList)
+  .prop('users', aggregateList)
+  .prop('os', aggregateList)
+  .prop('browsers', aggregateList)
+  .prop('pages', aggregateList)
+  .prop('refs', aggregateList)
 
 const roomList = S.array().items(room)
 const roomMessage = S.object()
@@ -267,6 +332,12 @@ module.exports = {
     getAll: {
       response: {
         200: callList
+      }
+    },
+    getReports: {
+      querystring: getReportsQueryString,
+      response: {
+        200: pagedRoomCallList
       }
     },
     pull: {

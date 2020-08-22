@@ -319,7 +319,7 @@ NUXT_TELEMETRY_DISABLED=1
 - TURN_URL & TURN_USERNAME & TURN_PASSWORD e.g. turns:coturn.mydomain.com:443?transport=udp, username & password
 - (WS_SCALEOUT_ENABLED=1 & WS_SCALEOUT_HOST=redis) or WS_SCALEOUT_ENABLED=0
 - (SENDGRID_API_KEY) or (GMAIL_USER & GMAIL_PASSWORD) or (SMTP_HOST & SMTP_PORT & SMTP_SECURE & SMTP_USER & SMTP_PASSWORD)
-- SUPER_ADMIN_EMAILS - '["email_of_super_admin_user@gmail.com"]' is used to view routes `/admin/visits` and `/admin/reports`
+- SUPER_ADMIN_EMAILS - '["email_of_super_admin_user@gmail.com"]' is used to view routes `/admin/reports`
 
 **IMPORTANT**: If you don't provide OAUTH (Facebook, Google, LinkedIn, Github) ID/SECRET envs, you will still be able to have local registration (username/email/password), but OAUTH button in the `/@/auth/login` or `/@/auth/register` routes will throw an error. Also if you don't provide Giphy API KEY, adding giphys will throw an error.
 

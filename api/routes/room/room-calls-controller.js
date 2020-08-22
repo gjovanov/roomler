@@ -16,6 +16,23 @@ class RoomCallsController {
     reply.send(result)
   }
 
+  async getReports (request, reply) {
+    const result = await callService.getReports({
+      from: request.query.from,
+      to: request.query.to,
+      status: request.query.status,
+      room: request.query.room,
+      device: request.query.device,
+      user: request.query.user,
+      os: request.query.os,
+      browser: request.query.browser,
+      country: request.query.country,
+      page: request.query.page || 0,
+      size: request.query.size || 100
+    })
+    reply.send(result)
+  }
+
   async pushCallWs (fastify, wss, conn, req, payload) {
     try {
       const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
