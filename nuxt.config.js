@@ -73,9 +73,9 @@ const nuxtConfig = {
   },
   workbox: {
     offlineAnalytics: true,
-    dev: true,
+    dev: isDev,
     config: {
-      debug: true
+      debug: isDev
     },
     importScripts: [
       'custom-sw.js'
