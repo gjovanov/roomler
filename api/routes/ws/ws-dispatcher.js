@@ -97,7 +97,7 @@ class WsDispatcher {
     return subscriptions
   }
 
-  send (op, recepients, subscriptions, stringify, extension, messages) {
+  send (op, recepients, stringify, extension, messages) {
     recepients.forEach((r) => {
       const recepient = JSON.stringify(r)
       if (storage.clients[recepient]) {
@@ -119,6 +119,9 @@ class WsDispatcher {
         }
       }
     })
+  }
+
+  sendNotifications (op, messages, subscriptions) {
     subscriptions.forEach((subscription) => {
       messages.forEach(async (message) => {
         try {
@@ -151,7 +154,7 @@ class WsDispatcher {
     })
   }
 
-  publish (op, messages) {
+  async publish (op, messages) {
     if (this.publisher && this.publisher.status === 'ready') {
       this.publisher.publish(channel, JSON.stringify({
         process: processName,
@@ -161,15 +164,21 @@ class WsDispatcher {
     } else {
       this.dispatch(op, messages)
     }
-  }
 
-  async dispatch (op, messages) {
-    const { recepients, stringify, extension, notifications } = await this.getRecepients(op, messages)
+    const { recepients, notifications } = await this.getRecepients(op, messages)
     let subscriptions = []
     if (notifications) {
       subscriptions = await this.getSubscriptions(recepients)
     }
-    this.send(op, recepients, subscriptions, stringify, extension, messages)
+    if (notifications) {
+      subscriptions = await this.getSubscriptions(recepients)
+    }
+    this.sendNotifications(op, messages, subscriptions)
+  }
+
+  async dispatch (op, messages) {
+    const { recepients, stringify, extension } = await this.getRecepients(op, messages)
+    this.send(op, recepients, stringify, extension, messages)
   }
 }
 
