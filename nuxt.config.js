@@ -47,7 +47,6 @@ const nuxtConfig = {
     '@/plugins/axios',
     '@/plugins/icons',
     '@/plugins/janus.client',
-    '@/plugins/sw.client',
     '@/plugins/ws.client'
   ],
   modules: [
