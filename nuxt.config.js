@@ -47,6 +47,7 @@ const nuxtConfig = {
     '@/plugins/axios',
     '@/plugins/icons',
     '@/plugins/janus.client',
+    '@/plugins/sw.client',
     '@/plugins/ws.client'
   ],
   modules: [
@@ -69,6 +70,19 @@ const nuxtConfig = {
       enabled: !isProd,
       sendHitTask: isProd
     }
+  },
+  workbox: {
+    offlineAnalytics: true,
+    dev: true,
+    config: {
+      debug: true
+    },
+    importScripts: [
+      'custom-sw.js'
+    ],
+    preCaching: [
+      'precache.js'
+    ]
   },
   vuetify: {
     customVariables: ['~/assets/variables.scss'],

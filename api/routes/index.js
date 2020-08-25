@@ -7,5 +7,6 @@ module.exports = [
   ...require('./invite'),
   ...require('./message'),
   ...require('./giphy'),
-  ...require('./visit')
+  ...require('./visit'),
+  ...require('./subscription')
 ]

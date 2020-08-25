@@ -31,7 +31,6 @@ class VisitFilter {
     }
     if (filter.room) {
       const room = `^${config.appSettings.env.URL}/${filter.room}.*`
-      console.log(`ROOM: ${room}`)
       $match1.$and.push({ url: { $regex: `${room}` } })
     }
     if (filter.referrer) {

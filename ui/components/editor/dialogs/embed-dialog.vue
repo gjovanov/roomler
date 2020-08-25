@@ -88,8 +88,6 @@ export default {
 
   methods: {
     insert () {
-      // eslint-disable-next-line no-debugger
-      debugger
       if (this.$refs.formEmbed.validate()) {
         this.$emit('insertEmbed', this.convertedUrl)
         this.url = null

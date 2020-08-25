@@ -99,7 +99,14 @@ const schema = new Schema({
     }
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true }
+})
+schema.virtual('userObj', {
+  ref: 'users',
+  localField: 'user',
+  foreignField: '_id',
+  justOne: true
 })
 
 schema.index({ createdAt: 1 })

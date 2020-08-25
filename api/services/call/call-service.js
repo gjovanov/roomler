@@ -41,6 +41,9 @@ class CallService {
     }
     let record = new Call(data)
     record = await record.save()
+      .then(r =>
+        r.populate({ path: 'userObj', select: '_id username' })
+          .execPopulate())
     return record
   }
 
@@ -54,6 +57,7 @@ class CallService {
     }
     const record = await Call
       .findOneAndUpdate(callFilter, update, options)
+      .populate({ path: 'userObj', select: '_id username' })
     return record
   }
 

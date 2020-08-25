@@ -140,6 +140,8 @@ const emailSettings = S.object()
       .prop('pass', S.string())
     )
   )
+const webPushSettings = S.object()
+  .prop('publicKey', S.string())
 
 const response = S.object()
   .prop('appSettings', appSettings)
@@ -150,6 +152,7 @@ const response = S.object()
   .prop('dataSettings', dataSettings)
   .prop('wsSettings', wsSettings)
   .prop('emailSettings', emailSettings)
+  .prop('webPushSettings', webPushSettings)
 
 module.exports = {
   get: {

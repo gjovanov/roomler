@@ -14,7 +14,8 @@ const config = {
   wsSettings: require('./ws-settings'),
   emailSettings: require('./email-settings'),
   geoipSettings: require('./geoip-settings'),
-  giphySettings: require('./giphy-settings')
+  giphySettings: require('./giphy-settings'),
+  webPushSettings: require('./web-push-settings')
 }
 
 module.exports = config

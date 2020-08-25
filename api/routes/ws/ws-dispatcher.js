@@ -5,7 +5,9 @@ const fastJson = require('fast-json-stringify')
 const userService = require('../../services/user/user-service')
 const messageService = require('../../services/message/message-service')
 const roomService = require('../../services/room/room-service')
+const subscriptionService = require('../../services/subscription/subscription-service')
 const channel = require('../../../config').wsSettings.scaleout.channel
+// const subscription = require('../../models/subscription')
 const storage = require('./ws-storage')
 const processName = `${os.hostname()}_${process.pid}`
 
@@ -27,10 +29,12 @@ class WsDispatcher {
     let recepients = []
     let stringify
     let extension = (record, userid) => record
+    let notifications = false
     if (op.startsWith('MESSAGE_')) {
       recepients = messageService.recepients(messages)
       stringify = fastJson(require('../message/message-schema').wsMessage.valueOf())
       extension = messageService.extension
+      notifications = true
     }
     if (op.startsWith('CONNECTION_') && messages.length && messages[0].user) {
       const rooms = await roomService.getAll(messages[0].user, 0, 10000)
@@ -72,6 +76,7 @@ class WsDispatcher {
       // TODO: notify peers not members of these rooms???
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../room/room-schema').wsRoomCall.valueOf())
+      notifications = true
     }
     if (op.startsWith('VISIT_')) {
       const users = await userService.getAdmins()
@@ -82,11 +87,17 @@ class WsDispatcher {
     return {
       recepients,
       stringify,
-      extension
+      extension,
+      notifications
     }
   }
 
-  send (op, recepients, stringify, extension, messages) {
+  async getSubscriptions (recepients) {
+    const subscriptions = await subscriptionService.getAll(recepients)
+    return subscriptions
+  }
+
+  send (op, recepients, subscriptions, stringify, extension, messages) {
     recepients.forEach((r) => {
       const recepient = JSON.stringify(r)
       if (storage.clients[recepient]) {
@@ -108,6 +119,36 @@ class WsDispatcher {
         }
       }
     })
+    subscriptions.forEach((subscription) => {
+      messages.forEach(async (message) => {
+        try {
+          let send = false
+          let content = ''
+          if (op.startsWith('MESSAGE_')) {
+            if (JSON.stringify(subscription.user) !== JSON.stringify(message.author)) {
+              send = true
+              content = message.content
+            }
+          } else if (op.startsWith('ROOM_CALL_OPEN')) {
+            if (JSON.stringify(subscription.user) !== JSON.stringify(message.call.userObj._id)) {
+              send = true
+              content = `${message.call.userObj.username} joined the call in the room '${message.room.name}'`
+            }
+          } else if (op.startsWith('ROOM_CALL_CLOSE')) {
+            if (JSON.stringify(subscription.user) !== JSON.stringify(message.call.userObj._id)) {
+              send = true
+              content = `${message.call.userObj.username} left the call from the room '${message.room.name}'`
+            }
+          }
+
+          if (send) {
+            await subscriptionService.send(subscription, content)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      })
+    })
   }
 
   publish (op, messages) {
@@ -123,8 +164,12 @@ class WsDispatcher {
   }
 
   async dispatch (op, messages) {
-    const { recepients, stringify, extension } = await this.getRecepients(op, messages)
-    this.send(op, recepients, stringify, extension, messages)
+    const { recepients, stringify, extension, notifications } = await this.getRecepients(op, messages)
+    let subscriptions = []
+    if (notifications) {
+      subscriptions = await this.getSubscriptions(recepients)
+    }
+    this.send(op, recepients, subscriptions, stringify, extension, messages)
   }
 }
 
