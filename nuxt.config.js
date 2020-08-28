@@ -70,9 +70,18 @@ const nuxtConfig = {
       sendHitTask: isProd
     }
   },
+  icon: {
+    sizes: [64, 120, 144, 152, 192, 384, 512],
+    purpose: ['any', 'maskable']
+  },
   workbox: {
-    offlineAnalytics: true,
+    // offlineAnalytics: true,
     dev: isDev,
+    globPatterns: ['**/*.{js,css,png}', '**/uploads/*', '**/audio/*'],
+    // globIgnores: [`${env.API_URL}/*`],
+    // runtimeCaching: [
+    //   { urlPattern: `${env.API_URL}/.*` }
+    // ],
     config: {
       debug: isDev
     },

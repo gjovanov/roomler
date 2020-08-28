@@ -1,3 +1,9 @@
+self.addEventListener('fetch', function (event) {
+  if (event.request.url.match('^.*(\/api\/).*$')) {
+    return false
+  }
+})
+
 // Listen to Push
 self.addEventListener('push', (e) => {
   let data = ''

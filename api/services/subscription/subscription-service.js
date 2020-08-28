@@ -4,9 +4,15 @@ const Subscription = require('../../models/subscription')
 const config = require('../../../config')
 const SubscriptionFilter = require('./subscription-filter')
 
-webpush.setVapidDetails(config.webPushSettings.contact, config.webPushSettings.publicKey, config.webPushSettings.privateKey)
-
 class SubscriptionService {
+  constructor () {
+    try {
+      webpush.setVapidDetails(config.webPushSettings.contact, config.webPushSettings.publicKey, config.webPushSettings.privateKey)
+    } catch (e) {
+      console.log(`ERROR: ${e}`)
+    }
+  }
+
   async create (userid, data) {
     data.user = userid
     let record = new Subscription(data)

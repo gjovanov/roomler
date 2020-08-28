@@ -7,7 +7,7 @@
   "scripts": {
     "pm2:logs": "pm2 logs --err",
     "dev:api": "cross-env NODE_ENV=development nodemon server/api/index.js --config server/api/nodemon.json",
-    "dev:api:cluster": "pm2 start server/api/index.js -i max --no-autorestart -f",
+    "dev:api:cluster": "cross-env NODE_ENV=development pm2 start server/api/index.js -i max --no-autorestart -f",
     "dev:ui": "cross-env NODE_ENV=development nodemon server/ui/index.js --config server/ui/nodemon.json ",
     "build": "nuxt build",
     "analyze": "nuxt build --analyze",
