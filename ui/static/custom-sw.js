@@ -1,5 +1,5 @@
 self.addEventListener('fetch', function (event) {
-  if (/^.*(\/api\/).*$/.text(event.request.url)) {
+  if (/^.*(\/api\/).*$/.test(event.request.url)) {
     return false
   }
 })
