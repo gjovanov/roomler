@@ -24,6 +24,8 @@ All that fully free and open source.
 - [VueJS](https://github.com/vuejs/vue)
 - [NuxtJS](https://github.com/nuxt/nuxt.js/)    
 - [VuetifyJS](https://github.com/vuetifyjs/vuetify)
+- [Tiptap](https://github.com/ueberdosis/tiptap)
+- [ProseMirror](https://github.com/ProseMirror/prosemirror)
 - [Nginx](https://github.com/nginx/nginx)
 - [Docker](https://github.com/docker)
 
