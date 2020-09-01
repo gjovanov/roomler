@@ -5,13 +5,13 @@ export const mutations = {
     handleDto.handle = handle
   },
   push (state, { sessionDto, handleDto }) {
-    const handles = sessionDto.handleDtos.filter(h => h.id !== handleDto.id)
+    const handles = sessionDto.audiobridgeHandles.filter(h => h.id !== handleDto.id)
     handles.push(handleDto)
-    sessionDto.handleDtos = handles
+    sessionDto.audiobridgeHandles = handles
   },
   pull (state, { sessionDto, handleDto }) {
     handleDto.handle = null
-    sessionDto.handleDtos = sessionDto.handleDtos.filter(h => h.id !== handleDto.id)
+    sessionDto.audiobridgeHandles = sessionDto.audiobridgeHandles.filter(h => h.id !== handleDto.id)
   }
 }
 
@@ -36,42 +36,42 @@ export const actions = {
           reject(error)
         },
         consentDialog: (on) => {
-          commit('api/janus/videoroom/updates/consentDialog', { handleDto, on }, { root: true })
+          commit('api/janus/audiobridge/updates/consentDialog', { handleDto, on }, { root: true })
         },
         webrtcState: (on, reason) => {
-          commit('api/janus/videoroom/updates/webrtcState', { handleDto, on, reason }, { root: true })
+          commit('api/janus/audiobridge/updates/webrtcState', { handleDto, on, reason }, { root: true })
         },
         iceState: (on) => {
-          commit('api/janus/videoroom/updates/iceState', { handleDto, on }, { root: true })
+          commit('api/janus/audiobridge/updates/iceState', { handleDto, on }, { root: true })
         },
         mediaState: (type, on) => {
-          commit('api/janus/videoroom/updates/mediaState', { handleDto, type, on }, { root: true })
+          commit('api/janus/audiobridge/updates/mediaState', { handleDto, type, on }, { root: true })
         },
         slowLink: (on) => {
-          commit('api/janus/videoroom/updates/slowLink', { handleDto, on }, { root: true })
+          commit('api/janus/audiobridge/updates/slowLink', { handleDto, on }, { root: true })
         },
         onlocalstream: (stream) => {
-          commit('api/janus/videoroom/updates/onlocalstream', { handleDto, stream, commit }, { root: true })
+          commit('api/janus/audiobridge/updates/onlocalstream', { handleDto, stream, commit }, { root: true })
         },
         onremotestream: (stream) => {
-          commit('api/janus/videoroom/updates/onremotestream', { handleDto, stream, commit }, { root: true })
+          commit('api/janus/audiobridge/updates/onremotestream', { handleDto, stream, commit }, { root: true })
         },
         ondataopen: () => {
-          commit('api/janus/videoroom/updates/ondataopen', { handleDto }, { root: true })
+          commit('api/janus/audiobridge/updates/ondataopen', { handleDto }, { root: true })
         },
         ondata: (data) => {
-          dispatch('api/janus/videoroom/handlers/ondata', { handleDto, data }, { root: true })
+          dispatch('api/janus/audiobridge/handlers/ondata', { handleDto, data }, { root: true })
         },
         oncleanup: () => {
-          commit('api/janus/videoroom/updates/oncleanup', { handleDto }, { root: true })
-          // commit('api/janus/handle/pull', { sessionDto, handleDto }, { root: true })
+          commit('api/janus/audiobridge/updates/oncleanup', { handleDto }, { root: true })
+          // commit('api/janus/audiobridge/handle/pull', { sessionDto, handleDto }, { root: true })
         },
         ondetached: () => {
           self.$Janus.debug('Detaching.............')
-          // commit('api/janus/handle/pull', { sessionDto, handleDto }, { root: true })
+          // commit('api/janus/audiobridge/handle/pull', { sessionDto, handleDto }, { root: true })
         },
         onmessage: (msg, jsep) => {
-          dispatch('api/janus/videoroom/handlers/onmessage', { handleDto, msg, jsep }, { root: true })
+          dispatch('api/janus/audiobridge/handlers/onmessage', { handleDto, msg, jsep }, { root: true })
         }
       })
     })
@@ -82,8 +82,8 @@ export const actions = {
       commit,
       dispatch
     }, { sessionDto, args }) {
-    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args }, { root: true })
-    commit('api/janus/videoroom/updates/setPublisher', { handleDto, isPublisher: true }, { root: true })
+    const handleDto = await dispatch('api/janus/audiobridge/handle/attach', { sessionDto, args }, { root: true })
+    commit('api/janus/audiobridge/updates/setPublisher', { handleDto, isPublisher: true }, { root: true })
     return handleDto
   },
 
@@ -92,8 +92,8 @@ export const actions = {
       commit,
       dispatch
     }, { sessionDto, args }) {
-    const handleDto = await dispatch('api/janus/handle/attach', { sessionDto, args }, { root: true })
-    commit('api/janus/videoroom/updates/setPublisher', { handleDto, isPublisher: false }, { root: true })
+    const handleDto = await dispatch('api/janus/audiobridge/handle/attach', { sessionDto, args }, { root: true })
+    commit('api/janus/audiobridge/updates/setPublisher', { handleDto, isPublisher: false }, { root: true })
     return handleDto
   },
 
@@ -116,7 +116,7 @@ export const actions = {
       if (handleDto.handle) {
         handleDto.handle.detach({
           success () {
-            commit('api/janus/handle/set', { handleDto, handle: null }, { root: true })
+            commit('api/janus/audiobridge/handle/set', { handleDto, handle: null }, { root: true })
             resolve()
           },
           error (error) {

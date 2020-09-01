@@ -4,6 +4,21 @@
       fluid
       class="pa-0"
     >
+      <v-row v-if="conferenceSession && remoteSipHandle">
+        <v-col
+          cols="12"
+          class="pa-1 ma-0"
+        />
+        <audio
+
+          :id="remoteSipHandle.id"
+          :srcObject.prop="remoteSipHandle.stream"
+          width="100%"
+          height="100%"
+          autoplay
+          controls
+        />
+      </v-row>
       <v-row
         v-if="conferenceSession && screens && screens.length"
       >
@@ -112,13 +127,19 @@ export default {
       return this.room ? this.$store.getters['api/auth/getRoomPeers'](this.room) : []
     },
     screens () {
-      return this.conferenceSession.handleDtos.filter(h => h.media.screen.enabled && !h.isLocal)
+      return this.conferenceSession.videoroomHandles.filter(h => h.media.screen.enabled && !h.isLocal)
     },
     publishers () {
-      return this.conferenceSession.handleDtos.filter(h => !(h.media.screen.enabled && !h.isLocal))
+      return this.conferenceSession.videoroomHandles.filter(h => !(h.media.screen.enabled && !h.isLocal))
     },
     localHandle () {
       return this.$store.getters['api/conference/localHandle']
+    },
+    remoteSipHandle () {
+      const result = this.$store.getters['api/conference/remoteSipHandle']
+      // eslint-disable-next-line no-debugger
+      debugger
+      return result
     },
     conferencePosition () {
       return this.roomRoute === 'calls' ? 'center' : 'left'
@@ -128,8 +149,8 @@ export default {
     if (this.localHandle) {
       this.setVideoMuted(this.localHandle)
     }
-    if (this.conferenceSession && this.conferenceSession.handleDtos) {
-      this.conferenceSession.handleDtos.filter(h => !(h.isLocal && h.media.screen.enabled)).forEach(async (h) => {
+    if (this.conferenceSession && this.conferenceSession.videoroomHandles) {
+      this.conferenceSession.videoroomHandles.filter(h => !(h.isLocal && h.media.screen.enabled)).forEach(async (h) => {
         if (h.stream) {
           const video = document.getElementById(h.id)
           if (video) {

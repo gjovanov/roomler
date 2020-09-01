@@ -8,7 +8,9 @@ module.exports = {
   plugins: {
     videoroom: 'janus.plugin.videoroom',
     textroom: 'janus.plugin.textroom',
-    streaming: 'janus.plugin.streaming'
+    streaming: 'janus.plugin.streaming',
+    sip: 'janus.plugin.sip',
+    audiobridge: 'janus.plugin.audiobridge'
   },
   audioCodecs: ['opus', 'isac32', 'isac16', 'pcmu', 'pcma'],
   videoCodecs: ['vp8', 'vp9', 'h264']

@@ -8,6 +8,8 @@ export class SessionDto {
     this.iceServers = iceServers
     this.plugins = plugins
     this.session = null
-    this.handleDtos = []
+    this.videoroomHandles = []
+    this.sipHandles = []
+    this.audiobridgeHandles = []
   }
 }

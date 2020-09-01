@@ -44,6 +44,13 @@ export const actions = {
 
 export const getters = {
   localHandle: (state) => {
-    return state.session && state.session.handleDtos ? state.session.handleDtos.find(h => h.isLocal) : null
+    return state.session && state.session.videoroomHandles ? state.session.videoroomHandles.find(h => h.isLocal) : null
+  },
+
+  localSipHandle: (state) => {
+    return state.session && state.session.sipHandles ? state.session.sipHandles.find(h => h.isLocal) : null
+  },
+  remoteSipHandle: (state) => {
+    return state.session && state.session.sipHandles ? state.session.sipHandles.find(h => !h.isLocal) : null
   }
 }

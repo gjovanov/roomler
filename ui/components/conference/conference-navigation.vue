@@ -425,7 +425,7 @@ export default {
             }
           }
           this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-          const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+          const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
           this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
         } catch (e) {
           this.$consola.error(e)
@@ -443,7 +443,7 @@ export default {
           }
         }
         this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
         this.$consola.error(e)
@@ -475,7 +475,7 @@ export default {
           }
         }
         this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
         this.$consola.error(e)
@@ -507,7 +507,7 @@ export default {
           }
         }
         this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
         this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
       } catch (e) {
         this.$consola.error(e)
@@ -524,7 +524,7 @@ export default {
     async publish (media) {
       this.publishDialog = false
       this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-      const jsep = await this.$store.dispatch('api/janus/handle/createOffer', { handleDto: this.localHandle })
+      const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
       this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
     },
     async unpublish () {

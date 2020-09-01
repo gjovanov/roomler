@@ -11,7 +11,7 @@ export const actions = {
   }, { handleDto, msg, jsep }) {
     this.$Janus.log(`onmessage: ${JSON.stringify(msg)}`)
 
-    if (msg.videoroom === 'joined') {
+    if (msg.audiobridge === 'joined') {
       this.$Janus.log('onmessage:attached')
       if (handleDto.isLocal) {
         await dispatch('api/room/calls/openCall', { room: handleDto.room._id, call_id: handleDto.call_id }, { root: true })
@@ -23,11 +23,11 @@ export const actions = {
       this.$Janus.log('onmessage:joining')
       await dispatch('handleJoining', { handleDto, joining: msg.joining })
     }
-    if (msg.videoroom === 'event') {
+    if (msg.audiobridge === 'event') {
       this.$Janus.log('onmessage:event')
       await dispatch('handleEvent', { handleDto, msg })
     }
-    if (msg.videoroom === 'attached') {
+    if (msg.audiobridge === 'attached') {
       await dispatch('handleAttached', { handleDto, msg })
     }
     if (msg.publishers && msg.publishers.length) {
@@ -54,7 +54,7 @@ export const actions = {
     if (jsep) {
       await dispatch('handleJsep', { handleDto, jsep })
     }
-    if (msg.videoroom === 'destroyed') {
+    if (msg.audiobridge === 'destroyed') {
       this.$Janus.log('onmessage:destroyed')
       await dispatch('handleDestroyed', { handleDto })
     }
@@ -69,11 +69,11 @@ export const actions = {
     dispatch
   }, { handleDto, msg }) {
     this.$Janus.log('handleJoined')
-    commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
-    commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
+    commit('api/janus/audiobridge/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/audiobridge/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
     if (handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled) {
-      dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
-        .then(jsep => dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true }))
+      dispatch('api/janus/audiobridge/handle/createOffer', { handleDto }, { root: true })
+        .then(jsep => dispatch('api/janus/audiobridge/api/configure', { handleDto, jsep }, { root: true }))
     }
   },
   handleJoining ({
@@ -91,16 +91,16 @@ export const actions = {
       ptype: 'attendee',
       id
     }
-    dispatch('api/janus/videoroom/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
+    dispatch('api/janus/audiobridge/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
   },
   handleEvent ({
     commit,
     dispatch
   }, { handleDto, msg }) {
     this.$Janus.log('handleEvent')
-    const foundHandleDTO = handleDto.sessionDto.videoroomHandles.find(h => h.id === msg.id)
+    const foundHandleDTO = handleDto.sessionDto.audiobridgeHandles.find(h => h.id === msg.id)
     if (foundHandleDTO) {
-      commit('api/janus/videoroom/updates/setDisplay', { handleDto: foundHandleDTO, display: msg.display }, { root: true })
+      commit('api/janus/audiobridge/updates/setDisplay', { handleDto: foundHandleDTO, display: msg.display }, { root: true })
     }
   },
   handleAttached ({
@@ -108,8 +108,8 @@ export const actions = {
     dispatch
   }, { handleDto, msg }) {
     this.$Janus.log('handleAttached')
-    commit('api/janus/videoroom/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
-    commit('api/janus/videoroom/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
+    commit('api/janus/audiobridge/updates/setId', { handleDto, id: msg.id, privateId: msg.private_id }, { root: true })
+    commit('api/janus/audiobridge/updates/setDisplay', { handleDto, display: msg.display }, { root: true })
   },
   handlePublishers ({
     commit,
@@ -133,8 +133,8 @@ export const actions = {
           audioCodec,
           videoCodec
         }
-        dispatch('api/janus/videoroom/handle/attachSubscriber', { sessionDto: handleDto.sessionDto, args }, { root: true })
-          .then(newHandleDTO => dispatch('api/janus/videoroom/api/joinSubscriber', { handleDto: newHandleDTO }, { root: true }))
+        dispatch('api/janus/audiobridge/handle/attachSubscriber', { sessionDto: handleDto.sessionDto, args }, { root: true })
+          .then(newHandleDTO => dispatch('api/janus/audiobridge/api/joinSubscriber', { handleDto: newHandleDTO }, { root: true }))
       }
     }
   },
@@ -155,7 +155,7 @@ export const actions = {
         ptype: 'attendee',
         id
       }
-      dispatch('api/janus/videoroom/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
+      dispatch('api/janus/audiobridge/handle/attachAttendee', { sessionDto: handleDto.sessionDto, args }, { root: true })
     }
   },
 
@@ -163,12 +163,12 @@ export const actions = {
     commit,
     dispatch
   }, { handleDto }) {
-    const result = await dispatch('api/janus/videoroom/api/listparticipants', { handleDto }, { root: true })
+    const result = await dispatch('api/janus/audiobridge/api/listparticipants', { handleDto }, { root: true })
     if (result.participants) {
       result.participants.forEach((p) => {
-        const handle = handleDto.sessionDto.videoroomHandles.find(h => h.id === p.id)
+        const handle = handleDto.sessionDto.audiobridgeHandles.find(h => h.id === p.id)
         if (handle) {
-          commit('api/janus/videoroom/updates/setDisplay', { handleDto: handle, display: p.display }, { root: true })
+          commit('api/janus/audiobridge/updates/setDisplay', { handleDto: handle, display: p.display }, { root: true })
         }
       })
     }
@@ -180,8 +180,8 @@ export const actions = {
     dispatch
   }, { handleDto, unpublished }) {
     if (unpublished === 'ok') {
-      commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia',
+      commit('api/janus/audiobridge/updates/clearStream', { handleDto }, { root: true })
+      commit('api/janus/audiobridge/updates/setMedia',
         {
           handleDto,
           media: {
@@ -200,10 +200,10 @@ export const actions = {
           }
         }, { root: true })
     } else {
-      const foundHandleDTO = handleDto.sessionDto.videoroomHandles.find(h => h.id === unpublished)
+      const foundHandleDTO = handleDto.sessionDto.audiobridgeHandles.find(h => h.id === unpublished)
       if (foundHandleDTO) {
-        commit('api/janus/videoroom/updates/clearStream', { handleDto: foundHandleDTO }, { root: true })
-        commit('api/janus/videoroom/updates/setMedia',
+        commit('api/janus/audiobridge/updates/clearStream', { handleDto: foundHandleDTO }, { root: true })
+        commit('api/janus/audiobridge/updates/setMedia',
           {
             handleDto: foundHandleDTO,
             media: {
@@ -230,8 +230,8 @@ export const actions = {
     dispatch
   }, { handleDto, leaving }) {
     if (leaving === 'ok') {
-      commit('api/janus/videoroom/updates/clearStream', { handleDto }, { root: true })
-      commit('api/janus/videoroom/updates/setMedia',
+      commit('api/janus/audiobridge/updates/clearStream', { handleDto }, { root: true })
+      commit('api/janus/audiobridge/updates/setMedia',
         {
           handleDto,
           media: {
@@ -250,10 +250,10 @@ export const actions = {
           }
         }, { root: true })
     } else {
-      const foundHandleDTO = handleDto.sessionDto.videoroomHandles.find(h => h.id === leaving)
+      const foundHandleDTO = handleDto.sessionDto.audiobridgeHandles.find(h => h.id === leaving)
       if (foundHandleDTO) {
-        await dispatch('api/janus/videoroom/handle/detach', { handleDto: foundHandleDTO }, { root: true })
-        commit('api/janus/videoroom/handle/pull', { sessionDto: foundHandleDTO.sessionDto, handleDto: foundHandleDTO }, { root: true })
+        await dispatch('api/janus/audiobridge/handle/detach', { handleDto: foundHandleDTO }, { root: true })
+        commit('api/janus/audiobridge/handle/pull', { sessionDto: foundHandleDTO.sessionDto, handleDto: foundHandleDTO }, { root: true })
       }
     }
   },
@@ -268,8 +268,8 @@ export const actions = {
       handleDto.handle.handleRemoteJsep({ jsep })
     } else {
       this.$Janus.log('createAnswer jsep')
-      dispatch('api/janus/videoroom/handle/createAnswer', { handleDto, jsep }, { root: true })
-        .then(jsepObj => dispatch('api/janus/videoroom/api/start', { handleDto, jsep: jsepObj }, { root: true }))
+      dispatch('api/janus/audiobridge/handle/createAnswer', { handleDto, jsep }, { root: true })
+        .then(jsepObj => dispatch('api/janus/audiobridge/api/start', { handleDto, jsep: jsepObj }, { root: true }))
     }
   },
 
