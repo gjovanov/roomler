@@ -129,15 +129,6 @@ export const actions = {
   }, { handleDto, result }) {
     this.$Janus.log('handleHangup')
   },
-  handleJsep ({
-    commit,
-    dispatch
-  }, { handleDto, jsep }) {
-    this.$Janus.log('handleJsep')
-    this.$Janus.log('createAnswer jsep')
-    dispatch('api/janus/sip/handle/createAnswer', { handleDto, jsep }, { root: true })
-      .then(jsepObj => dispatch('api/janus/sip/api/call', { handleDto, jsep: jsepObj }, { root: true }))
-  },
 
   handleError ({
     commit,

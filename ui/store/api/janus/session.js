@@ -51,11 +51,14 @@ export const actions = {
   create ({
     commit,
     rootState
-  }) {
+  }, room) {
     const sessionDto = new SessionDto(
       rootState.api.config.config.janusSettings.url,
       rootState.api.config.config.janusSettings.iceServers,
-      rootState.api.config.config.janusSettings.plugins
+      rootState.api.config.config.janusSettings.plugins,
+      rootState.api.config.config.asteriskSettings.url,
+      rootState.api.auth.user,
+      room
     )
     commit('push', sessionDto)
     const self = this
@@ -86,7 +89,7 @@ export const actions = {
   }, { sessionDto }) {
     if (sessionDto && sessionDto.session) {
       await Promise.all(
-        [...sessionDto.videoroomHandles, sessionDto.sipHandles, sessionDto.audiobridgeHandles].map(h => dispatch('api/janus/handle-factory/detach', { handleDto: h }, { root: true })))
+        [...sessionDto.videoroomHandles, ...sessionDto.sipHandles, ...sessionDto.audiobridgeHandles].map(h => dispatch('api/janus/handle-factory/detach', { handleDto: h }, { root: true })))
       sessionDto.session.destroy()
 
       return null

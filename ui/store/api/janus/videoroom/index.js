@@ -42,17 +42,12 @@ export const actions = {
     commit,
     dispatch,
     rootState
-  }, payload) {
-    await dispatch('api/janus/session/init', true, { root: true })
-    const sessionDto = await dispatch('api/janus/session/create', null, { root: true })
-    const handleDto = await dispatch('api/janus/videoroom/handle/attachPublisher', { sessionDto, args: payload.janus }, { root: true })
-    const sipHandleDto = await dispatch('api/janus/sip/handle/attach', { sessionDto, args: payload.janus }, { root: true })
-    await dispatch('api/janus/sip/api/register', { handleDto: sipHandleDto, payload: sipHandleDto.sip.register }, { root: true })
-    const result = await dispatch('api/janus/videoroom/api/exists', { handleDto, roomid: payload.janus.roomid }, { root: true })
+  }, { sessionDto, janusPayload, room }) {
+    const handleDto = await dispatch('api/janus/videoroom/handle/attachPublisher', { sessionDto, args: janusPayload.janus }, { root: true })
+    const result = await dispatch('api/janus/videoroom/api/exists', { handleDto, roomid: janusPayload.janus.roomid }, { root: true })
     if (!result.exists) {
-      await dispatch('api/janus/videoroom/api/create', { handleDto, payload: payload.media }, { root: true })
+      await dispatch('api/janus/videoroom/api/create', { handleDto, payload: janusPayload.media }, { root: true })
     }
     await dispatch('api/janus/videoroom/api/joinPublisher', { handleDto }, { root: true })
-    return sessionDto
   }
 }

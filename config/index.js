@@ -7,6 +7,7 @@ if (typeof window !== 'undefined' && window.requestAnimationFrame === undefined)
 const config = {
   appSettings: require('./app-settings'),
   janusSettings: require('./janus-settings'),
+  asteriskSettings: require('./asterisk-settings'),
   authSettings: require('./auth-settings'),
   oauthSettings: require('./oauth-settings'),
   dbSettings: require('./db-settings'),

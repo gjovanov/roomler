@@ -212,7 +212,7 @@ export const actions = {
 
   configure ({
     commit
-  }, { handleDto, jsep, replace = undefined }) {
+  }, { handleDto, jsep }) {
     return new Promise((resolve, reject) => {
       const audio = handleDto.media.audio && handleDto.media.audio.enabled
       const screen = handleDto.media.screen && handleDto.media.screen.enabled

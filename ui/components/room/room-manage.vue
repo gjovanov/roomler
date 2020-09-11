@@ -159,6 +159,8 @@
             multiple
             outlined
           />
+          <v-spacer />
+          <v-switch v-model="draftMedia.use_sip_bridge" label="Use SIP bridge audio mixing (experimental feature)" />
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -251,7 +253,8 @@ export default {
       videocodecs: defaults.videocodec.split(','),
       record: defaults.record,
       rec_dir: undefined,
-      notify_joining: defaults.notify_joining
+      notify_joining: defaults.notify_joining,
+      use_sip_bridge: defaults.use_sip_bridge
     }
     draftRoom.media = draftMedia
     return {

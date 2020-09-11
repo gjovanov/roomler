@@ -44,6 +44,8 @@
       multiple
       disabled
     />
+    <v-spacer />
+    <v-switch v-model="room.media.use_sip_bridge" label="Use SIP bridge audio mixing (experimental feature)" disabled />
   </div>
 </template>
 

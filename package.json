@@ -54,6 +54,8 @@
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "@nuxtjs/vuetify": "^1.11.2",
     "@sendgrid/mail": "^7.2.1",
+    "@types/ari-client": "^2.2.2",
+    "ari-client": "^2.2.0",
     "bcryptjs": "^2.4.3",
     "cheerio": "^1.0.0-rc.3",
     "consola": "^2.14.0",

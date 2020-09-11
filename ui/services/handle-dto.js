@@ -111,14 +111,14 @@ export class HandleDto {
     }
     this.sip = {
       register: {
-        proxy: 'sip:user@ip:port',
-        username: 'sip:user@ip:port',
-        authuser: 'username',
-        secret: 'secret',
-        display_name: 'Display'
+        proxy: `sip:${sessionDto.user._id}@${sessionDto.asteriskUrl}`,
+        username: `sip:${sessionDto.user._id}@${sessionDto.asteriskUrl}`,
+        authuser: `${sessionDto.user._id}`,
+        secret: `${sessionDto.user.timestamp}`,
+        display_name: sessionDto.user.username
       },
       call: {
-        uri: 'sip:extension@ip:port'
+        uri: `sip:${this.roomid}@${sessionDto.asteriskUrl}`
       }
     }
     this.simulcast = args.simulcast !== undefined ? args.simulcast : false

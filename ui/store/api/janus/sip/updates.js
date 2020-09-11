@@ -40,8 +40,6 @@ export const mutations = {
     handleDto.isLocal = true
   },
   onremotestream (state, { handleDto, stream, commit }) {
-    // eslint-disable-next-line no-debugger
-    debugger
     handleDto.stream = stream
     handleDto.isLocal = false
   },

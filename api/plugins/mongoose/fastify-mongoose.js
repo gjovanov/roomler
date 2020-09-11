@@ -23,4 +23,7 @@ function fastifyMongoose (fastify, options, next) {
     })
 }
 
-module.exports = fp(fastifyMongoose, '>=2.6.0')
+module.exports = fp(fastifyMongoose, {
+  fastify: '>=2.6.0',
+  name: 'fastify-mongoose'
+})

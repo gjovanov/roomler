@@ -42,6 +42,7 @@ const media = S.object()
   .prop('record', S.boolean())
   .prop('rec_dir', S.string())
   .prop('notify_joining', S.boolean())
+  .prop('use_sip_bridge', S.boolean())
 
 const user = S.object()
   .prop('_id', S.string().required())

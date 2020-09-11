@@ -140,14 +140,14 @@ export const actions = {
       const media = {
         audioRecv: false,
         videoRecv: false,
-        audio: handleDto.media.audio.enabled,
+        audio: handleDto.media.audio.enabled && !handleDto.room.media.use_sip_bridge,
         video: handleDto.media.screen.enabled ? 'screen' : (handleDto.media.video.enabled ? handleDto.media.video.resolution : false),
         data: handleDto.data
       }
-      if (handleDto.media.audio.enabled === true && handleDto.mediaState.audio === false) {
+      if (handleDto.media.audio.enabled === true && handleDto.mediaState.audio === false && !handleDto.room.media.use_sip_bridge) {
         media.addAudio = true
       }
-      if (handleDto.media.audio.enabled === false && handleDto.mediaState.audio === true) {
+      if (handleDto.media.audio.enabled === false && handleDto.mediaState.audio === true && !handleDto.room.media.use_sip_bridge) {
         media.removeAudio = true
       }
       if ((handleDto.media.video.enabled === true || handleDto.media.screen.enabled === true) && handleDto.mediaState.video === false) {

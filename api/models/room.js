@@ -91,6 +91,10 @@ const schema = new Schema({
     notify_joining: {
       type: Boolean,
       default: defaults.media.notify_joining
+    },
+    use_sip_bridge: {
+      type: Boolean,
+      default: defaults.media.use_sip_bridge
     }
   },
   calls: [{

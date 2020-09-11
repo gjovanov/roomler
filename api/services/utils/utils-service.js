@@ -7,7 +7,8 @@ class UtilsService {
       username: user.username,
       email: user.email,
       is_active: user.is_active,
-      is_admin: config.authSettings.superAdminEmails.includes(user.email)
+      is_admin: config.authSettings.superAdminEmails.includes(user.email),
+      timestamp: user.createdAt.getTime()
     }
   }
 }

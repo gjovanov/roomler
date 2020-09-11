@@ -24,7 +24,7 @@
       <span>Join the conference</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle && localHandle.stream" top left>
+    <v-tooltip v-if="room && room.media && !room.media.use_sip_bridge && localHandle && localHandle.stream" top left>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="localHandle && localHandle.stream"
@@ -43,28 +43,159 @@
       <span>Unpublish</span>
     </v-tooltip>
 
-    <v-tooltip v-if="localHandle" top left>
-      <template v-slot:activator="{ on }">
-        <v-btn
-          v-if="localHandle"
-          fab
-          x-small
-          :dark="!isDark"
-          :light="isDark"
-          v-on="on"
+    <v-menu
+      v-if="localHandle"
+      v-model="menus.screen"
+      bottom
+      offset-y
+    >
+      <template v-slot:activator="{ on: menu }">
+        <v-tooltip v-if="localHandle" top left>
+          <template v-slot:activator="{ on: tooltip }">
+            <v-btn
+              v-if="localHandle"
+              fab
+              x-small
+              :dark="!isDark"
+              :light="isDark"
+              v-on="{ ...tooltip, ...menu }"
+            >
+              <v-icon v-if="!(localHandle.media.screen.enabled && !localHandle.media.screen.muted)">
+                stop_screen_share
+              </v-icon>
+              <v-icon v-if="localHandle.media.screen.enabled && !localHandle.media.screen.muted">
+                screen_share
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>Screen-sharing options</span>
+        </v-tooltip>
+      </template>
+      <v-list>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          @click="toggleScreenMuted()"
+        >
+          <v-list-item-title v-if="!localHandle.media.screen.muted">
+            <v-icon x-small>
+              fa-video-slash
+            </v-icon> Pause Screen-sharing
+          </v-list-item-title>
+          <v-list-item-title v-if="localHandle.media.screen.muted">
+            <v-icon x-small>
+              fa-video
+            </v-icon> Continue Screen-sharing
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider v-if="localHandle.media.screen.enabled" />
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 2 * 128000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 128000"
+          @click="setBitrateLimit(128000)"
+        >
+          <v-list-item-title>
+            128 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 2 * 256000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 256000"
+          @click="setBitrateLimit(256000)"
+        >
+          <v-list-item-title>
+            256 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 512000"
+          @click="setBitrateLimit(512000)"
+        >
+          <v-list-item-title>
+            512 kbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 2 * 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 2 * 512000"
+          @click="setBitrateLimit(2 * 512000)"
+        >
+          <v-list-item-title>
+            1 Mbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 4 * 512000 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 4 * 512000"
+          @click="setBitrateLimit(4 * 512000)"
+        >
+          <v-list-item-title>
+            2 Mbit bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.bitrate.limit === 0 ? 'red' : ''"
+          :inactive="localHandle.bitrate.limit === 0"
+          @click="setBitrateLimit(0)"
+        >
+          <v-list-item-title>
+            No bitrate limit
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider v-if="localHandle.media.screen.enabled" />
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.media.screen.resolution === 'lowres' ? 'red' : ''"
+          :inactive="localHandle.media.screen.resolution === 'lowres'"
+          @click="setVideoResolution('lowres')"
+        >
+          <v-list-item-title>
+            Low resolution (320x240)
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.media.screen.resolution === 'stdres' ? 'red' : ''"
+          :inactive="localHandle.media.screen.resolution === 'stdres'"
+          @click="setVideoResolution('stdres')"
+        >
+          <v-list-item-title>
+            Standard resolution (640x480)
+          </v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="localHandle.media.screen.enabled"
+          :color="localHandle.media.screen.resolution === 'hires' ? 'red' : ''"
+          :inactive="localHandle.media.screen.resolution === 'hires'"
+          @click="setVideoResolution('hires')"
+        >
+          <v-list-item-title>
+            High resolution (1280x720)
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider v-if="localHandle.media.screen.enabled" />
+        <v-list-item
           @click="toggleScreen()"
         >
-          <v-icon v-if="!localHandle.media.screen.enabled">
-            screen_share
-          </v-icon>
-          <v-icon v-if="localHandle.media.screen.enabled">
-            stop_screen_share
-          </v-icon>
-        </v-btn>
-      </template>
-      <span v-if="localHandle.media.screen.enabled">Stop sharing screen</span>
-      <span v-if="!localHandle.media.screen.enabled">Start sharing screen</span>
-    </v-tooltip>
+          <v-list-item-title v-if="localHandle.media.screen.enabled">
+            <v-icon x-small>
+              fa-stop
+            </v-icon> Disable Screen-sharing
+          </v-list-item-title>
+          <v-list-item-title v-if="!localHandle.media.screen.enabled">
+            <v-icon x-small>
+              fa-play
+            </v-icon> Enable Screen-sharing
+          </v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
     <v-menu
       v-if="localHandle"
@@ -91,7 +222,7 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Change video</span>
+          <span>Camera options</span>
         </v-tooltip>
       </template>
       <v-list dense multiple>
@@ -110,7 +241,7 @@
             </v-icon> Turn camera on
           </v-list-item-title>
         </v-list-item>
-        <v-divider />
+        <v-divider v-if="localHandle.media.video.enabled" />
         <v-list-item
           v-if="localHandle.media.video.enabled"
           :color="localHandle.bitrate.limit === 2 * 128000 ? 'red' : ''"
@@ -171,7 +302,7 @@
             No bitrate limit
           </v-list-item-title>
         </v-list-item>
-        <v-divider />
+        <v-divider v-if="localHandle.media.video.enabled" />
         <v-list-item
           v-if="localHandle.media.video.enabled"
           :color="localHandle.media.video.resolution === 'lowres' ? 'red' : ''"
@@ -202,7 +333,7 @@
             High resolution (1280x720)
           </v-list-item-title>
         </v-list-item>
-        <v-divider />
+        <v-divider v-if="localHandle.media.video.enabled" />
         <v-list-item
           @click="toggleVideo()"
         >
@@ -245,7 +376,7 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Change audio</span>
+          <span>Microphone options</span>
         </v-tooltip>
       </template>
       <v-list dense>
@@ -265,6 +396,7 @@
           </v-list-item-title>
         </v-list-item>
         <v-list-item
+          v-if="room && room.media && !room.media.use_sip_bridge"
           @click="toggleAudio()"
         >
           <v-list-item-title v-if="localHandle.media.audio.enabled">
@@ -328,9 +460,6 @@ import JoinDialog from '@/components/conference/join-dialog'
 import PublishDialog from '@/components/conference/publish-dialog'
 import ExtensionDialog from '@/components/conference/extension-dialog'
 
-import { modelToQuery } from '@/services/handle-dto'
-import { v4 as uuid } from 'uuid'
-
 export default {
   components: {
     JoinDialog,
@@ -366,6 +495,7 @@ export default {
       extensionDialog: false,
       menus: {
         unpublish: false,
+        screen: false,
         video: false,
         audio: false
 
@@ -389,161 +519,42 @@ export default {
   methods: {
     join (media) {
       this.joinDialog = false
-      const config = this.$store.state.api.config.config
-      const mediaPart = modelToQuery(media)
-      const displayPart = this.user && this.user.username ? this.user.username : 'Anonymous'
-      const display = `${displayPart}?${mediaPart}`
-      const janusPayload = {
-        janus: {
-          roomid: this.selectedRoom.media.roomid,
-          room: {
-            _id: this.selectedRoom._id
-          },
-          call_id: uuid(),
-          isLocal: true,
-          plugin: config.janusSettings.plugins.videoroom,
-          display,
-          bitrateLimit: this.selectedRoom.media.bitrate
-        },
-        media: this.selectedRoom.media
-      }
-      janusPayload.media.room = janusPayload.media.roomid
-      janusPayload.media.request = 'create'
-      this.$store.dispatch('api/conference/join', { janusPayload, room: this.selectedRoom })
+      this.$store.dispatch('api/conference/join', { user: this.user, room: this.selectedRoom, media })
     },
     async toggleScreen () {
       if (!this.$Janus.isExtensionEnabled()) {
         this.extensionDialog = true
       } else {
-        try {
-          const media = {
-            video: {
-              enabled: false
-            },
-            screen: {
-              enabled: !this.localHandle.media.screen.enabled
-            }
-          }
-          this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-          const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
-          this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-        } catch (e) {
-          this.$consola.error(e)
-        }
+        await this.$store.dispatch('api/conference/toggleScreen')
       }
+    },
+    async toggleScreenMuted () {
+      await this.$store.dispatch('api/conference/toggleScreenMuted')
     },
     async toggleVideo () {
-      try {
-        const media = {
-          video: {
-            enabled: !this.localHandle.media.video.enabled
-          },
-          screen: {
-            enabled: false
-          }
-        }
-        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
-        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/toggleVideo')
     },
     async toggleVideoMuted () {
-      try {
-        const media = {
-          video: {
-            muted: !this.localHandle.media.video.muted
-          }
-        }
-        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
-        if (this.localHandle && this.localHandle.handle && !this.localHandle.media.video.muted) {
-          this.localHandle.handle.unmuteVideo()
-        } else {
-          this.localHandle.handle.muteVideo()
-        }
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/toggleVideoMuted')
     },
     async toggleAudio () {
-      try {
-        const media = {
-          audio: {
-            enabled: !this.localHandle.media.audio.enabled
-          }
-        }
-        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
-        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/toggleAudio')
     },
     async toggleAudioMuted () {
-      try {
-        const media = {
-          audio: {
-            muted: !this.localHandle.media.audio.muted
-          }
-        }
-        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
-        if (this.localHandle && this.localHandle.handle && !this.localHandle.media.audio.muted) {
-          this.localHandle.handle.unmuteAudio()
-        } else {
-          this.localHandle.handle.muteAudio()
-        }
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/toggleAudioMuted')
     },
     async setVideoResolution (resolution) {
-      try {
-        const media = {
-          video: {
-            resolution
-          }
-        }
-        this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-        const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
-        this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/setVideoResolution', resolution)
     },
     async setBitrateLimit (bitrateLimit) {
-      try {
-        this.$store.commit('api/janus/videoroom/updates/setBitrateLimit', { handleDto: this.localHandle, bitrateLimit })
-        await this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle })
-      } catch (e) {
-        this.$consola.error(e)
-      }
+      await this.$store.dispatch('api/conference/setBitrateLimit', bitrateLimit)
     },
     async publish (media) {
       this.publishDialog = false
-      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-      const jsep = await this.$store.dispatch('api/janus/videoroom/handle/createOffer', { handleDto: this.localHandle })
-      this.$store.dispatch('api/janus/videoroom/api/configure', { handleDto: this.localHandle, jsep })
+      await this.$store.dispatch('api/conference/publish', media)
     },
     async unpublish () {
-      const media = {
-        audio: {
-          enabled: false
-        },
-        video: {
-          enabled: false
-        },
-        screen: {
-          enabled: false
-        },
-        data: {
-          enabled: false
-        }
-      }
-      this.$store.commit('api/janus/videoroom/updates/setMedia', { handleDto: this.localHandle, media })
-      await this.$store.dispatch('api/janus/videoroom/api/unpublish', { handleDto: this.localHandle })
+      await this.$store.dispatch('api/conference/unpublish')
     },
     leave () {
       this.$store.commit('panel/set', { panel: 'left', value: true }, { root: true })

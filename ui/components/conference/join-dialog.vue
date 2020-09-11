@@ -61,6 +61,7 @@
                 outlined
                 tile
                 small
+                :disabled="disableAudioChange"
                 v-on="on"
                 @click="media.audio.enabled = !media.audio.enabled"
               >
@@ -115,6 +116,7 @@ export default {
   data () {
     return {
       dialog: false,
+      disableAudioChange: false,
       media: {
         audio: {
           enabled: true,
@@ -133,6 +135,14 @@ export default {
   watch: {
     open (newVal) {
       this.dialog = newVal
+      if (this.dialog) {
+        if (this.room && this.room.media && this.room.media.use_sip_bridge) {
+          this.media.audio.enabled = true
+          this.disableAudioChange = true
+        } else {
+          this.disableAudioChange = false
+        }
+      }
     },
     'media.video.enabled' (newVal) {
       if (newVal) {

@@ -34,6 +34,7 @@ const userToken = S.object()
   .prop('user', user)
   .prop('token', S.string())
   .prop('is_admin', S.boolean())
+  .prop('timestamp', S.number())
 
 const activateBody = S.object()
   .prop('username', S.string().minLength(8).required())

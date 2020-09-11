@@ -9,6 +9,7 @@ const buildApi = async function () {
   })
   const jwtOptions = require('./plugins/jwt/jwt-options')
   const oauthOptions = require('./plugins/oauth/options')
+  const asteriskAriOptions = require('./plugins/asterisk-ari/asterisk-ari-options')
   await fastify
     .setErrorHandler(require('./errors/error-handler'))
     .register(require('middie'))
@@ -48,6 +49,9 @@ const buildApi = async function () {
     oauthOptions.linkedin.credentials.client &&
     oauthOptions.linkedin.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.linkedin)
+  }
+  if (asteriskAriOptions.url) {
+    await fastify.register(require('./plugins/asterisk-ari/fastify-asterisk-ari'), asteriskAriOptions)
   }
   await fastify
     .decorate('authenticate', async (request, reply) => {

@@ -4,7 +4,7 @@
       fluid
       class="pa-0"
     >
-      <v-row v-if="conferenceSession && remoteSipHandle">
+      <v-row v-if="conferenceSession && remoteSipHandle" v-show="false">
         <v-col
           cols="12"
           class="pa-1 ma-0"
@@ -16,7 +16,6 @@
           width="100%"
           height="100%"
           autoplay
-          controls
         />
       </v-row>
       <v-row
@@ -39,7 +38,7 @@
                 height="100%"
                 style="max-height: 640px"
                 autoplay
-                controls
+                @dblclick="toggleFullScreen(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
             </v-card-text>
@@ -68,7 +67,7 @@
                 height="100%"
                 style="max-height: 240px"
                 :autoplay="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
-                :controls="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
+                @dblclick="toggleFullScreen(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
             </v-card-text>
@@ -118,7 +117,8 @@ export default {
 
   data () {
     return {
-      eventNames: ['beforeunload', 'unload', 'pagehide']
+      eventNames: ['beforeunload', 'unload', 'pagehide'],
+      doubleClickTimer: null
     }
   },
 
@@ -137,8 +137,6 @@ export default {
     },
     remoteSipHandle () {
       const result = this.$store.getters['api/conference/remoteSipHandle']
-      // eslint-disable-next-line no-debugger
-      debugger
       return result
     },
     conferencePosition () {
@@ -217,6 +215,21 @@ export default {
             if (video) {
               video.load()
               video.setAttribute('autoplay', 'autoplay')
+            }
+          }
+        }, 100)
+      })
+    },
+
+    toggleFullScreen (handleDto) {
+      this.$nextTick(() => {
+        setTimeout(async () => {
+          if (handleDto) {
+            const video = document.getElementById(handleDto.id)
+            if (!document.fullscreenElement) {
+              await video.requestFullscreen()
+            } else {
+              document.exitFullscreen()
             }
           }
         }, 100)

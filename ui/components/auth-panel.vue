@@ -417,7 +417,6 @@ export default {
     async toggleSubscribe () {
       if ('Notification' in window) {
         if (Notification.permission !== 'denied') {
-          console.log(this.subscription)
           if (!this.subscription) {
             const result = await Notification.requestPermission()
             if (result === 'denied') {

@@ -28,7 +28,8 @@ module.exports = {
         audiocodec: 'opus,pcmu',
         videocodec: 'vp8,h264',
         record: false,
-        notify_joining: true
+        notify_joining: true,
+        use_sip_bridge: false
       }
     }
   },
