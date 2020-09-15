@@ -41,7 +41,7 @@ services:
         - --verbose 
         - --user=${TURN_USERNAME}:${TURN_PASSWORD} 
         - --realm=coturn.roomler.live 
-#        - --listening-ip=$$(detect-external-ip)
+        - --listening-ip=$$(detect-external-ip)
         # - --relay-ip=$$(detect-external-ip)
         - --external-ip=$$(detect-external-ip)
         - --cert=/cert/roomler.live.pem
@@ -49,13 +49,14 @@ services:
 
   janus:
     image: gjovanov/janus-slim:latest
-    ports:
-      - "7089:7088"
-      - "7189:7188"
-      - "8089:8088"
-      - "8189:8188"
+    # ports:
+    #   - "7089:7088"
+    #   - "7189:7188"
+    #   - "8089:8088"
+    #   - "8189:8188"
     depends_on:
       - coturn
+    network_mode: host
 
   roomler:
     image: gjovanov/roomler:latest
