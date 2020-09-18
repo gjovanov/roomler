@@ -10,7 +10,7 @@ git pull
 # bump version
 # npm version $BUMP
 docker run --rm -v "$PWD":/app treeder/bump $BUMP
-docker run --rm -v "$PWD":/app -w /app node:alpine npm version patch
+docker run --rm -v "$PWD":/app -w /app node:alpine npm version $BUMP
 version=`cat VERSION`
 echo "version: $version"
 
