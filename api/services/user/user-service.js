@@ -3,6 +3,7 @@ const User = require('../../models/user')
 const Room = require('../../models/room')
 const codeService = require('../code/code-service')
 const emailService = require('../email/email-service')
+const asteriskService = require('../asterisk/asterisk-service')
 const validateUserExists = require('./validation/validate-user-exists')
 const validateUserToken = require('./validation/validate-user-token')
 const validateUserAdmin = require('./validation/validate-user-admin')
@@ -95,6 +96,9 @@ class UserService {
   async register (data) {
     const user = await this.create(data)
     await codeService.generateCode(user, 'user_activation', !data.is_active)
+    if (config.asteriskSettings.url) {
+      await asteriskService.createRecords(user)
+    }
     return user
   }
 
