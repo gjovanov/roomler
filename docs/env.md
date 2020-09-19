@@ -11,13 +11,13 @@ For the sake of easier understanding, we will group them by the function they pe
 ### Database (REQUIRED)
 - **DB_CONN** - Mongo DB connection string
 
-**IMPORTANT**: See [details](./deps-mongo.md)
+**IMPORTANT**: See [details](deps-mongo.md)
 
 ### Web Sockets (OPTIONAL)
 - **WS_SCALEOUT_ENABLED** - in case it is set to `true`, then your redis service is required
 - **WS_SCALEOUT_HOST** - redis host name (must be in the same docker network as roomler `backend`)
 
-**IMPORTANT**: Web Socket scaleout is implemented via Redis PUB/SUB mechanism. So if we start the app in development environment, without `pm2`, these variables are optional, otherwise you need to enable the scaleout and provide the `redis` hostname as well as make sure your redis microservice is attached in the `backend` docker network (see [this](./deps-redis.md))
+**IMPORTANT**: Web Socket scaleout is implemented via Redis PUB/SUB mechanism. So if we start the app in development environment, without `pm2`, these variables are optional, otherwise you need to enable the scaleout and provide the `redis` hostname as well as make sure your redis microservice is attached in the `backend` docker network (see [this](deps-redis.md))
 
 ### Email sending (REQUIRED, one of these three options)
 - **SENDGRID_API_KEY** - For sending Emails via your Sendgrid API key
@@ -44,7 +44,7 @@ For the sake of easier understanding, we will group them by the function they pe
 - **TURN_USERNAME** - Coturn Username
 - **TURN_PASSWORD** - Coturn Pasword
 
-**IMPORTANT**: Janus & Coturn are required micro service dependencies need to Room creation, video conferencing & reliable connects in NAT scenarios. See [Janus](./deps-janus.md) & [Coturn](./deps-coturn.md) for more details
+**IMPORTANT**: Janus & Coturn are required micro service dependencies need to Room creation, video conferencing & reliable connects in NAT scenarios. See [Janus](deps-janus.md) & [Coturn](deps-coturn.md) for more details
 
 ### Chat (OPTIONAL)
 - **GIPHY_API_KEY** - Your Giphy API key
