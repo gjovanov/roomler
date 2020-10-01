@@ -54,10 +54,9 @@ Besides the default `host` Docker network, we need to create two addition bridge
 - [MongoDB](docs/deps-mongo.md)
 - [Redis](docs/deps-redis.md) - optional in development, but recommended in production!
 - [Nginx](docs/deps-nginx.md) - optional in development, but recommended in production!
-- [Redis](docs/deps-redis.md) - optional, but recommended in production!
 
 ## Environment variables
-You need to setup all your Required (even Optional if desired) [environment variables]((docs/envs.md)), before you can run Roomler
+You need to setup all your Required (even Optional if desired) [environment variables](docs/env.md), before you can run Roomler
 
 # Start Roomler App
 
