@@ -1,4 +1,4 @@
-const config = require('./config')
+const config = require('../config')
 config.appSettings.env.NODE_ENV = 'production'
 
 // WIN-10: Check port usage
