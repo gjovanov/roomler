@@ -1,27 +1,20 @@
 <template>
   <v-dialog v-model="dialog" persistent retain-focus max-width="800px">
     <v-card v-if="room">
-      <v-expansion-panels
-        v-model="panel"
-        accordion
-        tile
-        flat
-      >
-        <v-expansion-panel>
-          <v-expansion-panel-header>SHARE THIS LINK</v-expansion-panel-header>
-          <v-expansion-panel-content>
-            <v-form>
-              <v-text-field
-                ref="textToCopy"
-                v-model="link"
-                :hint="tooltip"
-                persistent-hint
-                outlined
-              />
-            </v-form>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <v-card-title>
+        {{ $t('comps.invite.shareThisLink') }}
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field
+            ref="textToCopy"
+            v-model="link"
+            :hint="tooltip"
+            persistent-hint
+            outlined
+          />
+        </v-form>
+      </v-card-text>
       <v-card-actions>
         <v-btn
           color="grey"
@@ -29,12 +22,12 @@
           class="ma-3"
           @click="close()"
         >
-          Close
+          {{ $t('comps.invite.close') }}
         </v-btn>
         <v-spacer />
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               color="primary"
               outlined
@@ -42,7 +35,7 @@
               @click="copyToClipboard()"
               v-on="on"
             >
-              Copy link
+              {{ $t('comps.invite.copyLink') }}
             </v-btn>
           </template>
           <span>{{ tooltip }}</span>
@@ -66,6 +59,7 @@ export default {
     }
   },
   data () {
+    const self = this
     const config = this.$store.state.api.config.config
     const url = config.appSettings.env.URL
     const types = config.dataSettings.invite.types
@@ -75,12 +69,20 @@ export default {
       url,
       types,
       type: 'member',
-      tooltip: 'Copy to clipboard'
+      tooltip: self.$t('comps.invite.copyToClipboard')
     }
   },
   computed: {
     link () {
       return `${this.url}/${this.room.path}/join`
+    }
+  },
+  watch: {
+    dialog (newVal) {
+      const self = this
+      if (newVal) {
+        self.tooltip = self.$t('comps.invite.copyToClipboard')
+      }
     }
   },
   methods: {
@@ -93,9 +95,9 @@ export default {
       const textToCopy = this.$refs.textToCopy.$el.querySelector('input')
       textToCopy.select()
       document.execCommand('copy')
-      this.tooltip = 'Link copied!'
+      this.tooltip = self.$t('comps.invite.linkCopied')
       setTimeout(() => {
-        self.tooltip = 'Copy to clipboard'
+        self.tooltip = self.$t('comps.invite.copyToClipboard')
       }, 1000)
     }
   }

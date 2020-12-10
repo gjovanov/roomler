@@ -8,15 +8,12 @@
   >
     <v-img
       class="accent--text align-end"
-
       src="/friends.png"
-    >
-      <v-card-title class="justify-center">
-        It's more fun with friends
-      </v-card-title>
-    </v-img>
-    <v-card-text>
-      Let's invite some peers to join this room.
+    />
+    <v-card-text class="text-center">
+      <h2>
+        {{ $t('comps.room.moreFunWithFriends') }}
+      </h2>
     </v-card-text>
     <v-card-actions
       align="center"
@@ -25,24 +22,45 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-btn :to="`/${room.path}/peers?invite`" block outlined class="primary">
-              <v-icon>fa-paper-plane</v-icon> &nbsp; Invite new
+            <v-btn
+              :to="localePath({ name: 'room-peers', params: { room: `${room.path}` }, query: { invite: null } })"
+              block
+              outlined
+              class="primary"
+              :dark="!isDark"
+              :light="isDark"
+            >
+              <v-icon>fa-paper-plane</v-icon> &nbsp; {{ $t('comps.room.inviteNew') }}
             </v-btn>
           </v-col>
         </v-row>
 
-        <v-row v-if="peers && peers.length">
+        <v-row v-if="peers && peers.length > 1">
           <v-col cols="12">
-            <v-btn :to="`/${room.path}/peers?add`" block outlined class="orange darken-2">
-              <v-icon>fa-users</v-icon> &nbsp; Add existing
+            <v-btn
+              :to="localePath({ name: 'room-peers', params: { room: `${room.path}` }, query: { add: null } })"
+              block
+              outlined
+              class="orange darken-2"
+              :dark="!isDark"
+              :light="isDark"
+            >
+              <v-icon>fa-user-plus</v-icon> &nbsp; {{ $t('comps.room.addExisting') }}
             </v-btn>
           </v-col>
         </v-row>
 
         <v-row>
           <v-col cols="12">
-            <v-btn :to="`/${room.path}/peers?link`" block outlined class="orange lighten-2">
-              <v-icon>fa-link</v-icon> &nbsp; Share link
+            <v-btn
+              :to="localePath({ name: 'room-peers', params: { room: `${room.path}` }, query: { link: null } })"
+              block
+              outlined
+              class="orange lighten-2"
+              :dark="!isDark"
+              :light="isDark"
+            >
+              <v-icon>fa-link</v-icon> &nbsp; {{ $t('comps.room.shareLink') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -62,6 +80,11 @@ export default {
       default () {
         return []
       }
+    }
+  },
+  computed: {
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   }
 }

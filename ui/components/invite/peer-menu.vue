@@ -5,7 +5,7 @@
     left
     offset-x
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn
         v-if="isTransferVisible || isToMemberVisible || isToModeratorVisible || isRemoveVisible"
         :disabled="!isTransferVisible && !isToMemberVisible && !isToModeratorVisible && !isRemoveVisible"
@@ -26,7 +26,7 @@
         @click="openTransfer()"
       >
         <v-list-item-title>
-          Transfer Ownership
+          {{ $t('comps.invite.transferOwnership') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider :if="isTransferVisible" />
@@ -35,7 +35,7 @@
         @click="toMember()"
       >
         <v-list-item-title>
-          Demote to Member
+          {{ $t('comps.invite.demoteToMember') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider v-if="isToMemberVisible" />
@@ -44,7 +44,7 @@
         @click="toModerator()"
       >
         <v-list-item-title>
-          Promote to Moderator
+          {{ $t('comps.invite.promoteToModerator') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider v-if="isToModeratorVisible" />
@@ -53,7 +53,7 @@
         @click="openPeerDelete()"
       >
         <v-list-item-title>
-          Remove Peer
+          {{ $t('comps.invite.removeParticipant') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider v-if="isRemoveVisible" />

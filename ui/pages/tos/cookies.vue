@@ -30,12 +30,12 @@
     <h1>Relevant Links</h1>
     <ul>
       <li>
-        <nuxt-link to="/tos/terms">
+        <nuxt-link :to="localePath({ name: 'tos-terms' })">
           Terms of Service
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link to="/tos/privacy">
+        <nuxt-link :to="localePath({ name: 'tos-privacy' })">
           Privacy Policy
         </nuxt-link>
       </li>

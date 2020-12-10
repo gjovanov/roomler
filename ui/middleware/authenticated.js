@@ -3,6 +3,6 @@ export default function ({
   redirect
 }) {
   if (!store.getters['api/auth/isAuthenticated']) {
-    return redirect('/@/auth/login')
+    return redirect('/-/auth/login')
   }
 }

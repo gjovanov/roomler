@@ -18,6 +18,7 @@ class WsHandler {
   */
   async onConnection (fastify, wss, conn, req) {
     conn.id = uuid()
+
     if (req.user) {
       conn.user = req.user
       fastify.log.info(`WS client '${conn.user.username}' connected on '${processName}'`)
@@ -29,6 +30,10 @@ class WsHandler {
     const connection = await require('../connection/connection-controller').pushConnectionWs(fastify, wss, conn, req)
     fastify.log.info(`WS connection_id: '${connection._id}'`)
     conn.connection_id = connection._id
+    conn.send(JSON.stringify({
+      op: 'HELLO',
+      data: connection._id
+    }))
   }
 
   onMessage (fastify, wss, conn, req, msg) {

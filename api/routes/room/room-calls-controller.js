@@ -16,8 +16,8 @@ class RoomCallsController {
     reply.send(result)
   }
 
-  async getReports (request, reply) {
-    const result = await callService.getReports({
+  async getStats (request, reply) {
+    const result = await callService.getStats({
       from: request.query.from,
       to: request.query.to,
       status: request.query.status,
@@ -37,6 +37,7 @@ class RoomCallsController {
     try {
       const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress
       const geoip = await geoipService.get(ipAddress)
+      payload.connection = conn.connection_id
       payload.ip_address = ipAddress
       payload.geoip = geoip
 

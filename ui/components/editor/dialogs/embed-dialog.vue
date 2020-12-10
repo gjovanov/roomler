@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="800">
     <v-card>
-      <v-card-title>Embed URL</v-card-title>
+      <v-card-title>
+        {{ $t('comps.chat.embedUrl') }}
+      </v-card-title>
       <v-card-text>
         <v-form
           ref="formEmbed"
@@ -29,7 +31,7 @@
           class="ma-3"
           @click="cancel()"
         >
-          Cancel
+          {{ $t('comps.chat.cancel') }}
         </v-btn>
         <v-spacer />
         <v-btn
@@ -40,7 +42,7 @@
           class="ma-3"
           @click="insert()"
         >
-          Insert
+          {{ $t('comps.chat.insert') }}
         </v-btn>
       </v-card-actions>
     </v-card>

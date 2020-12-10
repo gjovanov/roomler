@@ -1,6 +1,7 @@
 const colors = require('vuetify/es5/util/colors').default
 const config = require('./config')
 const env = config.appSettings.env
+// you ask why simply not negated produciton and get development? Well there is test and many other potential env types :)
 const isProd = env.NODE_ENV === 'production'
 const isDev = env.NODE_ENV === 'development'
 
@@ -58,7 +59,8 @@ const nuxtConfig = {
     '@nuxtjs/google-analytics',
     '@nuxtjs/moment',
     '@nuxtjs/pwa',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    'nuxt-i18n'
   ],
   axios: {
     // credentials: true
@@ -75,13 +77,9 @@ const nuxtConfig = {
     purpose: ['any', 'maskable']
   },
   workbox: {
-    // offlineAnalytics: true,
+    offlineAnalytics: true,
     dev: isDev,
     globPatterns: ['**/*.{js,css,png}', '**/uploads/*', '**/audio/*'],
-    // globIgnores: [`${env.API_URL}/*`],
-    // runtimeCaching: [
-    //   { urlPattern: `${env.API_URL}/.*` }
-    // ],
     config: {
       debug: isDev
     },
@@ -123,6 +121,17 @@ const nuxtConfig = {
         }
       }
     }
+  },
+  i18n: {
+    langDir: 'lang/',
+    fallbackLocale: 'en',
+    lazy: true,
+    strategy: 'no_prefix',
+    locales: [
+      { code: 'bg', iso: 'bg-BG', name: 'Български', file: 'bg.js' },
+      { code: 'de', iso: 'de-DE', name: 'Deutsch', file: 'de.js' },
+      { code: 'en', iso: 'en-US', name: 'English', file: 'en.js' }
+    ]
   },
   build: {
     extractCSS: true,

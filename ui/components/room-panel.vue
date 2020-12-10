@@ -25,7 +25,7 @@
                 <v-icon>
                   fa-sign-in-alt
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">JOIN THIS ROOM - {{ room && room.name ? room.name.toUpperCase() : '' }}</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.joinThisRoom') }}: {{ room && room.name ? room.name : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -46,7 +46,7 @@
                     class="secondary"
                     @click="join()"
                   >
-                    <v-icon>fa-users</v-icon> &nbsp; Join
+                    <v-icon>fa-users</v-icon> &nbsp; {{ $t('comps.room.join') }}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -58,7 +58,7 @@
                 <v-icon>
                   fa-paper-plane
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">INVITE</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.invite') }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -85,7 +85,7 @@
                 <v-icon>
                   fa-phone
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">CONFERENCE - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : room ? room.name.toUpperCase() : '' }}</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.conference') }} - {{ conferenceRoom ? conferenceRoom.name : room ? room.name : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -120,7 +120,7 @@
                 <v-icon>
                   fa-comments
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">CHAT - {{ room ? room.name.toUpperCase() : '' }}</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.chat') }} - {{ room ? room.name : '' }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -140,7 +140,7 @@
                 <v-icon>
                   fa-users
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">PEERS</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.participants') }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
@@ -157,9 +157,9 @@
             <v-expansion-panel-header>
               <div>
                 <v-icon>
-                  fa-users
+                  fa-paper-plane
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">INVITES</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.invites') }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content class="justify-center">
@@ -178,7 +178,7 @@
                 <v-icon>
                   fa-info
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">BASIC INFO</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.basicInfo') }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -193,7 +193,7 @@
                 <v-icon>
                   fa-sliders-h
                 </v-icon> &nbsp;
-                <span style="font-weight: 500">MEDIA</span>
+                <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.media') }}</span>
               </div>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -287,19 +287,19 @@ export default {
   },
   computed: {
     joinPanel () {
-      return this.room && !this.isRoomPeer && this.roomRoute === 'chat'
+      return this.room && !this.isRoomPeer && this.roomRoute && this.roomRoute.startsWith('chat')
     },
     invitePanel () {
-      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length === 1 && this.roomRoute === 'chat'
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length === 1 && this.roomRoute && this.roomRoute.startsWith('chat')
     },
     callsPanel () {
-      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute === 'calls'
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute && this.roomRoute.startsWith('calls')
     },
     chatPanel () {
-      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute === 'chat'
+      return this.room && this.isRoomPeer && this.roomPeers && this.roomPeers.length >= 0 && this.roomRoute && this.roomRoute.startsWith('chat')
     },
     peersPanel () {
-      return this.room && this.roomRoute === 'peers'
+      return this.room && this.roomRoute && this.roomRoute.startsWith('peers')
     },
     invitesVisible () {
       const userRole = this.$store.getters['api/room/getUserRole'](this.room ? this.room._id : null, this.user ? this.user._id : null)
@@ -314,7 +314,7 @@ export default {
         this.roomQuery.link === true)
     },
     settingsPanel () {
-      return this.room && this.roomRoute === 'settings'
+      return this.room && this.roomRoute && this.roomRoute.startsWith('settings')
     },
     panel () {
       if (this.joinPanel) {
@@ -347,6 +347,12 @@ export default {
   watch: {
     'panel' (newVal) {
       this.panels = newVal
+    },
+    'panels' (newVal) {
+    // load invites
+      if (newVal === 5) {
+        this.$store.dispatch('api/invite/getAll', this.room._id)
+      }
     }
   },
   methods: {

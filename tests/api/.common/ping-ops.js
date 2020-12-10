@@ -14,7 +14,7 @@ class PingOps {
           })
           t.pass()
         })
-        .catch(() => {
+        .catch((e) => {
           t.fail()
         })
     })

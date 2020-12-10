@@ -182,6 +182,7 @@ class MessageOps {
   getAll(fastify, test, testname, messageContexts) {
     test.serial(`API "/api/message/get-all" ${testname}`, async(t) => {
       const expectedMessages = messageContexts.map(mc => mc.records).reduce((a, b) => [...a, ...b])
+      
       await fastify
         .inject({
           method: 'GET',

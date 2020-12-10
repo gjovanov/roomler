@@ -18,7 +18,7 @@
         text
         @click="remove(index)"
       >
-        Close
+        {{ $t('comps.toast.close') }}
       </v-btn>
     </v-snackbar>
   </v-row>

@@ -4,10 +4,11 @@ const visitService = require('../../services/visit/visit-service')
 const wsDispatcher = require('../ws/ws-dispatcher')
 
 class VisitController {
-  async getAll (request, reply) {
-    const result = await visitService.getAll({
+  async getStats (request, reply) {
+    const result = await visitService.getStats({
       from: request.query.from,
       to: request.query.to,
+      type: request.query.type,
       status: request.query.status,
       room: request.query.room,
       url: request.query.url,

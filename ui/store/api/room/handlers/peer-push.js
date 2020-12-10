@@ -4,6 +4,7 @@ export const handlePeerPush = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (
     data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRoleUpdate ||

@@ -10,7 +10,10 @@
     :style="{background: $vuetify.theme.themes[theme].background}"
     mini
   >
-    <nuxt-link v-show="conferenceRoom && roomRoute !== 'calls'" :to="conferenceRoom ? `/${conferenceRoom.path}/calls` : ''">
+    <nuxt-link
+      v-show="conferenceRoom && roomRoute !== 'calls'"
+      :to="conferenceRoom ? localePath({ name: 'room-calls', params: { room: `${conferenceRoom.path}` } }) : ''"
+    >
       <portal-target name="conference-left" />
     </nuxt-link>
     <v-expansion-panels
@@ -25,7 +28,7 @@
             <v-icon>
               fa-comments
             </v-icon> &nbsp;
-            <span style="font-weight: 500">CHAT - {{ conferenceRoom ? conferenceRoom.name.toUpperCase() : '' }}</span>
+            <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.chat') }} - {{ conferenceRoom ? conferenceRoom.name : '' }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -38,29 +41,31 @@
             <v-icon>
               account_tree
             </v-icon> &nbsp;
-            <span style="font-weight: 500">ROOMS</span>
+            <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.rooms') }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content :class="user && user._id && (!tree || !tree.items || !tree.items.length) ? 'pa-0 ma-0 mr-4' : 'pa-0 ma-0'">
           <v-btn
             v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
-            to="/explore/rooms"
-            dark
+            :to="localePath({ name: '--room-create' })"
+            :dark="!isDark"
+            :light="isDark"
             block
-            color="teal"
-            class="ma-2"
+            :color="$vuetify.theme.themes[theme].secondary"
+            class="ma-2 pr-2"
           >
-            <v-icon>fa fa-search</v-icon> &nbsp; Explore rooms
+            <v-icon>fa fa-plus</v-icon> &nbsp; {{ $t('comps.auth.createNewRoom') }}
           </v-btn>
           <v-btn
             v-if="user && user._id && (!tree || !tree.items || !tree.items.length)"
-            to="/@/room/create"
-            dark
+            :to="localePath({ name: 'explore-rooms' })"
+            :dark="!isDark"
+            :light="isDark"
             block
-            color="secondary"
-            class="ma-2 pr-2"
+            :color="$vuetify.theme.themes[theme].primary"
+            class="ma-2"
           >
-            <v-icon>fa fa-plus</v-icon> &nbsp; Create new room
+            <v-icon>fa fa-search</v-icon> &nbsp; {{ $t('comps.auth.exploreRooms') }}
           </v-btn>
           <v-treeview
             v-if="tree && tree.items && tree.items.length"
@@ -76,32 +81,19 @@
             class="pa-0 ma-0"
             @update:open="updateOpen"
           >
-            <template v-slot:prepend="{ item, open }">
-              <v-badge
-                :color="mentions(item) ? 'red' : 'orange'"
-                :value="unreads(item)"
-                left
-                bottom
-                overlap
-                class="align-self-center"
-              >
-                <template v-slot:badge>
-                  <span>{{ unreads(item) }}</span>
-                </template>
-                <v-icon>
-                  {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-                </v-icon>
-              </v-badge>
+            <template #prepend="{ item }">
+              <span>{{ item.emoji || '💥' }}</span>
             </template>
             <template slot="label" slot-scope="{ item }">
               <v-tooltip right>
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-btn
-                    :to="{ path: `/${item.path}` }"
+                    :to="localePath({ name: 'room-chat', params: { room: `${item.path}` } })"
                     dense
                     small
                     block
                     outlined
+                    :color="$vuetify.theme.themes[theme].primary"
                     class="justify-start pr-0"
                     style="font-weight: 100;"
                     v-on="on"
@@ -115,16 +107,33 @@
                     &nbsp;
                     <strong v-if="isRoomPeer(item)">{{ item.short_name }}</strong>
                     <em v-if="!isRoomPeer(item)">{{ item.short_name }}</em>
-                    &nbsp;
-                    <v-icon v-if="mentions(item)" small color="red">
-                      fa-at
-                    </v-icon>
+
+                    <v-chip
+                      v-if="unreads(item)"
+                      class="ml-auto"
+                      outlined
+                      text-color="white"
+                      style="border: 0"
+                    >
+                      <v-avatar
+                        left
+                        size="6"
+                        :color="mentions(item) ? 'red' : 'orange'"
+                      >
+                        <strong>{{ unreads(item) }}</strong>
+                      </v-avatar>
+                      <v-icon
+                        :color="mentions(item) ? 'red' : 'orange'"
+                      >
+                        {{ mentions(item) ? 'fa-at' : 'fa-envelope' }}
+                      </v-icon>
+                    </v-chip>
                   </v-btn>
                 </template>
-                <span>{{ item.name.toUpperCase() }} ({{ item.is_open ? 'open: join allowed to everyone' : 'closed: invite only join' }})</span>
+                <span>{{ item.is_open ? $t('comps.room.openRoom') : $t('comps.room.closedRoom') }}</span>
               </v-tooltip>
             </template>
-            <template v-slot:append="{ item }">
+            <template #append="{ item }">
               <room-menu
                 :room="item"
                 :user="user"
@@ -145,33 +154,35 @@
             <v-icon>
               fa-users
             </v-icon> &nbsp;
-            <span style="font-weight: 500">PEERS</span>
+            <span class="text-uppercase" style="font-weight: 500">{{ $t('comps.room.contacts') }}</span>
           </div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
+        <v-expansion-panel-content :class="(!contacts || !contacts.length) && tree && tree.items && tree.items.length ? 'pa-0 ma-0 mr-4' : 'pa-0 ma-0'">
           <v-btn
-            v-if="(!peers || !peers.length) && tree && tree.items && tree.items.length"
-            :to="`/${tree.items[0].path}/peers?invite`"
-            dark
+            v-if="(!contacts || !contacts.length) && tree && tree.items && tree.items.length"
+            :to="localePath({ name: 'room-peers', params: { room: `${tree.items[0].path}` }, query: { invite: null } })"
+            :dark="!isDark"
+            :light="isDark"
             block
-            outlined
-            class="primary"
+            :color="$vuetify.theme.themes[theme].primary"
+            class="ma-2 pr-2"
           >
-            <v-icon>fa-users</v-icon> &nbsp; Invite new peers
+            <v-icon>fa-users</v-icon> &nbsp; {{ $t('comps.room.inviteNew') }}
           </v-btn>
           <v-list
-            v-if="peers && peers.length"
+            v-if="contacts && contacts.length"
             dense
           >
             <v-list-item
-              v-for="peer in peers"
+              v-for="peer in contacts"
               :key="peer._id"
-              :to="`/@/${peer.username}`"
+              :to="localePath({ name: '--username', params: { username: `${peer.username}` } })"
               link
             >
               <v-list-item-icon>
                 <v-badge
                   :color="isInCall(peer._id) ? 'red' : isOnline(peer._id) ? 'green' : 'grey'"
+                  :dark="isInCall(peer._id) ? true : undefined"
                   bordered
                   bottom
                   left
@@ -180,7 +191,7 @@
                   offset-x="5"
                   offset-y="5"
                 >
-                  <template v-if="isInCall(peer._id)" v-slot:badge>
+                  <template v-if="isInCall(peer._id)" #badge>
                     <v-avatar v-if="isInCall(peer._id)" size="12">
                       <v-icon size="7" style="margin-bottom: 6px">
                         fa fa-phone
@@ -316,6 +327,9 @@ export default {
     },
     theme () {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
+    contacts () {
+      return this.peers.filter(u => u._id !== this.user._id)
     }
   },
   watch: {
@@ -328,7 +342,7 @@ export default {
       }
     },
     panelChange (value) {
-      if (value.conferenceRoom && value.roomRoute === 'calls') {
+      if (value.conferenceRoom && value.roomRoute && value.roomRoute.startsWith('calls')) {
         this.panel = 0
       } else {
         this.panel = 1
@@ -402,13 +416,13 @@ export default {
       return this.$store.getters['api/message/mentions'](room._id, userid).length
     },
     add (room) {
-      this.$router.push({ path: `/@/room/create?parent=${room.path}` })
+      this.$router.push({ path: this.localePath({ name: '--room-create', query: { parent: `${room.path}` } }) })
     },
     edit (room) {
-      this.$router.push({ path: `/@/room/edit?room=${room.path}` })
+      this.$router.push({ path: this.localePath({ name: '--room-edit', query: { room: `${room.path}` } }) })
     },
     goToConference (room) {
-      this.$router.push({ path: `/${this.conferenceRoom.path}/calls` })
+      this.$router.push({ path: this.localePath({ name: 'room-calls', params: { room: `${this.conferenceRoom.path}` } }) })
     },
     removeConsent (item) {
       this.dialog.delete = true
@@ -425,7 +439,7 @@ export default {
           permanent: true
         })
       ))
-      this.$router.push({ path: '/' })
+      this.$router.push({ path: this.localePath({ name: 'index' }) })
     },
     removeCancel () {
       this.dialog.delete = false
@@ -449,7 +463,7 @@ export default {
       this.selectedRoom = null
     },
     goToRoom (name) {
-      this.$router.push({ path: `/${name}` })
+      this.$router.push({ path: this.localePath({ name: 'room-chat', params: { room: `${name}` } }) })
     }
   }
 }

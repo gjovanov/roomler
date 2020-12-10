@@ -12,7 +12,7 @@
     </template>
     <template v-if="!extension.options.filteredItems.length">
       <v-subheader>
-        No emojis found
+        {{ $t('comps.chat.noEmojisFound') }}
       </v-subheader>
     </template>
   </div>

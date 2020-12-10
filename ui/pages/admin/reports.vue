@@ -28,7 +28,7 @@
                     max-width="290px"
                     min-width="290px"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template #activator="{ on, attrs }">
                       <v-text-field
                         v-model="filter.from"
                         label="Date"
@@ -51,7 +51,7 @@
                     max-width="290px"
                     min-width="290px"
                   >
-                    <template v-slot:activator="{ on, attrs }">
+                    <template #activator="{ on, attrs }">
                       <v-text-field
                         v-model="filter.to"
                         label="Date (read only text field)"
@@ -321,7 +321,6 @@ export default {
     RefChart,
     PageChart
   },
-  watchQuery: ['from', 'to', 'status', 'room', 'country', 'user', 'os', 'browser', 'url', 'referrer', 'pageVisits', 'pageCalls', 'size', 'sortBy', 'sortDesc', 'interval'],
   async asyncData ({ store, query }) {
     if (!query.from && !query.to) {
       const from = new Date()
@@ -443,23 +442,6 @@ export default {
     }
   },
   watch: {
-    // needsPageReset () {
-    //   const self = this
-    //   if (this.timeout2) {
-    //     clearTimeout(this.timeout2)
-    //   }
-    //   this.timeout2 = setTimeout(() => {
-    //     self.options.visits.page = 1
-    //     self.options.calls.page = 1
-    //     self.$router.push({ path: self.$route.path, query: self.filter })
-    //   }, self.timeDuration)
-    // },
-    // 'filter.pageVisits' () {
-    //   this.$router.push({ path: this.$route.path, query: this.filter })
-    // },
-    // 'filter.pageCalls' () {
-    //   this.$router.push({ path: this.$route.path, query: this.filter })
-    // },
     filter: {
       deep: true,
       handler () {
@@ -493,7 +475,8 @@ export default {
         this.filter.size = itemsPerPage
       }
     }
-  }
+  },
+  watchQuery: ['from', 'to', 'status', 'room', 'country', 'user', 'os', 'browser', 'url', 'referrer', 'pageVisits', 'pageCalls', 'size', 'sortBy', 'sortDesc', 'interval']
 }
 </script>
 

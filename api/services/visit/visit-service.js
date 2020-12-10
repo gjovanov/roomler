@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 const Visit = require('../../models/visit')
-const VisitFilter = require('./visit-filter')
+const VisitStatsFilter = require('./visit-stats-filter')
 
 class VisitService {
   // base methods - START
 
-  async getAll (filter) {
-    const aggregate = new VisitFilter(filter).getAggregate()
+  async getStats (filter) {
+    const aggregate = new VisitStatsFilter(filter).getAggregate()
     let records = await Visit
       .aggregate(aggregate)
       .collation({ locale: 'en', strength: 2 })

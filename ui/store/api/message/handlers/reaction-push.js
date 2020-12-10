@@ -4,6 +4,7 @@ export const handleReactionPush = async (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPush) {
     if (Array.isArray(data.data) && data.data.length) {

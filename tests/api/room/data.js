@@ -38,17 +38,20 @@ module.exports = {
   room: {
     payload: {
       name: 'TestName',
-      tags: ['super', 'dooper']
+      tags: ['super', 'dooper'],
+      emoji: '💥'
     },
     update: {
       name: 'TestName2',
-      tags: ['super', 'dooper', 'exciting']
+      tags: ['super', 'dooper', 'exciting'],
+      emoji: '💥'
     }
   },
   room2: {
     payload: {
       name: 'TestName2_',
-      tags: ['super2', 'dooper2']
+      tags: ['super2', 'dooper2'],
+      emoji: '💥'
     }
   }
 }

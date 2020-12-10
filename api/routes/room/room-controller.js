@@ -100,9 +100,10 @@ class RoomController {
       await roomService.renameChildren(room.name, payload.name)
       children = await roomService.getChildren(result, request.user.user._id)
     }
-    const response = { room: result, children }
     const parents = result.is_open ? await roomService.getParents(result) : []
-    wsDispatcher.publish(config.wsSettings.opTypes.roomUpdate, [response, ...parents])
+    const response = { room: result, children, parents }
+
+    wsDispatcher.publish(config.wsSettings.opTypes.roomUpdate, [response])
     reply.send(response)
   }
 

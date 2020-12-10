@@ -4,6 +4,7 @@ export const handleMessageCreate = async (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.messageCreate) {
     if (Array.isArray(data.data) && data.data.length) {

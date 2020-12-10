@@ -28,6 +28,7 @@ class MessageService {
       id
     })
     const aggregate = messageFilter
+      .addPreMatch()
       .addLookup()
       .addMatch(userid)
       .getAggregate()
@@ -54,6 +55,7 @@ class MessageService {
       filter
     })
     const aggregate = messageFilter
+      .addPreMatch()
       .addLookup()
       .addMatch(userid)
       .addSort(sort)
@@ -64,6 +66,7 @@ class MessageService {
     let records = await Message
       .aggregate(aggregate)
       .exec()
+
     records = records.map((r) => {
       const record = extendRecord(r, userid, false)
       record.room = record.room[0]
@@ -113,6 +116,7 @@ class MessageService {
     let records = []
     if (validate) {
       const aggregate = messageFilter
+        .addPreMatch()
         .addLookup()
         .addMatch(userid)
         .getAggregate()
@@ -136,9 +140,11 @@ class MessageService {
       id
     })
     const aggregate = messageFilter
+      .addPreMatch()
       .addLookup()
       .addMatch(userid)
       .getAggregate()
+
     const record = await Message
       .aggregate(aggregate)
       .exec()

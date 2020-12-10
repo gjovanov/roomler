@@ -62,13 +62,13 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleMessageCreate(dispatch, commit, state, rootState, router, data)
-      handleMessageUpdate(dispatch, commit, state, rootState, router, data)
-      handleReactionPush(dispatch, commit, state, rootState, router, data)
-      handleReactionPull(dispatch, commit, state, rootState, router, data)
+      handleMessageCreate(dispatch, commit, state, rootState, router, localePath, data)
+      handleMessageUpdate(dispatch, commit, state, rootState, router, localePath, data)
+      handleReactionPush(dispatch, commit, state, rootState, router, localePath, data)
+      handleReactionPull(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
   async create ({

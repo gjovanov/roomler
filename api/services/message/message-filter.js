@@ -10,10 +10,24 @@ class MessageFilter {
       }
     }
     if (this.filter.room) {
-      this.filter['room._id'] = mongoose.Types.ObjectId(this.filter.room)
+      const roomid = this.filter.room
       delete this.filter.room
+      this.filter.room = mongoose.Types.ObjectId(roomid)
     }
     this.aggregate = []
+  }
+
+  addPreMatch () {
+    const before = this.filter.before
+    delete this.filter.before
+    const match = {
+      $match: this.filter
+    }
+    if (before) {
+      match.$match.createdAt = { $lt: new Date(before) }
+    }
+    this.aggregate.push(match)
+    return this
   }
 
   addLookup () {
@@ -29,28 +43,19 @@ class MessageFilter {
   }
 
   addMatch (userid) {
-    const before = this.filter.before
-    delete this.filter.before
     const match = {
       $match: {
-        $and: [{
-          $or: [{
-            'room.owner': mongoose.Types.ObjectId(userid)
-          },
-          {
-            'room.moderators': mongoose.Types.ObjectId(userid)
-          },
-          {
-            'room.members': mongoose.Types.ObjectId(userid)
-          }
-          ]
+        $or: [{
+          'room.owner': mongoose.Types.ObjectId(userid)
         },
-        this.filter
+        {
+          'room.moderators': mongoose.Types.ObjectId(userid)
+        },
+        {
+          'room.members': mongoose.Types.ObjectId(userid)
+        }
         ]
       }
-    }
-    if (before) {
-      match.$match.$and.push({ createdAt: { $lt: new Date(before) } })
     }
     this.aggregate.push(match)
     return this

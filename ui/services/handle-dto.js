@@ -1,18 +1,28 @@
 
 import { v4 as uuid } from 'uuid'
+import { resolutions } from '@/utils/resolutions'
 import qs from 'qs'
 
+const defaultResolution = resolutions.find(r => r.label === 'QVGA - 320x240')
+
 export const defaultMedia = {
+  speakers: {
+    device: 'default'
+  },
   audio: {
     enabled: false,
     muted: false,
-    codec: null
+    codec: null,
+    device: 'default'
   },
   video: {
     enabled: false,
     muted: false,
     codec: null,
-    resolution: 'lowres'
+    resolution: defaultResolution.label,
+    width: defaultResolution.width,
+    height: defaultResolution.height,
+    device: 'default'
   },
   screen: {
     enabled: false,
@@ -82,8 +92,19 @@ export class HandleDto {
     if (args.audioCodec) {
       this.media.audio.codec = args.audioCodec
     }
+    if (args.audioDevice) {
+      this.media.audio.codec = args.audioCodec
+      this.media.audio.device = args.audioDevice
+    }
     if (args.videoCodec) {
       this.media.video.codec = args.videoCodec
+    }
+    if (args.videoDevice) {
+      this.media.video.codec = args.videoCodec
+      this.media.video.device = args.videoDevice
+    }
+    if (args.speakersDevice) {
+      this.media.speakers.device = args.speakersDevice
     }
     const mediaPart = modelToQuery(this.media)
 
@@ -98,6 +119,7 @@ export class HandleDto {
     this.roomid = args.roomid || null
     this.room = args.room
     this.token = args.token || undefined
+    this.stream = args.stream || null
 
     this.consentDialog = false
     this.webrtcState = false
@@ -107,7 +129,9 @@ export class HandleDto {
       audio: false,
       video: false,
       data: false,
-      resolution: null
+      resolution: null,
+      audioDevice: null,
+      videoDevice: null
     }
     this.sip = {
       register: {
@@ -125,10 +149,9 @@ export class HandleDto {
     this.iceRestart = args.iceRestart !== undefined ? args.iceRestart : true
     this.trickle = args.trickle !== undefined ? args.trickle : true
 
-    this.stream = null
     this.isPublisher = args.isPublisher !== undefined ? args.isPublisher : false
     this.isLocal = args.isLocal !== undefined ? args.isLocal : true
-    this.resolutions = ['lowres', 'lowres-16:9', 'stdres', 'stdres-16:9', 'hires', 'hires-16:9']
+    this.resolutions = resolutions
     this.timer = null
     this.interval = 1000
     this.bitrate = {

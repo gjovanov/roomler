@@ -11,7 +11,7 @@ module.exports = {
     auth: oauthPlugin.GITHUB_CONFIGURATION
   },
   startRedirectPath: '/oauth/login/github',
-  callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/github`,
+  callbackUri: `${config.appSettings.env.URL}/-/oauth/callback/github`,
   scope: ['user', 'user:email'],
   generateStateFunction: () => {
     return defaultState

@@ -5,22 +5,22 @@
         <v-tabs v-model="tab" centered>
           <v-tab
             v-for="t in tabs"
-            :key="t.name"
+            :key="t.id"
           >
-            {{ t.name }}
+            {{ $t(`comps.chat.${t.name}`) }}
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="tab">
           <v-tab-item
             v-for="t in tabs"
-            :key="`tab-item-${t.name}`"
+            :key="`tab-item-${t.id}`"
           >
             <v-card flat light>
               <v-card-title class="pt-0 mt-0">
                 <v-text-field
                   v-model="query"
-                  label="Search term"
-                  :name="`query-${t.name}`"
+                  :label="$t('comps.chat.searchTerm')"
+                  :name="`query-${t.id}`"
                   autocomplete="on"
                   class="pt-0 mt-0"
                   full-width
@@ -34,7 +34,7 @@
                 >
                   <v-hover
                     :key="`search-result-${t.name}-${index}`"
-                    v-slot:default="{ hover }"
+                    v-slot="{ hover }"
                     class="ma-1"
                   >
                     <v-card
@@ -69,7 +69,7 @@
           class="ma-3"
           @click="closeGiphyDialog()"
         >
-          Cancel
+          {{ $t('comps.chat.cancel') }}
         </v-btn>
         <v-spacer />
         <v-btn
@@ -104,12 +104,14 @@ export default {
       timeout: null,
       tabs: [
         {
+          id: 'giphs-tab',
           icon: 'mdi-gif',
-          name: 'Gifs'
+          name: 'giphs'
         },
         {
+          id: 'stikers-tab',
           icon: 'mdi-sticker-emoji',
-          name: 'Stickers'
+          name: 'stickers'
         }
       ]
     }

@@ -12,6 +12,11 @@ const schema = new Schema({
     maxlength: 40,
     index: true
   },
+  connection: {
+    type: ObjectId,
+    ref: 'connections',
+    index: true
+  },
   room: {
     type: ObjectId,
     ref: 'rooms',
@@ -28,75 +33,6 @@ const schema = new Schema({
     default: defaults.status,
     required: 'StatusIsRequired',
     maxlength: 50
-  },
-  ip_address: {
-    type: String,
-    required: true,
-    maxlength: 50
-  },
-  geoip: {
-    continent: {
-      code: {
-        type: String,
-        maxlength: 3
-      },
-      name: {
-        type: String,
-        maxlength: 50
-      }
-    },
-    country: {
-      code: {
-        type: String,
-        maxlength: 3,
-        index: true,
-        sparse: true
-      },
-      name: {
-        type: String,
-        maxlength: 50
-      },
-      is_eu: {
-        type: Boolean
-      }
-    },
-    city_name: {
-      type: String,
-      maxlength: 50
-    }
-  },
-  device_id: {
-    type: String,
-    maxlength: 40,
-    index: true,
-    sparse: true
-  },
-  os: {
-    name: {
-      type: String,
-      maxlength: 20,
-      index: true,
-      sparse: true
-    },
-    version: {
-      type: String,
-      maxlength: 20
-    }
-  },
-  browser: {
-    name: {
-      type: String,
-      maxlength: 20,
-      index: true,
-      sparse: true
-    },
-    version: {
-      type: String,
-      maxlength: 20
-    },
-    is_mobile: {
-      type: Boolean
-    }
   }
 }, {
   timestamps: true,

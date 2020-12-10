@@ -88,15 +88,15 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleRoomCreate(dispatch, commit, state, rootState, router, data)
-      handleRoomUpdate(dispatch, commit, state, rootState, router, data)
-      handleRoomDelete(dispatch, commit, state, rootState, router, data)
+      handleRoomCreate(dispatch, commit, state, rootState, router, localePath, data)
+      handleRoomUpdate(dispatch, commit, state, rootState, router, localePath, data)
+      handleRoomDelete(dispatch, commit, state, rootState, router, localePath, data)
 
-      handlePeerPush(dispatch, commit, state, rootState, router, data)
-      handlePeerPull(dispatch, commit, state, rootState, router, data)
+      handlePeerPush(dispatch, commit, state, rootState, router, localePath, data)
+      handlePeerPull(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
   async create ({

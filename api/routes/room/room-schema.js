@@ -10,7 +10,7 @@ const getAllQueryString = S.object()
   .prop('size', S.integer())
   .prop('search', S.string())
 
-const getReportsQueryString = S.object()
+const getStatsQueryString = S.object()
   .prop('from', S.string())
   .prop('to', S.string())
   .prop('status', S.string())
@@ -62,6 +62,7 @@ const room = S.object()
   .prop('name', S.string().required())
   .prop('parent_id', S.string())
   .prop('path', S.string())
+  .prop('emoji', S.string())
   .prop('is_open', S.boolean())
   .prop('tags', S.array().items(S.string()))
   .prop('description', S.string())
@@ -335,8 +336,8 @@ module.exports = {
         200: callList
       }
     },
-    getReports: {
-      querystring: getReportsQueryString,
+    getStats: {
+      querystring: getStatsQueryString,
       response: {
         200: pagedRoomCallList
       }

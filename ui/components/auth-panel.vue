@@ -5,10 +5,10 @@
         v-if="!isAuthenticated"
         color="secondary"
         rounded
-        to="/@/auth/register"
+        :to="localePath({ name: '--auth-register' })"
         style="border-radius: 28px;"
       >
-        Sign up, it's free
+        {{ $t('comps.auth.signup') }}
       </v-btn>
 
       <v-divider v-if="!isAuthenticated" vertical />
@@ -16,9 +16,9 @@
       <v-btn
         v-if="!isAuthenticated"
         text
-        to="/@/auth/login"
+        :to="localePath({ name: '--auth-login' })"
       >
-        Login
+        {{ $t('comps.auth.login') }}
       </v-btn>
 
       <v-divider vertical />
@@ -30,7 +30,7 @@
         bottom
         offset-y
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             outlined
             small
@@ -44,7 +44,7 @@
               bottom
               overlap
             >
-              <template v-slot:badge>
+              <template #badge>
                 {{ totalUnreads }}
               </template>
               <v-icon>mdi-email</v-icon>
@@ -64,7 +64,7 @@
                   bottom
                   overlap
                 >
-                  <template v-slot:badge>
+                  <template #badge>
                     {{ item.unreads }}
                   </template>
                   <v-icon>mdi-email</v-icon>
@@ -95,7 +95,7 @@
         bottom
         offset-y
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             outlined
             small
@@ -109,7 +109,7 @@
               bottom
               overlap
             >
-              <template v-slot:badge>
+              <template #badge>
                 {{ Object.keys(calls).length }}
               </template>
               <v-icon>fa fa-phone</v-icon>
@@ -130,7 +130,7 @@
                   bottom
                   overlap
                 >
-                  <template v-slot:badge>
+                  <template #badge>
                     {{ value.length }}
                   </template>
                   <v-icon>fa fa-phone</v-icon>
@@ -148,32 +148,77 @@
       </v-menu>
 
       <v-menu
+        v-model="langMenu"
+        open-on-hover
+        bottom
+        offset-y
+      >
+        <template #activator="{ on }">
+          <v-btn
+            text
+            right
+            depressed
+            v-on="on"
+          >
+            <v-icon>fa fa-globe</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="locale in $i18n.locales"
+            :key="locale.code"
+            :disabled="locale.code === $i18n.locale"
+            @click.prevent.stop="$i18n.setLocale(locale.code)"
+          >
+            <v-list-item-title class="justify-center align-center">
+              <v-chip :color="locale.code === $i18n.locale ? 'primary' : undefined">
+                <v-img :src="`/country/${locale.code}.png`" width="32" left /> &nbsp; {{ $t(`lang.${locale.code}`) }}
+              </v-chip>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-divider vertical />
+
+      <v-menu
         v-if="isAuthenticated"
         v-model="profileMenu"
         open-on-hover
         bottom
         offset-y
       >
-        <template v-slot:activator="{ on }">
+        <template #activator="{ on }">
           <v-btn
             text
             right
             depressed
             style="min-width: 255px"
+            class="pl-0"
             v-on="on"
           >
             <v-icon>mdi-dots-vertical</v-icon>
             {{ user.username }}
           &nbsp;
             <v-badge
-              :color="isOnline() ? 'green' : 'grey'"
+              id="auth-status"
+              :color="isInCall() ? 'red' : isOnline() ? 'green' : 'grey'"
+              :dark="isInCall() ? true : undefined"
               bordered
               bottom
               left
-              dot
+              avatar
+              overlap
               offset-x="10"
               offset-y="10"
             >
+              <template v-if="isInCall()" #badge>
+                <v-avatar v-if="isInCall()" size="6">
+                  <v-icon size="7" style="margin-bottom: 6px">
+                    fa fa-phone
+                  </v-icon>
+                </v-avatar>
+              </template>
               <v-avatar
                 size="36px"
               >
@@ -194,12 +239,12 @@
         <v-list>
           <v-list-item @click="goToProfile">
             <v-list-item-title>
-              <v-icon>fa-user</v-icon> Profile
+              <v-icon>fa-user</v-icon> {{ $t('comps.auth.profile') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item @click="toggleTheme">
             <v-list-item-title>
-              <v-switch v-model="toggle" label="Toggle Dark Mode" />
+              <v-switch v-model="toggle" :label="$t('comps.auth.toggleDarkMode')" />
             </v-list-item-title>
           </v-list-item>
           <v-divider />
@@ -211,39 +256,39 @@
           <v-divider />
           <v-list-item @click="goToCreateRoom">
             <v-list-item-title>
-              <v-icon>fa-plus</v-icon> Create new room
+              <v-icon>fa-plus</v-icon> {{ $t('comps.auth.createNewRoom') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item @click="goToExplore">
             <v-list-item-title>
-              <v-icon>fa-search</v-icon> Explore public rooms
+              <v-icon>fa-search</v-icon> {{ $t('comps.auth.exploreRooms') }}
             </v-list-item-title>
           </v-list-item>
           <v-divider />
           <v-list-item @click="resetUsername">
             <v-list-item-title>
-              <v-icon>fa-fingerprint</v-icon> Reset username
+              <v-icon>fa-fingerprint</v-icon> {{ $t('comps.auth.resetUsername') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item @click="resetPassword">
             <v-list-item-title>
-              <v-icon>fa-key</v-icon> Reset password
+              <v-icon>fa-key</v-icon> {{ $t('comps.auth.resetPassword') }}
             </v-list-item-title>
           </v-list-item>
           <v-divider />
           <v-list-item v-if="isAdmin" @click="goToVisits">
             <v-list-item-title>
-              <v-icon>fa-eye</v-icon> Visits
+              <v-icon>fa-eye</v-icon> {{ $t('comps.auth.visits') }}
             </v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="isAdmin" @click="goToReports">
+          <v-list-item v-if="isAdmin" @click="goToStats">
             <v-list-item-title>
-              <v-icon>fa-chart-line</v-icon> Reports
+              <v-icon>fa-chart-line</v-icon> {{ $t('comps.auth.stats') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item @click="logout">
             <v-list-item-title>
-              <v-icon>fa-power-off</v-icon> Log out
+              <v-icon>fa-power-off</v-icon> {{ $t('comps.auth.logout') }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -252,7 +297,7 @@
       <v-divider v-if="user && isAuthenticated && !isActivated" vertical />
 
       <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
-        Activate
+        {{ $t('comps.auth.activate') }}
       </v-btn>
     </v-toolbar-items>
   </client-only>
@@ -271,12 +316,16 @@ export default {
     return {
       subscription: null,
       toggle: true,
+      langMenu: false,
       profileMenu: false,
       messagesMenu: false,
       callsMenu: false
     }
   },
   computed: {
+    availableLocales () {
+      return this.$i18n.locales.filter(i => i.code !== this.$i18n.locale)
+    },
     isAuthenticated () {
       return this.$store.getters['api/auth/isAuthenticated']
     },
@@ -338,12 +387,12 @@ export default {
     },
     subscribeTitle () {
       if (this.subscription) {
-        return 'Stop Receiving Notifications'
+        return this.$t('comps.auth.notificationsStop')
       }
       if (this.permission === 'denied') {
-        return 'Notifications are blocked'
+        return this.$t('comps.auth.notificationsBlocked')
       } else {
-        return 'Start Receiving Notifications'
+        return this.$t('comps.auth.notificationsStart')
       }
     }
   },
@@ -355,6 +404,9 @@ export default {
     isOnline () {
       return this.$store.getters['api/auth/isOnline'](this.$store.state.api.auth.user._id)
     },
+    isInCall () {
+      return this.$store.getters['api/room/calls/isUserInCall'](this.$store.state.api.auth.user._id)
+    },
     getRoom (id) {
       return this.$store.getters['api/room/getRoom'](id)
     },
@@ -362,55 +414,55 @@ export default {
       return this.$store.getters['api/auth/getUser'](id)
     },
     goToProfile () {
-      this.$router.push({ path: `/@/${this.user.username}` })
+      this.$router.push({ path: this.localePath({ name: '--username', params: { username: `${this.user.username}` } }) })
     },
     toggleTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
       storage.setLocal('theme', this.theme)
     },
     goToRoom (room) {
-      this.$router.push({ path: `/${room}` })
+      this.$router.push({ path: this.localePath({ name: 'room-chat', params: { room } }) })
     },
     goToRoomCalls (room) {
       if (room && room.path) {
-        this.$router.push({ path: `/${room.path}/calls` })
+        this.$router.push({ path: this.localePath({ name: 'room-calls', params: { room: `${room.path}` } }) })
       }
     },
     goToCreateRoom () {
-      this.$router.push({ path: '/@/room/create' })
+      this.$router.push({ path: this.localePath({ name: '--room-create' }) })
     },
     goToExplore () {
-      this.$router.push({ path: '/explore/rooms' })
+      this.$router.push({ path: this.localePath({ name: 'explore-rooms' }) })
     },
     async resetAccount () {
       await this.$store.dispatch('api/auth/reset', {
         email: this.$store.state.api.auth.user.email,
         type: 'user_activation'
       })
-      handleSuccess('Activation link was send. Please check your email for further instructions.', this.$store.commit)
+      handleSuccess(this.$t('comps.auth.activationMessage'), this.$store.commit)
     },
     async resetUsername () {
       await this.$store.dispatch('api/auth/reset', {
         email: this.$store.state.api.auth.user.email,
         type: 'username_reset'
       })
-      handleSuccess('Username was reset. Please check your email for further instructions.', this.$store.commit)
+      handleSuccess(this.$t('comps.auth.usernameResetMessage'), this.$store.commit)
     },
     async resetPassword () {
       await this.$store.dispatch('api/auth/reset', {
         email: this.$store.state.api.auth.user.email,
         type: 'password_reset'
       })
-      handleSuccess('Password was reset. Please check your email for further instructions.', this.$store.commit)
+      handleSuccess(this.$t('comps.auth.passwordResetMessage'), this.$store.commit)
     },
     async goToVisits () {
-      await this.$router.push({ path: '/admin/reports?status=open&panel=3' })
+      await this.$router.push({ path: this.localePath({ name: 'admin-stats', query: { status: 'open', panel: 3, type: 'chart' } }) })
     },
-    async goToReports () {
-      await this.$router.push({ path: '/admin/reports?panel=3' })
+    async goToStats () {
+      await this.$router.push({ path: this.localePath({ name: 'admin-stats', query: { panel: 3, type: 'chart' } }) })
     },
     async logout () {
-      await this.$router.push({ path: '/' })
+      await this.$router.push({ path: this.localePath({ name: 'index' }) })
       await this.$store.dispatch('api/auth/logout')
       await this.$store.dispatch('connectWebSocket')
     },
@@ -420,7 +472,7 @@ export default {
           if (!this.subscription) {
             const result = await Notification.requestPermission()
             if (result === 'denied') {
-              alert('Notifications blocked. Please enable them in your browser.')
+              alert(this.$t('comps.auth.notificationsBlockedMessage'))
               return
             }
             if (!('serviceWorker' in navigator)) {
@@ -437,7 +489,7 @@ export default {
               await this.$store.dispatch('api/subscription/create', this.subscription.toJSON(), { root: true })
             }
             // eslint-disable-next-line no-new
-            new Notification('You have subscribed to notifications successfully! You can unsubscribe anytime')
+            new Notification(this.$t('comps.auth.subscribedMessage'))
           } else {
             const sw = await navigator.serviceWorker.ready
             const sub = await sw.pushManager.getSubscription()
@@ -450,15 +502,25 @@ export default {
               }
             }
             // eslint-disable-next-line no-new
-            new Notification('You have unsubscribed to notifications successfully! You can subscribe again anytime')
+            new Notification(this.$t('comps.auth.unsubscribedMessage'))
           }
         } else {
-          alert('Notifications blocked. Please enable them in your browser.')
+          alert(this.$t('comps.auth.notificationsBlockedMessage'))
         }
       } else {
-        alert('Notification is not supported by your browser! 😞')
+        alert(this.$t('comps.auth.notificationsNotSupportedMessage'))
       }
     }
   }
 }
 </script>
+<style scoped>
+#auth-status >>> .v-badge__badge {
+    height: 12px;
+    min-width: 12px;
+    padding: 0px;
+  }
+  #auth-status >>> #auth-status.v-badge--bordered .v-badge__badge::after {
+    border-width: 1px;
+  }
+</style>

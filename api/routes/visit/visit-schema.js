@@ -3,6 +3,7 @@ const S = require('fluent-schema')
 const getAllQueryString = S.object()
   .prop('from', S.string())
   .prop('to', S.string())
+  .prop('type', S.string())
   .prop('status', S.string())
   .prop('room', S.string())
   .prop('user', S.string())
@@ -101,7 +102,7 @@ const wsVisit = S.object()
 module.exports = {
   wsVisit,
 
-  getAll: {
+  getStats: {
     querystring: getAllQueryString,
     response: {
       200: pagedVisitList

@@ -5,16 +5,18 @@
     bottom
     offset-x
   >
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn
         :disabled="invite.status !== 'pending'"
         fab
-        small
-        text
-        dark
+        x-small
+        :dark="!isDark"
+        :light="isDark"
         v-on="on"
       >
-        <v-icon>fa-edit</v-icon>
+        <v-icon x-small>
+          fa-edit
+        </v-icon>
       </v-btn>
     </template>
     <v-list v-if="invite.status === 'pending'">
@@ -23,16 +25,15 @@
         @click="toMember()"
       >
         <v-list-item-title>
-          Demote to Member
+          {{ $t('comps.invite.demoteToMember') }}
         </v-list-item-title>
       </v-list-item>
-      <v-divider />
       <v-list-item
         v-if="invite.type !== 'moderator'"
         @click="toModerator()"
       >
         <v-list-item-title>
-          Promote to Moderator
+          {{ $t('comps.invite.promoteToModerator') }}
         </v-list-item-title>
       </v-list-item>
     </v-list>
@@ -55,6 +56,11 @@ export default {
   data () {
     return {
       menu: false
+    }
+  },
+  computed: {
+    isDark () {
+      return this.$vuetify.theme.dark
     }
   },
   methods: {

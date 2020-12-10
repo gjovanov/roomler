@@ -3,7 +3,7 @@
     <v-spacer />
     <v-text-field
       v-model="room.media.publishers"
-      label="Publishers"
+      :label="$t('comps.room.publishers')"
       name="media.publishers"
       type="number"
       class="mt-4"
@@ -13,7 +13,7 @@
     <v-spacer />
     <v-text-field
       v-model="room.media.bitrate"
-      label="Bitrate"
+      :label="$t('comps.room.bitrate')"
       name="media.bitrate"
       type="number"
       required
@@ -22,7 +22,7 @@
     <v-spacer />
     <v-text-field
       v-model="room.media.fir_freq"
-      label="Fir Frequency"
+      :label="$t('comps.room.firFrequency')"
       name="media.fir_freq"
       type="number"
       required
@@ -32,7 +32,7 @@
     <v-combobox
       v-model="roomAudioCodecs"
       :items="audiocodecs"
-      label="Audio codecs"
+      :label="$t('comps.room.audioCodecs')"
       multiple
       disabled
     />
@@ -40,12 +40,12 @@
     <v-combobox
       v-model="roomVideoCodecs"
       :items="videocodecs"
-      label="Video codecs"
+      :label="$t('comps.room.videoCodecs')"
       multiple
       disabled
     />
     <v-spacer />
-    <v-switch v-model="room.media.use_sip_bridge" label="Use SIP bridge audio mixing (experimental feature)" disabled />
+    <v-switch v-model="room.media.use_sip_bridge" :label="$t('comps.room.sipBridge')" disabled />
   </div>
 </template>
 

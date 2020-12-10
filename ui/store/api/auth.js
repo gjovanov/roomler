@@ -3,6 +3,7 @@ import {
   handleSuccess
 } from '@/services/ajax-handlers'
 import cookies from 'js-cookie'
+import { handleHello } from './auth/handlers/hello'
 import { handleConnectionPush } from './auth/handlers/connection-push'
 import { handleConnectionPull } from './auth/handlers/connection-pull'
 
@@ -11,6 +12,7 @@ export const state = () => ({
   user: null,
   token: null,
   oauth: null,
+  hello: null,
   isAdmin: false
 })
 
@@ -23,6 +25,9 @@ export const mutations = {
       }
     }
     state.peers = peers
+  },
+  setHello (state, hello) {
+    state.hello = hello
   },
   push (state, peer) {
     const found = state.peers.find(p => p._id === peer._id)
@@ -97,11 +102,12 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleConnectionPush(dispatch, commit, state, rootState, router, data)
-      handleConnectionPull(dispatch, commit, state, rootState, router, data)
+      handleHello(dispatch, commit, state, rootState, router, localePath, data)
+      handleConnectionPush(dispatch, commit, state, rootState, router, localePath, data)
+      handleConnectionPull(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
 
@@ -142,13 +148,14 @@ export const actions = {
 
   async activate ({
     commit
-  }, payload) {
+  }, { payload }) {
     const response = {}
     try {
       response.result = await this.$axios.$post('/api/auth/activate', payload)
       commit('storeUserInfo', response.result)
       commit('replace', response.result.user)
-      handleSuccess('Account was successfully activated', commit)
+
+      handleSuccess(this.app.i18n.t('store.auth.activationMessage'), commit)
     } catch (err) {
       handleError(err, commit)
       response.hasError = true

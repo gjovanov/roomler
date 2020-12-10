@@ -1,5 +1,14 @@
 <template>
   <v-form :ref="formRef" v-model="draftRoom.valid" lazy-validation>
+    <add-emoji-menu
+      :open="menu.addEmoji.open"
+      :emojis="emojis"
+      :x="menu.addEmoji.x"
+      :y="menu.addEmoji.y"
+      :message="menu.addEmoji.message"
+      @addEmoji="addEmoji"
+      @hideMenu="hideMenu"
+    />
     <v-expansion-panels
       v-model="panel"
       accordion
@@ -13,12 +22,12 @@
             <v-icon>
               fa-info
             </v-icon> &nbsp;
-            <span>BASIC INFO</span>
+            <span class="text-uppercase">{{ $t('pages.@.room.manage.basicInfo') }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-spacer />
-          <strong class="text-primary">Room URL: </strong>
+          <strong class="text-primary">{{ $t('pages.@.room.manage.roomUrl') }}</strong>
           <v-chip
             class="ma-2"
             color="primary"
@@ -34,7 +43,7 @@
           <v-text-field
             v-model="draftRoom.name"
             :rules="nameRules"
-            label="Room name"
+            :label="$t('pages.@.room.manage.roomName')"
             name="name"
             autocomplete="on"
             dense
@@ -42,11 +51,11 @@
             required
             @keydown.enter.prevent="action()"
           >
-            <template v-slot:append>
+            <template #append>
               <v-tooltip
                 bottom
               >
-                <template v-slot:activator="{ on }">
+                <template #activator="{ on }">
                   <v-icon
                     v-on="on"
                     @click="draftRoom.is_open = !draftRoom.is_open"
@@ -54,21 +63,32 @@
                     {{ `${draftRoom.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
                   </v-icon>
                 </template>
-                {{ `${draftRoom.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
+                {{ `${draftRoom.is_open ? $t('pages.@.room.manage.openRoom') : $t('pages.@.room.manage.closedRoom')}` }}
               </v-tooltip>
             </template>
           </v-text-field>
+          <v-spacer />
+          <v-text-field
+            v-model="draftRoom.emoji"
+            :label="$t('comps.room.emoji')"
+            name="emoji"
+            dense
+            outlined
+            required
+            readonly
+            @click="showMenu($event, 'addEmoji')"
+          />
           <v-spacer />
           <v-combobox
             v-model="draftRoom.tags"
             :items="draftRoom.tags"
             :rules="tagRules"
-            label="Tags"
-            placeholder="Type in Tag and press Enter"
+            :label="$t('pages.@.room.manage.tags')"
+            :placeholder="$t('pages.@.room.manage.tagsPlaceholder')"
             multiple
             chips
           >
-            <template v-slot:selection="data">
+            <template #selection="data">
               <v-chip
                 :key="JSON.stringify(data.item)"
                 v-bind="data.attrs"
@@ -83,9 +103,9 @@
           <v-spacer />
           <v-textarea
             v-model="draftRoom.description"
-            label="Description"
+            :label="$t('pages.@.room.manage.description')"
             name="description"
-            placeholder="Drop few words about the topic of this Room, Team or Community"
+            :placeholder="$t('pages.@.room.manage.descriptionPlaceholder')"
             autocomplete="on"
             dense
             outlined
@@ -99,14 +119,14 @@
             <v-icon>
               fa-sliders-h
             </v-icon> &nbsp;
-            <span>MEDIA</span>
+            <span class="text-uppercase">{{ $t('pages.@.room.manage.media') }}</span>
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-spacer />
           <v-text-field
             v-model.number="draftMedia.publishers"
-            label="Publishers"
+            :label="$t('pages.@.room.manage.publishers')"
             name="media.publishers"
             type="number"
             min="1"
@@ -118,7 +138,7 @@
           <v-spacer />
           <v-text-field
             v-model.number="draftMedia.bitrate"
-            label="Bitrate"
+            :label="$t('pages.@.room.manage.bitrate')"
             name="media.bitrate"
             type="number"
             min="0"
@@ -129,7 +149,7 @@
           <v-spacer />
           <v-text-field
             v-model.number="draftMedia.fir_freq"
-            label="Fir Frequency"
+            :label="$t('pages.@.room.manage.firFrequency')"
             name="media.fir_freq"
             type="number"
             min="0"
@@ -141,8 +161,8 @@
           <v-combobox
             v-model="draftMedia.audiocodecs"
             :items="audiocodecs"
-            label="Audio codecs"
-            hint="For multiple values selected, the order is important"
+            :label="$t('pages.@.room.manage.audioCodecs')"
+            :hint="$t('pages.@.room.manage.audioCodecsHint')"
             persistent-hint
             dense
             multiple
@@ -152,15 +172,15 @@
           <v-combobox
             v-model="draftMedia.videocodecs"
             :items="videocodecs"
-            label="Video codecs"
-            hint="For multiple values selected, the order is important"
+            :label="$t('pages.@.room.manage.videoCodecs')"
+            :hint="$t('pages.@.room.manage.videoCodecsHint')"
             persistent-hint
             dense
             multiple
             outlined
           />
           <v-spacer />
-          <v-switch v-model="draftMedia.use_sip_bridge" label="Use SIP bridge audio mixing (experimental feature)" />
+          <v-switch v-model="draftMedia.use_sip_bridge" :label="$t('pages.@.room.manage.sipBridge')" />
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -176,7 +196,7 @@
         outlined
         @click="create()"
       >
-        <v-icon>fa-plus</v-icon> &nbsp; Create
+        <v-icon>fa-plus</v-icon> &nbsp; {{ $t('pages.@.room.manage.create') }}
       </v-btn>
       <v-spacer v-if="hasUpdate" />
       <v-btn
@@ -188,15 +208,21 @@
         outlined
         @click="update()"
       >
-        <v-icon>fa-edit</v-icon> &nbsp; Update
+        <v-icon>fa-edit</v-icon> &nbsp; {{ $t('pages.@.room.manage.update') }}
       </v-btn>
     </v-row>
   </v-form>
 </template>
 <script>
 import slugify from 'slugify'
+import AddEmojiMenu from '@/components/room/add-emoji-menu'
+import * as EmojiMap from 'emojilib'
+import { v4 as uuid } from 'uuid'
 
 export default {
+  components: {
+    AddEmojiMenu
+  },
   props: {
     parentRoom: {
       type: Object,
@@ -216,11 +242,16 @@ export default {
     }
   },
   data () {
+    const self = this
     const slugOptions = {
       replacement: '-', // replace spaces with replacement
       remove: null, // regex to remove characters
       lower: true // result in lower case
     }
+    const emojis = EmojiMap.ordered.map((name) => {
+      const result = { ...EmojiMap.lib[name], name, key: uuid() }
+      return result
+    })
     const config = this.$store.state.api.config.config
     const defaults = config.dataSettings.room.defaults.media
     const videocodecs = config.janusSettings.videoCodecs
@@ -233,9 +264,13 @@ export default {
       valid: true,
       name: null,
       path: '',
+      emoji: '💥',
       is_open: true,
       description: undefined,
       tags: []
+    }
+    if (!draftRoom.emoji) {
+      draftRoom.emoji = '💥'
     }
     if (this.room && this.room.short_name) {
       draftRoom.name = this.room.short_name
@@ -258,24 +293,33 @@ export default {
     }
     draftRoom.media = draftMedia
     return {
+      emojis,
+      menu: {
+        addEmoji: {
+          x: 0,
+          y: 0,
+          open: false,
+          message: null
+        }
+      },
 
       panel: 0,
       formRef: this.hasUpdate ? 'formUpdate' : 'formCreate',
 
-      maxTagsLength: 5,
+      maxTagsLength: 15,
       config,
       url: config.appSettings.env.URL,
       slugOptions,
 
       newTag: null,
       tagRules: [
-        v => v.length >= 3 || 'Please select at least 3 tags',
-        v => v.length <= this.maxTagsLength || `Exceeding the max number of tags is: ${this.maxTagsLength}`
+        v => v.length >= 3 || self.$t('pages.@.room.manage.tagMinLimit'),
+        v => v.length <= this.maxTagsLength || `${self.$t('pages.@.room.manage.tagMaxLimit')} ${this.maxTagsLength}`
       ],
 
       nameRules: [
-        v => !!v || 'Room name is required',
-        v => /^[a-zA-Z0-9 _-]+$/.test(v) || 'Room name must be composed of only letters, numbers and - or _ character'
+        v => !!v || self.$t('pages.@.room.manage.roomNameRequired'),
+        v => /^[a-zA-Z0-9 _-]+$/.test(v) || self.$t('pages.@.room.manage.roomNameChars')
       ],
 
       audiocodecs,
@@ -303,6 +347,17 @@ export default {
       if (this.$refs[this.formRef].validate()) {
         this.$emit('update', this.draftRoom, this.draftMedia)
       }
+    },
+    showMenu (e, type) {
+      this.menu[type].x = e.clientX
+      this.menu[type].y = e.clientY - 100
+      this.menu[type].open = true
+    },
+    hideMenu (type) {
+      this.menu[type].open = false
+    },
+    addEmoji (emoji) {
+      this.draftRoom.emoji = emoji.char
     }
   }
 }

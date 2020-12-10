@@ -13,6 +13,9 @@ module.exports = {
   rules: {
     'nuxt/no-cjs-in-config': 'off',
     'no-console': 'off',
-    'vue/no-v-html': 'off'
+    'vue/no-v-html': 'off',
+    'vue/no-mutating-props': 'off',
+    'vue/custom-event-name-casing': 'off',
+    'multiline-ternary': 'off'
   }
 }

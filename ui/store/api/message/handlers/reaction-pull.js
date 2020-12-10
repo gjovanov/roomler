@@ -4,6 +4,7 @@ export const handleReactionPull = async (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.messageReactionPull) {
     if (Array.isArray(data.data) && data.data.length) {

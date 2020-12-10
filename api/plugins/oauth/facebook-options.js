@@ -11,7 +11,7 @@ module.exports = {
     auth: oauthPlugin.FACEBOOK_CONFIGURATION
   },
   startRedirectPath: '/oauth/login/facebook',
-  callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/facebook`,
+  callbackUri: `${config.appSettings.env.URL}/-/oauth/callback/facebook`,
   scope: 'email',
   generateStateFunction: () => {
     return defaultState

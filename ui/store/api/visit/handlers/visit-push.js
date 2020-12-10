@@ -4,6 +4,7 @@ export const handleVisitPush = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (
     data.op === rootState.api.config.config.wsSettings.opTypes.visitOpen) {

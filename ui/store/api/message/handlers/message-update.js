@@ -4,6 +4,7 @@ export const handleMessageUpdate = async (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.messageUpdate) {
     if (Array.isArray(data.data) && data.data.length) {

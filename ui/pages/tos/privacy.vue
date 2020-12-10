@@ -88,7 +88,7 @@
         <p>We receive information from you and other third-parties that helps us approximate your location. We may, for example, use a business address submitted by your employer, or an IP address received from your browser or device to determine approximate location. Roomler may also collect location information from devices in accordance with the consent process provided by your device.</p>
         <blockquote class="blockquote">
           The legal basis for this processing is our legitimate interests cf. GDPR art. 6 (1) item f, namely using this data for the purpose of ensuring the proper administration of our website and business, analyzing the use of the website and services, monitoring and improving our website and services, improving the user experience, preventing abuse, and assisting users with support inquiries. For information about cookies and how to opt out of cookies, see our
-          <nuxt-link to="/tos/cookies">
+          <nuxt-link :to="localePath({ name: 'tos-cookies' })">
             Cookie Policy
           </nuxt-link>.
         </blockquote>
@@ -154,12 +154,12 @@
     <h1>Relevant Links</h1>
     <ul>
       <li>
-        <nuxt-link to="/tos/terms">
+        <nuxt-link :to="localePath({ name: 'tos-terms' })">
           Terms of Service
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link to="/tos/cookies">
+        <nuxt-link :to="localePath({ name: 'tos-cookies' })">
           Cookie Policy
         </nuxt-link>
       </li>

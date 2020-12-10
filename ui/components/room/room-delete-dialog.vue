@@ -1,26 +1,26 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="290">
+    <v-dialog v-model="dialog" persistent max-width="400">
       <v-form ref="roomDeleteForm" v-model="valid" lazy-validation>
         <v-card v-if="room">
           <v-card-title class="headline">
-            Danger
+            {{ $t('comps.room.warning') }}
           </v-card-title>
           <v-card-text>
             <p>
-              Please type the name of your room to confirm deletion: <strong>{{ room.short_name }}</strong>
+              {{ $t('comps.room.typeRoomName') }}: <strong>{{ room.short_name }}</strong>
             </p>
             <p v-if="room.children && room.children.length">
-              <strong>Warning:</strong> children rooms will be also deleted.
+              <strong>{{ $t('comps.room.warning') }}:</strong> {{ $t('comps.room.deleteChildrenRooms') }}
             </p>
             <p>
-              This operation cannot be reverted!
+              {{ $t('comps.room.operationNotReversable') }}
             </p>
             <v-text-field
               v-model="name"
               :rules="nameRules"
-              label="Room name"
-              placeholder="Enter room name"
+              :label="$t('comps.room.roomName')"
+              :placeholder="$t('comps.room.roomNamePlaceholder')"
               name="name"
               autocomplete="on"
               dense
@@ -36,7 +36,7 @@
               class="ma-3"
               @click="no()"
             >
-              No
+              {{ $t('comps.room.cancel') }}
             </v-btn>
             <v-spacer />
 
@@ -47,7 +47,7 @@
               class="ma-3"
               @click="yes()"
             >
-              Yes
+              {{ $t('comps.room.delete') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -69,12 +69,13 @@ export default {
     }
   },
   data () {
+    const self = this
     return {
       valid: false,
       name: null,
       nameRules: [
-        v => !!v || 'Room name is required',
-        v => this.room.short_name === this.name || 'Room name must match the name of the room you are trying to delete'
+        v => !!v || self.$t('comps.room.roomNameRequired'),
+        v => this.room.short_name === this.name || self.$t('comps.room.roomNameMatch')
       ]
     }
   },

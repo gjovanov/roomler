@@ -62,6 +62,7 @@ class RoomService {
       .skip(pageInt * sizeInt)
       .limit(sizeInt)
       .exec()
+
     const visibleChildrenRooms = await this.getVisibleChildren(records, userid)
     const result = records.concat(visibleChildrenRooms)
     return result

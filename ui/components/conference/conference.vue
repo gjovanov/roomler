@@ -38,6 +38,7 @@
                 height="100%"
                 style="max-height: 640px"
                 autoplay
+                playsinline
                 @dblclick="toggleFullScreen(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
@@ -58,15 +59,16 @@
           class="pa-1 ma-0"
         >
           <v-card elevation="12" color="teal lighten-5">
-            <v-card-text class="pa-0 ma-0" style="max-height: 240px">
+            <v-card-text class="pa-0 ma-0" style="max-height: 240px; height: 100%;">
               <video
                 :id="handleDto.id"
                 :srcObject.prop="handleDto.stream"
                 :poster="getPeer(handleDto.display_name).avatar_url"
                 width="100%"
                 height="100%"
-                style="max-height: 240px"
+                style="max-height: 240px; height: 100vh; object-fit: cover;"
                 :autoplay="handleDto.media.audio.enabled || handleDto.media.video.enabled || handleDto.media.screen.enabled"
+                playsinline
                 @dblclick="toggleFullScreen(handleDto)"
               />
               <media-buttons :handle="handleDto" :conference-position="conferencePosition" />
@@ -140,7 +142,7 @@ export default {
       return result
     },
     conferencePosition () {
-      return this.roomRoute === 'calls' ? 'center' : 'left'
+      return this.roomRoute && this.roomRoute.startsWith('calls') ? 'center' : 'left'
     }
   },
   updated () {

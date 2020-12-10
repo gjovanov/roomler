@@ -3,7 +3,7 @@
     <v-container class="pl-0 pr-0 ml-0 mr-0">
       <v-layout class="pl-0 pr-0 ml-0 mr-0 d-flex flex-row flex-wrap justify-center">
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               tile
               small
@@ -17,11 +17,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Undo</span>
+          <span>
+            {{ $t('comps.chat.undo') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               tile
               small
@@ -35,11 +37,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Redo</span>
+          <span>
+            {{ $t('comps.chat.redo') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.bold()"
               tile
@@ -54,11 +58,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Bold</span>
+          <span>
+            {{ $t('comps.chat.bold') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.italic()"
               tile
@@ -73,11 +79,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Italic</span>
+          <span>
+            {{ $t('comps.chat.italic') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.strike()"
               tile
@@ -92,11 +100,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Strike-through</span>
+          <span>
+            {{ $t('comps.chat.strikeThrough') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.underline()"
               tile
@@ -111,11 +121,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Underline</span>
+          <span>
+            {{ $t('comps.chat.underline') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.paragraph()"
               tile
@@ -130,11 +142,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Paragraph</span>
+          <span>
+            {{ $t('comps.chat.paragraph') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 1 })"
               tile
@@ -147,11 +161,11 @@
               H1
             </v-btn>
           </template>
-          <span>Heading 1</span>
+          <span>{{ $t('comps.chat.heading') }} 1</span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 2 })"
               tile
@@ -164,11 +178,11 @@
               H2
             </v-btn>
           </template>
-          <span>Heading 2</span>
+          <span>{{ $t('comps.chat.heading') }} 2</span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.heading({ level: 3 })"
               tile
@@ -181,11 +195,11 @@
               H3
             </v-btn>
           </template>
-          <span>Heading 3</span>
+          <span>{{ $t('comps.chat.heading') }} 3</span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.bullet_list()"
               tile
@@ -200,11 +214,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Bullet list</span>
+          <span>
+            {{ $t('comps.chat.bulletList') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.ordered_list()"
               tile
@@ -219,11 +235,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Ordered list</span>
+          <span>
+            {{ $t('comps.chat.orderedList') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.todo_list()"
               tile
@@ -238,11 +256,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Todo</span>
+          <span>
+            {{ $t('comps.chat.todoList') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.blockquote()"
               tile
@@ -257,11 +277,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Quote</span>
+          <span>
+            {{ $t('comps.chat.quote') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.code_block()"
               tile
@@ -276,11 +298,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Code</span>
+          <span>
+            {{ $t('comps.chat.code') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.image()"
               tile
@@ -295,11 +319,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Insert image</span>
+          <span>
+            {{ $t('comps.chat.insertImage') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.file()"
               tile
@@ -314,11 +340,13 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Attach files</span>
+          <span>
+            {{ $t('comps.chat.attachFiles') }}
+          </span>
         </v-tooltip>
 
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-btn
               :text="isActive.table()"
               tile
@@ -333,14 +361,16 @@
               </v-icon>
             </v-btn>
           </template>
-          <span>Table</span>
+          <span>
+            {{ $t('comps.chat.table') }}
+          </span>
         </v-tooltip>
 
         <template
           v-if="isActive.table()"
         >
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -353,11 +383,13 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Remove table</span>
+            <span>
+              {{ $t('comps.chat.removeTable') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -368,11 +400,13 @@
                 +|
               </v-btn>
             </template>
-            <span>Add column before</span>
+            <span>
+              {{ $t('comps.chat.addColumnBefore') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -383,11 +417,13 @@
                 |+
               </v-btn>
             </template>
-            <span>Add column after</span>
+            <span>
+              {{ $t('comps.chat.addColumnAfter') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -398,11 +434,13 @@
                 |x|
               </v-btn>
             </template>
-            <span>Delete column</span>
+            <span>
+              {{ $t('comps.chat.deleteColumn') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -413,11 +451,13 @@
                 +_
               </v-btn>
             </template>
-            <span>Add row before</span>
+            <span>
+              {{ $t('comps.chat.addRowBefore') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -428,11 +468,13 @@
                 _+
               </v-btn>
             </template>
-            <span>Add row after</span>
+            <span>
+              {{ $t('comps.chat.addRowAfter') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -443,11 +485,13 @@
                 _x_
               </v-btn>
             </template>
-            <span>Delete row</span>
+            <span>
+              {{ $t('comps.chat.deleteRow') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 small
                 :dark="!isDark"
@@ -460,7 +504,9 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Merge cells</span>
+            <span>
+              {{ $t('comps.chat.mergeCells') }}
+            </span>
           </v-tooltip>
         </template>
       </v-layout>

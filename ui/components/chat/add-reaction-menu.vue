@@ -28,7 +28,7 @@
           <v-text-field
             ref="emoji-filter"
             v-model="filter"
-            label="Search for reaction"
+            :label="$t('comps.chat.searchReaction')"
             name="filter"
             single-line
             autofocus
@@ -37,7 +37,7 @@
             persistent-hint
             clearable
             autocomplete="on"
-            hint="E.g. smile or boom"
+            :hint="$t('comps.chat.reactionHint')"
           />
           <v-sheet>
             <v-tabs
@@ -84,9 +84,10 @@
 
 <script>
 import Fuse from 'fuse.js'
-
-const frequent = require('./emoji-frequent').frequent
-const categories = require('./emoji-categories').categories
+import { frequent } from '@/components/emoji/emoji-frequent'
+import { categories } from '@/components/emoji/emoji-categories'
+// const frequent = require('./emoji-frequent').frequent
+// const categories = require('./emoji-categories').categories
 
 export default {
   props: {
@@ -167,7 +168,7 @@ export default {
     },
     menu (newVal) {
       if (!newVal) {
-        this.$emit('hideMenu')
+        this.$emit('hideMenu', 'addReaction')
       }
     },
     tab (newVal) {
@@ -180,7 +181,7 @@ export default {
   },
   methods: {
     hideMenu () {
-      this.$emit('hideMenu')
+      this.$emit('hideMenu', 'addReaction')
     },
     async pushReaction (emoji) {
       this.$emit('noScroll')
@@ -192,7 +193,7 @@ export default {
             symbol: emoji.char
           }
         })
-      this.$emit('hideMenu')
+      this.$emit('hideMenu', 'addReaction')
     }
   }
 }

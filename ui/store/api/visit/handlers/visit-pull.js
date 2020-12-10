@@ -4,6 +4,7 @@ export const handleVisitPull = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (
     data.op === rootState.api.config.config.wsSettings.opTypes.visitClose) {

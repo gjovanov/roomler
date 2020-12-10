@@ -21,7 +21,7 @@
               offset-x="10"
               offset-y="10"
             >
-              <template v-if="isInCall(item.user._id)" v-slot:badge>
+              <template v-if="isInCall(item.user._id)" #badge>
                 <v-avatar v-if="isInCall(item.user._id)" size="12">
                   <v-icon size="7" style="margin-bottom: 6px">
                     fa fa-phone
@@ -50,7 +50,7 @@
                 outlined
                 color="primary"
               >
-                {{ item.role }}
+                {{ $t(`comps.room.${item.role}`) }}
               </v-chip>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -71,10 +71,10 @@
         </v-list-item>
       </template>
     </v-list>
-    <v-tooltip v-if="peers && peers.length && canInvite" bottom left>
-      <template v-slot:activator="{ on }">
+    <v-tooltip v-if="contacts && contacts.length && canInvite" bottom left>
+      <template #activator="{ on }">
         <v-btn
-          v-if="peers && peers.length && canInvite"
+          v-if="contacts && contacts.length && canInvite"
           right
           :dark="!isDark"
           :light="isDark"
@@ -89,7 +89,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Add existing peers</span>
+      <span>{{ $t('comps.room.addExisting') }}</span>
     </v-tooltip>
     <peer-dialog :dialog="peerDialog" :room="room" :peers="peers" @cancelPeers="cancelPeers" @addPeers="addPeers" />
     <ownership-dialog :dialog="transferDialog" :room="room" :user="selectedUser" @toOwner="toOwner" @transferCancel="transferCancel" />
@@ -146,7 +146,7 @@ export default {
   computed: {
     dialogStarter () {
       return {
-        peers: this.roomRoute === 'peers',
+        peers: this.roomRoute && this.roomRoute.startsWith('peers'),
         add: !!(this.roomQuery && (this.roomQuery.add === null || this.roomQuery.add === true))
       }
     },
@@ -171,6 +171,9 @@ export default {
         .sort((a, b) => {
           return a.user.username.localeCompare(b.user.username)
         })
+    },
+    contacts () {
+      return this.roomPeers.filter(u => u._id !== this.user._id)
     },
     isDark () {
       return this.$vuetify.theme.dark
@@ -201,11 +204,11 @@ export default {
         ]
       )
       this.peerDialog = false
-      this.$router.push({ path: `/${this.room.path}/peers` })
+      this.$router.push({ path: this.localePath({ name: 'room-peers', params: { room: `${this.room.path}` } }) })
     },
     cancelPeers () {
       this.peerDialog = false
-      this.$router.push({ path: `/${this.room.path}/peers` })
+      this.$router.push({ path: this.localePath({ name: 'room-peers', params: { room: `${this.room.path}` } }) })
     },
     openTransfer (user) {
       this.selectedUser = user

@@ -1,4 +1,3 @@
-
 const os = require('os')
 const process = require('process')
 const fastJson = require('fast-json-stringify')
@@ -47,8 +46,9 @@ class WsDispatcher {
       stringify = fastJson(require('../room/room-schema').wsRoomCreate.valueOf())
     }
     if (op.startsWith('ROOM_UPDATE')) {
+      const parents = messages.map(m => m.parents).reduce((a, b) => a.concat(b), [])
       const children = messages.map(m => m.children).reduce((a, b) => a.concat(b), [])
-      const rooms = messages.map(m => m.room).concat(children)
+      const rooms = messages.map(m => m.room).concat(children).concat(parents)
       recepients = roomService.recepients(rooms)
       stringify = fastJson(require('../room/room-schema').wsRoomUpdate.valueOf())
     }

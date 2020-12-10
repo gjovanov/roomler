@@ -1,10 +1,17 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="290">
+  <v-dialog v-model="dialog" persistent max-width="600">
     <v-card v-if="room && user">
       <v-card-title class="headline">
-        Warning
+        {{ $t('comps.room.warning') }}
       </v-card-title>
-      <v-card-text>Are you sure you want to remove <strong>{{ user.username }}</strong> from <strong>{{ room.path }}</strong> room?</v-card-text>
+      <v-card-text>
+        <p>
+          {{ $t('comps.invite.removeParticipant1') }} <strong>{{ user.username }}</strong></strong>
+        </p>
+        <p>
+          {{ $t('comps.invite.removeParticipant2') }} <strong>{{ room.path }}</strong>
+        </p>
+      </v-card-text>
       <v-card-actions>
         <v-btn
           color="grey"
@@ -12,7 +19,7 @@
           outlined
           @click="no()"
         >
-          No
+          {{ $t('comps.invite.cancel') }}
         </v-btn>
         <v-spacer />
 
@@ -22,7 +29,7 @@
           outlined
           @click="yes()"
         >
-          Yes
+          {{ $t('comps.invite.removeParticipant') }}
         </v-btn>
       </v-card-actions>
     </v-card>

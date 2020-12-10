@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12">
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 fab
                 x-small
@@ -18,10 +18,12 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Format</span>
+            <span>
+              {{ $t('comps.chat.format') }}
+            </span>
           </v-tooltip>
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 fab
                 x-small
@@ -35,10 +37,12 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Insert image</span>
+            <span>
+              {{ $t('comps.chat.insertImage') }}
+            </span>
           </v-tooltip>
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 fab
                 x-small
@@ -52,10 +56,12 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Attach files</span>
+            <span>
+              {{ $t('comps.chat.attachFiles') }}
+            </span>
           </v-tooltip>
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 fab
                 x-small
@@ -69,10 +75,12 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Embed URL</span>
+            <span>
+              {{ $t('comps.chat.embedUrl') }}
+            </span>
           </v-tooltip>
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 fab
                 x-small
@@ -86,11 +94,13 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Gifs & Stickers</span>
+            <span>
+              {{ $t('comps.chat.gifsStickers') }}
+            </span>
           </v-tooltip>
 
           <v-tooltip top>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn
                 x-small
                 absolute
@@ -108,7 +118,9 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>Send message</span>
+            <span>
+              {{ $t('comps.chat.sendMessage') }}
+            </span>
           </v-tooltip>
         </v-col>
       </v-row>

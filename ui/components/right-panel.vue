@@ -22,7 +22,7 @@
           <v-icon small>
             fa-users
           </v-icon>
-          <span style="font-weight: 500; font-size: 0.9375rem">&nbsp; ROOM PEERS</span>
+          <span class="text-uppercase" style="font-weight: 500; font-size: 0.9375rem">&nbsp; {{ $t('comps.room.participants') }}</span>
         </v-list-item-title>
         <v-btn
           icon
@@ -39,12 +39,13 @@
         <v-list-item
           v-for="user in roomPeers"
           :key="user._id"
-          :to="`/@/${user.username}`"
+          :to="localePath({ name: '--username', params: { username: `${user.username}` } })"
           link
         >
           <v-list-item-icon>
             <v-badge
               :color="isInCall(user._id) ? 'red' : isOnline(user._id) ? 'green' : 'grey'"
+              :dark="isInCall(user._id) ? true : undefined"
               bordered
               bottom
               left
@@ -53,7 +54,7 @@
               offset-x="5"
               offset-y="5"
             >
-              <template v-if="isInCall(user._id)" v-slot:badge>
+              <template v-if="isInCall(user._id)" #badge>
                 <v-avatar v-if="isInCall(user._id)" size="12">
                   <v-icon size="7" style="margin-bottom: 6px">
                     fa fa-phone
@@ -142,15 +143,15 @@ export default {
 </script>
 
 <style scoped>
-* >>> .v-badge__badge {
-  height: 12px;
-  min-width: 12px;
-  padding: 0px;
-}
-* >>> .v-badge--bordered .v-badge__badge::after {
-  border-width: 1px;
-}
-* >>> .v-navigation-drawer__content {
+  * >>> .v-badge__badge {
+    height: 12px;
+    min-width: 12px;
+    padding: 0px;
+  }
+  * >>> .v-badge--bordered .v-badge__badge::after {
+    border-width: 1px;
+  }
+  * >>> .v-navigation-drawer__content {
     /* overflow-y: hidden;
     overflow-x: hidden; */
     scrollbar-width: thin;

@@ -4,7 +4,7 @@
       <v-col cols="12" sm="12">
         <v-text-field
           v-model="search"
-          label="Search public room..."
+          :label="$t('pages.explore.rooms.searchLabel')"
           name="search-room"
           autocomplete="on"
           class="pt-0 mt-0"
@@ -30,7 +30,7 @@
         >
           <v-card-title>{{ room.name }}</v-card-title>
           <v-card-text>
-            <em>{{ room.description|| 'Description N/A' }}</em>
+            <em>{{ room.description || $t('pages.explore.rooms.description') }}</em>
 
             <v-chip-group
               v-model="room.selection"
@@ -42,7 +42,7 @@
               >
                 <v-chip
                   :key="`tag-${tag}-${index2}`"
-                  :to="`/explore/rooms?search=${tag}`"
+                  :to="localePath({ name: 'explore-rooms', query: { search: `${tag}` } })"
                   outlined
                   small
                   color="primary"
@@ -72,7 +72,7 @@
             >
               <v-icon small>
                 fa-sign-in-alt
-              </v-icon> &nbsp; Join
+              </v-icon> &nbsp; {{ $t('pages.explore.rooms.join') }}
             </v-btn>
             <v-btn
               v-if="isRoomPeer(room)"
@@ -80,11 +80,11 @@
               small
               :dark="!isDark"
               :light="isDark"
-              :to="`/${room.path}`"
+              :to="localePath({ name: 'room-chat', params: { room: `${room.path}` } })"
             >
               <v-icon small>
                 fa-eye
-              </v-icon> &nbsp; Visit
+              </v-icon> &nbsp; {{ $t('pages.explore.rooms.visit') }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -165,12 +165,12 @@ export default {
             this.$store.dispatch('api/message/getAll', { room })
           ])
           this.$store.commit('api/room/open', room, { root: true })
-          this.$router.push({ path: `/${room.path}` })
+          this.$router.push({ path: this.localePath({ name: 'room-chat', params: { room: `${room.path}` } }) })
         } catch (e) {
           // will be handled by the individal AJAX, so we want to only stay on the same page (not navigate away)
         }
       } else {
-        this.$router.push({ path: '/@/auth/login' })
+        this.$router.push({ path: this.localePath({ name: '--auth-login' }) })
       }
     }
   }

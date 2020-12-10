@@ -1,10 +1,13 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="290">
+  <v-dialog v-model="dialog" persistent max-width="800">
     <v-card v-if="room && user">
       <v-card-title class="headline">
-        Danger
+        {{ $t('comps.room.warning') }}
       </v-card-title>
-      <v-card-text>You are about to transfer the ownership of '{{ room.path }}' to '{{ user.username }}'. You will still keep a moderator role of this room, but the owner will become '{{ user.username }}'. Are you sure you want to proceed? </v-card-text>
+      <v-card-text>
+        <p>{{ $t('comps.invite.transferOwnership1') }} <strong>{{ room.path }}</strong> {{ $t('comps.invite.transferOwnership2') }} <strong>{{ user.username }}</strong>. {{ $t('comps.invite.transferOwnership3') }}</p>
+        <p>{{ $t('comps.invite.transferOwnership4') }}</p>
+      </v-card-text>
       <v-card-actions>
         <v-btn
           color="grey"
@@ -12,7 +15,7 @@
           outlined
           @click="no()"
         >
-          No
+          {{ $t('comps.invite.cancel') }}
         </v-btn>
         <v-spacer />
 
@@ -22,7 +25,7 @@
           outlined
           @click="yes()"
         >
-          Yes
+          {{ $t('comps.invite.transferOwnership') }}
         </v-btn>
       </v-card-actions>
     </v-card>

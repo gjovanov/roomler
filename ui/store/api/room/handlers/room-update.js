@@ -4,6 +4,7 @@ export const handleRoomUpdate = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.roomUpdate) {
     data.data.forEach((record) => {

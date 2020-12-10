@@ -4,13 +4,9 @@ import { handleVisitPush } from './visit/handlers/visit-push'
 import { handleVisitPull } from './visit/handlers/visit-pull'
 
 export const state = () => ({
-  visitsLoading: true,
-  visits: [],
-  visitsCount: 0,
-
-  reportsLoading: true,
-  reports: [],
-  reportsCount: 0,
+  statsLoading: false,
+  stats: [],
+  statsCount: 0,
 
   countries: [],
   os: [],
@@ -20,56 +16,50 @@ export const state = () => ({
   users: []
 })
 
-const simplifyUrl = (visit, url) => {
-  if (visit.url) {
-    visit.url = visit.url.replace(url, '')
+const simplifyUrl = (stat, url) => {
+  if (stat.url) {
+    stat.url = stat.url.replace(url, '')
   }
-  if (visit.referrer) {
-    visit.referrer = visit.referrer.replace(url, '')
+  if (stat.referrer) {
+    stat.referrer = stat.referrer.replace(url, '')
   }
 }
 
 export const mutations = {
-  setLoading (state, { type, value }) {
-    state[`${type}Loading`] = value
+  setStatsLoading (state, { value }) {
+    state.statsLoading = value
   },
-  setVisits (state, visits) {
+  setStats (state, stats) {
     const url = this.state.api.config.config.appSettings.env.URL
-    visits.data.forEach((visit) => {
-      simplifyUrl(visit, url)
-    })
-    state.visits = visits.data
-    state.visitsCount = visits.count
-  },
-  setReports (state, reports) {
-    const url = this.state.api.config.config.appSettings.env.URL
-    reports.data.forEach((report) => {
-      simplifyUrl(report, url)
-    })
-    state.reports = reports.data
-    state.reportsCount = reports.count
+    if (stats.data) {
+      stats.data.forEach((stat) => {
+        simplifyUrl(stat, url)
+      })
+    }
+    state.stats = stats.data || []
+    state.statsCount = stats.count || 0
 
-    state.countries = reports.countries
-    state.os = reports.os
-    state.browsers = reports.browsers
-    state.pages = reports.pages
-    state.refs = reports.refs
-    state.users = reports.users
+    state.countries = stats.countries || []
+    state.os = stats.os || []
+    state.browsers = stats.browsers || []
+    state.pages = stats.pages || []
+    state.refs = stats.refs || []
+    state.users = stats.users || []
   },
-  push (state, visit) {
+  push (state, stat) {
     const url = this.state.api.config.config.appSettings.env.URL
-    simplifyUrl(visit, url)
-    const found = state.visits.find(v => v.connection._id === visit.connection._id)
+    simplifyUrl(stat, url)
+    const found = state.stats.find(v => v.connection._id === stat.connection._id)
     if (!found) {
-      state.visits = [visit, ...state.visits].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+      state.stats = [stat, ...state.stats].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
     } else {
-      state.visits = state.visits
-        .map(v => v.connection._id === visit.connection._id ? visit : v)
+      state.stats = state.stats
+        .map(v => v.connection._id === stat.connection._id ? stat : v)
     }
   },
-  pull (state, visit) {
-    state.visits = state.visits
-      .filter(v => v.connection._id !== visit.connection._id)
+  pull (state, stat) {
+    state.stats = state.stats
+      .filter(v => v.connection._id !== stat.connection._id)
   }
 }
 
@@ -79,11 +69,11 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleVisitPush(dispatch, commit, state, rootState, router, data)
-      handleVisitPull(dispatch, commit, state, rootState, router, data)
+      handleVisitPush(dispatch, commit, state, rootState, router, localePath, data)
+      handleVisitPull(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
 
@@ -107,29 +97,7 @@ export const actions = {
     return response
   },
 
-  async getAll ({
-    commit,
-    state,
-    rootState
-  }, params) {
-    const response = {}
-    try {
-      if (!params.from && !params.to && !params.status) {
-        params.status = 'open'
-      }
-      commit('setLoading', { type: 'visits', value: true })
-      const query = qs.stringify(params, { encode: false })
-      response.result = await this.$axios.$get(`/api/visit/get-all?${query}`)
-      commit('setVisits', response.result ? response.result : [])
-      commit('setLoading', { type: 'visits', value: false })
-    } catch (err) {
-      // handleError(err, commit)
-      response.hasError = true
-    }
-    return response
-  },
-
-  async getReports ({
+  async getStats ({
     commit,
     state,
     rootState
@@ -137,10 +105,10 @@ export const actions = {
     const response = {}
     try {
       const query = qs.stringify(params, { encode: false })
-      commit('setLoading', { type: 'reports', value: true })
-      response.result = await this.$axios.$get(`/api/visit/get-all?${query}`)
-      commit('setReports', response.result ? response.result : [])
-      commit('setLoading', { type: 'reports', value: false })
+      commit('setStatsLoading', { value: true })
+      response.result = await this.$axios.$get(`/api/visit/get-stats?${query}`)
+      commit('setStats', response.result ? response.result : [])
+      commit('setStatsLoading', { value: false })
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true

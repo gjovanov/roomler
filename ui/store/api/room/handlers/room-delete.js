@@ -8,6 +8,7 @@ export const handleRoomDelete = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.roomDelete) {
     data.data.forEach((record) => {
@@ -21,7 +22,7 @@ export const handleRoomDelete = (
       })
       if (currentRoom) {
         handleSuccess(`'${currentRoom.name}' was deleted by the owner`, commit)
-        router.push({ path: '/' })
+        router.push({ path: localePath({ name: 'index' }) })
       }
     })
   }

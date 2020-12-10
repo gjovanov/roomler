@@ -1,9 +1,6 @@
-const os = require('os')
-const process = require('process')
 const fp = require('fastify-plugin')
 const WebSocket = require('ws')
 const Redis = require('ioredis')
-const processName = `${os.hostname()}_${process.pid}`
 
 const startHeartbeats = (wss, conn, opts) => {
   const noop = () => {}
@@ -99,10 +96,6 @@ function fastifyWs (fastify, opts, next) {
       // start the connection Hearbeats with PING/PONG messages
       const interval = startHeartbeats(wss, conn, opts)
       if (opts.handler) {
-        conn.send(JSON.stringify({
-          op: 'HELLO',
-          data: `${processName}`
-        }))
         opts.handler.onConnection(fastify, wss, conn, req)
 
         // on WS message (command):

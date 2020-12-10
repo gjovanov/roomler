@@ -15,7 +15,7 @@ module.exports = {
     }
   },
   startRedirectPath: '/oauth/login/linkedin',
-  callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/linkedin`,
+  callbackUri: `${config.appSettings.env.URL}/-/oauth/callback/linkedin`,
   scope: ['r_emailaddress', 'r_liteprofile'],
   generateStateFunction: () => {
     return defaultState

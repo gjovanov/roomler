@@ -4,6 +4,7 @@ export const handleInviteDelete = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteDelete) {
     data.data.forEach((invite) => {

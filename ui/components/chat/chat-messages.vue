@@ -14,6 +14,16 @@
       @hideMenu="hideMenu"
       @noScroll="noScroll"
     />
+    <message-menu
+      :open="menu.message.open"
+      :x="menu.message.x"
+      :y="menu.message.y"
+      :message="menu.message.message"
+      @toggleEdit="toggleEdit"
+      @messageDeleteConsent="messageDeleteConsent"
+      @hideMenu="hideMenu"
+      @noScroll="noScroll"
+    />
     <template v-for="(value, propertyName) in messages">
       <v-subheader :key="`subheader_${propertyName}`">
         {{ propertyName }}
@@ -45,7 +55,7 @@
               offset-x="9"
               offset-y="9"
             >
-              <template v-if="isInCall(message.author)" v-slot:badge>
+              <template v-if="isInCall(message.author)" #badge>
                 <v-avatar v-if="isInCall(message.author)" size="12">
                   <v-icon size="7" style="margin-bottom: 6px">
                     fa fa-phone
@@ -65,9 +75,40 @@
               style="color: black"
               outlined
             >
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                right
+                bottom
+                x-small
+                absolute
+                :dark="!isDark"
+                :light="isDark"
+                @mouseover="showMenu($event, 'addReaction', message)"
+              >
+                😄
+              </v-btn>
+
+              <v-btn
+                v-if="user && message.author === user._id"
+                fab
+                right
+                bottom
+                x-small
+                absolute
+                :dark="!isDark"
+                :light="isDark"
+                :style="`margin-right: 36px !important;`"
+                @mouseover="showMenu($event, 'message', message)"
+              >
+                <v-icon x-small>
+                  mdi mdi-dots-vertical
+                </v-icon>
+              </v-btn>
+
+              <v-tooltip v-if="user && message.author === user._id && message.edit" top>
+                <template #activator="{ on }">
                   <v-btn
+                    v-if="user && message.author === user._id && message.edit"
                     fab
                     right
                     bottom
@@ -75,26 +116,7 @@
                     absolute
                     :dark="!isDark"
                     :light="isDark"
-                    v-on="on"
-                    @click="showMenu($event, message)"
-                  >
-                    😄
-                  </v-btn>
-                </template>
-                <span>Add reaction</span>
-              </v-tooltip>
-              <v-tooltip v-if="user && message.author === user._id" top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-if="user && message.author === user._id"
-                    fab
-                    right
-                    bottom
-                    x-small
-                    absolute
-                    :dark="!isDark"
-                    :light="isDark"
-                    :style="`margin-right: 36px !important;`"
+                    :style="`margin-right: 72px !important;`"
                     v-on="on"
                     @click="toggleEdit(message)"
                   >
@@ -106,40 +128,25 @@
                     </v-icon>
                   </v-btn>
                 </template>
-                <span v-if="!message.edit">Edit message</span>
-                <span v-if="message.edit">Discard changes</span>
+                <span v-if="!message.edit">
+                  {{ $t('comps.chat.editMessage') }}
+                </span>
+                <span v-if="message.edit">
+                  {{ $t('comps.chat.discardChanges') }}
+                </span>
               </v-tooltip>
-              <v-tooltip v-if="user && message.author === user._id" top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-if="user && message.author === user._id"
-                    fab
-                    right
-                    bottom
-                    x-small
-                    absolute
-                    :dark="!isDark"
-                    :light="isDark"
-                    :style="`margin-right: 72px !important;`"
-                    v-on="on"
-                    @click="messageDeleteConsent(message)"
-                  >
-                    <v-icon x-small>
-                      fa-trash
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>Delete message</span>
-              </v-tooltip>
+
               <v-card-title class="overline pa-0 pl-4">
                 {{ getUser(message.author).username }}, {{ datetimeUtils.toHoursFormat(message.createdAt) }} &nbsp;
                 <v-tooltip v-if="message.has_mention" right>
-                  <template v-slot:activator="{ on }">
+                  <template #activator="{ on }">
                     <v-icon small color="red" v-on="on">
                       fa-at
                     </v-icon>
                   </template>
-                  <span>You are mentioned in this messsage!</span>
+                  <span>
+                    {{ $t('comps.chat.youMentioned') }}
+                  </span>
                 </v-tooltip>
               </v-card-title>
               <v-card-text style="color: black">
@@ -179,6 +186,7 @@ import { domUtils } from '@/utils/dom-utils'
 import { datetimeUtils } from '@/utils/datetime-utils'
 import Tiptap from '@/components/editor/tiptap'
 import AddReactionMenu from '@/components/chat/add-reaction-menu'
+import MessageMenu from '@/components/chat/message-menu'
 import MessageReactionList from '@/components/chat/message-reaction-list'
 import MessageDeleteDialog from '@/components/chat/message-delete-dialog'
 import * as EmojiMap from 'emojilib'
@@ -194,6 +202,7 @@ export default {
   components: {
     Tiptap,
     AddReactionMenu,
+    MessageMenu,
     MessageReactionList,
     MessageDeleteDialog
   },
@@ -251,10 +260,16 @@ export default {
           open: false,
           message: null
         },
-        reactionMembers: {
+        // reactionMembers: {
+        //   x: 0,
+        //   y: 0,
+        //   open: false
+        // },
+        message: {
           x: 0,
           y: 0,
-          open: false
+          open: false,
+          message: null
         }
       },
       scroll: scrollDirection.bottom
@@ -267,6 +282,9 @@ export default {
     },
     isDark () {
       return this.$vuetify.theme.dark
+    },
+    messageDeletedByAuthor () {
+      return this.$t('comps.chat.messageDeletedByAuthor')
     }
   },
 
@@ -321,7 +339,7 @@ export default {
       this.messageDeletedDialog = true
     },
     async messageDelete (message) {
-      await this.sendMessage('<p><em>Message was deleted by the author</em></p>', message)
+      await this.sendMessage(`<p><em>${this.messageDeletedByAuthor}</em></p>`, message)
       this.selectedMessage = null
       this.messageDeletedDialog = false
     },
@@ -343,16 +361,14 @@ export default {
       return result
     },
 
-    showMenu (e, message) {
-      if (!this.menu.addReaction.open) {
-        this.menu.addReaction.x = e.clientX
-        this.menu.addReaction.y = e.clientY - 100
-        this.menu.addReaction.message = message
-        this.menu.addReaction.open = true
-      }
+    showMenu (e, type, message) {
+      this.menu[type].x = e.clientX
+      this.menu[type].y = e.clientY - 100
+      this.menu[type].message = message
+      this.menu[type].open = true
     },
-    hideMenu () {
-      this.menu.addReaction.open = false
+    hideMenu (type) {
+      this.menu[type].open = false
     },
 
     getMessageId (message) {

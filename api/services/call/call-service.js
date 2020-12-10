@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Call = require('../../models/call')
 const CallFilter = require('./call-filter')
-const CallReportsFilter = require('./call-reports-filter')
+const CallStatsFilter = require('./call-stats-filter')
 
 class CallService {
   // base methods - START
@@ -10,6 +10,7 @@ class CallService {
     const callFilter = new CallFilter({
       id: filter.id,
       ids: filter.ids,
+      connection: filter.connection,
       call_id: filter.call_id,
       status: filter.status
     })
@@ -20,8 +21,8 @@ class CallService {
     return record
   }
 
-  async getReports (filter, group) {
-    const aggregate = new CallReportsFilter(filter).getAggregate()
+  async getStats (filter, group) {
+    const aggregate = new CallStatsFilter(filter).getAggregate()
     let records = await Call
       .aggregate(aggregate)
       .collation({ locale: 'en', strength: 2 })

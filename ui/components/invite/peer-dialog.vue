@@ -9,7 +9,9 @@
         flat
       >
         <v-expansion-panel>
-          <v-expansion-panel-header>New peer</v-expansion-panel-header>
+          <v-expansion-panel-header>
+            {{ $t('comps.invite.newParticipants') }}
+          </v-expansion-panel-header>
           <v-expansion-panel-content>
             <v-form ref="newPeerForm" v-model="isValidNewPeer" lazy-validation>
               <v-autocomplete
@@ -19,14 +21,15 @@
                 filled
                 chips
                 color="blue-grey lighten-2"
-                label="Select"
+                :label="$t('comps.invite.selectParticipant')"
+                :no-data-text="$t('comps.invite.noAvailableParticipants')"
                 item-text="username"
                 item-value="_id"
                 validate-on-blur
                 dense
                 required
               >
-                <template v-slot:selection="data">
+                <template #selection="data">
                   <v-chip
                     v-bind="data.attrs"
                     :input-value="data.selected"
@@ -40,7 +43,7 @@
                     {{ data.item.username }}
                   </v-chip>
                 </template>
-                <template v-slot:item="data">
+                <template #item="data">
                   <template v-if="typeof data.item !== 'object'">
                     <v-list-item-content v-text="data.item" />
                   </template>
@@ -58,8 +61,10 @@
               <v-select
                 v-model="newPeer.type"
                 :items="types"
-                no-data-text="Type"
-                label="Type"
+                item-value="id"
+                item-text="name"
+                :no-data-text="$t('comps.invite.type')"
+                :label="$t('comps.invite.type')"
                 outlined
                 dense
               />
@@ -70,16 +75,16 @@
                 class="justify-end"
                 @click="push"
               >
-                <v-icon>fa-plus</v-icon> Add peer
+                <v-icon>fa-plus</v-icon> {{ $t('comps.invite.addParticipant') }}
               </v-btn>
             </v-form>
           </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
-          <v-expansion-panel-header>New peers list</v-expansion-panel-header>
+          <v-expansion-panel-header>{{ $t('comps.invite.newParticipantList') }}</v-expansion-panel-header>
           <v-expansion-panel-content>
             <em v-if="!newPeers.length">
-              Please add some peers in this list.
+              {{ $t('comps.invite.newParticipantFromContacts') }}
             </em>
             <v-form ref="peersForm" v-model="areValidPeers" lazy-validation>
               <v-row
@@ -108,8 +113,10 @@
                   <v-select
                     v-model="peer.type"
                     :items="types"
-                    label="Type"
-                    no-data-text="Type"
+                    item-value="id"
+                    item-text="name"
+                    :no-data-text="$t('comps.invite.type')"
+                    :label="$t('comps.invite.type')"
                     dense
                     outlined
                   />
@@ -141,7 +148,7 @@
           class="ma-3"
           @click="cancelPeers()"
         >
-          Cancel
+          {{ $t('comps.invite.cancel') }}
         </v-btn>
         <v-spacer />
         <v-btn
@@ -151,7 +158,7 @@
           class="ma-3"
           @click="addPeers()"
         >
-          Add peers
+          {{ $t('comps.invite.addParticipants') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -177,13 +184,20 @@ export default {
     }
   },
   data () {
+    const self = this
     const config = this.$store.state.api.config.config
     const defaultPeer = {
       room: this.room._id,
       peer: undefined,
       type: config.dataSettings.invite.defaults.type
     }
-    const types = config.dataSettings.invite.types
+    const defaultTypes = config.dataSettings.invite.types
+    const types = defaultTypes.map((t) => {
+      return {
+        id: t,
+        name: self.$t(`comps.invite.${t}`)
+      }
+    })
     const newPeer = Object.assign({ }, defaultPeer)
 
     return {
@@ -192,12 +206,13 @@ export default {
       areValidPeers: true,
 
       peerRules: [
-        v => !!v || 'Peer is required'
+        v => !!v || self.$t('comps.invite.participantRequired')
       ],
 
       panel: [0, 1],
       defaultPeer,
       newPeer,
+      defaultTypes,
       types,
       newPeers: []
     }
@@ -214,6 +229,17 @@ export default {
     }
   },
   watch: {
+    dialog (newVal) {
+      const self = this
+      if (newVal) {
+        this.types = this.defaultTypes.map((t) => {
+          return {
+            id: t,
+            name: self.$t(`comps.invite.${t}`)
+          }
+        })
+      }
+    },
     room (newRoom) {
       if (newRoom && newRoom._id) {
         this.defaultPeer.room = newRoom._id

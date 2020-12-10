@@ -92,6 +92,8 @@ const dataSettings = S.object()
 
 const wsSettings = S.object()
   .prop('opTypes', S.object()
+    .prop('hello', S.string())
+
     .prop('messageCreate', S.string())
     .prop('messageUpdate', S.string())
     .prop('messageDelete', S.string())

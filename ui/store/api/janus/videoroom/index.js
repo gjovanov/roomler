@@ -48,6 +48,6 @@ export const actions = {
     if (!result.exists) {
       await dispatch('api/janus/videoroom/api/create', { handleDto, payload: janusPayload.media }, { root: true })
     }
-    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDto }, { root: true })
+    await dispatch('api/janus/videoroom/api/joinPublisher', { handleDto, stream: janusPayload.stream }, { root: true })
   }
 }

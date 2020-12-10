@@ -137,11 +137,17 @@ export const actions = {
     }
   }) {
     return new Promise((resolve, reject) => {
+      const resolution = handleDto.resolutions.find(r => r.label === handleDto.media.video.resolution)
+      const video = {
+        deviceId: handleDto.media.video.device,
+        width: { exact: resolution.width },
+        height: { exact: resolution.height }
+      }
       const media = {
         audioRecv: false,
         videoRecv: false,
-        audio: handleDto.media.audio.enabled && !handleDto.room.media.use_sip_bridge,
-        video: handleDto.media.screen.enabled ? 'screen' : (handleDto.media.video.enabled ? handleDto.media.video.resolution : false),
+        audio: handleDto.media.audio.enabled && !handleDto.room.media.use_sip_bridge ? { deviceId: handleDto.media.audio.device } : false,
+        video: handleDto.media.screen.enabled ? 'screen' : (handleDto.media.video.enabled ? video : false),
         data: handleDto.data
       }
       if (handleDto.media.audio.enabled === true && handleDto.mediaState.audio === false && !handleDto.room.media.use_sip_bridge) {
@@ -161,6 +167,12 @@ export const actions = {
       }
       if ((handleDto.media.video.enabled === true) && handleDto.mediaState.resolution !== handleDto.media.video.resolution) {
         media.replaceVideo = true
+      }
+      if ((handleDto.media.video.enabled === true) && handleDto.mediaState.videoDevice !== handleDto.media.video.device) {
+        media.replaceVideo = true
+      }
+      if ((handleDto.media.audio.enabled === true) && handleDto.mediaState.audioDevice !== handleDto.media.audio.device) {
+        media.replaceAudio = true
       }
       handleDto.handle.createOffer({
         media,

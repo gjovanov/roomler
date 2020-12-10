@@ -4,20 +4,20 @@
     absolute
     height="42"
   >
-    <v-btn x-small value="terms" to="/tos/terms" class="ma-0">
-      <span>Terms</span>
+    <v-btn x-small value="terms" :to="localePath({ name: 'tos-terms' })" class="ma-0">
+      <span>{{ $t('comps.tos.terms') }}</span>
       <v-icon small>
         fa fa-list-alt
       </v-icon>
     </v-btn>
     <v-btn x-small value="reach-out" href="https://roomler.live/gjovanov/join" target="_blank" class="ma-0">
-      <span>Support</span>
+      <span>{{ $t('comps.tos.support') }}</span>
       <v-icon small>
         fa fa-phone
       </v-icon>
     </v-btn>
     <v-btn x-small value="source" href="https://github.com/gjovanov/roomler" target="_blank" class="ma-0">
-      <span>Source</span>
+      <span>{{ $t('comps.tos.source') }}</span>
       <v-icon small>
         fab fa-github
       </v-icon>

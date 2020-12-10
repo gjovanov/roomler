@@ -29,7 +29,7 @@
     </v-list>
     <template v-if="!extension.options.filteredItems.length">
       <v-subheader>
-        No users found
+        {{ $t('comps.chat.noUsersFound') }}
       </v-subheader>
     </template>
   </div>

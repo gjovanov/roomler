@@ -6,10 +6,10 @@
   >
     <v-card>
       <v-card-title class="headline">
-        Missing screen sharing extension
+        {{ $t('comps.conference.missingExtension') }}
       </v-card-title>
       <v-card-text>
-        You need to install this extension to be able to share your screen.
+        {{ $t('comps.conference.installExtension') }}
       </v-card-text>
       <v-spacer />
 
@@ -22,7 +22,7 @@
           tile
           @click="cancel()"
         >
-          Cancel
+          {{ $t('comps.conference.cancel') }}
         </v-btn>
 
         <v-btn
@@ -33,7 +33,7 @@
           href="https://chrome.google.com/webstore/detail/janus-webrtc-screensharin/hapfgfdkleiggjjpfpenajgdnfckjpaj"
           target="_blank"
         >
-          Install
+          {{ $t('comps.conference.install') }}
         </v-btn>
       </v-card-actions>
     </v-card>

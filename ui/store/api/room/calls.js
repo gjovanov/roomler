@@ -9,9 +9,9 @@ import { handleCallPull } from './handlers/call-pull'
 export const state = () => ({
   calls: [],
 
-  reportsLoading: true,
-  reports: [],
-  reportsCount: 0,
+  statsLoading: false,
+  stats: [],
+  statsCount: 0,
 
   rooms: [],
   countries: [],
@@ -30,18 +30,18 @@ export const mutations = {
   pullCall (state, call) {
     state.calls = state.calls.filter(c => c._id !== call._id)
   },
-  setLoading (state, { type, value }) {
-    state[`${type}Loading`] = value
+  setStatsLoading (state, { type, value }) {
+    state.statsLoading = value
   },
-  setReports (state, reports) {
-    state.reports = reports.data
-    state.reportsCount = reports.count
+  setStats (state, stats) {
+    state.stats = stats.data
+    state.statsCount = stats.count
 
-    state.rooms = reports.rooms
-    state.countries = reports.countries
-    state.os = reports.os
-    state.browsers = reports.browsers
-    state.users = reports.users
+    state.rooms = stats.rooms
+    state.countries = stats.countries
+    state.os = stats.os
+    state.browsers = stats.browsers
+    state.users = stats.users
   }
 }
 
@@ -51,11 +51,11 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleCallPush(dispatch, commit, state, rootState, router, data)
-      handleCallPull(dispatch, commit, state, rootState, router, data)
+      handleCallPush(dispatch, commit, state, rootState, router, localePath, data)
+      handleCallPull(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
 
@@ -74,7 +74,7 @@ export const actions = {
     return response
   },
 
-  async getReports ({
+  async getStats ({
     commit,
     state,
     rootState
@@ -84,11 +84,11 @@ export const actions = {
       if (!params.from && !params.to && !params.status) {
         params.status = 'open'
       }
-      commit('setLoading', { type: 'reports', value: true })
+      commit('setStatsLoading', { value: true })
       const query = qs.stringify(params, { encode: false })
-      response.result = await this.$axios.$get(`/api/room/calls/get-reports?${query}`)
-      commit('setReports', response.result ? response.result : [])
-      commit('setLoading', { type: 'reports', value: false })
+      response.result = await this.$axios.$get(`/api/room/calls/get-stats?${query}`)
+      commit('setStats', response.result ? response.result : [])
+      commit('setStatsLoading', { value: false })
     } catch (err) {
       // handleError(err, commit)
       response.hasError = true

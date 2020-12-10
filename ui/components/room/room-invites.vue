@@ -26,11 +26,10 @@
                 outlined
                 color="primary"
               >
-                {{ item.type }}
-              </v-chip> {{ `(${item.status})` }}
+                {{ $t(`comps.room.${item.type}`) }}
+              </v-chip> ({{ $t(`comps.room.${item.status}`) }})
             </v-list-item-action-text>
           </v-list-item-content>
-
           <v-list-item-action>
             <invite-menu
               :room="room"
@@ -43,7 +42,7 @@
       </template>
     </v-list>
     <v-tooltip v-if="canInvite" bottom left>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           v-if="canInvite"
           right
@@ -60,11 +59,11 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Invite new peers</span>
+      <span>{{ $t('comps.room.inviteNew') }}</span>
     </v-tooltip>
 
     <v-tooltip v-if="room && room.is_open && canInvite" bottom left>
-      <template v-slot:activator="{ on }">
+      <template #activator="{ on }">
         <v-btn
           v-if="canInvite"
           right
@@ -81,7 +80,7 @@
           </v-icon>
         </v-btn>
       </template>
-      <span>Share room link</span>
+      <span>{{ $t('comps.room.shareLink') }}</span>
     </v-tooltip>
     <invite-dialog :dialog="inviteDialog" :room="room" @cancelInvites="cancelInvites" @sendInvites="sendInvites" />
     <link-dialog :dialog="linkDialog" :room="room" @close="linkDialog = false" />
@@ -132,7 +131,7 @@ export default {
   computed: {
     dialogStarter () {
       return {
-        peers: this.roomRoute === 'peers',
+        peers: this.roomRoute && this.roomRoute.startsWith('peers'),
         invite: !!(this.roomQuery && (this.roomQuery.invite === null || this.roomQuery.invite === true)),
         link: !!(this.roomQuery && (this.roomQuery.link === null || this.roomQuery.link === true))
       }
@@ -166,12 +165,12 @@ export default {
     },
     cancelInvites () {
       this.inviteDialog = false
-      this.$router.push({ path: `/${this.room.path}/peers` })
+      this.$router.push({ path: this.localePath({ name: 'room-peers', params: { room: `${this.room.path}` } }) })
     },
     async sendInvites (invites) {
       await this.$store.dispatch('api/invite/create', invites)
       this.inviteDialog = false
-      this.$router.push({ path: `/${this.room.path}/peers` })
+      this.$router.push({ path: this.localePath({ name: 'room-peers', params: { room: `${this.room.path}` } }) })
     }
   }
 }

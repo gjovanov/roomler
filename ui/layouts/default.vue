@@ -31,7 +31,7 @@
       <v-toolbar-title class="mr-12 align-center">
         <v-btn
           small
-          to="/"
+          :to="localePath('index')"
           text
           tile
           depressed
@@ -100,7 +100,6 @@ import Toaster from '@/components/toaster'
 import { storage } from '@/services/storage'
 
 export default {
-  middleware: 'default-routes',
   components: {
     Logo,
     AuthPanel,
@@ -110,6 +109,7 @@ export default {
     BottomPanel,
     Toaster
   },
+  middleware: 'default-routes',
   data: () => ({
     title: 'Roomler',
     bottomNav: ''
@@ -119,7 +119,7 @@ export default {
       return this.$route && this.$route.name && this.$route.name.startsWith('room')
     },
     roomRoute () {
-      return this.$route && this.$route.name.startsWith('room-')
+      return this.$route && this.$route.name && this.$route.name.startsWith('room-')
         ? this.$route.name.replace('room-', '')
         : null
     },
@@ -128,7 +128,7 @@ export default {
       return query
     },
     fillHeight () {
-      return this.$route.name.startsWith('@')
+      return this.$route.name && this.$route.name.startsWith('--')
       // return !this.areRoomRoutes && ['index'].includes(this.$route.name) && !['explore-rooms'].includes(this.$route.name)
     },
     isAuthenticated () {
@@ -178,11 +178,6 @@ export default {
   created () {
     const theme = storage.getLocal('theme')
     this.$vuetify.theme.dark = theme === 'dark'
-
-    if (typeof window !== 'undefined') {
-      // eslint-disable-next-line nuxt/no-globals-in-created
-      window.parent.document.body.style.zoom = 1.0
-    }
   },
   methods: {
     toggle (panel) {
@@ -205,7 +200,7 @@ export default {
   border: 1px solid white;
 }
 .v-toolbar__content {
-      padding-right: 0px !important;
+  padding-right: 0px !important;
 }
 .iframe_embed {
   max-width: 100%;

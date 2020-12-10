@@ -94,12 +94,12 @@ export const actions = {
     commit,
     state,
     rootState
-  }, router) {
+  }, { router, localePath }) {
     this.$wss.subscribe('onmessage', (message) => {
       const data = JSON.parse(message.data)
-      handleInviteAccept(dispatch, commit, state, rootState, router, data)
-      handleInviteUpdate(dispatch, commit, state, rootState, router, data)
-      handleInviteDelete(dispatch, commit, state, rootState, router, data)
+      handleInviteAccept(dispatch, commit, state, rootState, router, localePath, data)
+      handleInviteUpdate(dispatch, commit, state, rootState, router, localePath, data)
+      handleInviteDelete(dispatch, commit, state, rootState, router, localePath, data)
     })
   },
   async create ({

@@ -2,9 +2,11 @@
   <v-dialog v-model="dialog" persistent max-width="290">
     <v-card v-if="message">
       <v-card-title class="headline">
-        Warning
+        {{ $t('comps.chat.warning') }}
       </v-card-title>
-      <v-card-text>Are you sure you want to delete this message?</v-card-text>
+      <v-card-text>
+        {{ $t('comps.chat.messageDeletedWarning') }}
+      </v-card-text>
       <v-card-actions>
         <v-btn
           color="grey"
@@ -12,7 +14,7 @@
           class="ma-3"
           @click="no()"
         >
-          No
+          {{ $t('comps.chat.cancel') }}
         </v-btn>
         <v-spacer />
         <v-btn
@@ -21,7 +23,7 @@
           class="ma-3"
           @click="yes()"
         >
-          Yes
+          {{ $t('comps.chat.delete') }}
         </v-btn>
       </v-card-actions>
     </v-card>

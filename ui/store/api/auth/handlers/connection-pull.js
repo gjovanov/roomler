@@ -4,6 +4,7 @@ export const handleConnectionPull = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.connectionClose) {
     commit('api/auth/pullConnection', data.data, {

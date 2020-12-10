@@ -1,19 +1,14 @@
 import { SessionDto } from '@/services/session-dto'
 
 export const state = () => ({
-  sessionDtos: [],
-  audioInputDevices: [],
-  videoInputDevices: []
+  sessionDtos: []
 })
 
 export const mutations = {
   set (state, { sessionDto, session }) {
     sessionDto.session = session
   },
-  setDevices (state, devices) {
-    state.audioInputDevices = devices.filter(d => d.kind === 'audioinput')
-    state.videoInputDevices = devices.filter(d => d.kind === 'videoinput')
-  },
+
   push (state, sessionDto) {
     state.sessionDtos.push(sessionDto)
   },
@@ -33,17 +28,6 @@ export const actions = {
         callback: () => {
           resolve()
         }
-      })
-    })
-  },
-
-  listDevices ({
-    commit
-  }) {
-    return new Promise((resolve) => {
-      this.$Janus.listDevices((devices) => {
-        commit('setDevices', devices)
-        resolve(devices)
       })
     })
   },

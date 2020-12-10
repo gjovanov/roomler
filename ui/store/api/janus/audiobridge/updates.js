@@ -68,8 +68,17 @@ export const mutations = {
     if (type === 'video') {
       if (handleDto.media.video.enabled && on) {
         handleDto.mediaState.resolution = handleDto.media.video.resolution
+        handleDto.mediaState.videoDevice = handleDto.media.video.device
       } else {
         handleDto.mediaState.resolution = null
+        handleDto.mediaState.videoDevice = null
+      }
+    }
+    if (type === 'audio') {
+      if (handleDto.media.audio.enabled && on) {
+        handleDto.mediaState.audioDevice = handleDto.media.audio.device
+      } else {
+        handleDto.mediaState.audioDevice = null
       }
     }
   },

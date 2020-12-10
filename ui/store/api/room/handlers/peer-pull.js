@@ -8,6 +8,7 @@ export const handlePeerPull = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (
     data.op === rootState.api.config.config.wsSettings.opTypes.roomPeerRemove ||
@@ -24,7 +25,7 @@ export const handlePeerPull = (
       if (isUserRemoved) {
         handleSuccess(`You have been removed from the room '${record.room.path}'`, commit)
         if (rootState.api.room.room && rootState.api.room.room._id === record.room._id) {
-          await router.push({ path: '/' })
+          await router.push({ path: localePath({ name: 'index' }) })
         }
         if (!record.room.is_open) {
           commit('api/room/pull', record.room._id, {

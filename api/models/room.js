@@ -25,6 +25,9 @@ const schema = new Schema({
     index: true,
     unique: true
   },
+  emoji: {
+    type: String
+  },
   is_open: {
     type: Boolean,
     default: defaults.is_open

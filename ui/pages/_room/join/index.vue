@@ -20,7 +20,7 @@ export default {
       await this.$store.dispatch('api/room/get', this.$route.params.room)
     }
     if (!this.room || !this.room._id) {
-      return this.$router.push({ path: '/' })
+      return this.$router.push({ path: this.localePath({ name: 'index' }) })
     }
     const type = ((this.$route.name === 'room-join')
       ? (this.$route.query.moderator !== undefined ? 'moderator' : 'member') : null)
@@ -34,18 +34,18 @@ export default {
     if (!this.user || !this.user._id) {
       const toast = {
         prop: 'global',
-        message: 'Please login or register before you can join any Room',
+        message: this.$t('pages.room.join.loginBeforeJoin'),
         error: true
       }
       this.$store.commit('toast/push', toast, {
         root: true
       })
-      return this.$router.push({ path: '/@/auth/login' })
+      return this.$router.push({ path: this.localePath({ name: '--auth-login' }) })
     }
     await this.$store.dispatch('api/invite/acceptPendingJoins', this.user._id)
     await this.$store.dispatch('connectWebSocket')
     if (join) {
-      return this.$router.push({ path: `/${this.room.path}/chat` })
+      return this.$router.push({ path: this.localePath({ name: 'room-chat', params: { room: `${this.room.path}` } }) })
     }
   }
 }

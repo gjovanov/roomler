@@ -1,7 +1,8 @@
 {
   "files.eol": "\n",
   "html.format.wrapLineLength": 0,
-  "eslint.validate": [{ //list of extensions to validate
+  "eslint.validate": [
+    { //list of extensions to validate
       "language": "html",
       "autoFix": true
     },

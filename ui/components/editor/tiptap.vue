@@ -182,7 +182,7 @@ export default {
       extensions: [
         new Placeholder({
           showOnlyWhenEditable: true,
-          emptyNodeText: 'Write something... Drop & drop files here... Use @ to mention someone. Use : for emoji'
+          emptyNodeText: self.$t('comps.chat.emptyText')
         }),
         new class extends Extension {
           keys () {
@@ -254,7 +254,15 @@ export default {
       customEmoji
     }
   },
+  computed: {
+    emptyText () {
+      return this.$t('comps.chat.emptyText')
+    }
+  },
   watch: {
+    emptyText (newVal) {
+      this.editor.extensions.options.placeholder.emptyNodeText = newVal
+    },
     'message.edit' (val, oldVal) {
       if (!val) {
         this.editor.setContent(this.backup)

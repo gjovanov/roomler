@@ -2,24 +2,24 @@
   <div v-if="room">
     <v-text-field
       v-model="room.name"
-      label="Room name"
+      :label="$t('comps.room.roomName')"
       name="name"
       autocomplete="on"
       disabled
       required
     >
-      <template v-slot:append>
+      <template #append>
         <v-tooltip
           bottom
         >
-          <template v-slot:activator="{ on }">
+          <template #activator="{ on }">
             <v-icon
               v-on="on"
             >
               {{ `${room.is_open ? 'fa-lock-open' : 'fa-lock'}` }}
             </v-icon>
           </template>
-          {{ `${room.is_open ? 'Open room (join allowed to everyone)' : 'Closed room (invite-only join)'}` }}
+          {{ `${room.is_open ? $t('comps.room.openRoom') : $t('comps.room.closedRoom') }` }}
         </v-tooltip>
       </template>
     </v-text-field>
@@ -27,12 +27,12 @@
     <v-combobox
       v-model="room.tags"
       :items="room.tags"
-      label="Tags"
+      :label="$t('comps.room.tags')"
       multiple
       chips
       disabled
     >
-      <template v-slot:selection="data">
+      <template #selection="data">
         <v-chip
           :key="JSON.stringify(data.item)"
           v-bind="data.attrs"
@@ -47,7 +47,7 @@
     <v-spacer />
     <v-textarea
       v-model="room.description"
-      label="Description"
+      :label="$t('comps.room.description')"
       name="description"
       autocomplete="on"
       disabled

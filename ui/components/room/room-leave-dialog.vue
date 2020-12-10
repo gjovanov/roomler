@@ -3,9 +3,9 @@
     <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
         <v-card-title class="headline">
-          Warning
+          {{ $t('comps.room.warning') }}
         </v-card-title>
-        <v-card-text>Are you sure you want to leave this room?</v-card-text>
+        <v-card-text>{{ $t('comps.room.leaveConfirmation') }}</v-card-text>
         <v-card-actions>
           <v-btn
             color="grey"
@@ -13,7 +13,7 @@
             outlined
             @click="no()"
           >
-            No
+            {{ $t('comps.room.cancel') }}
           </v-btn>
           <v-spacer />
 
@@ -23,7 +23,7 @@
             outlined
             @click="yes()"
           >
-            Yes
+            {{ $t('comps.room.leave') }}
           </v-btn>
         </v-card-actions>
       </v-card>

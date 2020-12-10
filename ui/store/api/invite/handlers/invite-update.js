@@ -4,6 +4,7 @@ export const handleInviteUpdate = (
   state,
   rootState,
   router,
+  localePath,
   data) => {
   if (data.op === rootState.api.config.config.wsSettings.opTypes.roomInviteUpdate) {
     data.data.forEach((invite) => {

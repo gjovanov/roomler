@@ -11,13 +11,13 @@ For the sake of easier understanding, we will group them by the function they pe
 ### Database (REQUIRED)
 - **DB_CONN** - Mongo DB connection string
 
-**IMPORTANT**: See [details](deps-mongo.md)
+**IMPORTANT**: See [details](./deps-mongo.md)
 
 ### Web Sockets (OPTIONAL)
 - **WS_SCALEOUT_ENABLED** - in case it is set to `true`, then your redis service is required
 - **WS_SCALEOUT_HOST** - redis host name (must be in the same docker network as roomler `backend`)
 
-**IMPORTANT**: Web Socket scaleout is implemented via Redis PUB/SUB mechanism. So if we start the app in development environment, without `pm2`, these variables are optional, otherwise you need to enable the scaleout and provide the `redis` hostname as well as make sure your redis microservice is attached in the `backend` docker network (see [this](deps-redis.md))
+**IMPORTANT**: Web Socket scaleout is implemented via Redis PUB/SUB mechanism. So if we start the app in development environment, without `pm2`, these variables are optional, otherwise you need to enable the scaleout and provide the `redis` hostname as well as make sure your redis microservice is attached in the `backend` docker network (see [this](./deps-redis.md))
 
 ### Email sending (REQUIRED, one of these three options)
 - **SENDGRID_API_KEY** - For sending Emails via your Sendgrid API key
@@ -36,7 +36,7 @@ For the sake of easier understanding, we will group them by the function they pe
 - **LINKEDIN_ID** - OAuth LinkedIn ID
 - **LINKEDIN_SECRET** - OAuth LinkedIn Secret
 
-**IMPORTANT**: If you don't provide OAUTH (Facebook, Google, LinkedIn, Github) ID/SECRET envs, you will still be able to have local registration (username/email/password), but clicking on the OAUTH buttons in the `/@/auth/login` or `/@/auth/register` routes will throw an error.
+**IMPORTANT**: If you don't provide OAUTH (Facebook, Google, LinkedIn, Github) ID/SECRET envs, you will still be able to have local registration (username/email/password), but clicking on the OAUTH buttons in the `/-/auth/login` or `/-/auth/register` routes will throw an error.
 
 ### Video Conferencing (REQUIRED)
 - **JANUS_URL** - Your Janus server public URL e.g. `wss://janus.yourdomain.com/janus_ws`
@@ -44,7 +44,7 @@ For the sake of easier understanding, we will group them by the function they pe
 - **TURN_USERNAME** - Coturn Username
 - **TURN_PASSWORD** - Coturn Pasword
 
-**IMPORTANT**: Janus & Coturn are required micro service dependencies need to Room creation, video conferencing & reliable connects in NAT scenarios. See [Janus](deps-janus.md) & [Coturn](deps-coturn.md) for more details
+**IMPORTANT**: Janus & Coturn are required micro service dependencies need to Room creation, video conferencing & reliable connects in NAT scenarios. See [Janus](./deps-janus.md) & [Coturn](./deps-coturn.md) for more details
 
 ### Chat (OPTIONAL)
 - **GIPHY_API_KEY** - Your Giphy API key
@@ -52,10 +52,10 @@ For the sake of easier understanding, we will group them by the function they pe
 **IMPORTANT**: If you don't provide Giphy API KEY, adding giphys will throw an error. TODO - preven hide the giphy button if no Giphy API key is provided.
 
 ### Admin (OPTIONAL)
-- **SUPER_ADMIN_EMAILS** - Email of the Roomler Super admin, that can look in to the analyitcs of user visits and reports
+- **SUPER_ADMIN_EMAILS** - Email of the Roomler Super admin, that can look in to the analyitcs of user live visits and page stats
 - **GOOGLE_ANALYTICS_ID**  - Your google anaytics Id.
 
-**IMPORTANT**: If `SUPER_ADMIN_EMAILS` is not provided, you won't be able to access the analytics routes `/admin/reports`. Regarding `GOOGLE_ANALYTICS_ID`, in `development`, this env variable is being set before running the `npm run dev:api & npm run dev:ui`. In `production `is actually needed during the `nuxt build` (app compilation), hence you can put it a separate `.arg` file, similar to `.env` with the following content:
+**IMPORTANT**: If `SUPER_ADMIN_EMAILS` is not provided, you won't be able to access the analytics routes `/admin/stats`. Regarding `GOOGLE_ANALYTICS_ID`, in `development`, this env variable is being set before running the `npm run dev:api & npm run dev:ui`. In `production `is actually needed during the `nuxt build` (app compilation), hence you can put it a separate `.arg` file, similar to `.env` with the following content:
 ```
 GOOGLE_ANALYTICS_ID=YOUR_GOOGLE_ANALYICS
 ```

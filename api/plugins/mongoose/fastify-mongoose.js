@@ -11,9 +11,8 @@ function fastifyMongoose (fastify, options, next) {
       fastify
         .decorate('mongo', mongo)
         .addHook('onClose', function (f, done) {
-          fastify.mongo.db.close(() => {
-            done()
-          })
+          fastify.mongo.db.close()
+          done()
         })
 
       next()

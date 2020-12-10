@@ -3,8 +3,9 @@
 </template>
 
 <script>
-import echarts from 'echarts/lib/echarts'
+
 import BaseChart from '@/components/chart/base-chart'
+import { datetimeUtils } from '@/utils/datetime-utils'
 
 export default {
   components: {
@@ -114,7 +115,7 @@ export default {
             max: new Date(this.to),
             axisLabel: {
               formatter (value) {
-                return echarts.format.formatTime('yyyy-MM-dd', value)
+                return datetimeUtils.toDate(value)
               }
             }
           }

@@ -11,7 +11,7 @@ module.exports = {
     auth: oauthPlugin.GOOGLE_CONFIGURATION
   },
   startRedirectPath: '/oauth/login/google',
-  callbackUri: `${config.appSettings.env.URL}/@/oauth/callback/google`,
+  callbackUri: `${config.appSettings.env.URL}/-/oauth/callback/google`,
   scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
   generateStateFunction: () => {
     return defaultState

@@ -60,7 +60,7 @@
 
     <h1>Privacy Policy</h1>
     <p>
-      When delivering the Service, Roomler will collect and process personal data about you and your use of the Service. By using the Service, you agree that Roomler can use your personal data in accordance with our <nuxt-link to="/tos/privacy">
+      When delivering the Service, Roomler will collect and process personal data about you and your use of the Service. By using the Service, you agree that Roomler can use your personal data in accordance with our <nuxt-link :to="localePath({ name: 'tos-privacy' })">
         Privacy Policy
       </nuxt-link> and in accordance with the consents you have given us.
     </p>
@@ -115,12 +115,12 @@
     <h1>Relevant Links</h1>
     <ul>
       <li>
-        <nuxt-link to="/tos/privacy">
+        <nuxt-link :to="localePath({ name: 'tos-privacy' })">
           Privacy Policy
         </nuxt-link>
       </li>
       <li>
-        <nuxt-link to="/tos/cookies">
+        <nuxt-link :to="localePath({ name: 'tos-cookies' })">
           Cookie Policy
         </nuxt-link>
       </li>

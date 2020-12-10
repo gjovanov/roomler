@@ -9,6 +9,9 @@ class CallFilter {
         this.filter.call_id = options.id
       }
     }
+    if (options.connection && mongoose.Types.ObjectId.isValid(options.connection)) {
+      this.filter.connection = mongoose.Types.ObjectId(options.connection)
+    }
     if (options.ids) {
       if (options.ids.filter(id => !mongoose.Types.ObjectId.isValid(id)).length > 0) {
         throw new TypeError('Invalid call id!')

@@ -1,9 +1,14 @@
 import { modelToQuery } from '@/services/handle-dto'
+import { resolutions } from '@/utils/resolutions'
 import { v4 as uuid } from 'uuid'
 
 export const state = () => ({
   session: null,
-  room: null
+  room: null,
+  audioDevices: [],
+  speakers: [],
+  videoDevices: [],
+  resolutions
 })
 
 export const mutations = {
@@ -13,10 +18,59 @@ export const mutations = {
   },
   setPosition (state, position) {
     state.position = position
+  },
+  setDevices (state, devices) {
+    state.audioDevices = devices.filter(d => d.kind === 'audioinput')
+    state.speakers = devices.filter(d => d.kind === 'audiooutput')
+    state.videoDevices = devices.filter(d => d.kind === 'videoinput')
+  },
+  pushDeviceResolution (state, { resolution, deviceId }) {
+    resolution.devices.push(deviceId)
   }
 }
 
 export const actions = {
+  listDevices ({
+    commit
+  }) {
+    const self = this
+    return new Promise((resolve) => {
+      self.$Janus.listDevices((devices) => {
+        commit('setDevices', devices)
+        resolve(devices)
+      })
+    })
+  },
+
+  getResolutionsPerDevice ({
+    commit,
+    state
+  }) {
+    const self = this
+    state.resolutions.forEach((resolution) => {
+      state.videoDevices.forEach(async (device) => {
+        const constraints = {
+          video: {
+            deviceId: device.deviceId,
+            width: { exact: resolution.width },
+            height: { exact: resolution.height }
+          }
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia(constraints)
+          commit('pushDeviceResolution', { resolution, deviceId: device.deviceId })
+          self.$Janus.stopAllTracks(stream)
+        } catch (err) {
+          if (resolution.label === 'HD - 1280x720') {
+            console.log(err)
+            console.log(resolution)
+            console.log(constraints)
+          }
+        }
+      })
+    })
+  },
+
   async join ({
     commit,
     dispatch,
@@ -74,20 +128,33 @@ export const actions = {
     state
   }) {
     const handleDto = getters.localHandle
-    try {
-      const media = {
-        video: {
-          enabled: false
-        },
-        screen: {
-          enabled: !handleDto.media.screen.enabled
-        }
+    const hasVideo = handleDto.media.video.enabled
+    const hasAudio = handleDto.media.audio.enabled
+    const media = {
+      video: {
+        enabled: false
+      },
+      screen: {
+        enabled: !handleDto.media.screen.enabled
       }
+    }
+    try {
       commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
       const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
       await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
-    } catch (e) {
-      this.$consola.error(e)
+    } catch (err) {
+      if (err.name && err.name.includes('NotAllowedError')) {
+        alert(this.app.i18n.t('comps.conference.screenNotAllowedError'))
+        let jsep
+        media.screen.enabled = false
+        media.video.enabled = hasVideo
+        commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+        if (hasAudio) {
+          jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+        }
+        await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+      }
+      this.$consola.error(err)
     }
   },
   async toggleScreenMuted ({
@@ -115,6 +182,40 @@ export const actions = {
     }
   },
 
+  async setVideo ({
+    commit,
+    dispatch,
+    getters,
+    state
+  }, device) {
+    const handleDto = getters.localHandle
+    const media = {
+      video: {
+        device
+      },
+      screen: {
+        enabled: false
+      }
+    }
+    try {
+      commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+      const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+      await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+    } catch (err) {
+      if (err.name && err.name.includes('OverconstrainedError')) {
+        alert(this.app.i18n.t('comps.conference.overconstrainedError'))
+        const defaultResolution = state.resolutions.find(r => r.is_default)
+        media.video.resolution = defaultResolution.label
+        media.video.width = defaultResolution.width
+        media.video.height = defaultResolution.height
+        commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+        const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+        await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+      }
+      this.$consola.error(err)
+    }
+  },
+
   async toggleVideo ({
     commit,
     dispatch,
@@ -122,20 +223,30 @@ export const actions = {
     state
   }) {
     const handleDto = getters.localHandle
-    try {
-      const media = {
-        video: {
-          enabled: !handleDto.media.video.enabled
-        },
-        screen: {
-          enabled: false
-        }
+    const media = {
+      video: {
+        enabled: !handleDto.media.video.enabled
+      },
+      screen: {
+        enabled: false
       }
+    }
+    try {
       commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
       const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
       await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
-    } catch (e) {
-      this.$consola.error(e)
+    } catch (err) {
+      if (err.name && err.name.includes('OverconstrainedError')) {
+        alert(this.app.i18n.t('comps.conference.overconstrainedError'))
+        const defaultResolution = state.resolutions.find(r => r.is_default)
+        media.video.resolution = defaultResolution.label
+        media.video.width = defaultResolution.width
+        media.video.height = defaultResolution.height
+        commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+        const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+        await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+      }
+      this.$consola.error(err)
     }
   },
 
@@ -163,6 +274,68 @@ export const actions = {
       this.$consola.error(e)
     }
   },
+
+  async setAudio ({
+    commit,
+    dispatch,
+    getters,
+    state
+  }, device) {
+    try {
+      const handleDto = getters.localHandle
+      const media = {
+        audio: {
+          device
+        }
+      }
+      commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+      const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+      await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+    } catch (e) {
+      this.$consola.error(e)
+    }
+  },
+
+  async setSpeaker ({
+    commit,
+    dispatch,
+    getters,
+    state
+  }, device) {
+    try {
+      const handleDto = getters.localHandle
+      const media = {
+        speakers: {
+          device
+        }
+      }
+      commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+      await dispatch('api/janus/videoroom/api/configure', { handleDto }, { root: true })
+      state.session.videoroomHandles.forEach(async (handle) => {
+        const video = document.getElementById(handle.id)
+        if (video) {
+          try {
+            await video.setSinkId(device)
+          } catch (e) {
+            this.$consola.info(e)
+          }
+        }
+      })
+      state.session.sipHandles.forEach(async (handle) => {
+        const audio = document.getElementById(handle.id)
+        if (audio) {
+          try {
+            await audio.setSinkId(device)
+          } catch (e) {
+            this.$consola.info(e)
+          }
+        }
+      })
+    } catch (err) {
+      this.$consola.error(err)
+    }
+  },
+
   async toggleAudio ({
     commit,
     dispatch,
@@ -193,7 +366,7 @@ export const actions = {
     try {
       const handleDto = getters.localHandle
       const sipHandleDto = getters.remoteSipHandle
-      const handle = sipHandleDto.handle || handleDto.handle
+      const handle = sipHandleDto && sipHandleDto.handle ? sipHandleDto.handle : handleDto.handle
       const media = {
         audio: {
           muted: !handleDto.media.audio.muted
@@ -215,19 +388,32 @@ export const actions = {
     dispatch,
     getters,
     state
-  }, resolution) {
-    try {
-      const handleDto = getters.localHandle
-      const media = {
-        video: {
-          resolution
-        }
+  }, { resolution }) {
+    const foundResolution = state.resolutions.find(r => r.label === resolution)
+    const handleDto = getters.localHandle
+    const media = {
+      video: {
+        resolution,
+        width: foundResolution.width,
+        height: foundResolution.height
       }
+    }
+    try {
       commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
       const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
       await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
-    } catch (e) {
-      this.$consola.error(e)
+    } catch (err) {
+      if (err.name && err.name.includes('OverconstrainedError')) {
+        alert(this.app.i18n.t('comps.conference.overconstrainedError'))
+        const defaultResolution = state.resolutions.find(r => r.is_default)
+        media.video.resolution = defaultResolution.label
+        media.video.width = defaultResolution.width
+        media.video.height = defaultResolution.height
+        commit('api/janus/videoroom/updates/setMedia', { handleDto, media }, { root: true })
+        const jsep = await dispatch('api/janus/videoroom/handle/createOffer', { handleDto }, { root: true })
+        await dispatch('api/janus/videoroom/api/configure', { handleDto, jsep }, { root: true })
+      }
+      this.$consola.error(err)
     }
   },
   async setBitrateLimit ({
