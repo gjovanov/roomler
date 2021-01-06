@@ -83,6 +83,7 @@
                 absolute
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 @mouseover="showMenu($event, 'addReaction', message)"
               >
                 😄
@@ -98,6 +99,7 @@
                 :dark="!isDark"
                 :light="isDark"
                 :style="`margin-right: 36px !important;`"
+                elevation="0"
                 @mouseover="showMenu($event, 'message', message)"
               >
                 <v-icon x-small>
@@ -117,6 +119,7 @@
                     :dark="!isDark"
                     :light="isDark"
                     :style="`margin-right: 72px !important;`"
+                    elevation="0"
                     v-on="on"
                     @click="toggleEdit(message)"
                   >

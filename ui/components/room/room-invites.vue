@@ -51,6 +51,7 @@
           :light="isDark"
           fab
           class="mt-4 ml-4 mr-4 mb-12"
+          elevation="0"
           @click="inviteDialog = true"
           v-on="on"
         >
@@ -72,6 +73,7 @@
           :light="isDark"
           fab
           class="mt-4 ml-4 mr-4 mb-12"
+          elevation="0"
           @click="linkDialog = true"
           v-on="on"
         >

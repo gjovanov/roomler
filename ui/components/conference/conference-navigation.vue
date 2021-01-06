@@ -1,5 +1,9 @@
 <template>
-  <v-layout justify-center dark>
+  <v-layout
+    justify-center
+    dark
+    class="pt-0 pb-3"
+  >
     <join-dialog
       :room="room"
       :audio-devices="audioDevices"
@@ -32,6 +36,7 @@
           color="green"
           :dark="!isDark"
           :light="isDark"
+          elevation="0"
           v-on="on"
           @click="joinDialog = true"
         >
@@ -51,6 +56,7 @@
           x-small
           :dark="!isDark"
           :light="isDark"
+          elevation="0"
           v-on="on"
           @click="unpublish()"
         >
@@ -79,6 +85,7 @@
               x-small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="{ ...tooltip, ...menu }"
               @click="clickScreen()"
             >
@@ -144,6 +151,7 @@
               x-small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="{ ...tooltip, ...menu }"
               @click="clickVideo()"
             >
@@ -232,6 +240,7 @@
               x-small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="{ ...tooltip, ...menu }"
               @click="clickAudio()"
             >
@@ -328,6 +337,7 @@
           x-small
           :dark="!isDark"
           :light="isDark"
+          elevation="0"
           v-on="on"
           @click="publishDialog = true"
         >
@@ -348,6 +358,7 @@
           x-small
           :dark="!isDark"
           :light="isDark"
+          elevation="0"
           v-on="on"
           @click="leave()"
         >
@@ -377,6 +388,7 @@
               x-small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="{ ...tooltip, ...menu }"
             >
               <v-icon>

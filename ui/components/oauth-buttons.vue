@@ -12,6 +12,7 @@
       bottom
       dark
       small
+      elevation="0"
     >
       <v-icon>
         fab {{ oauth.icon }}

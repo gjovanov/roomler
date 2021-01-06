@@ -1,8 +1,8 @@
 // use either SENDGRID or SMTP server
 
 const settings = {
-  fromEmail: 'support@roomler.live',
-  supportEmail: 'support@roomler.live',
+  fromEmail: process.env.FROM_EMAIL || 'support@roomler.live',
+  supportEmail: process.env.SUPPORT_EMAIL || 'support@roomler.live',
   sendgrid: {
     apiKey: process.env.SENDGRID_API_KEY || undefined
   },

@@ -9,6 +9,7 @@
               small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="on"
               @click="commands.undo"
             >
@@ -29,6 +30,7 @@
               small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               v-on="on"
               @click="commands.redo"
             >
@@ -50,6 +52,7 @@
               small
               :dark="!isDark && !isActive.bold()"
               :light="isDark && !isActive.bold()"
+              elevation="0"
               v-on="on"
               @click="commands.bold"
             >
@@ -71,6 +74,7 @@
               small
               :dark="!isDark && !isActive.italic()"
               :light="isDark && !isActive.italic()"
+              elevation="0"
               v-on="on"
               @click="commands.italic"
             >
@@ -92,6 +96,7 @@
               small
               :dark="!isDark && !isActive.strike()"
               :light="isDark && !isActive.strike()"
+              elevation="0"
               v-on="on"
               @click="commands.strike"
             >
@@ -113,6 +118,7 @@
               small
               :dark="!isDark && !isActive.underline()"
               :light="isDark && !isActive.underline()"
+              elevation="0"
               v-on="on"
               @click="commands.underline"
             >
@@ -134,6 +140,7 @@
               small
               :dark="!isDark && !isActive.paragraph()"
               :light="isDark && !isActive.paragraph()"
+              elevation="0"
               v-on="on"
               @click="commands.paragraph"
             >
@@ -155,6 +162,7 @@
               small
               :dark="!isDark && !isActive.heading({ level: 1 })"
               :light="isDark && !isActive.heading({ level: 1 })"
+              elevation="0"
               v-on="on"
               @click="commands.heading({ level: 1 })"
             >
@@ -172,6 +180,7 @@
               small
               :dark="!isDark && !isActive.heading({ level: 2 })"
               :light="isDark && !isActive.heading({ level: 2 })"
+              elevation="0"
               v-on="on"
               @click="commands.heading({ level: 2 })"
             >
@@ -189,6 +198,7 @@
               small
               :dark="!isDark && !isActive.heading({ level: 3 })"
               :light="isDark && !isActive.heading({ level: 3 })"
+              elevation="0"
               v-on="on"
               @click="commands.heading({ level: 3 })"
             >
@@ -206,6 +216,7 @@
               small
               :dark="!isDark && !isActive.bullet_list()"
               :light="isDark && !isActive.bullet_list()"
+              elevation="0"
               v-on="on"
               @click="commands.bullet_list"
             >
@@ -227,6 +238,7 @@
               small
               :dark="!isDark && !isActive.ordered_list()"
               :light="isDark && !isActive.ordered_list()"
+              elevation="0"
               v-on="on"
               @click="commands.ordered_list"
             >
@@ -248,6 +260,7 @@
               small
               :dark="!isDark && !isActive.todo_list()"
               :light="isDark && !isActive.todo_list()"
+              elevation="0"
               v-on="on"
               @click="commands.todo_list"
             >
@@ -269,6 +282,7 @@
               small
               :dark="!isDark && !isActive.blockquote()"
               :light="isDark && !isActive.blockquote()"
+              elevation="0"
               v-on="on"
               @click="commands.blockquote"
             >
@@ -290,6 +304,7 @@
               small
               :dark="!isDark && !isActive.code_block()"
               :light="isDark && !isActive.code_block()"
+              elevation="0"
               v-on="on"
               @click="commands.code_block"
             >
@@ -311,6 +326,7 @@
               small
               :dark="!isDark && !isActive.image()"
               :light="isDark && !isActive.image()"
+              elevation="0"
               v-on="on"
               @click="attach(commands, 'image')"
             >
@@ -332,6 +348,7 @@
               small
               :dark="!isDark && !isActive.file()"
               :light="isDark && !isActive.file()"
+              elevation="0"
               v-on="on"
               @click="attach(commands, 'file')"
             >
@@ -353,6 +370,7 @@
               small
               :dark="!isDark && !isActive.table()"
               :light="isDark && !isActive.table()"
+              elevation="0"
               v-on="on"
               @click="commands.createTable({rowsCount: 3, colsCount: 3, withHeaderRow: false })"
             >
@@ -375,6 +393,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.deleteTable"
               >
@@ -394,6 +413,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.addColumnBefore"
               >
@@ -411,6 +431,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.addColumnAfter"
               >
@@ -428,6 +449,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.deleteColumn"
               >
@@ -445,6 +467,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.addRowBefore"
               >
@@ -462,6 +485,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.addRowAfter"
               >
@@ -479,6 +503,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.deleteRow"
               >
@@ -496,6 +521,7 @@
                 small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="commands.toggleCellMerge"
               >

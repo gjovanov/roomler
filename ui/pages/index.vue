@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="pt-0 pr-0 pl-0 pb-8 mt-0 mr-0 ml-0 mb-8"
+    class="pt-8 pr-0 pl-0 pb-8 mt-0 mr-0 ml-0 mb-8"
     fluid
   >
     <v-row

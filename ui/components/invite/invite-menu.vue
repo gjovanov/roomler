@@ -12,6 +12,7 @@
         x-small
         :dark="!isDark"
         :light="isDark"
+        elevation="0"
         v-on="on"
       >
         <v-icon x-small>

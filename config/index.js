@@ -16,7 +16,8 @@ const config = {
   emailSettings: require('./email-settings'),
   geoipSettings: require('./geoip-settings'),
   giphySettings: require('./giphy-settings'),
-  webPushSettings: require('./web-push-settings')
+  webPushSettings: require('./web-push-settings'),
+  stripeSettings: require('./stripe-settings')
 }
 
 module.exports = config

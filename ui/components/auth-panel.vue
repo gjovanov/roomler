@@ -157,7 +157,6 @@
           <v-btn
             text
             right
-            depressed
             v-on="on"
           >
             <v-icon>fa fa-globe</v-icon>
@@ -192,9 +191,9 @@
           <v-btn
             text
             right
-            depressed
             style="min-width: 255px"
             class="pl-0"
+            elevation="0"
             v-on="on"
           >
             <v-icon>mdi-dots-vertical</v-icon>

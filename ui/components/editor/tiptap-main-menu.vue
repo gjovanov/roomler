@@ -1,6 +1,6 @@
 <template>
   <editor-menu-bar :id="`${elemId}-main-menu`" v-slot="{ commands }" :editor="editor">
-    <v-layout v-if="!message || message.edit">
+    <v-layout v-if="!message || message.edit" class="pt-2">
       <v-row>
         <v-col cols="12">
           <v-tooltip top>
@@ -10,6 +10,7 @@
                 x-small
                 :dark="!isDark && minimal"
                 :light="isDark && minimal"
+                elevation="0"
                 v-on="on"
                 @click="toggleMinimal()"
               >
@@ -29,6 +30,7 @@
                 x-small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="attach(commands, 'image')"
               >
@@ -48,6 +50,7 @@
                 x-small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="attach(commands, 'file')"
               >
@@ -67,6 +70,7 @@
                 x-small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="openEmbedDialog(commands.iframe)"
               >
@@ -86,6 +90,7 @@
                 x-small
                 :dark="!isDark"
                 :light="isDark"
+                elevation="0"
                 v-on="on"
                 @click="openGiphyDialog(commands.image)"
               >
@@ -110,6 +115,7 @@
                 :dark="!isDark"
                 :light="isDark"
                 style="right: 0px;"
+                elevation="0"
                 v-on="on"
                 @click="send()"
               >

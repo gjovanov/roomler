@@ -81,6 +81,7 @@
           class="ma-4"
           x-small
           fab
+          elevation="0"
           @click="peerDialog = true"
           v-on="on"
         >

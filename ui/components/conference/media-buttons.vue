@@ -9,11 +9,11 @@
           fab
           outlined
           dark
-          depressed
           :ripple="false"
           x-small
           :color="handle.media.audio.enabled && !handle.media.audio.muted ? 'green' : 'red'"
           style="bottom: 24px"
+          elevation="0"
           v-on="on"
         >
           <v-icon v-if="handle.media.audio.enabled && !handle.media.audio.muted" x-small>
@@ -38,11 +38,11 @@
           fab
           outlined
           dark
-          depressed
           :ripple="false"
           x-small
           :color="handle.media.video.enabled && !handle.media.video.muted ? 'green' : 'red'"
           style="bottom: 24px"
+          elevation="0"
           v-on="on"
         >
           <v-icon v-if="handle.media.video.enabled && !handle.media.video.muted" x-small>
@@ -67,11 +67,11 @@
           fab
           outlined
           dark
-          depressed
           :ripple="false"
           x-small
           :color="handle.media.screen.enabled ? 'green' : 'red'"
           style="bottom: 24px"
+          elevation="0"
           v-on="on"
         >
           <v-icon v-if="handle.media.screen.enabled" x-small>
@@ -96,7 +96,6 @@
           left
           dark
           right
-          depressed
           :ripple="false"
           x-small
           style="bottom: 24px"

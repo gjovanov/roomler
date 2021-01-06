@@ -4,8 +4,8 @@
     class="pa-0 ma-0"
     style="height: 100%"
   >
-    <v-row v-show="room && room._id">
-      <v-col cols="12" class="pa-0 ma-0">
+    <v-row v-show="room && room._id" class="pt-6">
+      <v-col cols="12">
         <room-navigation
           :room="room"
           :room-route="roomRoute"
@@ -13,7 +13,7 @@
       </v-col>
     </v-row>
     <v-row v-show="room && room._id">
-      <v-col cols="12" class="pt-0">
+      <v-col cols="12" class="pa-0 ma-0">
         <v-expansion-panels
           v-model="panels"
           accordion

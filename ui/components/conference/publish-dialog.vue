@@ -41,6 +41,7 @@
                       :dark="!isDark && !media.video.enabled"
                       :light="isDark && !media.video.enabled"
                       :style="stream? 'bottom: 24px' : ''"
+                      elevation="0"
                       v-on="on"
                       @click="media.video.enabled = !media.video.enabled"
                     >
@@ -68,6 +69,7 @@
                       :light="isDark && !media.audio.enabled"
                       :disabled="disableAudioChange"
                       :style="stream? 'bottom: 24px' : ''"
+                      elevation="0"
                       v-on="on"
                       @click="media.audio.enabled = !media.audio.enabled"
                     >
@@ -94,6 +96,7 @@
                       :dark="!isDark && !settings"
                       :light="isDark && !settings"
                       :style="stream? 'bottom: 24px' : ''"
+                      elevation="0"
                       v-on="on"
                       @click="settings = !settings"
                     >

@@ -18,6 +18,7 @@
           :dark="!isDark"
           :light="isDark"
           :to="localePath({ name: 'room-chat', params: { room: `${room.path}` } })"
+          elevation="0"
           v-on="on"
         >
           <v-icon>
@@ -36,6 +37,7 @@
           :dark="!isDark"
           :light="isDark"
           :to="localePath({ name: 'room-calls', params: { room: `${room.path}` } })"
+          elevation="0"
           v-on="on"
         >
           <v-icon>
@@ -54,6 +56,7 @@
           :dark="!isDark"
           :light="isDark"
           :to="localePath({ name: 'room-peers', params: { room: `${room.path}` } })"
+          elevation="0"
           v-on="on"
         >
           <v-icon>
@@ -80,6 +83,7 @@
           :dark="!isDark"
           :light="isDark"
           class="mr-9"
+          elevation="0"
           v-on="{ ...menu }"
         >
           <v-icon>

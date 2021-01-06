@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-4">
+  <div class="pa-8">
     <h1>Privacy Policy</h1>
     <p>
       <strong>Effective date:</strong> July 7rd, 2020

@@ -130,6 +130,7 @@
                     color="red"
                     fab
                     x-small
+                    elevation="0"
                     @click="pop(peer)"
                   >
                     <v-icon>fa-trash-alt</v-icon>

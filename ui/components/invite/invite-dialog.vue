@@ -122,6 +122,7 @@
                     color="red"
                     fab
                     x-small
+                    elevation="0"
                     @click="pop(invite)"
                   >
                     <v-icon>fa-trash-alt</v-icon>
