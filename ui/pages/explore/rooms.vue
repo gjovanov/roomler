@@ -68,6 +68,7 @@
               small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               @click="join(room)"
             >
               <v-icon small>
@@ -80,6 +81,7 @@
               small
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
               :to="localePath({ name: 'room-chat', params: { room: `${room.path}` } })"
             >
               <v-icon small>

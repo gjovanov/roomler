@@ -29,6 +29,7 @@
               class="primary"
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
             >
               <v-icon>fa-paper-plane</v-icon> &nbsp; {{ $t('comps.room.inviteNew') }}
             </v-btn>
@@ -44,6 +45,7 @@
               class="orange darken-2"
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
             >
               <v-icon>fa-user-plus</v-icon> &nbsp; {{ $t('comps.room.addExisting') }}
             </v-btn>
@@ -59,6 +61,7 @@
               class="orange lighten-2"
               :dark="!isDark"
               :light="isDark"
+              elevation="0"
             >
               <v-icon>fa-link</v-icon> &nbsp; {{ $t('comps.room.shareLink') }}
             </v-btn>

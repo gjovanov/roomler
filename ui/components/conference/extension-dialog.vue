@@ -20,6 +20,7 @@
           color="green darken-1"
           outlined
           tile
+          elevation="0"
           @click="cancel()"
         >
           {{ $t('comps.conference.cancel') }}
@@ -32,6 +33,7 @@
           link
           href="https://chrome.google.com/webstore/detail/janus-webrtc-screensharin/hapfgfdkleiggjjpfpenajgdnfckjpaj"
           target="_blank"
+          elevation="0"
         >
           {{ $t('comps.conference.install') }}
         </v-btn>

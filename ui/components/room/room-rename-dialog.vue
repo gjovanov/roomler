@@ -11,6 +11,7 @@
             color="grey"
             class="ma-3"
             outlined
+            elevation="0"
             @click="no()"
           >
             No
@@ -21,6 +22,7 @@
             color="primary"
             class="ma-3"
             outlined
+            elevation="0"
             @click="yes()"
           >
             Yes

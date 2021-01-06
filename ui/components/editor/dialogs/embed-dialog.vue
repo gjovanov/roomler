@@ -29,6 +29,7 @@
           color="grey"
           outlined
           class="ma-3"
+          elevation="0"
           @click="cancel()"
         >
           {{ $t('comps.chat.cancel') }}
@@ -40,6 +41,7 @@
           color="primary"
           outlined
           class="ma-3"
+          elevation="0"
           @click="insert()"
         >
           {{ $t('comps.chat.insert') }}

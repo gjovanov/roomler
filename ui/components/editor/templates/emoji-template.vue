@@ -5,6 +5,7 @@
         :key="emoji.id"
         tile
         :outlined="extension.options.navigatedIndex === index"
+        elevation="0"
         @click="extension.selectItem(emoji)"
       >
         {{ emoji.char }}

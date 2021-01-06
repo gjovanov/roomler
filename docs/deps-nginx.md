@@ -8,7 +8,9 @@ docker run -d --name nginx \
     -v /your_path/conf.d/:/etc/nginx/conf.d/ \
     -v /your_path/cert/:/etc/nginx/cert/ \
     -v /your_path/logs/:/etc/nginx/logs/ \
-    --net=bridge \
+    -p YOUR_PUBLIC_IP:80:80 \
+    -p YOUR_PUBLIC_IP:443:443/tcp \
+    -p YOUR_PUBLIC_IP:443:443/udp \
     gjovanov/nginx
 
 # attach nginx container to frontend network

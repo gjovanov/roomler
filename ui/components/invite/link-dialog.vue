@@ -20,6 +20,7 @@
           color="grey"
           outlined
           class="ma-3"
+          elevation="0"
           @click="close()"
         >
           {{ $t('comps.invite.close') }}
@@ -32,6 +33,7 @@
               color="primary"
               outlined
               class="ma-3"
+              elevation="0"
               @click="copyToClipboard()"
               v-on="on"
             >

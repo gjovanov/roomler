@@ -18,6 +18,7 @@
           text
           right
           absolute
+          elevation="0"
           @click="hideMenu()"
         >
           <v-icon>fa-window-close</v-icon>
@@ -70,6 +71,7 @@
               <v-btn
                 :key="emoji.id"
                 tile
+                elevation="0"
                 @click="pushReaction(emoji)"
               >
                 {{ emoji.char }}

@@ -16,6 +16,7 @@
       <v-btn
         dark
         text
+        elevation="0"
         @click="remove(index)"
       >
         {{ $t('comps.toast.close') }}

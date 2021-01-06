@@ -53,6 +53,7 @@
             block
             :color="$vuetify.theme.themes[theme].secondary"
             class="ma-2 pr-2"
+            elevation="0"
           >
             <v-icon>fa fa-plus</v-icon> &nbsp; {{ $t('comps.auth.createNewRoom') }}
           </v-btn>
@@ -64,6 +65,7 @@
             block
             :color="$vuetify.theme.themes[theme].primary"
             class="ma-2"
+            elevation="0"
           >
             <v-icon>fa fa-search</v-icon> &nbsp; {{ $t('comps.auth.exploreRooms') }}
           </v-btn>
@@ -96,6 +98,7 @@
                     :color="$vuetify.theme.themes[theme].primary"
                     class="justify-start pr-0"
                     style="font-weight: 100;"
+                    elevation="0"
                     v-on="on"
                   >
                     <v-icon v-if="item.is_open" x-small class="justify-start">
@@ -166,6 +169,7 @@
             block
             :color="$vuetify.theme.themes[theme].primary"
             class="ma-2 pr-2"
+            elevation="0"
           >
             <v-icon>fa-users</v-icon> &nbsp; {{ $t('comps.room.inviteNew') }}
           </v-btn>

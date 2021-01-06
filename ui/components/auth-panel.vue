@@ -7,6 +7,7 @@
         rounded
         :to="localePath({ name: '--auth-register' })"
         style="border-radius: 28px;"
+        elevation="0"
       >
         {{ $t('comps.auth.signup') }}
       </v-btn>
@@ -17,6 +18,7 @@
         v-if="!isAuthenticated"
         text
         :to="localePath({ name: '--auth-login' })"
+        elevation="0"
       >
         {{ $t('comps.auth.login') }}
       </v-btn>
@@ -36,6 +38,7 @@
             small
             dark
             style="background-color: #303030"
+            elevation="0"
             v-on="on"
           >
             <v-badge
@@ -101,6 +104,7 @@
             small
             dark
             style="background-color: #303030"
+            elevation="0"
             v-on="on"
           >
             <v-badge
@@ -157,6 +161,7 @@
           <v-btn
             text
             right
+            elevation="0"
             v-on="on"
           >
             <v-icon>fa fa-globe</v-icon>
@@ -295,7 +300,12 @@
 
       <v-divider v-if="user && isAuthenticated && !isActivated" vertical />
 
-      <v-btn v-if="user && isAuthenticated && !isActivated" text @click="resetAccount()">
+      <v-btn
+        v-if="user && isAuthenticated && !isActivated"
+        text
+        elevation="0"
+        @click="resetAccount()"
+      >
         {{ $t('comps.auth.activate') }}
       </v-btn>
     </v-toolbar-items>

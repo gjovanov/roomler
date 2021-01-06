@@ -34,6 +34,7 @@
               color="grey"
               outlined
               class="ma-3"
+              elevation="0"
               @click="no()"
             >
               {{ $t('comps.room.cancel') }}
@@ -45,6 +46,7 @@
               outlined
               :disabled="!valid"
               class="ma-3"
+              elevation="0"
               @click="yes()"
             >
               {{ $t('comps.room.delete') }}

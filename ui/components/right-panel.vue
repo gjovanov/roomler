@@ -11,6 +11,7 @@
         <v-list-item-avatar class="mr-0">
           <v-btn
             icon
+            elevation="0"
             @click.stop="mini = !mini"
           >
             <v-icon>
@@ -26,6 +27,7 @@
         </v-list-item-title>
         <v-btn
           icon
+          elevation="0"
           @click.stop="mini = !mini"
         >
           <v-icon>

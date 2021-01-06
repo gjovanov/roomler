@@ -47,6 +47,7 @@
                 color="primary"
                 outlined
                 class="justify-end"
+                elevation="0"
                 @click="push"
               >
                 <v-icon>fa-plus</v-icon> {{ $t('comps.invite.addInvite') }}
@@ -139,6 +140,7 @@
           color="grey"
           outlined
           class="ma-3"
+          elevation="0"
           @click="cancelInvites()"
         >
           {{ $t('comps.invite.cancel') }}
@@ -149,6 +151,7 @@
           color="primary"
           outlined
           class="ma-3"
+          elevation="0"
           @click="sendInvites()"
         >
           {{ $t('comps.invite.sendInvites') }}

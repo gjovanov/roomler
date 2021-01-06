@@ -49,6 +49,7 @@
                   <v-btn
                     x-small
                     class="mb-8"
+                    elevation="0"
                     :to="localePath({ name: '--auth-forgot-password' })"
                   >
                     {{ $t('pages.@.auth.login.forgotPassword') }}
@@ -56,6 +57,7 @@
                   <v-btn
                     x-small
                     class="mb-8"
+                    elevation="0"
                     :to="localePath({ name: '--auth-forgot-username' })"
                   >
                     {{ $t('pages.@.auth.login.forgotUsername') }}
@@ -68,6 +70,7 @@
                     :disabled="!valid"
                     color="primary"
                     class="mb-8"
+                    elevation="0"
                     @click="login()"
                   >
                     {{ $t('pages.@.auth.login.login') }}

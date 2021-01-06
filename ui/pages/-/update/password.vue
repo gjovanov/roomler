@@ -41,6 +41,7 @@
             <v-btn
               :disabled="!valid"
               color="primary"
+              elevation="0"
               @click="change()"
             >
               Change password

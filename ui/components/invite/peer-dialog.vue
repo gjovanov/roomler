@@ -73,6 +73,7 @@
                 color="primary"
                 outlined
                 class="justify-end"
+                elevation="0"
                 @click="push"
               >
                 <v-icon>fa-plus</v-icon> {{ $t('comps.invite.addParticipant') }}
@@ -157,6 +158,7 @@
           color="primary"
           outlined
           class="ma-3"
+          elevation="0"
           @click="addPeers()"
         >
           {{ $t('comps.invite.addParticipants') }}

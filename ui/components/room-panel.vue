@@ -44,6 +44,7 @@
                     block
                     outlined
                     class="secondary"
+                    elevation="0"
                     @click="join()"
                   >
                     <v-icon>fa-users</v-icon> &nbsp; {{ $t('comps.room.join') }}

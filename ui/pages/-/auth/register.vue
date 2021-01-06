@@ -69,6 +69,7 @@
                     :disabled="!valid"
                     color="primary"
                     class="mb-6"
+                    elevation="0"
                     @click="register()"
                   >
                     {{ $t('pages.@.auth.register.signup') }}

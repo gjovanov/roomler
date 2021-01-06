@@ -57,7 +57,14 @@
         cols="12"
         sm="9"
       >
-        <v-btn :to="localePath({ name: 'explore-rooms' })" dark outlined block class="teal">
+        <v-btn
+          :to="localePath({ name: 'explore-rooms' })"
+          dark
+          outlined
+          block
+          class="teal"
+          elevation="0"
+        >
           <v-icon>fa-search</v-icon> &nbsp; {{ $t('pages.home.exploreRooms') }}
         </v-btn>
       </v-col>
@@ -83,7 +90,14 @@
         cols="12"
         sm="9"
       >
-        <v-btn :to="localePath({ name: '--room-create' })" dark outlined block class="secondary">
+        <v-btn
+          :to="localePath({ name: '--room-create' })"
+          dark
+          outlined
+          block
+          class="secondary"
+          elevation="0"
+        >
           <v-icon>fa-pluse</v-icon> &nbsp; {{ $t('pages.home.createNewRoom') }}
         </v-btn>
       </v-col>

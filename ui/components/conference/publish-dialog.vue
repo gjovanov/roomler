@@ -188,6 +188,7 @@
         <v-btn
           color="grey"
           outlined
+          elevation="0"
           @click="cancel()"
         >
           {{ $t('comps.conference.cancel') }}
@@ -197,6 +198,7 @@
           color="primary"
           outlined
           :disabled="!isValid || !stream"
+          elevation="0"
           @click="publish()"
         >
           {{ $t('comps.conference.publish') }}

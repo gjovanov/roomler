@@ -67,6 +67,7 @@
           color="grey"
           outlined
           class="ma-3"
+          elevation="0"
           @click="closeGiphyDialog()"
         >
           {{ $t('comps.chat.cancel') }}
@@ -75,6 +76,7 @@
         <v-btn
           text
           class="ma-3"
+          elevation="0"
           href="https://support.giphy.com/hc/en-us/articles/360032872931-GIPHY-Privacy-Policy"
         >
           <v-img src="/giphy/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif" />

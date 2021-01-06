@@ -194,6 +194,7 @@
         color="primary"
         class="mt-4 mb-4 ml-4 mr-3"
         outlined
+        elevation="0"
         @click="create()"
       >
         <v-icon>fa-plus</v-icon> &nbsp; {{ $t('pages.@.room.manage.create') }}
@@ -206,6 +207,7 @@
         color="primary"
         class="mt-4 mb-4 ml-4 mr-3"
         outlined
+        elevation="0"
         @click="update()"
       >
         <v-icon>fa-edit</v-icon> &nbsp; {{ $t('pages.@.room.manage.update') }}

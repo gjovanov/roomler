@@ -26,6 +26,7 @@
             <v-btn
               :disabled="!valid"
               color="primary"
+              elevation="0"
               @click="reset()"
             >
               {{ $t('pages.@.auth.forgot.password.resetPassword') }}
