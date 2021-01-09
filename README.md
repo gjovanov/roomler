@@ -64,24 +64,24 @@ You need to setup all your Required (even Optional if desired) [environment vari
 
 ``` bash
 # install dependencies
-$ npm i
+$ npx lerna bootstrap
 
 # Start API server (localhost:3001)
-$ npm run dev:api
+$ yarn run dev:api
 
 # Start UI server (localhost:3000)
-$ npm run dev:ui
+$ yarn run dev:ui
 ```
 
 ## Start in production mode
 
 ``` bash
 # install dependencies
-$ npm i
+$ npx lerna bootstrap --scope roomler.ui
 
 # build for production and launch server
-$ npm run build
-$ npm start
+$ yarn run build
+$ yarn run start
 ```
 
 ## Start in production mode using docker
@@ -138,16 +138,7 @@ docker network connect backend roomler
 
 ``` bash
 # makes sure MongoDB is reachable based on /config/index.js (dbSettings)
-$ npm run test:api
+$ yarn run test:api
 ```
 
 ## Run E2E tests (TODO)
-
-``` bash
-# makes sure MongoDB is reachable based on /config/index.js (dbSettings)
-# first start the API and UI servers in TEST envrionment
-$ npm run start:test-e2e
-# then run all E2E test
-$ npm run test:e2e
-
-```
