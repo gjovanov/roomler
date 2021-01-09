@@ -7,7 +7,7 @@ config.appSettings.env.URL = 'http://localhost:3000'
 module.exports = {
   apps: [{
     name: 'roomler1',
-    script: '../packages/api/index.js',
+    script: 'index.js',
     watch: true,
     instances: 'max',
     autorestart: false,
@@ -22,7 +22,7 @@ module.exports = {
   },
   {
     name: 'roomler2',
-    script: '../packages/api/index.js',
+    script: 'index.js',
     watch: true,
     instances: 'max',
     autorestart: false,

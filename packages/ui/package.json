@@ -11,7 +11,7 @@
     "analyze": "nuxt build --analyze",
     "start": "if-env WS_SCALEOUT_ENABLED=true && npm run start:cluster || npm run start:single",
     "start:single": "cross-env NODE_ENV=production node index.js",
-    "start:cluster": "cross-env NODE_ENV=production pm2 start ../../.pm2/pm2.config.js --no-pmx --attach",
+    "start:cluster": "cross-env NODE_ENV=production pm2 start ../../pm2.config.js --no-pmx --attach",
     "generate": "nuxt generate",
     "standard:fix": "standard --fix",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",

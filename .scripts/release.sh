@@ -8,11 +8,13 @@ BUMP=patch
 git pull
 
 # bump version
+yarn run bump:${BUMP}
 # npm version $BUMP
 docker run --rm -v "$PWD":/app treeder/bump $BUMP
-docker run --rm -v "$PWD":/app -w /app node:alpine npm version $BUMP
+# docker run --rm -v "$PWD":/app -w /app node:alpine npm version $BUMP
 version=`cat VERSION`
 echo "version: $version"
+
 
 # run build
 ./build.sh
@@ -20,9 +22,9 @@ echo "version: $version"
 # tag it
 git add -A
 git commit -m "version $version"
-git tag -a "$version" -m "version $version"
-git push
-git push --tags
+#git tag -a "$version" -m "version $version"
+#git push
+#git push --tags
 docker tag $USERNAME/$IMAGE:latest $USERNAME/$IMAGE:$version
 
 # push it

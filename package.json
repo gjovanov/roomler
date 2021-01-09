@@ -1,6 +1,6 @@
 {
   "name": "roomler",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Community & Team Collaboration - Videoconferencing & Chat powered Communication",
   "author": "Goran Jovanov",
   "license": "AGPL-3.0",
@@ -14,7 +14,10 @@
     "build": "yarn workspace roomler.ui build",
     "start": "yarn workspace roomler.ui start",
     "start:cluster": "yarn workspace roomler.ui start:cluster",
-    "test:api": "yarn workspace roomler.tests test:api"
+    "test:api": "yarn workspace roomler.tests test:api",
+    "bump:patch": "npx lerna version patch",
+    "bump:minor": "npx lerna version minor",
+    "bump:major": "npx lerna version major"
   },
   "dependencies": {
     "consola": "^2.15.0",
