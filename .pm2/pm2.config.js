@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('roomler.config')
 config.appSettings.env.NODE_ENV = 'production'
 
 // WIN-10: Check port usage
@@ -6,7 +6,7 @@ config.appSettings.env.NODE_ENV = 'production'
 module.exports = {
   apps: [{
     name: 'roomler',
-    script: './server/ui/index.js',
+    script: 'index.js',
     watch: false,
     instances: 'max',
     autorestart: false,

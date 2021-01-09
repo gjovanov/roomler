@@ -1,0 +1,27 @@
+{
+  "name": "roomler.config",
+  "version": "0.3.6",
+  "description": "Community & Team Collaboration - Videoconferencing & Chat powered Communication",
+  "author": "Goran Jovanov",
+  "license": "AGPL-3.0",
+  "private": true,
+  "scripts": {},
+  "standard": {
+    "env": [
+      "browser",
+      "node"
+    ]
+  },
+  "dependencies": {
+    "if-env": "^1.0.4"
+  },
+  "homepage": "https://github.com/gjovanov/roomler#readme",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gjovanov/roomler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gjovanov/roomler/issues"
+  }
+}

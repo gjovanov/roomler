@@ -1,4 +1,4 @@
-const config = require('../config')
+const config = require('roomler.config')
 config.appSettings.env.URL = 'http://localhost:3000'
 
 // WIN-10: Check port usage
@@ -7,7 +7,7 @@ config.appSettings.env.URL = 'http://localhost:3000'
 module.exports = {
   apps: [{
     name: 'roomler1',
-    script: './server/api/index.js',
+    script: '../packages/api/index.js',
     watch: true,
     instances: 'max',
     autorestart: false,
@@ -22,7 +22,7 @@ module.exports = {
   },
   {
     name: 'roomler2',
-    script: './server/api/index.js',
+    script: '../packages/api/index.js',
     watch: true,
     instances: 'max',
     autorestart: false,
@@ -37,7 +37,7 @@ module.exports = {
   },
   {
     name: 'roomler3',
-    script: './server/api/index.js',
+    script: '../packages/api/index.js',
     watch: true,
     instances: 'max',
     autorestart: false,
@@ -52,7 +52,7 @@ module.exports = {
   },
   {
     name: 'roomler4',
-    script: './server/api/index.js',
+    script: '../packages/api/index.js',
     watch: true,
     instances: 'max',
     autorestart: false,
