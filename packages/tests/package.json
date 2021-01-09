@@ -1,0 +1,45 @@
+{
+  "name": "roomler.tests",
+  "version": "0.4.0",
+  "description": "Community & Team Collaboration - Videoconferencing & Chat powered Communication",
+  "author": "Goran Jovanov",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "standard:fix": "standard --fix",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
+    "precommit": "npm run lint",
+    "test:api": "cross-env NODE_ENV=test cross-env TEST=api node drop-database.js && cross-env NODE_ENV=test cross-env TEST=api ava --tap --verbose",
+    "test:api-no-clean": "cross-env NODE_ENV=test cross-env TEST=api ava --tap --verbose",
+    "test:drop-db": "cross-env NODE_ENV=test cross-env TEST=api node drop-database.js",
+    "test:ui": "cross-env NODE_ENV=test cross-env TEST=ui node drop-database.js && cross-env NODE_ENV=test cross-env TEST=ui ava",
+    "test:e2e": "cross-env NODE_ENV=test cross-env TEST=e2e node drop-database.js && cross-env NODE_ENV=test cross-env TEST=e2e ava",
+    "test": "cross-env NODE_ENV=test cross-env TEST=all node drop-database.js && cross-env NODE_ENV=test ava cross-env TEST=e2e all",
+    "test-report:api": "cross-env NODE_ENV=test cross-env TEST=api node drop-database.js && cross-env NODE_ENV=test cross-env TEST=api nyc ava --tap --timeout=300000",
+    "test-report:ui": "cross-env NODE_ENV=test cross-env TEST=ui node drop-database.js && cross-env NODE_ENV=test cross-env TEST=ui nyc ava --tap --timeout=300000",
+    "test-report:e2e": "cross-env NODE_ENV=test cross-env TEST=e2e node drop-database.js && cross-env NODE_ENV=test cross-env TEST=e2e nyc ava --tap --timeout=300000",
+    "test-report": "cross-env NODE_ENV=test cross-env TEST=all node drop-database.js && cross-env NODE_ENV=test cross-env TEST=all nyc ava --tap --timeout=300000"
+  },
+  "standard": {
+    "env": [
+      "browser",
+      "node"
+    ]
+  },
+  "dependencies": {
+    "if-env": "^1.0.4",
+    "roomler.api": "^0.4.0"
+  },
+  "devDependencies": {
+    "ava": "^3.15.0",
+    "nock": "^13.0.5",
+    "nyc": "^15.1.0",
+    "puppeteer": "^5.5.0",
+    "puppeteer-coverage": "0.0.10",
+    "puppeteer-to-istanbul": "^1.4.0",
+    "require-extension-hooks": "^0.3.3",
+    "require-extension-hooks-babel": "^1.0.0",
+    "require-extension-hooks-vue": "^3.0.0",
+    "sinon": "^9.2.2"
+  }
+}

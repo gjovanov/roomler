@@ -24,6 +24,8 @@ For the sake of easier understanding, we will group them by the function they pe
 - **GMAIL_USER** & **GMAIL_PASSWORD** - For sending eails via your GMAIL account
 - **SMTP_HOST** & **SMTP_PORT** & **SMTP_SECURE** & **SMTP_USER** & **SMTP_PASSWORD** - For sending emails via your own SMTP server
 
+- **FROM_EMAIL** - Email address from which all emails are being sent
+
 **IMPORTANT**: You need to select one of the three options for sending emails, otherwise creating an account will throw an error.
 
 ### Authentication (OAuth) (OPTIONAL)
