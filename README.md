@@ -99,6 +99,7 @@ docker run -d --name roomler \
     --hostname roomler \
     --network backend \
     --restart always \
+    -v /path_to_your_uploads_folder:/roomler/packages/ui/static/uploads \
     -e API_URL=https://roomler.live \
     -p 8082:3000 \
     -e DB_CONN=YOUR_DB_CONN \

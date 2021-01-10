@@ -45,7 +45,7 @@ COPY --from=build /roomler /roomler
 
 RUN yarn global add pm2
 ADD VERSION .
-VOLUME /roomler/ui/static/uploads
+VOLUME /roomler/packages/ui/static/uploads
 WORKDIR /roomler
 EXPOSE ${PORT}
 
