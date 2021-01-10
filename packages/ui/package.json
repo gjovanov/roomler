@@ -1,6 +1,6 @@
 {
   "name": "roomler.ui",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Community & Team Collaboration - Videoconferencing & Chat powered Communication",
   "author": "Goran Jovanov",
   "license": "AGPL-3.0",
@@ -47,8 +47,8 @@
     "portal-vue": "^2.1.7",
     "qs": "^6.9.4",
     "recursive-diff": "^1.0.8",
-    "roomler.api": "^0.4.3",
-    "roomler.config": "^0.4.3",
+    "roomler.api": "^0.4.4",
+    "roomler.config": "^0.4.4",
     "stream-audio-level": "0.0.4",
     "tippy.js": "^6.2.7",
     "tiptap": "^1.31.0",
