@@ -8,12 +8,11 @@ BUMP=patch
 git pull
 
 # bump version
-yarn run bump:${BUMP}
-# npm version $BUMP
 docker run --rm -v "$PWD":/app treeder/bump $BUMP
-# docker run --rm -v "$PWD":/app -w /app node:alpine npm version $BUMP
 version=`cat VERSION`
 echo "version: $version"
+#docker run --rm -v "$PWD":/app -w /app node:alpine yarn version $BUMP
+npx lerna version $VERSION
 
 
 # run build
