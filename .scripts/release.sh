@@ -11,6 +11,8 @@ git pull
 docker run --rm -v "$PWD":/app treeder/bump $BUMP
 version=`cat VERSION`
 echo "version: $version"
+git add -A
+git commit -m "version $version"
 #docker run --rm -v "$PWD":/app -w /app node:alpine yarn version $BUMP
 npx lerna version $VERSION
 
