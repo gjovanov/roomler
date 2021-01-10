@@ -87,10 +87,10 @@ $ yarn run start
 ## Start in production mode using docker
 
 ### Docker build
-`./build.sh`
+`.scripts/build.sh`
 
 ### Docker release
-`./release.sh`
+`.scripts/release.sh`
 
 
 ### Docker run
