@@ -14,11 +14,11 @@ echo "version: $version"
 git add -A
 git commit -m "version $version"
 #docker run --rm -v "$PWD":/app -w /app node:alpine yarn version $BUMP
-npx lerna version $VERSION
+npx lerna version $VERSION --force-publish
 
 
 # run build
-./build.sh
+.scripts/build.sh
 
 # tag it
 git add -A
