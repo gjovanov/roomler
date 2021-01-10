@@ -28,9 +28,9 @@ RUN rm -rf /var/lib/apt/lists/* \
   python \
   git \
   && cd / \
-  && git clone https://github.com/gjovanov/roomler.git \
+  && git clone --depth=1 https://github.com/gjovanov/roomler.git \
   && cd /roomler \
-  && npx lerna bootstrap --scope roomler.ui \
+  && npx lerna bootstrap --scope roomler.ui -- --production --no-optional \
   && yarn run build \
 # Cleanup
   && cd / \
