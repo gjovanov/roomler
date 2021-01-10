@@ -88,5 +88,5 @@ sw.*
 # Mac OSX
 .DS_Store
 
-ui/static/uploads/*
-!ui/static/uploads/README.md
+packages/ui/static/uploads/*
+!packages/ui/static/uploads/README.md

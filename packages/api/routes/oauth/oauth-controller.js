@@ -1,5 +1,6 @@
 
 const oAuthService = require('../../services/oauth/oauth-service')
+const userService = require('../../services/user/user-service')
 const tokenizeUser = require('../../services/utils/utils-service').tokenizeUser
 const dataGetter = require('./oauth-data-getter')
 const imageDownloader = require('./oauth-image-downloader')
@@ -41,6 +42,10 @@ const getOrCreateOAuth = async (data, type) => {
       name: data.name,
       avatar_url: avatarUrl
     })
+  }
+  if (oauth.user && !oauth.user.avatar_url) {
+    const avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
+    await userService.updateAvatar(oauth.user._id, avatarUrl)
   }
   return oauth
 }
