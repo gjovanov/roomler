@@ -52,6 +52,12 @@ const buildApi = async function () {
     oauthOptions.linkedin.credentials.client.id) {
     await fastify.register(require('fastify-oauth2'), oauthOptions.linkedin)
   }
+  if (oauthOptions.microsoft &&
+    oauthOptions.microsoft.credentials &&
+    oauthOptions.microsoft.credentials.client &&
+    oauthOptions.microsoft.credentials.client.id) {
+    await fastify.register(require('fastify-oauth2'), oauthOptions.microsoft)
+}
   if (asteriskAriOptions.url) {
     await fastify.register(require('./plugins/asterisk-ari/fastify-asterisk-ari'), asteriskAriOptions)
   }

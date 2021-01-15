@@ -26,6 +26,10 @@ const getData = async (access, type) => {
     const data = await dataGetter.getLinkedinData(access)
     return data
   }
+  if (type === 'microsoft') {
+    const data = await dataGetter.getMicrosoftData(access)
+    return data
+  }
 }
 
 const getOrCreateOAuth = async (data, type) => {
