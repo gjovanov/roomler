@@ -1,6 +1,6 @@
 {
   "name": "roomler.tests",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "Community & Team Collaboration - Videoconferencing & Chat powered Communication",
   "author": "Goran Jovanov",
   "private": true,
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "if-env": "^1.0.4",
-    "roomler.api": "^0.4.8"
+    "roomler.api": "^0.4.9"
   },
   "devDependencies": {
     "ava": "^3.15.0",
