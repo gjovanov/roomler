@@ -38,10 +38,11 @@
                     <v-btn
                       fab
                       small
-                      :dark="!isDark && !media.video.enabled"
-                      :light="isDark && !media.video.enabled"
+                      :dark="!isDark && media.video.enabled"
+                      :light="isDark && media.video.enabled"
                       :style="stream? 'bottom: 24px' : ''"
                       elevation="0"
+                      :disabled="!videoDevices.length"
                       v-on="on"
                       @click="media.video.enabled = !media.video.enabled"
                     >
@@ -65,9 +66,9 @@
                     <v-btn
                       fab
                       small
-                      :dark="!isDark && !media.audio.enabled"
-                      :light="isDark && !media.audio.enabled"
-                      :disabled="disableAudioChange"
+                      :dark="!isDark && media.audio.enabled"
+                      :light="isDark && media.audio.enabled"
+                      :disabled="disableAudioChange || !audioDevices.length"
                       :style="stream? 'bottom: 24px' : ''"
                       elevation="0"
                       v-on="on"
@@ -290,18 +291,21 @@ export default {
     }
   },
   watch: {
-    open (newVal) {
+    async open (newVal) {
       this.dialog = newVal
       if (this.dialog) {
-        this.media.audio.enabled = true
-        this.media.video.enabled = true
-        this.media.screen.enabled = false
-        this.settings = false
-
         this.isWebrtcSupported = this.$Janus.isWebrtcSupported()
         this.isGetUserMediaAvailable = this.$Janus.isGetUserMediaAvailable()
         this.isGetDisplayMediaAvailable = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia
         this.sinkIdEnabled = ('sinkId' in HTMLMediaElement.prototype)
+        if (newVal && (!this.audioDevices.length || !this.videoDevices.length)) {
+          await this.$store.dispatch('api/janus/session/init', true, { root: true })
+          await this.$store.dispatch('api/conference/listDevices', null, { root: true })
+        }
+        this.media.audio.enabled = !!this.audioDevices.length
+        this.media.video.enabled = !!this.videoDevices.length
+        this.media.screen.enabled = false
+        this.settings = false
         this.selectAudioDevices()
         this.selectVideoDevices()
         if (this.room && this.room.media && this.room.media.use_sip_bridge) {
@@ -388,7 +392,7 @@ export default {
       if (this.selected.audio && this.selected.video) {
         try {
           self.closeStream()
-          self.stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: self.media.video.device }, audio: { deviceId: self.media.audio.device } })
+          self.stream = await navigator.mediaDevices.getUserMedia({ video: self.videoDevices.length ? { deviceId: self.media.video.device } : false, audio: { deviceId: self.media.audio.device } })
         } catch (err) {
           self.closeStream()
           if (err.name && err.name.includes('NotAllowedError')) {

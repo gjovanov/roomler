@@ -5,7 +5,7 @@
     style="height: 100%"
   >
     <v-row v-show="room && room._id" class="pt-6">
-      <v-col cols="12">
+      <v-col cols="12" class="pb-0">
         <room-navigation
           :room="room"
           :room-route="roomRoute"

@@ -135,7 +135,7 @@
     </v-menu>
 
     <v-menu
-      v-if="localHandle"
+      v-if="localHandle && videoDevices.length"
       v-model="menus.video"
       bottom
       offset-y
@@ -143,10 +143,10 @@
       close-on-click
     >
       <template #activator="{ on: menu }">
-        <v-tooltip v-if="localHandle" top left>
+        <v-tooltip v-if="localHandle && videoDevices.length" top left>
           <template #activator="{ on: tooltip }">
             <v-btn
-              v-if="localHandle"
+              v-if="localHandle && videoDevices.length"
               fab
               x-small
               :dark="!isDark"
@@ -224,7 +224,7 @@
     </v-menu>
 
     <v-menu
-      v-if="localHandle"
+      v-if="localHandle && audioDevices.length"
       v-model="menus.audio"
       bottom
       offset-y
@@ -232,10 +232,10 @@
       close-on-click
     >
       <template #activator="{ on: menu }">
-        <v-tooltip v-if="localHandle" top left>
+        <v-tooltip v-if="localHandle && audioDevices.length" top left>
           <template #activator="{ on: tooltip }">
             <v-btn
-              v-if="localHandle"
+              v-if="localHandle && audioDevices.length"
               fab
               x-small
               :dark="!isDark"
@@ -328,10 +328,10 @@
       </v-list>
     </v-menu>
 
-    <v-tooltip v-if="localHandle && !localHandle.stream" top left>
+    <v-tooltip v-if="localHandle && !localHandle.stream && (videoDevices.length || audioDevices.length)" top left>
       <template #activator="{ on }">
         <v-btn
-          v-if="localHandle && !localHandle.stream"
+          v-if="localHandle && !localHandle.stream && (videoDevices.length || audioDevices.length)"
           color="green"
           fab
           x-small
