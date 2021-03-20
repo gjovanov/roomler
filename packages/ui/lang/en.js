@@ -2,7 +2,8 @@ export default {
   lang: {
     bg: 'Bulgarian',
     en: 'English',
-    de: 'German'
+    de: 'German',
+    pt: 'Portuguese'
   },
   pages: {
     home: {
