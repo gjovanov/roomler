@@ -37,6 +37,8 @@ For the sake of easier understanding, we will group them by the function they pe
 - **GITHUB_SECRET** - OAuth Github Secret
 - **LINKEDIN_ID** - OAuth LinkedIn ID
 - **LINKEDIN_SECRET** - OAuth LinkedIn Secret
+- **MICROSOFT_ID** - OAuth Microsoft ID
+- **MICROSOFT_SECRET** - OAuth Microsoft Secret
 
 **IMPORTANT**: If you don't provide OAUTH (Facebook, Google, LinkedIn, Github) ID/SECRET envs, you will still be able to have local registration (username/email/password), but clicking on the OAUTH buttons in the `/-/auth/login` or `/-/auth/register` routes will throw an error.
 

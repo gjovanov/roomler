@@ -37,21 +37,22 @@ const getOrCreateOAuth = async (data, type) => {
     type,
     email: data.email
   })
-  if(data.avatarUrl){
-    if (!oauth) {
-      const avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
-      oauth = await oAuthService.create({
-        type,
-        email: data.email,
-        id: data.id,
-        name: data.name,
-        avatar_url: avatarUrl
-      })
+  if (!oauth) {
+    let avatarUrl
+    if (data.avatar_url) {
+      avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
     }
-    if (oauth.user && !oauth.user.avatar_url) {
-      const avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
-      await userService.updateAvatar(oauth.user._id, avatarUrl)
-    }
+    oauth = await oAuthService.create({
+      type,
+      email: data.email,
+      id: data.id,
+      name: data.name,
+      avatar_url: avatarUrl
+    })
+  }
+  if (oauth && oauth.avatar_url && oauth.user && !oauth.user.avatar_url) {
+    const avatarUrl = await imageDownloader.download(data.avatar_url, `${Date.now()}`)
+    await userService.updateAvatar(oauth.user._id, avatarUrl)
   }
   return oauth
 }
