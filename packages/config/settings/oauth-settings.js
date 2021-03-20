@@ -1,3 +1,3 @@
 module.exports = {
-  types: ['facebook', 'google', 'github', 'linkedin']
+  types: ['facebook', 'google', 'github', 'linkedin', 'microsoft']
 }

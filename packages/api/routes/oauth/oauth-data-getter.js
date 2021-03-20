@@ -123,6 +123,27 @@ class OAuthDataGetter {
     result.email = data2.elements[0]['handle~'].emailAddress
     return result
   }
+  async getMicrosoftData (access) {
+    const result = {
+      email: null,
+      id: null,
+      name: null,
+      avatar_url: null
+    }
+    const data = await getService.get({
+      url: 'https://graph.microsoft.com/v1.0/me',
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${access.access_token}`
+      },
+      json: true
+    })
+    result.id = data.id
+    result.name = data.givenName
+    result.email = data.mail
+    result.avatar_url = undefined
+    return result
+  }
 }
 
 module.exports = new OAuthDataGetter()

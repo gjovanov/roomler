@@ -49,6 +49,12 @@ export default {
           icon: 'fa-linkedin',
           color: 'teal darken-4',
           url: '/oauth/login/linkedin'
+        },
+        {
+          name: 'microsoft',
+          icon: 'fa-microsoft',
+          color: 'yellow darken-4',
+          url: '/oauth/login/microsoft'
         }
       ]
     }
