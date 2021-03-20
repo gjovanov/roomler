@@ -128,7 +128,8 @@ const nuxtConfig = {
     locales: [
       { code: 'bg', iso: 'bg-BG', name: 'Български', file: 'bg.js' },
       { code: 'de', iso: 'de-DE', name: 'Deutsch', file: 'de.js' },
-      { code: 'en', iso: 'en-US', name: 'English', file: 'en.js' }
+      { code: 'en', iso: 'en-US', name: 'English', file: 'en.js' },
+      { code: 'pt', iso: 'pt-BR', name: 'Português', file: 'pt.js' }
     ]
   },
   build: {
