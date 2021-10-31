@@ -1,0 +1,72 @@
+<mxfile host="app.diagrams.net" modified="2021-04-11T13:35:30.760Z" agent="5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36" etag="q0T51lwbpeycDIq91sL_" version="14.5.10" type="github" pages="2">
+  <diagram id="6bqymBZvYrGDmIiO0pwY" name="Add-SIP-registar">
+    <mxGraphModel dx="1967" dy="670" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-1" value="&lt;b&gt;packages/api/models/user.js&lt;br&gt;&lt;/b&gt;// existing properties&lt;br&gt;...&amp;nbsp;&lt;br&gt;// extened model&lt;br&gt;sip: {&lt;br&gt;&amp;nbsp; register: string,&lt;br&gt;&amp;nbsp; identify: string,&lt;br&gt;&amp;nbsp; username: string,&lt;br&gt;&amp;nbsp; secret: string,&lt;br&gt;&amp;nbsp; &amp;nbsp;displayName: string&lt;br&gt;}" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="510" y="120" width="210" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="uVbisnkl_uuRyzW3-3z8-3" target="uVbisnkl_uuRyzW3-3z8-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-3" value="&lt;b&gt;packages/api/services/sip-service.js&lt;br&gt;&lt;br&gt;class SipService {&lt;br&gt;&amp;nbsp; &amp;nbsp; user addRegistar(data);&lt;br&gt;}&lt;br&gt;&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="260" y="120" width="210" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="uVbisnkl_uuRyzW3-3z8-5" target="uVbisnkl_uuRyzW3-3z8-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-5" value="&lt;b&gt;packages/api/routes/sip/index.js&lt;br&gt;&lt;br&gt;&lt;/b&gt;&lt;div style=&quot;color: rgb(212 , 212 , 212) ; background-color: rgb(30 , 30 , 30) ; font-family: &amp;#34;consolas&amp;#34; , &amp;#34;courier new&amp;#34; , monospace ; font-size: 14px ; line-height: 19px&quot;&gt;&lt;div&gt;{&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;method&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #ce9178&quot;&gt;&#39;POST&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;url&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #ce9178&quot;&gt;&#39;/api/sip/add-registar&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;schema&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;{&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;body&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;sipSchema&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;addRegistar&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;body&lt;/span&gt;,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;response&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;{&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #b5cea8&quot;&gt;200&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;sipSchema&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;addRegistar&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;response&lt;/span&gt;[&lt;span style=&quot;color: #b5cea8&quot;&gt;200&lt;/span&gt;],&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #b5cea8&quot;&gt;409&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;errorSchema&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;response&lt;/span&gt;[&lt;span style=&quot;color: #b5cea8&quot;&gt;409&lt;/span&gt;],&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #b5cea8&quot;&gt;500&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;errorSchema&lt;/span&gt;.&lt;span style=&quot;color: #9cdcfe&quot;&gt;response&lt;/span&gt;[&lt;span style=&quot;color: #b5cea8&quot;&gt;500&lt;/span&gt;]&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;}&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;},&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&lt;span style=&quot;color: #dcdcaa&quot;&gt;handler&lt;/span&gt;&lt;span style=&quot;color: #9cdcfe&quot;&gt;:&lt;/span&gt;&amp;nbsp;&lt;span style=&quot;color: #9cdcfe&quot;&gt;sipController&lt;/span&gt;.&lt;span style=&quot;color: #dcdcaa&quot;&gt;addRegistar&lt;/span&gt;&lt;/div&gt;&lt;div&gt;},&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-520" y="120" width="440" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="uVbisnkl_uuRyzW3-3z8-6" target="uVbisnkl_uuRyzW3-3z8-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-6" value="&lt;b&gt;packages/api/routes/sip-controller.js&lt;br&gt;&lt;br&gt;class SipController {&lt;br&gt;&amp;nbsp; &amp;nbsp; user addRegistar(req, res);&lt;br&gt;}&lt;br&gt;&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-10" y="120" width="220" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="uVbisnkl_uuRyzW3-3z8-8" target="uVbisnkl_uuRyzW3-3z8-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-8" value="&lt;b&gt;packages/ui/pages/-/_username/settings.vue&lt;/b&gt;&lt;br&gt;&lt;br&gt;add setting pages, only for Authenticated users, for setting the SIP registar&lt;br&gt;&lt;br&gt;new form with all SIP registar fields and SAVE button" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-50" y="520" width="290" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="uVbisnkl_uuRyzW3-3z8-10" target="uVbisnkl_uuRyzW3-3z8-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="uVbisnkl_uuRyzW3-3z8-10" value="&lt;b&gt;packages/ui/stores/api/sip/registar.js&lt;/b&gt;&lt;br&gt;&lt;br&gt;add actions for AJAX calls to save the user SIP registar" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="-445" y="520" width="290" height="280" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="vuvVATC0s12OxyIqOTbj" name="Call-via-SIP-registar">
+    <mxGraphModel dx="782" dy="469" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="WcSLpt09VlRKRORXUb0D-0" />
+        <mxCell id="WcSLpt09VlRKRORXUb0D-1" parent="WcSLpt09VlRKRORXUb0D-0" />
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WcSLpt09VlRKRORXUb0D-1" source="oQyU8hKbXZ9UzGQpztwy-0" target="oQyU8hKbXZ9UzGQpztwy-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-0" value="&lt;b&gt;packages/ui/components/left-panel&lt;/b&gt;&lt;br&gt;&lt;br&gt;- extend left-panel with new extension panel for &quot;Dial&quot;, that will have:&lt;br&gt;&amp;nbsp; &amp;nbsp;- 0-9 key pads&lt;br&gt;&amp;nbsp; &amp;nbsp;- textbox with typed number&lt;br&gt;&amp;nbsp; &amp;nbsp;- button dial" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="WcSLpt09VlRKRORXUb0D-1">
+          <mxGeometry x="80" y="360" width="290" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WcSLpt09VlRKRORXUb0D-1" source="oQyU8hKbXZ9UzGQpztwy-1" target="oQyU8hKbXZ9UzGQpztwy-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-1" value="&lt;b&gt;packages/ui/store/dial.js&lt;br&gt;&lt;/b&gt;&lt;br&gt;- implement new store dial.js similar to: conference.js&lt;br&gt;&lt;br&gt;with -&amp;gt; join()&lt;br&gt;&amp;nbsp; &amp;nbsp;1. init session&lt;br&gt;&amp;nbsp; &amp;nbsp;2. create session&lt;br&gt;&amp;nbsp; &amp;nbsp;3. sip join&lt;br&gt;&lt;br&gt;using the &lt;b&gt;user.sip&lt;/b&gt;&amp;nbsp;registar info" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="WcSLpt09VlRKRORXUb0D-1">
+          <mxGeometry x="400" y="360" width="290" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="WcSLpt09VlRKRORXUb0D-1" source="oQyU8hKbXZ9UzGQpztwy-2" target="oQyU8hKbXZ9UzGQpztwy-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-2" value="&lt;b&gt;packages/ui/store/sip/*.*&lt;br&gt;&lt;/b&gt;&lt;br&gt;- adjust api.js, handlers.js, handle.js, index.js and updates.js to support 1-on-1 SIP calls" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="WcSLpt09VlRKRORXUb0D-1">
+          <mxGeometry x="720" y="360" width="290" height="280" as="geometry" />
+        </mxCell>
+        <mxCell id="oQyU8hKbXZ9UzGQpztwy-5" value="&lt;b&gt;packages/ui/services/handle-dto.js&lt;br&gt;&lt;/b&gt;&lt;br&gt;- current implementation stores the the &lt;b&gt;sip info&lt;/b&gt;&amp;nbsp;based on the Astrisk server. We need to make that dynamic, if it&#39;s 1-on-1 call via the newly created &lt;b&gt;user.sip&lt;/b&gt;&amp;nbsp;registar info, then pass that info instead, otherwise leave the Asterisk info&lt;br&gt;&lt;br&gt;- for that purpose u made add additional flag: &lt;b&gt;this.viaAsterisk = true&lt;/b&gt; that u can overwrite in case making 1-on-1 SIP calls" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="WcSLpt09VlRKRORXUb0D-1">
+          <mxGeometry x="1040" y="360" width="290" height="280" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
