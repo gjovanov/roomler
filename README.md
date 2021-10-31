@@ -30,7 +30,7 @@ All that fully free and open source.
 - [Docker](https://github.com/docker)
 
 # Architecture
-![Architecture](./ui/static/architecture.png)
+![Architecture](./packages/ui/static/architecture.png)
 
 # Prerequisites
 
