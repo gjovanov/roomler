@@ -58,7 +58,7 @@
     "validator": "^13.5.2",
     "vue-echarts": "^5.0.0-beta.0",
     "vuetify": "^2.4.1",
-    "webrtc-adapter": "^7.7.0"
+    "webrtc-adapter": "^9.0.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^5.0.0",
