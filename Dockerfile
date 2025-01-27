@@ -30,6 +30,8 @@ RUN rm -rf /var/lib/apt/lists/* \
   && cd / \
   && git clone --depth=1 https://github.com/gjovanov/roomler.git \
   && cd /roomler \
+  && npm i -g lerna@3.21.0 \
+#  && npm i -g yarn@1.22.4 \
   && npx lerna bootstrap --scope roomler.ui -- --production --no-optional \
   && yarn run build \
 # Cleanup
