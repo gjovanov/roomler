@@ -23,6 +23,6 @@
   "eslint.lintTask.enable": true,
   "standard.autoFixOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   }
 }
