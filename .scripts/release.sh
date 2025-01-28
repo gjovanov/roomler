@@ -2,7 +2,7 @@ set -ex
 # SET THE FOLLOWING VARIABLES
 USERNAME=gjovanov
 IMAGE=roomler
-BUMP=patch
+BUMP=minor
 
 # ensure we're up to date
 git pull
