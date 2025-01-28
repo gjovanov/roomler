@@ -124,6 +124,11 @@
           Cookie Policy
         </nuxt-link>
       </li>
+      <li>
+        <nuxt-link :to="localePath({ name: 'turn-test' })">
+          TURN Test
+        </nuxt-link>
+      </li>
     </ul>
     <h1>&nbsp;</h1>
   </div>
