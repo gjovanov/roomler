@@ -23,17 +23,15 @@ const nuxtConfig = {
       rel: 'icon',
       type: 'image/x-icon',
       href: '/favicon.ico'
-    },
-    {
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'
     }
     ]
   },
   loading: {
     color: '#fff'
   },
-  css: [],
+  css: [
+    '~/assets/style/fonts.css'
+  ],
   env,
   components: true,
   router: {
