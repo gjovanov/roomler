@@ -1,10 +1,10 @@
 <template>
 	<div class="pa-8">
-	  <input id="url" placeholder="Turn URL" type="text" value="turn:fes1-secunet-coturn.roomler.live:3478?transport=tcp" style="width: 500px">
+	  <input id="url" placeholder="Turn URL" type="text" value="turn:secunet-coturn.roomler.live:3478?transport=tcp" style="width: 500px">
 	  <br>
-	  <input id="username" placeholder="Turn Username" type="text" value="neko" style="width: 500px">
+	  <input id="username" placeholder="Turn Username" type="text" value="miky" style="width: 500px">
 	  <br>
-	  <input id="credential" placeholder="Turn Credential" type="text" value="neko" style="width: 500px">
+	  <input id="credential" placeholder="Turn Credential" type="text" value="miky" style="width: 500px">
 	  <br>
 	  <button @click="validate()">
 		validate
@@ -61,7 +61,7 @@
 		  credential
 		})
 		.then(function (bool) {
-		  document.getElementById('content').textContent = 'is TURN server active? ', bool ? 'yes' : 'no'
+		  document.getElementById('content').textContent = `is TURN server active? ${bool ? 'yes' : 'no'}`;
 		  console.log('is TURN server active? ', bool ? 'yes' : 'no')
 		}).catch(console.error.bind(console))
 	  }
