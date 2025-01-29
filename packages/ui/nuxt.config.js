@@ -87,7 +87,12 @@ const nuxtConfig = {
     ]
   },
   vuetify: {
-    defaultAssets: false,
+    defaultAssets: {
+      font: {
+        family: 'Roboto'
+      },
+      icons: 'mdi'
+    },
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
     theme: {
