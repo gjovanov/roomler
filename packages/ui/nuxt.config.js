@@ -30,7 +30,8 @@ const nuxtConfig = {
     color: '#fff'
   },
   css: [
-    '~/assets/style/fonts.css'
+    '~/assets/style/fonts.css',
+    '@mdi/font/css/materialdesignicons.css'
   ],
   env,
   components: true,
@@ -87,12 +88,7 @@ const nuxtConfig = {
     ]
   },
   vuetify: {
-    defaultAssets: {
-      font: {
-        family: 'Roboto'
-      },
-      icons: 'mdi'
-    },
+    defaultAssets: false,
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
     theme: {
