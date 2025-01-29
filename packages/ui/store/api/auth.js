@@ -69,7 +69,7 @@ export const mutations = {
   },
 
   storeUserInfo (state, result) {
-    cookies.set('token', result.token, { expires: 14 })
+    cookies.set('token', result.token, { sameSite: 'None', secure: true, expires: 14 })
     if (result && result.user && result.timestamp) {
       result.user.timestamp = result.timestamp
     }

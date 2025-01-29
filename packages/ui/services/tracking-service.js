@@ -14,7 +14,7 @@ class TrackingService {
     this.deviceId = cookies.get('device_id')
     if (!this.deviceId) {
       this.deviceId = uuid()
-      cookies.set('device_id', this.deviceId, { expires: 365 * 18 })
+      cookies.set('device_id', this.deviceId, { sameSite: 'None', secure: true, expires: 365 * 18 })
     }
     window.addEventListener('locationchange', () => {
       self.openVisit()

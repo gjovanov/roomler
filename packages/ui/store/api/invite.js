@@ -36,7 +36,7 @@ export const mutations = {
       }
     })
     state.pendingInvites = result
-    cookies.set('pendingInvites', JSON.stringify(state.pendingInvites))
+    cookies.set('pendingInvites', JSON.stringify(state.pendingInvites), { sameSite: 'None', secure: true })
   },
   storePendingJoins (state, join) {
     const result = []
@@ -61,15 +61,15 @@ export const mutations = {
       }
     })
     state.pendingJoins = result
-    cookies.set('pendingJoins', JSON.stringify(state.pendingJoins))
+    cookies.set('pendingJoins', JSON.stringify(state.pendingJoins), { sameSite: 'None', secure: true })
   },
   clearPendingInvites (state) {
     state.pendingInvites = []
-    cookies.set('pendingInvites', state.pendingInvites)
+    cookies.set('pendingInvites', state.pendingInvites, { sameSite: 'None', secure: true })
   },
   clearPendingJoins (state) {
     state.pendingJoins = []
-    cookies.set('pendingJoins', state.pendingJoins)
+    cookies.set('pendingJoins', state.pendingJoins, { sameSite: 'None', secure: true })
   },
 
   setInvites (state, invites) {
