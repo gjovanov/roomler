@@ -19,6 +19,11 @@ const nuxtConfig = {
       name: 'description',
       content: process.env.npm_package_description || ''
     }],
+    script: [{
+      defer: true,
+      'data-domain': 'roomler.live',
+      src: 'https://purestat.ai/js/purestat.js'
+    }],
     link: [{
       rel: 'icon',
       type: 'image/x-icon',
