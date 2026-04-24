@@ -32,8 +32,8 @@ RUN rm -rf /var/lib/apt/lists/* \
   && cd / \
   && git clone --depth=1 https://github.com/gjovanov/roomler.git \
   && cd /roomler \
-  && yarn global add lerna@3.22.1 \
-  && npx lerna bootstrap --scope roomler.ui -- --production --no-optional \
+  && yarn global add lerna@3.22.1 --ignore-engines \
+  && npx lerna bootstrap --scope roomler.ui -- --production --no-optional --ignore-engines \
   && yarn run build \
 # Cleanup
   && cd / \
