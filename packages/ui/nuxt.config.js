@@ -146,7 +146,11 @@ const nuxtConfig = {
   }
 }
 
-nuxtConfig.axios.baseURL = env.API_URL
+// SSR calls axios from inside the pod; hitting the public hostname would round-trip
+// via nginx + NodePort (~6s per request). API_URL_SERVER is the in-cluster shortcut
+// (e.g. http://localhost:3000). Browser-side axios always targets the public URL.
+nuxtConfig.axios.baseURL = env.API_URL_SERVER || env.API_URL
+nuxtConfig.axios.browserBaseURL = env.API_URL
 if (env.NODE_ENV === 'development') {
   nuxtConfig.modules.push('@nuxtjs/eslint-module')
 }
