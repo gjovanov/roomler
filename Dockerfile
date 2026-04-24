@@ -1,4 +1,4 @@
-FROM node:14.5.0-buster-slim as base
+FROM node:14-bullseye-slim as base
 
 LABEL maintainer="Goran Jovanov <goran.jovanov@gmail.com>"
 LABEL description="Roomler - Video Conferencing & Team Collaboration Tool"
@@ -19,13 +19,15 @@ ENV GOOGLE_ANALYTICS_ID=${GOOGLE_ANALYTICS_ID}
 ARG DEBIAN_FRONTEND=noninteractive
 
 FROM base as build
-# Install packages & git clone source code and build the application
+# Install packages & git clone source code and build the application.
+# Bullseye replaced the bare `python` pkg with python2 + python-is-python2.
 RUN rm -rf /var/lib/apt/lists/* \
   && apt-get -y update \
   && apt-get install -yq apt-utils \
   && apt-get install -yq \
   build-essential \
-  python \
+  python2 \
+  python-is-python2 \
   git \
   && cd / \
   && git clone --depth=1 https://github.com/gjovanov/roomler.git \
@@ -38,7 +40,8 @@ RUN rm -rf /var/lib/apt/lists/* \
   && rm -Rf /tmp/* \
   && apt-get purge -y \
   build-essential \
-  python \
+  python2 \
+  python-is-python2 \
   git
 
 FROM base as release
