@@ -47,7 +47,7 @@ RUN rm -rf /var/lib/apt/lists/* \
 FROM base as release
 COPY --from=build /roomler /roomler
 
-RUN yarn global add pm2
+RUN yarn global add pm2@5 --ignore-engines
 ADD VERSION .
 VOLUME /roomler/packages/ui/static/uploads
 WORKDIR /roomler
